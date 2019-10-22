@@ -46,9 +46,7 @@ jobs:
       # https://nose.readthedocs.io
       - run:
           name: run tests
-          command: |
-            . venv/bin/activate
-            python manage.py test
+          command: nosetests
 
       - store_artifacts:
           path: test-reports
