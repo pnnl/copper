@@ -13,6 +13,7 @@ class Chiller:
         compressor_type,
         condenser_type,
         compressor_speed,
+        curves="",
     ):
         self.compressor_type = compressor_type
         self.condenser_type = condenser_type
@@ -25,13 +26,47 @@ class Chiller:
         self.part_eff_unit = part_eff_unit
 
     def generate_curve_set(self, sim_engine, algorithm):
-        cset = CurveSet(self.compressor_type, [])
-        return cset.generate(sim_engine, algorithm)
+        """
+        Generate a curve set that matches a targeted full and part load efficiency.
+        The curves are generated to be used with the specified energy modeling software and with the specified algorithm.
+        """
+        pass
+
+    def find_base_curves(self,model="ect&lwt",sim_engine="energyplus"):
+        """
+        Find an existing equipment curve that best matches the chiller
+        """
+        # Define instance of the GA to use lookup function
+        ga = GA()
+
+        # Define chiller properties
+        props = [
+            ("eqp_type", "chiller"),
+            ("compressor_type",self.compressor_type),
+            ("condenser_type", self.condenser_type),
+            ("compressor_speed", self.compressor_speed),
+            ("sim_engine", sim_engine),
+            ("algorithm", model)]
+
+        # Find equipment match in the library
+        eqp_match = ga.find_equipment(filters=props)
+
+        if len(eqp_match) > 0:
+            # If multiple equipment match the specified properties,
+            # return the one that has numeric attributes that best
+            # match the proposed case
+            if len(eqp_match) > 1:
+                return ga.get_curve_set_by_name(ga.get_best_match(self, eqp_match))
+            else:
+                return ga.get_curve_set_by_name(eqp_match)
+        else:
+            raise ValueError('Could not find a set of curves that matches the specified properties.')
 
 
 class CurveSet:
-    def __init__(self, name, curves):
-        self.curves = curves
+    def __init__(self):
+        self.name = ""
+        self.curves = []
 
     def generate(self, sim_engine, algorithm):
         pass
@@ -39,49 +74,23 @@ class CurveSet:
     def plot(self, unit):
         pass
 
-    def find_curve_sets(
-        self,
-        db_path="./fixtures/curves.json",
-        filters=[],
-        features=[],
-    ):
-        pass
-        # curves = json.loads(open(db_path, "r").read())
-        # avail_curve_sets = []
-        # for curve in curves:
-        #    if all(
-        #        curves[curve][i] == j for i, j in filters
-        #    ):
-        #        if features == []:
-        #            curve_sets_match = cp.curves_set(curve,)
-        #            for curve in curves[curve]["curves"]:
-        # return avail_curve_sets
-
 
 class Curve:
-    def __init__(
-        self,
-        output_var,
-        curve_type,
-        x_min,
-        y_min,
-        x_max,
-        y_max,
-        out_min,
-        out_max,
-        coeffs,
-    ):
-        self.output_var = output_var
-        self.curve_type = curve_type
-        self.x_min = x_min
-        self.y_min = y_min
-        self.x_max = x_max
-        self.y_max = y_max
-        self.out_min = out_min
-        self.out_max = out_max
-        self.coeffs = coeffs
+    def __init__(self):
+        self.output_var = ""
+        self.curve_type = ""
+        self.x_min = 0
+        self.y_min = 0
+        self.x_max = 0
+        self.y_max = 0
+        self.out_min = 0
+        self.out_max = 0
+        self.coeffs = []
 
     def evaluate(self, x, y):
+        """
+        Return the output of a curve.
+        """
         x = min(max(x, self.x_min), self.x_max)
         y = min(max(y, self.y_min), self.y_max)
 
@@ -118,13 +127,16 @@ class Curve:
             return min(max(out, self.out_min), self.out_max)
 
 
-class Rating:
+class Unit:
     def __init__(self, value, unit):
         self.value = value
         self.unit = unit
 
-    def conversion(self, new_eff_rat):
-        if new_eff_rat == "kWpton":
+    def conversion(self, new_unit):
+        """
+        Convert efficiency rating
+        """
+        if new_unit == "kWpton":
             if self.unit == "COP":
                 return 12.0 / (self.value * 3.412)
             elif self.unit == "kWpton":
@@ -133,7 +145,7 @@ class Rating:
                 return 12.0 / self.value
             else:
                 return self.value
-        elif new_eff_rat == "COP":
+        elif new_unit == "COP":
             if self.unit == "kWpton":
                 return 12.0 / self.value / 3.412
             elif self.unit == "COP":
@@ -142,7 +154,7 @@ class Rating:
                 return self.value / 3.412
             else:
                 return self.value
-        elif new_eff_rat == "EER":
+        elif new_unit == "EER":
             if self.unit == "kWpton":
                 return 12.0 / self.value
             elif self.unit == "EER":
@@ -151,9 +163,178 @@ class Rating:
                 return 3.412 * self.value
             else:
                 return self.value
+        elif new_unit == "ton":
+            if self.unit == "kW":
+                return self.value * (3412 / 12000)
+        elif new_unit == "kW":
+            if self.unit == "ton":
+                return self.value / (3412 / 12000)
+
+class GA:
+    def __init__(self,):
+        pass
 
     def iplv(self, value):
         pass
 
     def kwpton(self, value):
         pass
+
+    def find_equipment(
+        self,
+        db_path="./fixtures/curves_from_csv.json",
+        filters=[],
+    ):
+        """
+        Find equipment matching specified filter in the curve library
+        """
+        # Load curve database
+        c_db = json.loads(open(db_path, "r").read())
+
+        eqp_match_dict = {}
+        for eqp in c_db:
+            # Check if equipment properties match specified filter
+            if all(c_db[eqp][prop] == val for prop, val in filters):
+                eqp_match_dict[eqp] = c_db[eqp]
+
+        return eqp_match_dict
+
+    def get_best_match(self, eqp, matches):
+        # Initialize numeric attribute difference
+        diff = float("inf")
+
+        # Iterate over matches and calculate the 
+        # difference in numeric fields
+        for name, val in matches.items():
+            # Retrive full load/reference numeric attribute
+            cap = matches[name]['ref_cap']
+            cap_unit = matches[name]['ref_cap_unit']
+            eff = matches[name]['full_eff']
+            eff_unit = matches[name]['full_eff_unit']
+
+            # Capacity conversion
+            if cap_unit != eqp.ref_cap_unit:
+                c_unit = Unit(cap, cap_unit)
+                cap = c_unit.conversion(eqp.ref_cap_unit)
+                cap_unit = eqp.ref_cap_unit
+
+            # Efficiency conversion
+            if eff_unit != eqp.full_eff_unit:
+                c_unit = Unit(eff, eff_unit)
+                eff = c_unit.conversion(eqp.full_eff_unit)
+                eff_unit = eqp.full_eff_unit
+
+            # Compute difference
+            c_diff = abs((eqp.ref_cap - cap) / eqp.ref_cap) + \
+                abs((eqp.full_eff - eff) / eqp.full_eff)
+
+            if c_diff < diff:
+                # Update lowest numeric difference
+                diff = c_diff
+
+                # Update best match
+                best_match = name
+        
+        # TODO;
+        # Remove following line, just for debugging
+        print(best_match)
+        
+        return best_match
+
+    def get_curve_set_by_name(self, name, db_path="./fixtures/curves_from_csv.json"):
+        """
+        Retrieve curve set from the library by name
+        """
+        # Load curve database
+        c_db = json.loads(open(db_path, "r").read())
+
+        # Initialize curve set object
+        c_set = CurveSet()
+        c_set.name = name
+        
+        # List of curves
+        c_lst = []
+
+        # Define curve objects
+        for c in c_db[name]["curves"]:
+            c_lst.append(self.get_curve(c_db, c, c_db[name]))
+
+        # Add curves to curve set object
+        c_set.curves = c_lst
+
+        return c_set
+
+    def get_curve(self, c_db, c, c_name):
+        # Initialize curve object
+        c_obj = Curve()
+        c_obj.output_var = c
+
+        # Curve properties
+        c_prop = c_name["curves"][c]
+
+        # Retrive all attributes of the curve object
+        for c_att in list(Curve().__dict__):
+            # Set the attribute of new Curve object 
+            # if attrubute are identified in database entry
+            if c_att in list(c_prop.keys()):
+                c_obj.__dict__[c_att] = c_prop[c_att]
+
+        return c_obj
+
+    def get_curve_sets(
+        self,
+        db_path="./fixtures/curves_from_csv.json",
+        filters=[],
+    ):
+        """
+        Retrive curve sets fromt he libraray that match the specified filters (tuples of strings)
+        """
+        # Load curve database
+        c_db = json.loads(open(db_path, "r").read())
+        
+        # Find name of equiment that match specified filter
+        eqp_match = self.find_equipment(db_path, filters)
+
+        # List of curve sets that match specified filters
+        curve_sets = []
+
+        # Retrieve identified equipment's curve sets from the library
+        for name, props in eqp_match.items():
+            c_set = CurveSet()
+            c_set.name = name
+            c_lst = []
+            # Create new CurveSet and Curve objects for all the 
+            # sets of curves identified as matching the filters
+            for c in c_db[name]["curves"]:
+                c_lst.append(self.get_curve(c_db, c, c_db[name]))
+            c_set.curves = c_lst
+            curve_sets.append(c_set)
+
+        return curve_sets
+
+    def generate_population():
+        pass
+
+    def evolve_population():
+        pass
+
+    def determine_fitness():
+        pass
+    
+    def grade_population():
+        pass
+
+    def random_selection():
+        pass
+
+    def perform_mutation():
+        pass
+
+    def perform_crossover():
+        pass
+
+    def identify_best_performer():
+        pass
+
+
+
