@@ -13,7 +13,9 @@ class Chiller:
         compressor_type,
         condenser_type,
         compressor_speed,
-        curves="",
+        curveset="",
+        model="ect&lwt",
+        sim_engine="energyplus",
     ):
         self.compressor_type = compressor_type
         self.condenser_type = condenser_type
@@ -24,15 +26,17 @@ class Chiller:
         self.full_eff_unit = full_eff_unit
         self.part_eff = part_eff
         self.part_eff_unit = part_eff_unit
+        self.model = model
+        self.sim_engine = sim_engine
 
-    def generate_curve_set(self, sim_engine, algorithm):
+    def generate_curve_set(self):
         """
         Generate a curve set that matches a targeted full and part load efficiency.
         The curves are generated to be used with the specified energy modeling software and with the specified algorithm.
         """
         pass
 
-    def find_base_curves(self,model="ect&lwt",sim_engine="energyplus"):
+    def find_base_curves(self):
         """
         Find an existing equipment curve that best matches the chiller
         """
@@ -45,8 +49,8 @@ class Chiller:
             ("compressor_type",self.compressor_type),
             ("condenser_type", self.condenser_type),
             ("compressor_speed", self.compressor_speed),
-            ("sim_engine", sim_engine),
-            ("algorithm", model)]
+            ("sim_engine", self.sim_engine),
+            ("algorithm", self.model)]
 
         # Find equipment match in the library
         eqp_match = ga.find_equipment(filters=props)
@@ -174,8 +178,83 @@ class GA:
     def __init__(self,):
         pass
 
-    def iplv(self, value):
-        pass
+    def iplv(self, equip, unit="kWpton"):
+        """
+        Calculate equipment IPLV
+        """
+
+        # Retrieve equipment efficiency and unit
+        kwpton_ref = equip.full_eff
+        kwpton_ref_unit = equip.full_eff_unit
+
+        # Convert to kWpton if necessary
+        if equip.full_eff_unit != "kWpton":
+            kwpton_ref_unit = Unit(kwpton_ref, kwpton_ref_unit)
+            kwpton_ref = kwpton_ref_unit.conversion("kWpton")
+        
+        # Full load conditions
+        load_ref = 1
+        eir_ref = 1 / (12 / kwpton_ref / 3.412141633)    
+
+        # Test conditions
+        # Same approach as EnergyPlus
+        # Same as AHRI Std 550/590
+        loads = [1, 0.75, 0.5, 0.25]
+
+        # List of equipment efficiency for each load
+        kwpton_lst = []
+
+        # DOE-2 chiller model
+        if equip.model == "ect&lwt":
+            if equip.condenser_type == 'air':
+                # Temperatures from AHRI Std 550/590
+                chw = 6.67
+                ect = [3 + 32 * loads[0],
+                       3 + 32 * loads[1],
+                       3 + 32 * loads[2],
+                       13]
+            elif equip.condenser_type == 'water':
+                # Temperatures from AHRI Std 550/590
+                chw = 6.67
+                ect = [8 + 22 * loads[0],
+                       8 + 22 * loads[1],
+                       19, 19]
+            
+            # Retrieve curves
+            for curve in equip.curveset.curves:
+                if curve.output_var == "cap-f-T":
+                    cap_f_t = curve
+                elif curve.output_var == "eir-f-T":
+                    eir_f_t = curve
+                else:
+                    eir_f_plr = curve
+
+            # Calculate EIR for each testing conditions
+            for idx, load in enumerate(loads):
+                dt = ect[idx] - chw
+                cap_f_chw_ect = cap_f_t.evaluate(chw, ect[idx])
+                eir_f_chw_ect = eir_f_t.evaluate(chw, ect[idx])
+                cap_op = load_ref * cap_f_chw_ect
+                plr = load / cap_op
+                eir_plr = eir_f_plr.evaluate(plr,dt)
+                eir = eir_ref * eir_f_chw_ect * eir_plr / plr
+                kwpton_lst.append(eir) # / 3.412141633 * 12)
+
+            # Coefficients from AHRI Std 550/590
+            iplv = 1 / ((0.01 / kwpton_lst[0]) + (0.42 / kwpton_lst[1]) + (0.45 / kwpton_lst[2]) + (0.12 / kwpton_lst[3]))
+
+        else:
+            # TODO:
+            # Implement IPLV calcs for other chiller algorithm
+            raise ValueError("Algorithm not implemented.")
+
+        # Convet IPLV to desired unit
+        if unit != "kWpton":
+            iplv_org = Unit(iplv, "kWpton")
+            iplv = iplv_org.conversion(unit)
+
+        return iplv
+
 
     def kwpton(self, value):
         pass
