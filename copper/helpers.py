@@ -18,6 +18,7 @@ def curve_csv_to_json(csv_path):
                 if litems[j] == "":
                     litems[j] = None
                 if j == 0:
+                    # TODO: add equipment as argument to the function
                     json_c["eqp_type"] = "chiller"
                     json_c[litems[0]] = {}
                 if h == "out_var":
