@@ -1,5 +1,5 @@
 # Copper
-Copper is a performance curve generator for building energy simulations. It uses a genetic algorithm to modify exisiting performance curves to match specific performance ratings at both full and part loads.
+Copper is a performance curve generator for building energy simulations. It uses a genetic algorithm to modify exisiting performance curves to match specific performance indicators at both full and part loads.
 
 Unit Test Status: [![CircleCI](https://circleci.com/gh/lymereJ/copper/tree/master.svg?style=svg&circle-token=2d4c8e2ca7654f95f203d37182a8d2cd4680bbe7)](https://circleci.com/gh/lymereJ/copper/tree/master)
 
