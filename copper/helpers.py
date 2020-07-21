@@ -1,7 +1,7 @@
 import json, sys
 
 
-def curve_csv_to_json(csv_path, equip_type='chiller'):
+def curve_csv_to_json(csv_path, equip_type="chiller"):
     """
     Convert curve sets defined in a CSV file using a predefined format to a JSON file
     """
@@ -38,11 +38,11 @@ def curve_csv_to_json(csv_path, equip_type='chiller'):
                         json_c[litems[0]]["curves"][out_var][h] = float(litems[j])
                     except:
                         json_c[litems[0]]["curves"][out_var][h] = litems[j]
-                        
 
     with open(csv_path.replace(".csv", ".json"), "w", encoding="utf-8") as f:
         json.dump(json_c, f, ensure_ascii=False, indent=4)
     return True
+
 
 if __name__ == "__main__":
     # first argument is the name of the helper function to call
