@@ -2,13 +2,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json, copy
 
+
 class Library:
-    def __init__(
-        self,
-        path = "./fixtures/chiller_curves.json"
-    ):
+    def __init__(self, path="./fixtures/chiller_curves.json"):
         self.path = path
         self.data = json.loads(open(self.path, "r").read())
+
+    def content(self):
+        return self.data
+
+    def get_unique_eqp_fields(self):
+        key_val = {}
+        for eqp_n, eqp_f in self.data.items():
+            for field, val in eqp_f.items():
+                if field != "curves" and field != "name":
+                    if field not in key_val.keys():
+                        key_val[field] = [val]
+                    else:
+                        key_val[field].append(val)
+        for key, val in key_val.items():
+            key_val[key] = set(val)
+        return key_val
 
     def find_curve_sets_from_lib(self, filters=[]):
         """
@@ -36,12 +50,15 @@ class Library:
             # Create new CurveSet and Curve objects for all the
             # sets of curves identified as matching the filters
             for c in self.data[name]["curves"]:
-                c_lst.append(self.get_curve(c, self.data[name], eqp_type=self.data[name]["eqp_type"]))
+                c_lst.append(
+                    self.get_curve(
+                        c, self.data[name], eqp_type=self.data[name]["eqp_type"]
+                    )
+                )
             c_set.curves = c_lst
             curve_sets.append(c_set)
 
         return curve_sets
-
 
     def find_equipment(self, filters=[]):
         """
@@ -51,13 +68,16 @@ class Library:
         for eqp in self.data:
             assertions = []
             for prop, val in filters:
+                # ~! = all but...
                 if "~!" in val:
                     assertions.append(
                         val.replace("~!", "").lower().strip()
                         not in self.data[eqp][prop].lower().strip()
                     )
+                # ! = does not include
                 elif "!" in val:
                     assertions.append(self.data[eqp][prop] != val)
+                # ~ = includes
                 elif "~" in val:
                     assertions.append(
                         val.replace("~", "").lower().strip()
@@ -70,10 +90,7 @@ class Library:
 
         return eqp_match_dict
 
-
-    def get_curve_set_by_name(
-        self, name, eqp_match="chiller"
-    ):
+    def get_curve_set_by_name(self, name, eqp_match="chiller"):
         """
         Retrieve curve set from the library by name
         """
@@ -86,13 +103,16 @@ class Library:
         # Define curve objects
         try:
             for c in self.data[name]["curves"]:
-                c_lst.append(self.get_curve(c, self.data[name], eqp_type=self.data[name]["eqp_type"]))
+                c_lst.append(
+                    self.get_curve(
+                        c, self.data[name], eqp_type=self.data[name]["eqp_type"]
+                    )
+                )
             # Add curves to curve set object
             c_set.curves = c_lst
             return c_set
         except:
             raise ValueError("Cannot find curve in library.")
-
 
     def get_curve(self, c, c_name, eqp_type):
         # Initialize curve object
@@ -276,29 +296,91 @@ class CurveSet:
             self.min_plr = 0
             self.min_unloading = 0
             self.max_plr = 0
+            if self.cond_type == "water":
+                self.plotting_range = {
+                    "eir-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 40,
+                        "x2_norm": 35,
+                    },
+                    "cap-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 40,
+                        "x2_norm": 35,
+                    },
+                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
+                    "eir-f-plr-dt": {
+                        "x1_min": 0.3,
+                        "x1_max": 1,
+                        "x1_norm": 1,
+                        "nbval": 50,
+                        "x2_min": 28.33,
+                        "x2_max": 28.33,
+                        "x2_norm": 28.33,
+                    },
+                }
+            else:
+                self.plotting_range = {
+                    "eir-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 40,
+                        "x2_norm": 29.44,
+                    },
+                    "cap-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 40,
+                        "x2_norm": 29.44,
+                    },
+                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
+                    "eir-f-plr-dt": {
+                        "x1_min": 0.3,
+                        "x1_max": 1,
+                        "x1_norm": 1,
+                        "nbval": 50,
+                        "x2_min": 22.77,
+                        "x2_max": 22.77,
+                        "x2_norm": 22.77,
+                    },
+                }
 
-    def plot(self, out_var=[], ranges={}, axes=[], norm=True, color="Black", alpha=0.3):
+    def plot(self, out_var=[], axes=[], norm=True, color="Black", alpha=0.3):
         for i, var in enumerate(out_var):
             for curve in self.curves:
                 if curve.out_var == var:
-                    nb_vals = ranges[var]["nbval"]
-                    x1_min = ranges[var]["x1_min"]
-                    x1_max = ranges[var]["x1_max"]
+                    nb_vals = self.plotting_range[var]["nbval"]
+                    x1_min = self.plotting_range[var]["x1_min"]
+                    x1_max = self.plotting_range[var]["x1_max"]
                     x_1_vals = np.linspace(x1_min, x1_max, nb_vals)
 
-                    if "x2_min" in ranges[var].keys():
-                        x2_min = ranges[var]["x2_min"]
-                        x2_max = ranges[var]["x2_max"]
+                    if "x2_min" in self.plotting_range[var].keys():
+                        x2_min = self.plotting_range[var]["x2_min"]
+                        x2_max = self.plotting_range[var]["x2_max"]
                         x_2_vals = np.linspace(x2_min, x2_max, nb_vals)
                     else:
                         x_2_vals = [0]
 
                     y = []
                     for v in range(nb_vals):
-                        if "x2_min" in ranges[var].keys():
+                        if "x2_min" in self.plotting_range[var].keys():
                             norm_fac = (
                                 curve.evaluate(
-                                    ranges[var]["x1_norm"], ranges[var]["x2_norm"]
+                                    self.plotting_range[var]["x1_norm"], self.plotting_range[var]["x2_norm"]
                                 )
                                 if norm
                                 else 1
@@ -307,7 +389,7 @@ class CurveSet:
                         else:
                             norm_fac = (
                                 curve.evaluate(
-                                    ranges[var]["x1_norm"], ranges[var]["x1_norm"]
+                                    self.plotting_range[var]["x1_norm"], self.plotting_range[var]["x1_norm"]
                                 )
                                 if norm
                                 else 1
