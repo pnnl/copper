@@ -33,37 +33,6 @@ class TestCurves(TestCase):
         self.assertTrue(len(curve_sets) == 111)
 
         # Plot curves
-        ranges = {
-            "eir-f-t": {
-                "x1_min": 6.67,
-                "x1_max": 6.67,
-                "x1_norm": 6.67,
-                "nbval": 50,
-                "x2_min": 20,
-                "x2_max": 30,
-                "x2_norm": 30,
-            },
-            "cap-f-t": {
-                "x1_min": 6.67,
-                "x1_max": 6.67,
-                "x1_norm": 6.67,
-                "nbval": 50,
-                "x2_min": 20,
-                "x2_max": 30,
-                "x2_norm": 30,
-            },
-            "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
-            "eir-f-plr-dt": {
-                "x1_min": 0.3,
-                "x1_max": 1,
-                "x1_norm": 1,
-                "nbval": 50,
-                "x2_min": 23.33,
-                "x2_max": 23.33,
-                "x2_norm": 23.33,
-            },
-        }
-
         out_vars = ["eir-f-t", "cap-f-t", "eir-f-plr"]
 
         fig, axes = plt.subplots(nrows=1, ncols=len(out_vars), figsize=(25, 5))
@@ -71,7 +40,7 @@ class TestCurves(TestCase):
         plot_res = []
         for c_set in curve_sets:
             plot_res.append(
-                c_set.plot(out_var=out_vars, ranges=ranges, norm=True, axes=axes)
+                c_set.plot(out_var=out_vars, norm=True, axes=axes)
             )
         self.assertTrue(all(plot_res))
 
