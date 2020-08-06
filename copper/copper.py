@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import json, copy
+import json, copy, random
 
 
 class Library:
@@ -90,12 +90,12 @@ class Library:
 
         return eqp_match_dict
 
-    def get_curve_set_by_name(self, name, eqp_match="chiller"):
+    def get_curve_set_by_name(self, name):
         """
         Retrieve curve set from the library by name
         """
         # Initialize curve set object
-        c_set = CurveSet(eqp_match)
+        c_set = CurveSet("chiller")
         c_set.name = name
 
         # List of curves
@@ -115,18 +115,79 @@ class Library:
             raise ValueError("Cannot find curve in library.")
 
     def get_curve(self, c, c_name, eqp_type):
-        # Initialize curve object
-        c_obj = Curve(eqp_type)
-        c_obj.out_var = c
         # Curve properties
         c_prop = c_name["curves"][c]
+        # Initialize curve object
+        c_obj = Curve(eqp_type, c_prop["type"])
+        c_obj.out_var = c
         # Retrive all attributes of the curve object
-        for c_att in list(Curve(eqp_type).__dict__):
+        for c_att in list(Curve(eqp_type, c_prop["type"]).__dict__):
             # Set the attribute of new Curve object
             # if attrubute are identified in database entry
             if c_att in list(c_prop.keys()):
                 c_obj.__dict__[c_att] = c_prop[c_att]
         return c_obj
+
+    def find_seed_curves(self, filters, eqp):
+        """
+        Find an existing equipment curve that best matches the chiller
+        """
+        # Find equipment match in the library
+        eqp_match = self.find_equipment(filters=filters)
+
+        if len(eqp_match) > 0:
+            # If multiple equipment match the specified properties,
+            # return the one that has numeric attributes that best
+            # match the proposed case
+            if len(eqp_match) > 1:
+                return self.get_curve_set_by_name(self.get_best_match(eqp, eqp_match))
+            else:
+                return self.get_curve_set_by_name(eqp_match)
+        else:
+            raise ValueError(
+                "Could not find a set of curves that matches the specified properties."
+            )
+
+    def get_best_match(self, eqp, matches):
+        # Initialize numeric attribute difference
+        diff = float("inf")
+
+        # Iterate over matches and calculate the
+        # difference in numeric fields
+        for name, val in matches.items():
+            # Retrieve full load/reference numeric attribute
+            if eqp.type == "chiller":
+                cap = val["ref_cap"]
+                cap_unit = val["ref_cap_unit"]
+                eff = val["ref_eff"]
+                eff_unit = matches[name]["ref_eff_unit"]
+
+                if not cap is None:
+                    # Capacity conversion
+                    if cap_unit != eqp.ref_cap_unit:
+                        c_unit = Unit(cap, cap_unit)
+                        cap = c_unit.conversion(eqp.ref_cap_unit)
+                        cap_unit = eqp.ref_cap_unit
+
+                    # Efficiency conversion
+                    if eff_unit != eqp.full_eff_unit:
+                        c_unit = Unit(eff, eff_unit)
+                        eff = c_unit.conversion(eqp.full_eff_unit)
+                        eff_unit = eqp.full_eff_unit
+
+                        # Compute difference
+                        c_diff = abs((eqp.ref_cap - cap) / eqp.ref_cap) + abs(
+                            (eqp.full_eff - eff) / eqp.full_eff
+                        )
+
+                        if c_diff < diff:
+                            # Update lowest numeric difference
+                            diff = c_diff
+
+                            # Update best match
+                            best_match = name
+
+        return best_match
 
 
 class Chiller:
@@ -142,11 +203,10 @@ class Chiller:
         condenser_type,
         compressor_speed,
         curveset="",
-        model="ect&lwt",
+        model="ect_lwt",
         sim_engine="energyplus",
-        full_rating="kwpton",
-        part_rating="iplv",
     ):
+        self.type = "chiller"
         self.compressor_type = compressor_type
         self.condenser_type = condenser_type
         self.compressor_speed = compressor_speed
@@ -158,43 +218,39 @@ class Chiller:
         self.part_eff_unit = part_eff_unit
         self.model = model
         self.sim_engine = sim_engine
+        self.curveset = curveset
 
-    def find_base_curves(self):
+    def generate_curve_set(
+        self,
+        method="typical",
+        pop_size=100,
+        tol=0.005,
+        max_gen=15000,
+        vars="",
+        sFac=0.5,
+        retain=0.2,
+        random_select=0.05,
+        mutate=0.05,
+        bounds=(6, 10),
+    ):
+        ga = GA(
+            self,
+            method,
+            pop_size,
+            tol,
+            max_gen,
+            vars,
+            sFac,
+            retain,
+            random_select,
+            mutate,
+            bounds,
+        )
+        return ga.generate_curve_set()
+
+    def calc_eff(self, eff_type, unit="kw/ton"):
         """
-        Find an existing equipment curve that best matches the chiller
-        """
-
-        lib = Library(path="./fixtures/chiller_curves.json")
-
-        # Define chiller properties
-        props = [
-            ("eqp_type", "chiller"),
-            ("compressor_type", self.compressor_type),
-            ("condenser_type", self.condenser_type),
-            ("compressor_speed", self.compressor_speed),
-            ("sim_engine", self.sim_engine),
-            ("algorithm", self.model),
-        ]
-
-        # Find equipment match in the library
-        eqp_match = lib.find_equipment(filters=props)
-
-        if len(eqp_match) > 0:
-            # If multiple equipment match the specified properties,
-            # return the one that has numeric attributes that best
-            # match the proposed case
-            if len(eqp_match) > 1:
-                return lib.get_curve_set_by_name(ga.get_best_match(self, eqp_match))
-            else:
-                return lib.get_curve_set_by_name(eqp_match)
-        else:
-            raise ValueError(
-                "Could not find a set of curves that matches the specified properties."
-            )
-
-    def iplv(self, unit="kWpton"):
-        """
-        Calculate chiller IPLV
+        Calculate chiller efficiency
         """
 
         # Retrieve equipment efficiency and unit
@@ -202,9 +258,9 @@ class Chiller:
         kwpton_ref_unit = self.full_eff_unit
 
         # Convert to kWpton if necessary
-        if self.full_eff_unit != "kWpton":
+        if self.full_eff_unit != "kw/ton":
             kwpton_ref_unit = Unit(kwpton_ref, kwpton_ref_unit)
-            kwpton_ref = kwpton_ref_unit.conversion("kWpton")
+            kwpton_ref = kwpton_ref_unit.conversion("kw/ton")
 
         # Conversion factors
         ton_to_kbtu = 12
@@ -223,7 +279,7 @@ class Chiller:
         kwpton_lst = []
 
         # DOE-2 chiller model
-        if self.model == "ect&lwt":
+        if self.model == "ect_lwt":
             if self.condenser_type == "air":
                 # Temperatures from AHRI Std 550/590
                 chw = 6.67
@@ -234,47 +290,51 @@ class Chiller:
                 ect = [8 + 22 * loads[0], 8 + 22 * loads[1], 19, 19]
 
             # Retrieve curves
-            for curve in self.curveset.curves:
-                if curve.output_var == "cap-f-T":
+            for curve in self.curveset:
+                if curve.out_var == "cap-f-t":
                     cap_f_t = curve
-                elif curve.output_var == "eir-f-T":
+                elif curve.out_var == "eir-f-t":
                     eir_f_t = curve
                 else:
                     eir_f_plr = curve
 
             # Calculate EIR for each testing conditions
-            for idx, load in enumerate(loads):
-                dt = ect[idx] - chw
-                cap_f_chw_ect = cap_f_t.evaluate(chw, ect[idx])
-                eir_f_chw_ect = eir_f_t.evaluate(chw, ect[idx])
-                cap_op = load_ref * cap_f_chw_ect
-                plr = load / cap_op
-                eir_plr = eir_f_plr.evaluate(plr, dt)
-                # eir = power / load so eir * plr = (power / load) * (load / cap_op)
-                eir = eir_ref * eir_f_chw_ect * eir_plr / plr
-                kwpton_lst.append(eir / kbtu_to_kw * ton_to_kbtu)
+            try:
+                for idx, load in enumerate(loads):
+                    dt = ect[idx] - chw
+                    cap_f_chw_ect = cap_f_t.evaluate(chw, ect[idx])
+                    eir_f_chw_ect = eir_f_t.evaluate(chw, ect[idx])
+                    cap_op = load_ref * cap_f_chw_ect
+                    plr = (
+                        load * cap_f_t.evaluate(chw, ect[0]) / cap_op
+                    )  # Pending EnergyPlus development team review otherwise load / cap_op
+                    eir_plr = eir_f_plr.evaluate(plr, dt)
+                    # eir = power / load so eir * plr = (power / load) * (load / cap_op)
+                    eir = eir_ref * eir_f_chw_ect * eir_plr / plr
+                    kwpton = eir / kbtu_to_kw * ton_to_kbtu
+                    if eff_type == "kwpton" and idx == 0:
+                        return kwpton
+                    kwpton_lst.append(eir / kbtu_to_kw * ton_to_kbtu)
 
-            # Coefficients from AHRI Std 550/590
-            iplv = 1 / (
-                (0.01 / kwpton_lst[0])
-                + (0.42 / kwpton_lst[1])
-                + (0.45 / kwpton_lst[2])
-                + (0.12 / kwpton_lst[3])
-            )
+                # Coefficients from AHRI Std 550/590
+                iplv = 1 / (
+                    (0.01 / kwpton_lst[0])
+                    + (0.42 / kwpton_lst[1])
+                    + (0.45 / kwpton_lst[2])
+                    + (0.12 / kwpton_lst[3])
+                )
+            except:
+                return -999
         else:
-            # TODO:
-            # Implement IPLV calcs for other chiller algorithm
+            # TODO: implement IPLV calcs for other chiller algorithm
             raise ValueError("Algorithm not implemented.")
 
         # Convert IPLV to desired unit
-        if unit != "kWpton":
-            iplv_org = Unit(iplv, "kWpton")
+        if unit != "kw/ton":
+            iplv_org = Unit(iplv, "kw/ton")
             iplv = iplv_org.conversion(unit)
 
         return iplv
-
-    def kwpton(self, value):
-        pass
 
 
 class CurveSet:
@@ -380,7 +440,8 @@ class CurveSet:
                         if "x2_min" in self.plotting_range[var].keys():
                             norm_fac = (
                                 curve.evaluate(
-                                    self.plotting_range[var]["x1_norm"], self.plotting_range[var]["x2_norm"]
+                                    self.plotting_range[var]["x1_norm"],
+                                    self.plotting_range[var]["x2_norm"],
                                 )
                                 if norm
                                 else 1
@@ -389,7 +450,8 @@ class CurveSet:
                         else:
                             norm_fac = (
                                 curve.evaluate(
-                                    self.plotting_range[var]["x1_norm"], self.plotting_range[var]["x1_norm"]
+                                    self.plotting_range[var]["x1_norm"],
+                                    self.plotting_range[var]["x1_norm"],
                                 )
                                 if norm
                                 else 1
@@ -408,12 +470,11 @@ class CurveSet:
 
 
 class Curve:
-    def __init__(self, eqp_type):
+    def __init__(self, eqp_type, c_type):
         # General charactersitics
         self.out_var = ""
-        self.type = ""
+        self.type = c_type
         self.units = "si"
-        self.type = ""
         self.x_min = 0
         self.y_min = 0
         self.x_max = 0
@@ -422,16 +483,28 @@ class Curve:
         self.ref_y = 0
         self.out_min = 0
         self.out_max = 0
-        self.coeff1 = 0
-        self.coeff2 = 0
-        self.coeff3 = 0
-        self.coeff4 = 0
-        self.coeff5 = 0
-        self.coeff6 = 0
-        self.coeff7 = 0
-        self.coeff8 = 0
-        self.coeff9 = 0
-        self.coeff10 = 0
+        if self.type == "quad":
+            self.coeff1 = 0
+            self.coeff2 = 0
+            self.coeff3 = 0
+        elif self.type == "bi_quad":
+            self.coeff1 = 0
+            self.coeff2 = 0
+            self.coeff3 = 0
+            self.coeff4 = 0
+            self.coeff5 = 0
+            self.coeff6 = 0
+        elif self.type == "bi_cub":
+            self.coeff1 = 0
+            self.coeff2 = 0
+            self.coeff3 = 0
+            self.coeff4 = 0
+            self.coeff5 = 0
+            self.coeff6 = 0
+            self.coeff7 = 0
+            self.coeff8 = 0
+            self.coeff9 = 0
+            self.coeff10 = 0
 
         # Equipment specific charcatertics
         if eqp_type == "chiller":
@@ -490,6 +563,16 @@ class Curve:
             out = self.coeff1 + self.coeff2 * x + self.coeff3 * x ** 2
             return min(max(out, self.out_min), self.out_max)
 
+    def nb_coeffs(self):
+        """
+        Find number of curve coefficients
+        """
+        ids = []
+        for key in list(self.__dict__.keys()):
+            if "coeff" in key:
+                ids.append(int(key.split("coeff")[-1]))
+        return max(ids)
+
 
 class Unit:
     def __init__(self, value, unit):
@@ -500,36 +583,353 @@ class Unit:
         """
         Convert efficiency rating
         """
-        if new_unit == "kWpton":
-            if self.unit == "COP":
+        if new_unit == "kw/ton":
+            if self.unit == "cop":
                 return 12.0 / (self.value * 3.412)
-            elif self.unit == "kWpton":
+            elif self.unit == "kw/ton":
                 return self.value
             elif self.unit == "EER":
                 return 12.0 / self.value
             else:
                 return self.value
-        elif new_unit == "COP":
-            if self.unit == "kWpton":
+        elif new_unit == "cop":
+            if self.unit == "kw/ton":
                 return 12.0 / self.value / 3.412
-            elif self.unit == "COP":
+            elif self.unit == "cop":
                 return self.value
             elif self.unit == "EER":
                 return self.value / 3.412
             else:
                 return self.value
         elif new_unit == "EER":
-            if self.unit == "kWpton":
+            if self.unit == "kw/ton":
                 return 12.0 / self.value
             elif self.unit == "EER":
                 return self.value
-            elif self.unit == "COP":
+            elif self.unit == "cop":
                 return 3.412 * self.value
             else:
                 return self.value
-        elif new_unit == "ton":
+        elif new_unit == "tons":
             if self.unit == "kW":
                 return self.value * (3412 / 12000)
         elif new_unit == "kW":
-            if self.unit == "ton":
+            if self.unit == "tons":
                 return self.value / (3412 / 12000)
+
+
+class GA:
+    def __init__(
+        self,
+        equipment,
+        method="typical",
+        pop_size=100,
+        tol=0.005,
+        max_gen=15000,
+        vars="",
+        sFac=0.5,
+        retain=0.2,
+        random_select=0.05,
+        mutate=0.05,
+        bounds=(6, 10),
+    ):
+        self.equipment = equipment
+        self.method = method
+        self.pop_size = pop_size
+        self.tol = tol
+        self.max_gen = max_gen
+        self.vars = vars
+        self.sFac = sFac
+        self.retain = retain
+        self.random_select = random_select
+        self.mutate = mutate
+        self.bounds = bounds
+
+    def generate_curve_set(self):
+        self.target = self.equipment.part_eff
+        self.full_eff = self.equipment.full_eff
+
+        # Convert target if different than kw/ton
+        if self.equipment.part_eff_unit != "kw/ton":
+            target_c = Unit(self.target, self.equipment.part_eff_unit)
+            self.target = target_c.conversion("kw/ton")
+
+        # Convert target if different than kw/ton
+        if self.equipment.full_eff_unit != "kw/ton":
+            full_eff_c = Unit(self.equipment.full_eff, self.equipment.full_eff_unit)
+            self.full_eff = full_eff_c.conversion("kw/ton")
+
+        if self.equipment.type == "chiller":
+            # TODO: implement other methods
+            if self.method == "typical":
+                lib = Library(path="./fixtures/typical_curves.json")
+            elif self.method == "best_match":
+                lib = Library(path="./fixtures/chiller_curves.json")
+
+            # Define chiller properties
+            filters = [
+                ("eqp_type", self.equipment.type),
+                ("comp_type", self.equipment.compressor_type),
+                ("cond_type", self.equipment.condenser_type),
+                ("comp_speed", self.equipment.compressor_speed),
+                ("sim_engine", self.equipment.sim_engine),
+                ("model", self.equipment.model),
+            ]
+        else:
+            raise ValueError("This type of equipment has not yet been implemented.")
+
+        # Find typical curves from library
+        # Only one equipment should be returned
+        if self.method == "typical":
+            base_curves = lib.find_curve_sets_from_lib(filters)
+        elif self.method == "best_match":
+            base_curves = [lib.find_seed_curves(filters, self.equipment)]
+
+        # Run GA
+        best_pop = self.run_ga(curves=base_curves)
+        return best_pop[0]
+
+    def run_ga(self, curves):
+        self.pop = self.generate_population(curves)
+        gen = 0
+        self.equipment.curves = curves
+        while gen <= self.max_gen and not self.is_target_met():
+            self.evolve_population(self.pop)
+            gen += 1
+        print("Curve coefficients calculated in {} generations.".format(gen))
+        return self.pop
+
+    def is_target_met(self):
+        if self.equipment.type == "chiller":
+            if self.equipment.curveset != "":
+                part_rating = self.equipment.calc_eff(eff_type="iplv")
+                full_rating = self.equipment.calc_eff(eff_type="kwpton")
+            else:
+                return False
+        else:
+            raise ValueError("This type of equipment has not yet been implemented.")
+        if (
+            (part_rating < self.target * (1 + self.tol))
+            and (part_rating > self.target * (1 - self.tol))
+            and (full_rating < self.full_eff * (1 + self.tol))
+            and (full_rating > self.full_eff * (1 - self.tol))
+        ):
+            return True
+        else:
+            return False
+
+    def generate_population(self, curves):
+        pop = []
+        for _ in range(self.pop_size):
+            pop.append(self.individual(curves))
+        return pop
+
+    def get_random(self):
+        while True:
+            val = float(
+                random.randrange(-99999, 99999)
+                / 10 ** (random.randint(self.bounds[0], self.bounds[1]))
+            )  # (random.randint(6, 10)))
+            if val != 0:
+                return val
+
+    def individual(self, curves):
+        new_curves = copy.deepcopy(curves[0])
+        for curve in new_curves.curves:
+            if len(self.vars) == 0 or curve.out_var in self.vars:
+                for idx in range(1, 11):
+                    try:
+                        setattr(
+                            curve,
+                            "coeff{}".format(idx),
+                            getattr(curve, "coeff{}".format(idx)) + self.get_random(),
+                        )
+                    except:
+                        pass
+        return new_curves
+
+    def fitness_scale_grading(self, pop, scaling=True):
+        # Intial fitness calcs
+        fitnesses = [self.determine_fitness(curves) for curves in pop]
+
+        # Scaling
+        pop_scaled = self.scale_fitnesses(fitnesses, pop, scaling)
+
+        # Grading
+        pop_graded = self.grade_population(pop_scaled)
+
+        return pop_graded
+
+    def evolve_population(self, pop):
+        # Fitness, Scaling, Grading
+        pop_graded = self.fitness_scale_grading(pop)
+
+        # Retain best performers as parents
+        retain_length = int(len(pop_graded) * self.retain)
+        parents = pop_graded[:retain_length]
+
+        # Randomly add other individuals to
+        # promote genetic diversity
+        for individual in pop_graded[retain_length:]:
+            if self.random_select > random.random():
+                parents.append(individual)
+
+        # Mutate some individuals
+        for idx, individual in enumerate(parents):
+            if self.mutate > random.random():
+                parents[idx] = self.perform_mutation(individual)
+
+        # Crossover parents to create children
+        self.perform_crossover(parents)
+        self.identify_best_performer()
+
+    def determine_fitness(self, curveset):
+        """
+        Compute fitness score of an individual
+        """
+        # Temporary assign curve to equipment
+        self.equipment.curveset = curveset.curves
+
+        # Normalization score
+        curve_normal_score = 0
+        for c in curveset.curves:
+            if self.equipment.type == "chiller":
+                if "-t" in c.out_var:
+                    if self.equipment.model == "ect_lwt":
+                        x_ref = c.ref_ect
+                        y_ref = c.ref_lwt
+                else:
+                    x_ref = 1
+                    y_ref = 0
+            else:
+                raise ValueError("This type of equipment has not yet been implemented.")
+            curve_normal_score += abs(1 - c.evaluate(x_ref, y_ref))
+
+        if self.equipment.type == "chiller":
+            fit_score = (
+                2 * abs(self.equipment.calc_eff(eff_type="iplv") - self.target)
+                + 1
+                * abs(
+                    self.equipment.calc_eff(eff_type="kwpton") - self.equipment.full_eff
+                )
+                + curve_normal_score
+            ) / (2 + 1 + len(curveset.curves))
+        else:
+            raise ValueError("This type of equipment has not yet been implemented.")
+
+        return fit_score
+
+    def scale_fitnesses(self, fitnesses, pop, scaling=True):
+        """
+        Scale the fitness scores to prevent best performers from draggin the whole population to a local extremum
+        """
+        # linear scaling: a + b * f
+        if scaling:
+            max_f = max(fitnesses)
+            min_f = min(fitnesses)
+            avg_f = sum(fitnesses) / len(fitnesses)
+            if min_f > (self.sFac * avg_f - max_f) / (self.sFac - 1.0):
+                d = max_f - avg_f
+                if d == 0:
+                    a = 1
+                    b = 0
+                else:
+                    a = (self.sFac - 1.0) * avg_f
+                    b = avg_f * (max_f - (self.sFac * avg_f)) / d
+            else:
+                d = avg_f - min_f
+                if d == 0:
+                    a = 1
+                    b = 0
+                else:
+                    a = avg_f / d
+                    b = -min_f * avg_f
+        else:
+            a = 1
+            b = 0
+
+        pop_scaled = [
+            (a * self.determine_fitness(curveset) + b, curveset) for curveset in pop
+        ]
+        return pop_scaled
+
+    def grade_population(self, pop_scaled):
+        pop_sorted = sorted(pop_scaled, key=lambda tup: tup[0])
+        pop_graded = [item[1] for item in pop_sorted]
+        return pop_graded
+
+    def perform_mutation(self, individual):
+        new_individual = copy.deepcopy(individual)
+        for curve in new_individual.curves:
+            if len(self.vars) == 0 or curve.out_var in self.vars:
+                idx = random.randint(1, curve.nb_coeffs())
+                setattr(
+                    curve,
+                    "coeff{}".format(idx),
+                    getattr(curve, "coeff{}".format(idx)) + self.get_random(),
+                )
+        return new_individual
+
+    def perform_crossover(self, parents):
+        parents_length = len(parents)
+        desired_length = len(self.pop) - parents_length
+        children = []
+        while len(children) < desired_length:
+            male = random.randint(0, parents_length - 1)
+            female = random.randint(0, parents_length - 1)
+            # Can't crossover with the same element
+            if male != female:
+                male = parents[male]
+                female = parents[female]
+                child = CurveSet(eqp_type=self.equipment.type)
+                curves = []
+                # male and female curves are structured the same way
+                for i, c in enumerate(male.curves):
+                    # Copy as male
+                    n_child_curves = copy.deepcopy(c)
+                    if c.out_var in self.vars or len(self.vars) == 0:
+                        if c.type == "quad":
+                            positions = [[1], [2, 3]]  # cst  # x^?
+                        elif c.type == "bi_quad":
+                            positions = [
+                                [1],  # cst
+                                [2, 3],  # x^?
+                                [4, 5],  # y^?
+                                [6],
+                            ]  # x*y
+                        elif c.type == "bi_cub":
+                            positions = [
+                                [1],  # cst
+                                [2, 3, 7],  # x^?
+                                [4, 5, 8],  # y^?
+                                [6],  # x*y
+                                [9],  # x^2*y
+                                [10],
+                            ]  # x*y^2
+                        else:
+                            raise ValueError("Type of curve not yet implemented.")
+                        couple = ["male", copy.deepcopy(female)]
+                        cnt = 0
+                        for p in positions:
+                            # Alternate between male and female
+                            cnt = (cnt + 1) % 2
+                            if couple[cnt] != "male":
+                                # sub_position
+                                for s_p in p:
+                                    setattr(
+                                        n_child_curves,
+                                        "coeff{}".format(s_p),
+                                        getattr(n_child_curves, "coeff{}".format(s_p)),
+                                    )
+                    curves.append(n_child_curves)
+                child.curves = curves
+                children.append(child)
+        parents.extend(children)
+        self.pop = parents
+
+    def identify_best_performer(self):
+        # Re-compute fitness, scaling and grading
+        pop_graded = self.fitness_scale_grading(self.pop, scaling=False)
+
+        # Assign the equipment with the best fitness
+        self.equipment.curveset = pop_graded[0].curves
