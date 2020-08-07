@@ -13,7 +13,7 @@ class Library:
 
     def get_unique_eqp_fields(self):
         key_val = {}
-        for eqp_n, eqp_f in self.data.items():
+        for _, eqp_f in self.data.items():
             for field, val in eqp_f.items():
                 if field != "curves" and field != "name":
                     if field not in key_val.keys():
@@ -686,8 +686,8 @@ class GA:
             base_curves = [lib.find_seed_curves(filters, self.equipment)]
 
         # Run GA
-        best_pop = self.run_ga(curves=base_curves)
-        return best_pop[0]
+        self.run_ga(curves=base_curves)
+        return self.equipment.curveset
 
     def run_ga(self, curves):
         self.pop = self.generate_population(curves)
@@ -696,6 +696,8 @@ class GA:
         while gen <= self.max_gen and not self.is_target_met():
             self.evolve_population(self.pop)
             gen += 1
+            # For debugging
+            # print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="iplv"),2), round(self.equipment.calc_eff(eff_type="kwpton"),2)))
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 
@@ -729,7 +731,7 @@ class GA:
             val = float(
                 random.randrange(-99999, 99999)
                 / 10 ** (random.randint(self.bounds[0], self.bounds[1]))
-            )  # (random.randint(6, 10)))
+            )
             if val != 0:
                 return val
 
@@ -806,14 +808,17 @@ class GA:
             curve_normal_score += abs(1 - c.evaluate(x_ref, y_ref))
 
         if self.equipment.type == "chiller":
+            iplv_score = abs(self.equipment.calc_eff(eff_type="iplv") - self.target)
+            full_eff_score = abs(
+                self.equipment.calc_eff(eff_type="kwpton") - self.equipment.full_eff
+            )
+            iplv_weight = 1
+            eff_weight = 1
             fit_score = (
-                2 * abs(self.equipment.calc_eff(eff_type="iplv") - self.target)
-                + 1
-                * abs(
-                    self.equipment.calc_eff(eff_type="kwpton") - self.equipment.full_eff
-                )
+                iplv_score * iplv_weight
+                + full_eff_score * eff_weight
                 + curve_normal_score
-            ) / (2 + 1 + len(curveset.curves))
+            ) / (iplv_weight + eff_weight + len(curveset.curves))
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
 
@@ -884,7 +889,7 @@ class GA:
                 child = CurveSet(eqp_type=self.equipment.type)
                 curves = []
                 # male and female curves are structured the same way
-                for i, c in enumerate(male.curves):
+                for _, c in enumerate(male.curves):
                     # Copy as male
                     n_child_curves = copy.deepcopy(c)
                     if c.out_var in self.vars or len(self.vars) == 0:
@@ -929,7 +934,7 @@ class GA:
 
     def identify_best_performer(self):
         # Re-compute fitness, scaling and grading
-        pop_graded = self.fitness_scale_grading(self.pop, scaling=False)
+        pop_graded = self.fitness_scale_grading(self.pop, scaling=True)
 
         # Assign the equipment with the best fitness
         self.equipment.curveset = pop_graded[0].curves
