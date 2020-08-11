@@ -10,9 +10,9 @@ class TestCurves(TestCase):
 
         # Curve lookup by name
         c_name = "ElectricEIRChiller_Trane_CVHE_1080kW/7.39COP/Vanes"
-        self.assertTrue(len([lib.get_curve_set_by_name(c_name, eqp_match="chiller")]))
+        self.assertTrue(len([lib.get_curve_set_by_name(c_name)]))
         with self.assertRaises(ValueError):
-            lib.get_curve_set_by_name(c_name + "s", eqp_match="chiller")
+            lib.get_curve_set_by_name(c_name + "s")
 
         # Equipment lookup
         self.assertTrue(
@@ -45,5 +45,5 @@ class TestCurves(TestCase):
         self.assertTrue(all(plot_res))
 
         # Evaluate curve values
-        curve_set = lib.get_curve_set_by_name(c_name, eqp_match="chiller")
+        curve_set = lib.get_curve_set_by_name(c_name)
         self.assertTrue(round(curve_set.curves[0].evaluate(6.67, 35), 2) == 0.96)

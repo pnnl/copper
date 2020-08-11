@@ -1,3 +1,16 @@
+"""
+copper.py
+====================================
+This is the core module of Copper. It handles the following:
+
+- Curves
+- Curve sets
+- Equipment related calculations
+- Unit conversions
+- Genetic algorithm
+- Curve library manipulations
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import json, copy, random
@@ -12,21 +25,34 @@ class Library:
         return self.data
 
     def get_unique_eqp_fields(self):
-        key_val = {}
+        """Get all unique values for each field of a particular equipment.
+
+        :return: Dictionary showing all unique values for each equipment field.
+        :rtype: dict[str, ]
+
+        """
+        # Store all value for each field
+        uni_field_val = {}
         for _, eqp_f in self.data.items():
             for field, val in eqp_f.items():
                 if field != "curves" and field != "name":
-                    if field not in key_val.keys():
-                        key_val[field] = [val]
+                    # Check if field has already been added
+                    if field not in uni_field_val.keys():
+                        uni_field_val[field] = [val]
                     else:
-                        key_val[field].append(val)
-        for key, val in key_val.items():
-            key_val[key] = set(val)
-        return key_val
+                        uni_field_val[field].append(val)
+        # Retain only unique values
+        for field, val in uni_field_val.items():
+            uni_field_val[field] = set(val)
+        return uni_field_val
 
     def find_curve_sets_from_lib(self, filters=[]):
-        """
-        Retrieve curve sets from a JSON library that match the specified filters (tuples of strings)
+        """Retrieve curve sets from a library matching specific filters.
+
+        :param list(tuple()) filters: Filter represented by tuples (field, val)
+        :return: All curve set object matching the filters
+        :rtype: list()
+
         """
         # Find name of equiment that match specified filter
         eqp_match = self.find_equipment(filters)
@@ -61,8 +87,18 @@ class Library:
         return curve_sets
 
     def find_equipment(self, filters=[]):
-        """
-        Find equipment matching specified filter in the curve library
+        """Find equipment matching specified filter in the curve library.
+        
+        Special filter characters:
+        
+        - ~! means "all except..."
+        - ! means "do not include..."
+        - ~ means "include..."
+
+        :param list(tuple()) filters: Filter represented by tuples (field, val)
+        :return: Dictionary of field for each equipment matching specified filter 
+        :rtype: dict[str,dict[]]
+
         """
         eqp_match_dict = {}
         for eqp in self.data:
@@ -91,8 +127,12 @@ class Library:
         return eqp_match_dict
 
     def get_curve_set_by_name(self, name):
-        """
-        Retrieve curve set from the library by name
+        """Retrieve curve set from the library by name.
+
+        :param str name: Curve name
+        :return: Curve set object
+        :rtype: CurveSet()
+
         """
         # Initialize curve set object
         c_set = CurveSet("chiller")
@@ -115,6 +155,15 @@ class Library:
             raise ValueError("Cannot find curve in library.")
 
     def get_curve(self, c, c_name, eqp_type):
+        """Retrieve individual attribute of a curve object.
+
+        :param Curve() c: Curve object
+        :param str c_name: Name of the curve object
+        :param str eqp_type: Type of equipment associated with the curve
+        :return: Curve object
+        :rtype: Curve()
+
+        """
         # Curve properties
         c_prop = c_name["curves"][c]
         # Initialize curve object
@@ -129,8 +178,13 @@ class Library:
         return c_obj
 
     def find_seed_curves(self, filters, eqp):
-        """
-        Find an existing equipment curve that best matches the chiller
+        """Find an existing equipment curve that best matches the equipment.
+
+        :param list(tuple()) filters: Filter represented by tuples (field, val)
+        :param eqp: Equipment object(e.g. Chiller())
+        :return: Curve set object
+        :rtype: CurveSet()
+
         """
         # Find equipment match in the library
         eqp_match = self.find_equipment(filters=filters)
@@ -149,6 +203,14 @@ class Library:
             )
 
     def get_best_match(self, eqp, matches):
+        """Find the curve set matching the equipment characteristics the best.
+
+        :param eqp: Equipment object(e.g. Chiller())
+        :param dict[str,dict[]] matches: All potential matches
+        :return: Name of the curve set that best matches the equipment characteristics
+        :rtype: str
+
+        """
         # Initialize numeric attribute difference
         diff = float("inf")
 
@@ -610,11 +672,11 @@ class Unit:
                 return 3.412 * self.value
             else:
                 return self.value
-        elif new_unit == "tons":
+        elif new_unit == "ton":
             if self.unit == "kW":
                 return self.value * (3412 / 12000)
         elif new_unit == "kW":
-            if self.unit == "tons":
+            if self.unit == "ton":
                 return self.value / (3412 / 12000)
 
 
