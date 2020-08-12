@@ -39,9 +39,7 @@ class TestCurves(TestCase):
 
         plot_res = []
         for c_set in set_of_curvess:
-            plot_res.append(
-                c_set.plot(out_var=out_vars, norm=True, axes=axes)
-            )
+            plot_res.append(c_set.plot(out_var=out_vars, norm=True, axes=axes))
         self.assertTrue(all(plot_res))
 
         # Evaluate curve values

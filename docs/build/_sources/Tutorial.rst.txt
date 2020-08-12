@@ -52,3 +52,13 @@ Finally, plot the curves.
 This should produce something like the following figure.
 
 .. image:: chiller_curves.png
+
+Let's check that the set of curves would result in simulation a chiller with an efficiency of 0.650 kW/ton and an IPLV of 0.480 kW/ton
+
+.. sourcecode:: python
+
+    print("Efficiency: {} kW/ton, IPLV: {} kW/ton.".format(round(chlr.calc_eff(eff_type="kwpton"),2), 
+                                                           round(chlr.calc_eff(eff_type="iplv"),2)))
+
+This will return `Efficiency: 0.65 kW/ton, IPLV: 0.48 kW/ton.`.
+    

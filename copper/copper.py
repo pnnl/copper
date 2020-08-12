@@ -194,7 +194,9 @@ class Library:
             # return the one that has numeric attributes that best
             # match the proposed case
             if len(eqp_match) > 1:
-                return self.get_set_of_curves_by_name(self.get_best_match(eqp, eqp_match))
+                return self.get_set_of_curves_by_name(
+                    self.get_best_match(eqp, eqp_match)
+                )
             else:
                 return self.get_set_of_curves_by_name(eqp_match)
         else:
@@ -1027,7 +1029,8 @@ class GA:
             b = 0
 
         pop_scaled = [
-            (a * self.determine_fitness(set_of_curves) + b, set_of_curves) for set_of_curves in pop
+            (a * self.determine_fitness(set_of_curves) + b, set_of_curves)
+            for set_of_curves in pop
         ]
         return pop_scaled
 
