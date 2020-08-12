@@ -77,6 +77,12 @@
 </div>
 <p>This should produce something like the following figure.</p>
 <img alt="_images/chiller_curves.png" src="_images/chiller_curves.png" />
+<p>Let’s check that the set of curves would result in simulation a chiller with an efficiency of 0.650 kW/ton and an IPLV of 0.480 kW/ton</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Efficiency: {} kW/ton, IPLV: {} kW/ton.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">chlr</span><span class="o">.</span><span class="n">calc_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;kwpton&quot;</span><span class="p">),</span><span class="mi">2</span><span class="p">),</span>
+                                                       <span class="nb">round</span><span class="p">(</span><span class="n">chlr</span><span class="o">.</span><span class="n">calc_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;iplv&quot;</span><span class="p">),</span><span class="mi">2</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>This will return <cite>Efficiency: 0.65 kW/ton, IPLV: 0.48 kW/ton.</cite>.</p>
 </div>
 </div>
 
