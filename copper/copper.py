@@ -4,7 +4,7 @@ copper.py
 This is the core module of Copper. It handles the following:
 
 - Curves
-- Curve sets
+- Sets of curves
 - Equipment related calculations
 - Unit conversions
 - Genetic algorithm
@@ -46,25 +46,25 @@ class Library:
             uni_field_val[field] = set(val)
         return uni_field_val
 
-    def find_curve_sets_from_lib(self, filters=[]):
-        """Retrieve curve sets from a library matching specific filters.
+    def find_set_of_curvess_from_lib(self, filters=[]):
+        """Retrieve sets of curves from a library matching specific filters.
 
         :param list(tuple()) filters: Filter represented by tuples (field, val)
-        :return: All curve set object matching the filters
+        :return: All set of curves object matching the filters
         :rtype: list()
 
         """
         # Find name of equiment that match specified filter
         eqp_match = self.find_equipment(filters)
 
-        # List of curve sets that match specified filters
-        curve_sets = []
+        # List of sets of curves that match specified filters
+        set_of_curvess = []
 
-        # Retrieve identified equipment's curve sets from the library
+        # Retrieve identified equipment's sets of curves from the library
         for name, props in eqp_match.items():
-            c_set = CurveSet(props["eqp_type"])
+            c_set = SetofCurves(props["eqp_type"])
 
-            # Retrive all attributes of the curve sets object
+            # Retrive all attributes of the sets of curves object
             for c_att in list(c_set.__dict__):
                 # Set the attribute of new Curve object
                 # if attrubute are identified in database entry
@@ -73,7 +73,7 @@ class Library:
 
             c_lst = []
 
-            # Create new CurveSet and Curve objects for all the
+            # Create new SetofCurves and Curve objects for all the
             # sets of curves identified as matching the filters
             for c in self.data[name]["curves"]:
                 c_lst.append(
@@ -82,9 +82,9 @@ class Library:
                     )
                 )
             c_set.curves = c_lst
-            curve_sets.append(c_set)
+            set_of_curvess.append(c_set)
 
-        return curve_sets
+        return set_of_curvess
 
     def find_equipment(self, filters=[]):
         """Find equipment matching specified filter in the curve library.
@@ -126,16 +126,16 @@ class Library:
 
         return eqp_match_dict
 
-    def get_curve_set_by_name(self, name):
-        """Retrieve curve set from the library by name.
+    def get_set_of_curves_by_name(self, name):
+        """Retrieve set of curves from the library by name.
 
         :param str name: Curve name
-        :return: Curve set object
-        :rtype: CurveSet()
+        :return: Set of curves object
+        :rtype: SetofCurves()
 
         """
-        # Initialize curve set object
-        c_set = CurveSet("chiller")
+        # Initialize set of curves object
+        c_set = SetofCurves("chiller")
         c_set.name = name
 
         # List of curves
@@ -148,7 +148,7 @@ class Library:
                         c, self.data[name], eqp_type=self.data[name]["eqp_type"]
                     )
                 )
-            # Add curves to curve set object
+            # Add curves to set of curves object
             c_set.curves = c_lst
             return c_set
         except:
@@ -182,8 +182,8 @@ class Library:
 
         :param list(tuple()) filters: Filter represented by tuples (field, val)
         :param eqp: Equipment object(e.g. Chiller())
-        :return: Curve set object
-        :rtype: CurveSet()
+        :return: Set of curves object
+        :rtype: SetofCurves()
 
         """
         # Find equipment match in the library
@@ -194,20 +194,20 @@ class Library:
             # return the one that has numeric attributes that best
             # match the proposed case
             if len(eqp_match) > 1:
-                return self.get_curve_set_by_name(self.get_best_match(eqp, eqp_match))
+                return self.get_set_of_curves_by_name(self.get_best_match(eqp, eqp_match))
             else:
-                return self.get_curve_set_by_name(eqp_match)
+                return self.get_set_of_curves_by_name(eqp_match)
         else:
             raise ValueError(
                 "Could not find a set of curves that matches the specified properties."
             )
 
     def get_best_match(self, eqp, matches):
-        """Find the curve set matching the equipment characteristics the best.
+        """Find the set of curves matching the equipment characteristics the best.
 
         :param eqp: Equipment object(e.g. Chiller())
         :param dict[str,dict[]] matches: All potential matches
-        :return: Name of the curve set that best matches the equipment characteristics
+        :return: Name of the set of curves that best matches the equipment characteristics
         :rtype: str
 
         """
@@ -264,7 +264,7 @@ class Chiller:
         compressor_type,
         condenser_type,
         compressor_speed,
-        curveset="",
+        set_of_curves="",
         model="ect_lwt",
         sim_engine="energyplus",
     ):
@@ -280,9 +280,9 @@ class Chiller:
         self.part_eff_unit = part_eff_unit
         self.model = model
         self.sim_engine = sim_engine
-        self.curveset = curveset
+        self.set_of_curves = set_of_curves
 
-    def generate_curve_set(
+    def generate_set_of_curves(
         self,
         method="typical",
         pop_size=100,
@@ -295,7 +295,7 @@ class Chiller:
         mutate=0.8,
         bounds=(6, 10),
     ):
-        """Generate a curve set for a particular Chiller() object.
+        """Generate a set of curves for a particular Chiller() object.
 
         :param str method: Method used to generate the set of curves, either `typical` or `best_match`
 
@@ -311,8 +311,8 @@ class Chiller:
         :param float random_select: Probability of randomly selecting an individual to be part of the next generation
         :param float mutate: Probability of an individual to be mutated in the next generation
         :param tuple() bounds: Random modification bounds (TODO: add more details)
-        :return: Curve set object generated by the genetic algorithm that matches the Chiller() definition
-        :rtype: CurveSet()
+        :return: Set of curves object generated by the genetic algorithm that matches the Chiller() definition
+        :rtype: SetofCurves()
 
         """
         ga = GA(
@@ -328,13 +328,18 @@ class Chiller:
             mutate,
             bounds,
         )
-        return ga.generate_curve_set()
+        return ga.generate_set_of_curves()
 
     def calc_eff(self, eff_type, unit="kw/ton"):
-        """
-        Calculate chiller efficiency
-        """
+        """Calculate chiller efficiency.
 
+        :param str eff_type: Chiller performance indicator, currently supported `kw/ton` (full load rating) 
+                             and `iplv` (part load rating)
+        :param str unit: Unit of the efficiency indicator
+        :return: Chiller performance indicator
+        :rtype: float
+
+        """
         # Retrieve equipment efficiency and unit
         kwpton_ref = self.full_eff
         kwpton_ref_unit = self.full_eff_unit
@@ -372,7 +377,7 @@ class Chiller:
                 ect = [8 + 22 * loads[0], 8 + 22 * loads[1], 19, 19]
 
             # Retrieve curves
-            for curve in self.curveset:
+            for curve in self.set_of_curves:
                 if curve.out_var == "cap-f-t":
                     cap_f_t = curve
                 elif curve.out_var == "eir-f-t":
@@ -419,7 +424,7 @@ class Chiller:
         return iplv
 
 
-class CurveSet:
+class SetofCurves:
     def __init__(self, eqp_type):
         self.name = ""
         self.curves = []
@@ -502,6 +507,18 @@ class CurveSet:
                 }
 
     def plot(self, out_var=[], axes=[], norm=True, color="Black", alpha=0.3):
+        """Plot set of curves.
+
+        :param list() out_var: List of the output variables to plot, e.g. `eir-f-t`, `eir-f-plr`, `cap-f-t`.
+                               Refer to JSON files structure for other output variables
+        :param matplotlib.pyplot.axes axes: Matplotlib pyplot axes
+        :param boolean norm: Normalize plot to reference values
+        :param str color: Set of curves color
+        :param float alpha: Transparency of the curves (0-1).
+        :return: Plotting success
+        :rtype: boolean
+
+        """
         for i, var in enumerate(out_var):
             for curve in self.curves:
                 if curve.out_var == var:
@@ -597,8 +614,13 @@ class Curve:
             self.ref_lct = 35
 
     def evaluate(self, x, y):
-        """
-        Return the output of a curve.
+        """Return the output of a curve.
+
+        :param float x: First curve independent variable
+        :param float y: Secon curve independent variable
+        :return: Curve output
+        :rtype: float
+
         """
         # Catch nulls
         if self.out_min is None:
@@ -646,8 +668,11 @@ class Curve:
             return min(max(out, self.out_min), self.out_max)
 
     def nb_coeffs(self):
-        """
-        Find number of curve coefficients
+        """Find number of curve coefficients.
+
+        :return: Number of curve coefficients
+        :rtype: int
+
         """
         ids = []
         for key in list(self.__dict__.keys()):
@@ -662,8 +687,12 @@ class Unit:
         self.unit = unit
 
     def conversion(self, new_unit):
-        """
-        Convert efficiency rating
+        """Convert efficiency rating.
+
+        :param str new_unit: Unit after conversion
+        :return: Converted value
+        :rtype: int
+
         """
         if new_unit == "kw/ton":
             if self.unit == "cop":
@@ -727,7 +756,13 @@ class GA:
         self.mutate = mutate
         self.bounds = bounds
 
-    def generate_curve_set(self):
+    def generate_set_of_curves(self):
+        """Generate set of curves using genetic algorithm.
+
+        :return: Set of curves
+        :rtype: SetofCurves()
+
+        """
         self.target = self.equipment.part_eff
         self.full_eff = self.equipment.full_eff
 
@@ -763,15 +798,22 @@ class GA:
         # Find typical curves from library
         # Only one equipment should be returned
         if self.method == "typical":
-            base_curves = lib.find_curve_sets_from_lib(filters)
+            base_curves = lib.find_set_of_curvess_from_lib(filters)
         elif self.method == "best_match":
             base_curves = [lib.find_seed_curves(filters, self.equipment)]
 
         # Run GA
         self.run_ga(curves=base_curves)
-        return self.equipment.curveset
+        return self.equipment.set_of_curves
 
     def run_ga(self, curves):
+        """Run genetic algorithm.
+
+        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
+        :return: Final population of sets of curves
+        :rtype: list()
+
+        """
         self.pop = self.generate_population(curves)
         gen = 0
         self.equipment.curves = curves
@@ -784,8 +826,14 @@ class GA:
         return self.pop
 
     def is_target_met(self):
+        """Check if the objective of the optimization through the algorithm have been met.
+
+        :return: Verification result
+        :rtype: boolean
+
+        """
         if self.equipment.type == "chiller":
-            if self.equipment.curveset != "":
+            if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_eff(eff_type="iplv")
                 full_rating = self.equipment.calc_eff(eff_type="kwpton")
             else:
@@ -803,12 +851,25 @@ class GA:
             return False
 
     def generate_population(self, curves):
+        """Generate population of sets of curves.
+
+        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
+        :return: Verification result
+        :rtype: boolean
+
+        """
         pop = []
         for _ in range(self.pop_size):
             pop.append(self.individual(curves))
         return pop
 
     def get_random(self):
+        """Generate random number between two bounds.
+
+        :return: Randomly generated value
+        :rtype: float
+
+        """
         while True:
             val = float(
                 random.randrange(-99999, 99999)
@@ -818,6 +879,13 @@ class GA:
                 return val
 
     def individual(self, curves):
+        """Create new individual.
+
+        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
+        :return: New set of curves randomly modified
+        :rtype: SetofCurves
+
+        """
         new_curves = copy.deepcopy(curves[0])
         for curve in new_curves.curves:
             if len(self.vars) == 0 or curve.out_var in self.vars:
@@ -833,6 +901,14 @@ class GA:
         return new_curves
 
     def fitness_scale_grading(self, pop, scaling=True):
+        """Calculate fitness, scale, and grade for a population.
+
+        :param list() pop: Population of individual, i.e. list of curves
+        :param boolean scaling: Linearly scale fitness scores
+        :return: List sets of curves graded by fitness scores
+        :rtype: list()
+
+        """
         # Intial fitness calcs
         fitnesses = [self.determine_fitness(curves) for curves in pop]
 
@@ -845,6 +921,11 @@ class GA:
         return pop_graded
 
     def evolve_population(self, pop):
+        """Evolve population to create a new generation.
+
+        :param list() pop: Population of individual, i.e. list of curves
+
+        """
         # Fitness, Scaling, Grading
         pop_graded = self.fitness_scale_grading(pop)
 
@@ -867,16 +948,20 @@ class GA:
         self.perform_crossover(parents)
         self.identify_best_performer()
 
-    def determine_fitness(self, curveset):
-        """
-        Compute fitness score of an individual
+    def determine_fitness(self, set_of_curves):
+        """Compute fitness score of an individual.
+
+        :param SetofCurves() set_of_curves: Set of curves
+        :return: Fitness score
+        :rtype: float
+
         """
         # Temporary assign curve to equipment
-        self.equipment.curveset = curveset.curves
+        self.equipment.set_of_curves = set_of_curves.curves
 
         # Normalization score
         curve_normal_score = 0
-        for c in curveset.curves:
+        for c in set_of_curves.curves:
             if self.equipment.type == "chiller":
                 if "-t" in c.out_var:
                     if self.equipment.model == "ect_lwt":
@@ -900,15 +985,21 @@ class GA:
                 iplv_score * iplv_weight
                 + full_eff_score * eff_weight
                 + curve_normal_score
-            ) / (iplv_weight + eff_weight + len(curveset.curves))
+            ) / (iplv_weight + eff_weight + len(set_of_curves.curves))
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
 
         return fit_score
 
     def scale_fitnesses(self, fitnesses, pop, scaling=True):
-        """
-        Scale the fitness scores to prevent best performers from draggin the whole population to a local extremum
+        """Scale the fitness scores to prevent best performers from dragging the whole population to a local extremum.
+
+        :param list() fitnesses: List of fitness for each set of curves
+        :param list() pop: List of sets of curves
+        :param boolean scaling: Specifies whether of not to linearly scale the fitnesses
+        :return: List of tuples representing the fitness of a set of curves and the set of curves
+        :rtype: list(tuple())
+
         """
         # linear scaling: a + b * f
         if scaling:
@@ -936,16 +1027,30 @@ class GA:
             b = 0
 
         pop_scaled = [
-            (a * self.determine_fitness(curveset) + b, curveset) for curveset in pop
+            (a * self.determine_fitness(set_of_curves) + b, set_of_curves) for set_of_curves in pop
         ]
         return pop_scaled
 
     def grade_population(self, pop_scaled):
+        """Grade population.
+
+        :param list(tuple()) pop_scaled: List of tuples representing the fitness of a set of curves and the set of curves
+        :return: List of set of curves graded from the best to the worst
+        :rtype: list(SetofCurves())
+
+        """
         pop_sorted = sorted(pop_scaled, key=lambda tup: tup[0])
         pop_graded = [item[1] for item in pop_sorted]
         return pop_graded
 
     def perform_mutation(self, individual):
+        """Mutate individual.
+
+        :param SetofCurves() individual: Set of curves
+        :return: Modified indivudal
+        :rtype: SetofCurves()
+
+        """
         new_individual = copy.deepcopy(individual)
         for curve in new_individual.curves:
             if len(self.vars) == 0 or curve.out_var in self.vars:
@@ -958,6 +1063,11 @@ class GA:
         return new_individual
 
     def perform_crossover(self, parents):
+        """Crossover best individuals.
+
+        :param list() parents: List of best performing individuals of the generation
+
+        """
         parents_length = len(parents)
         desired_length = len(self.pop) - parents_length
         children = []
@@ -968,7 +1078,7 @@ class GA:
             if male != female:
                 male = parents[male]
                 female = parents[female]
-                child = CurveSet(eqp_type=self.equipment.type)
+                child = SetofCurves(eqp_type=self.equipment.type)
                 curves = []
                 # male and female curves are structured the same way
                 for _, c in enumerate(male.curves):
@@ -1015,8 +1125,11 @@ class GA:
         self.pop = parents
 
     def identify_best_performer(self):
+        """Assign the best individual to the equipment.
+
+        """
         # Re-compute fitness, scaling and grading
         pop_graded = self.fitness_scale_grading(self.pop, scaling=True)
 
         # Assign the equipment with the best fitness
-        self.equipment.curveset = pop_graded[0].curves
+        self.equipment.set_of_curves = pop_graded[0].curves

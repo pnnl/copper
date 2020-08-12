@@ -3,7 +3,7 @@ import json, sys
 
 def curve_csv_to_json(csv_path, equip_type="chiller"):
     """
-    Convert curve sets defined in a CSV file using a predefined format to a JSON file
+    Convert sets of curves defined in a CSV file using a predefined format to a JSON file
     """
     csv_c = open(csv_path, "r")
 
