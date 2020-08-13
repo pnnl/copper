@@ -45,3 +45,7 @@ class TestCurves(TestCase):
         # Evaluate curve values
         set_of_curves = lib.get_set_of_curves_by_name(c_name)
         self.assertTrue(round(set_of_curves.curves[0].evaluate(6.67, 35), 2) == 0.96)
+
+        # Eport curves
+        set_of_curves.sim_engine = "energyplus"
+        self.assertTrue(set_of_curves.export())

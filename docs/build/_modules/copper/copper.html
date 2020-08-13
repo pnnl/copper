@@ -229,7 +229,9 @@
             <span class="c1"># return the one that has numeric attributes that best</span>
             <span class="c1"># match the proposed case</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eqp_match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_set_of_curves_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_best_match</span><span class="p">(</span><span class="n">eqp</span><span class="p">,</span> <span class="n">eqp_match</span><span class="p">))</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_set_of_curves_by_name</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_best_match</span><span class="p">(</span><span class="n">eqp</span><span class="p">,</span> <span class="n">eqp_match</span><span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_set_of_curves_by_name</span><span class="p">(</span><span class="n">eqp_match</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -600,7 +602,46 @@
                     <span class="p">)</span>
                     <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
                     <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+    
+<div class="viewcode-block" id="SetofCurves.export"><a class="viewcode-back" href="../../Code Documentation.html#copper.copper.SetofCurves.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./curves&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;idf&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Export curves to simulation engine input format.</span>
+
+<span class="sd">        :param str path: Path and file name, do not include the extension,</span>
+<span class="sd">                         it will be added based on the simulation engine </span>
+<span class="sd">                         of the SetofCurves() object.</span>
+<span class="sd">        :param str fmt: Input format type, currently not used. TODO: json, idf, inp.</span>
+<span class="sd">        :return: Success</span>
+<span class="sd">        :rtype: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">curve_export</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">curve</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">curves</span><span class="p">:</span>
+            <span class="n">curve_type</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">type</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_engine</span> <span class="o">==</span> <span class="s2">&quot;energyplus&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">curve_type</span> <span class="o">==</span> <span class="s2">&quot;quad&quot;</span><span class="p">:</span>
+                    <span class="n">cuvre_type</span> <span class="o">=</span> <span class="s2">&quot;Curve:Quadratic&quot;</span>
+                <span class="k">elif</span> <span class="n">curve_type</span> <span class="o">==</span> <span class="s2">&quot;bi_quad&quot;</span><span class="p">:</span>
+                    <span class="n">cuvre_type</span> <span class="o">=</span> <span class="s2">&quot;Curve:Biquadratic&quot;</span>
+                <span class="k">elif</span> <span class="n">curve_type</span> <span class="o">==</span> <span class="s2">&quot;bi_cub&quot;</span><span class="p">:</span>
+                    <span class="n">cuvre_type</span> <span class="o">=</span> <span class="s2">&quot;Curve:Bicubic&quot;</span>
+                <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cuvre_type</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">curve_export</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cuvre_type</span><span class="p">)</span>
+                <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">out_var</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">curve</span><span class="o">.</span><span class="n">nb_coeffs</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="s2">&quot;coeff</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
+                <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">x_min</span><span class="p">)</span> <span class="k">if</span> <span class="n">curve</span><span class="o">.</span><span class="n">x_min</span> <span class="k">else</span> <span class="s2">&quot;    ,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">x_max</span><span class="p">)</span> <span class="k">if</span> <span class="n">curve</span><span class="o">.</span><span class="n">x_max</span> <span class="k">else</span> <span class="s2">&quot;    ,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">y_min</span><span class="p">)</span> <span class="k">if</span> <span class="n">curve</span><span class="o">.</span><span class="n">y_min</span> <span class="k">else</span> <span class="s2">&quot;    ,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">y_max</span><span class="p">)</span> <span class="k">if</span> <span class="n">curve</span><span class="o">.</span><span class="n">y_max</span> <span class="k">else</span> <span class="s2">&quot;    ,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">out_min</span><span class="p">)</span> <span class="k">if</span> <span class="n">curve</span><span class="o">.</span><span class="n">out_min</span> <span class="k">else</span> <span class="s2">&quot;    ,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;   </span><span class="si">{}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">out_max</span><span class="p">)</span> <span class="k">if</span> <span class="n">curve</span><span class="o">.</span><span class="n">out_max</span> <span class="k">else</span> <span class="s2">&quot;    ;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># TODO: implement export to DOE-2 format</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Export to the </span><span class="si">{}</span><span class="s2"> input format is not yet implemented.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_engine</span><span class="p">))</span>
+        <span class="n">filen</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">),</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span>
+        <span class="n">filen</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">curve_export</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div></div>
+    
 
 
 <div class="viewcode-block" id="Curve"><a class="viewcode-back" href="../../Code Documentation.html#copper.copper.Curve">[docs]</a><span class="k">class</span> <span class="nc">Curve</span><span class="p">:</span>
@@ -652,7 +693,7 @@
         <span class="sd">&quot;&quot;&quot;Return the output of a curve.</span>
 
 <span class="sd">        :param float x: First curve independent variable</span>
-<span class="sd">        :param float y: Secon curve independent variable</span>
+<span class="sd">        :param float y: Second curve independent variable</span>
 <span class="sd">        :return: Curve output</span>
 <span class="sd">        :rtype: float</span>
 
@@ -1037,6 +1078,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># linear scaling: a + b * f</span>
+        <span class="c1"># Based on &quot;Scaling in Genetic Algorithms&quot;, Sushil J. Louis</span>
+        <span class="c1"># https://www.cse.unr.edu/~sushil/class/gas/notes/scaling/index.html</span>
         <span class="k">if</span> <span class="n">scaling</span><span class="p">:</span>
             <span class="n">max_f</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">fitnesses</span><span class="p">)</span>
             <span class="n">min_f</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">fitnesses</span><span class="p">)</span>
@@ -1062,7 +1105,8 @@
             <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="n">pop_scaled</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_fitness</span><span class="p">(</span><span class="n">set_of_curves</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="n">set_of_curves</span><span class="p">)</span> <span class="k">for</span> <span class="n">set_of_curves</span> <span class="ow">in</span> <span class="n">pop</span>
+            <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_fitness</span><span class="p">(</span><span class="n">set_of_curves</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="n">set_of_curves</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">set_of_curves</span> <span class="ow">in</span> <span class="n">pop</span>
         <span class="p">]</span>
         <span class="k">return</span> <span class="n">pop_scaled</span></div>
 

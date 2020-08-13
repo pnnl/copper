@@ -569,6 +569,66 @@ class SetofCurves:
                     axes[i].set_title(var)
         return True
 
+    def export(self, path="./curves", fmt="idf"):
+        """Export curves to simulation engine input format.
+
+        :param str path: Path and file name, do not include the extension,
+                         it will be added based on the simulation engine 
+                         of the SetofCurves() object.
+        :param str fmt: Input format type, currently not used. TODO: json, idf, inp.
+        :return: Success
+        :rtype: boolean
+
+        """
+        curve_export = ""
+        for curve in self.curves:
+            curve_type = curve.type
+            if self.sim_engine == "energyplus":
+                if curve_type == "quad":
+                    cuvre_type = "Curve:Quadratic"
+                elif curve_type == "bi_quad":
+                    cuvre_type = "Curve:Biquadratic"
+                elif curve_type == "bi_cub":
+                    cuvre_type = "Curve:Bicubic"
+                curve_export += (
+                    "\n{},\n".format(cuvre_type)
+                    if len(curve_export)
+                    else "{},\n".format(cuvre_type)
+                )
+                curve_export += "   {}_{},\n".format(self.name, curve.out_var)
+                for i in range(1, curve.nb_coeffs() + 1):
+                    curve_export += "   {},\n".format(
+                        getattr(curve, "coeff{}".format(i))
+                    )
+                curve_export += (
+                    "   {},\n".format(curve.x_min) if curve.x_min else "    ,\n"
+                )
+                curve_export += (
+                    "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
+                )
+                curve_export += (
+                    "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
+                )
+                curve_export += (
+                    "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
+                )
+                curve_export += (
+                    "   {},\n".format(curve.out_min) if curve.out_min else "    ,\n"
+                )
+                curve_export += (
+                    "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
+                )
+            else:
+                # TODO: implement export to DOE-2 format
+                raise ValueError(
+                    "Export to the {} input format is not yet implemented.".format(
+                        self.sim_engine
+                    )
+                )
+        filen = open(path + ".{}".format(fmt), "w+")
+        filen.write(curve_export)
+        return True
+
 
 class Curve:
     def __init__(self, eqp_type, c_type):
@@ -619,7 +679,7 @@ class Curve:
         """Return the output of a curve.
 
         :param float x: First curve independent variable
-        :param float y: Secon curve independent variable
+        :param float y: Second curve independent variable
         :return: Curve output
         :rtype: float
 
@@ -1004,6 +1064,8 @@ class GA:
 
         """
         # linear scaling: a + b * f
+        # Based on "Scaling in Genetic Algorithms", Sushil J. Louis
+        # https://www.cse.unr.edu/~sushil/class/gas/notes/scaling/index.html
         if scaling:
             max_f = max(fitnesses)
             min_f = min(fitnesses)

@@ -60,5 +60,11 @@ Let's check that the set of curves would result in simulation a chiller with an 
     print("Efficiency: {} kW/ton, IPLV: {} kW/ton.".format(round(chlr.calc_eff(eff_type="kwpton"),2), 
                                                            round(chlr.calc_eff(eff_type="iplv"),2)))
 
-This will return `Efficiency: 0.65 kW/ton, IPLV: 0.48 kW/ton.`.
-    
+This will return `Efficiency: 0.65 kW/ton, IPLV: 0.48 kW/ton.`
+Once this is done you can also export the set of curves to the simulation engine input format.
+
+.. sourcecode:: python
+
+    new_curves.export(path="./curves/curve")
+
+You do not need to include the extension when passing the `path` argument.

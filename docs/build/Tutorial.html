@@ -82,7 +82,12 @@
                                                        <span class="nb">round</span><span class="p">(</span><span class="n">chlr</span><span class="o">.</span><span class="n">calc_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;iplv&quot;</span><span class="p">),</span><span class="mi">2</span><span class="p">)))</span>
 </pre></div>
 </div>
-<p>This will return <cite>Efficiency: 0.65 kW/ton, IPLV: 0.48 kW/ton.</cite>.</p>
+<p>This will return <cite>Efficiency: 0.65 kW/ton, IPLV: 0.48 kW/ton.</cite>
+Once this is done you can also export the set of curves to the simulation engine input format.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_curves</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;./curves/curve&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You do not need to include the extension when passing the <cite>path</cite> argument.</p>
 </div>
 </div>
 
