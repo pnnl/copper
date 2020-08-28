@@ -802,8 +802,8 @@ class GA:
         vars="",
         sFac=0.5,
         retain=0.2,
-        random_select=0.05,
-        mutate=0.05,
+        random_select=0.1,
+        mutate=0.95,
         bounds=(6, 10),
     ):
         self.equipment = equipment

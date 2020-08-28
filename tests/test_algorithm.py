@@ -21,11 +21,7 @@ class TestAlgorithm(TestCase):
 
         chlr.generate_set_of_curves(
             vars=["eir-f-t", "cap-f-t", "eir-f-plr"],
-            method="typical",
-            sFac=0.9,
-            tol=0.005,
-            random_select=0.3,
-            mutate=0.8,
+            method="typical"
         )
 
         res = "Efficiency: {} kW/ton, IPLV: {} kW/ton.".format(
