@@ -293,8 +293,8 @@ class Chiller:
         vars="",
         sFac=0.5,
         retain=0.2,
-        random_select=0.3,
-        mutate=0.8,
+        random_select=0.1,
+        mutate=0.95,
         bounds=(6, 10),
     ):
         """Generate a set of curves for a particular Chiller() object.
