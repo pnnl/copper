@@ -1063,7 +1063,7 @@ class GA:
             full_eff_c = Unit(self.equipment.full_eff, self.equipment.full_eff_unit)
             self.full_eff = full_eff_c.conversion("kw/ton")
 
-        if self.base_curves != "":
+        if self.base_curves == "":
             if self.equipment.type == "chiller":
                 # TODO: implement other methods
                 if self.method == "typical":
