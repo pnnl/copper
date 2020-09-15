@@ -1088,12 +1088,12 @@ class GA:
             # Find typical curves from library
             # Only one equipment should be returned
             if self.method == "typical":
-                base_curves = lib.find_set_of_curvess_from_lib(filters)
+                self.base_curves = lib.find_set_of_curvess_from_lib(filters)
             elif self.method == "best_match":
-                base_curves = [lib.find_base_curves(filters, self.equipment)]
+                self.base_curves = [lib.find_base_curves(filters, self.equipment)]
 
         # Run GA
-        self.run_ga(curves=base_curves)
+        self.run_ga(curves=self.base_curves)
         return self.equipment.set_of_curves
 
     def run_ga(self, curves):
