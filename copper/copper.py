@@ -298,6 +298,7 @@ class Chiller:
         random_select=0.1,
         mutate=0.95,
         bounds=(6, 10),
+        base_curves=""
     ):
         """Generate a set of curves for a particular Chiller() object.
 
@@ -331,6 +332,7 @@ class Chiller:
             random_select,
             mutate,
             bounds,
+            base_curves,
         )
         return ga.generate_set_of_curves()
 
@@ -943,7 +945,7 @@ class Curve:
                 model.params
             )
             r_sqr = model.rsquared
-            if r_sqr < 0.9:
+            if r_sqr < 0.8:
                 print(
                     "Performance of the regression for {} is poor, r2: {}".format(
                         self.out_var, round(r_sqr, 2)
