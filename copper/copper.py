@@ -15,8 +15,7 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
-import json, copy, random
-import statistics
+import json, copy, random, statistics, itertools
 
 
 class Library:
@@ -180,7 +179,7 @@ class Library:
                 c_obj.__dict__[c_att] = c_prop[c_att]
         return c_obj
 
-    def find_seed_curves(self, filters, eqp):
+    def find_base_curves(self, filters, eqp):
         """Find an existing equipment curve that best matches the equipment.
 
         :param list(tuple()) filters: Filter represented by tuples (field, val)
@@ -255,6 +254,7 @@ class Library:
                             best_match = name
 
         return best_match
+
 
 class Chiller:
     def __init__(
@@ -427,12 +427,13 @@ class Chiller:
 
         return iplv
 
+
 class SetsofCurves:
     def __init__(self, eqp_type, sets):
         self.eqp_type = eqp_type
         self.sets_of_curves = sets
-    
-    def get_aggregated_set_of_curves(self, method= 'average', ranges={}, misc_attr={}):
+
+    def get_aggregated_set_of_curves(self, method="average", ranges={}, misc_attr={}):
         """
         Determine sets of curves based on aggregation.
 
@@ -448,27 +449,49 @@ class SetsofCurves:
         # - defined for the same type of units
         ref_setofcurves = self.sets_of_curves[0].list_to_dict()
         for set_of_curves in self.sets_of_curves:
-            if set(ref_setofcurves.keys()) != set_of_curves.list_to_dict().keys(): raise ValueError("The output variables in each set of curves are not consistently the same, aggregated set of curves cannot currently be determined.")
+            if set(ref_setofcurves.keys()) != set_of_curves.list_to_dict().keys():
+                raise ValueError(
+                    "The output variables in each set of curves are not consistently the same, aggregated set of curves cannot currently be determined."
+                )
             for c in set_of_curves.curves:
-                if c.type != ref_setofcurves[c.out_var].type: raise ValueError("Curve type in each set of curves are not consistently the same, aggregated set of curves cannot currently be determined.")
-                if not c.out_var in list(ranges.keys()): raise ValueError("Ranges provided do not cover some of the output variables. Ranges: {}, output variables not found in ranges {}.".format(list(ranges.keys()), c.out_var))
-                if c.units != ref_setofcurves[c.out_var].units: raise ValueError("Curve unit mismatch, aggregated set of curves cannot currently be determined.")
-        
+                if c.type != ref_setofcurves[c.out_var].type:
+                    raise ValueError(
+                        "Curve type in each set of curves are not consistently the same, aggregated set of curves cannot currently be determined."
+                    )
+                if not c.out_var in list(ranges.keys()):
+                    raise ValueError(
+                        "Ranges provided do not cover some of the output variables. Ranges: {}, output variables not found in ranges {}.".format(
+                            list(ranges.keys()), c.out_var
+                        )
+                    )
+                if c.units != ref_setofcurves[c.out_var].units:
+                    raise ValueError(
+                        "Curve unit mismatch, aggregated set of curves cannot currently be determined."
+                    )
+
         input_values = {}
         # Determine values of independent variables using the user-specified ranges
         for c in self.sets_of_curves[0].curves:
             input_values[c.out_var] = []
-            for vars_rng in ranges[c.out_var]['vars_range']:
+            for vars_rng in ranges[c.out_var]["vars_range"]:
                 min_val, max_val = vars_rng
-                input_values[c.out_var].append(np.linspace(min_val, max_val, 100))
+                input_values[c.out_var].append(np.linspace(min_val, max_val, 4))
             # Add 0s for second independent variables for univariate curves
-            if len(input_values[c.out_var]) == 1: input_values[c.out_var].append(np.linspace(0.0, 0.0, 100))
+            if len(input_values[c.out_var]) == 1:
+                input_values[c.out_var].append(np.linspace(0.0, 0.0, 4))
 
         output_values = {}
         # Calculate values of dependent variables using the user-specified ranges
         for set_of_curves in self.sets_of_curves:
             for c in set_of_curves.curves:
-                output_value = [c.evaluate(x, y) for x, y in zip(input_values[c.out_var][0], input_values[c.out_var][1])]
+                output_value = [
+                    c.evaluate(x, y)
+                    for x, y in list(
+                        itertools.product(
+                            input_values[c.out_var][0], input_values[c.out_var][1]
+                        )
+                    )
+                ]
                 if c.out_var in output_values.keys():
                     output_values[c.out_var].append(output_value)
                 else:
@@ -476,22 +499,34 @@ class SetsofCurves:
                     output_values[c.out_var].append(output_value)
 
         # Create new set of curves and assign its attributes based on user defined inputs
-        agg_set_of_curves = SetofCurves(eqp_type = self.eqp_type)
+        agg_set_of_curves = SetofCurves(eqp_type=self.eqp_type)
         for att, att_val in misc_attr.items():
             setattr(agg_set_of_curves, att, att_val)
 
         # Determine aggregated values for dependent variables
         for var, vals in output_values.items():
-            if method == 'average':
-                y_s = [list(map(lambda x: sum(x)/len(x), zip(*vals)))]
-            elif method == 'median':
+            if method == "average":
+                y_s = [list(map(lambda x: sum(x) / len(x), zip(*vals)))]
+            elif method == "median":
                 y_s = [list(map(lambda x: statistics.median(x), zip(*vals)))]
 
-            data = pd.DataFrame(input_values[var]+ y_s).transpose()
-            data.columns = ['X1','X2','Y']
+            data = pd.DataFrame(
+                [
+                    list(xs + (y,))
+                    for xs, y in zip(
+                        list(
+                            itertools.product(
+                                input_values[var][0], input_values[var][1]
+                            )
+                        ),
+                        y_s[0],
+                    )
+                ]
+            )
+            data.columns = ["X1", "X2", "Y"]
 
             # Create new curve
-            new_curve = Curve(eqp_type=self.eqp_type,c_type=ref_setofcurves[var].type)
+            new_curve = Curve(eqp_type=self.eqp_type, c_type=ref_setofcurves[var].type)
 
             # Assign curve attributes, assume no min/max
             # TODO: Allow min/max to be passed by user
@@ -503,9 +538,11 @@ class SetsofCurves:
             new_curve.y_max = 999
             new_curve.out_min = -999
             new_curve.out_max = 999
-            if not 'normalization' in ranges[var].keys():
-                raise ValueError("Normalization point not provided, the curve cannot be created.")
-            norm = ranges[var]['normalization']
+            if not "normalization" in ranges[var].keys():
+                raise ValueError(
+                    "Normalization point not provided, the curve cannot be created."
+                )
+            norm = ranges[var]["normalization"]
             if isinstance(norm, float):
                 ref_x = norm
                 ref_y = 0
@@ -529,10 +566,9 @@ class SetsofCurves:
             # Normalize curve to reference point
             new_curve.normalized(data, ref_x, ref_y)
 
-
-
             agg_set_of_curves.curves.append(new_curve)
         return agg_set_of_curves
+
 
 class SetofCurves:
     def __init__(self, eqp_type):
@@ -752,7 +788,7 @@ class SetofCurves:
         for c in self.curves:
             if c in curves_to_del:
                 self.curves.remove(c)
-    
+
     def list_to_dict(self):
         """
         Convert curves fo the set from a list to a dictionary, the key being the output variable type.
@@ -764,6 +800,7 @@ class SetofCurves:
         for c in self.curves:
             curves[c.out_var] = c
         return curves
+
 
 class Curve:
     def __init__(self, eqp_type, c_type):
@@ -885,27 +922,33 @@ class Curve:
         """
         # TODO: implement bi_cubic
         if self.type == "quad":
-            data['X1^2'] = data['X1'] * data['X1']
-            X = data[['X1','X1^2']]
-            y = data['Y']
+            data["X1^2"] = data["X1"] * data["X1"]
+            X = data[["X1", "X1^2"]]
+            y = data["Y"]
 
             X = sm.add_constant(X)
             model = sm.OLS(y, X).fit()
             self.coeff1, self.coeff2, self.coeff3 = model.params
         elif self.type == "bi_quad":
-            data['X1^2'] = data['X1'] * data['X1']
-            data['X2^2'] = data['X2'] * data['X2']
-            data['X1*X2'] = data['X1'] * data['X2']
+            data["X1^2"] = data["X1"] * data["X1"]
+            data["X2^2"] = data["X2"] * data["X2"]
+            data["X1*X2"] = data["X1"] * data["X2"]
 
-            X = data[['X1','X1^2','X2','X2^2','X1*X2']]
-            y = data['Y']
+            X = data[["X1", "X1^2", "X2", "X2^2", "X1*X2"]]
+            y = data["Y"]
 
             X = sm.add_constant(X)
             model = sm.OLS(y, X).fit()
-            self.coeff1, self.coeff2, self.coeff3, self.coeff4, self.coeff5, self.coeff6 = model.params
+            self.coeff1, self.coeff2, self.coeff3, self.coeff4, self.coeff5, self.coeff6 = (
+                model.params
+            )
             r_sqr = model.rsquared
             if r_sqr < 0.9:
-                print("Performance of the regression for {} is poor, r2: {}".format(self.out_var, round(r_sqr,2)))
+                print(
+                    "Performance of the regression for {} is poor, r2: {}".format(
+                        self.out_var, round(r_sqr, 2)
+                    )
+                )
 
     def normalized(self, data, x_norm, y_norm):
         """Normalize curve around the reference data points.
@@ -915,8 +958,13 @@ class Curve:
         :param DataFrame() data: DataFrame() object with the following columns: "X1","X1^2","X2","X2^2","X1*X2", "Y".
 
         """
-        data['Y'] = data.apply(lambda row: self.evaluate(row['X1'], row['X2']) / self.evaluate(x_norm, y_norm), axis=1)
+        data["Y"] = data.apply(
+            lambda row: self.evaluate(row["X1"], row["X2"])
+            / self.evaluate(x_norm, y_norm),
+            axis=1,
+        )
         self.regression(data)
+
 
 class Unit:
     def __init__(self, value, unit):
@@ -980,6 +1028,7 @@ class GA:
         random_select=0.1,
         mutate=0.95,
         bounds=(6, 10),
+        base_curves="",
     ):
         self.equipment = equipment
         self.method = method
@@ -992,6 +1041,7 @@ class GA:
         self.random_select = random_select
         self.mutate = mutate
         self.bounds = bounds
+        self.base_curves = base_curves
 
     def generate_set_of_curves(self):
         """Generate set of curves using genetic algorithm.
@@ -1013,31 +1063,32 @@ class GA:
             full_eff_c = Unit(self.equipment.full_eff, self.equipment.full_eff_unit)
             self.full_eff = full_eff_c.conversion("kw/ton")
 
-        if self.equipment.type == "chiller":
-            # TODO: implement other methods
+        if self.base_curves != "":
+            if self.equipment.type == "chiller":
+                # TODO: implement other methods
+                if self.method == "typical":
+                    lib = Library(path="./fixtures/typical_curves.json")
+                elif self.method == "best_match":
+                    lib = Library(path="./fixtures/chiller_curves.json")
+
+                # Define chiller properties
+                filters = [
+                    ("eqp_type", self.equipment.type),
+                    ("comp_type", self.equipment.compressor_type),
+                    ("cond_type", self.equipment.condenser_type),
+                    ("comp_speed", self.equipment.compressor_speed),
+                    ("sim_engine", self.equipment.sim_engine),
+                    ("model", self.equipment.model),
+                ]
+            else:
+                raise ValueError("This type of equipment has not yet been implemented.")
+
+            # Find typical curves from library
+            # Only one equipment should be returned
             if self.method == "typical":
-                lib = Library(path="./fixtures/typical_curves.json")
+                base_curves = lib.find_set_of_curvess_from_lib(filters)
             elif self.method == "best_match":
-                lib = Library(path="./fixtures/chiller_curves.json")
-
-            # Define chiller properties
-            filters = [
-                ("eqp_type", self.equipment.type),
-                ("comp_type", self.equipment.compressor_type),
-                ("cond_type", self.equipment.condenser_type),
-                ("comp_speed", self.equipment.compressor_speed),
-                ("sim_engine", self.equipment.sim_engine),
-                ("model", self.equipment.model),
-            ]
-        else:
-            raise ValueError("This type of equipment has not yet been implemented.")
-
-        # Find typical curves from library
-        # Only one equipment should be returned
-        if self.method == "typical":
-            base_curves = lib.find_set_of_curvess_from_lib(filters)
-        elif self.method == "best_match":
-            base_curves = [lib.find_seed_curves(filters, self.equipment)]
+                base_curves = [lib.find_base_curves(filters, self.equipment)]
 
         # Run GA
         self.run_ga(curves=base_curves)
