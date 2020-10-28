@@ -753,12 +753,13 @@ class SetofCurves:
                 curve_export += (
                     "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
                 )
-                curve_export += (
-                    "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
-                )
-                curve_export += (
-                    "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
-                )
+                if curve_type != "quad":
+                    curve_export += (
+                        "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
+                    )
+                    curve_export += (
+                        "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
+                    )
                 curve_export += (
                     "   {},\n".format(curve.out_min) if curve.out_min else "    ,\n"
                 )
@@ -772,7 +773,7 @@ class SetofCurves:
                         self.sim_engine
                     )
                 )
-        filen = open(path + ".{}".format(fmt), "w+")
+        filen = open(path + self.name + ".{}".format(fmt), "w+")
         filen.write(curve_export)
         return True
 
