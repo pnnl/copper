@@ -298,7 +298,7 @@ class Chiller:
         random_select=0.1,
         mutate=0.95,
         bounds=(6, 10),
-        base_curves="",
+        base_curves=[],
     ):
         """Generate a set of curves for a particular Chiller() object.
 
@@ -1042,7 +1042,7 @@ class GA:
         random_select=0.1,
         mutate=0.95,
         bounds=(6, 10),
-        base_curves="",
+        base_curves=[],
     ):
         self.equipment = equipment
         self.method = method
@@ -1056,12 +1056,6 @@ class GA:
         self.mutate = mutate
         self.bounds = bounds
         self.base_curves = base_curves
-        self.set_of_base_curves = self.base_curves[0]
-        self.base_curves_data = {}
-        for curve in self.set_of_base_curves.curves:
-            self.base_curves_data[
-                curve.out_var
-            ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
     def generate_set_of_curves(self):
         """Generate set of curves using genetic algorithm.
@@ -1083,7 +1077,7 @@ class GA:
             full_eff_c = Unit(self.equipment.full_eff, self.equipment.full_eff_unit)
             self.full_eff = full_eff_c.conversion("kw/ton")
 
-        if self.base_curves == "":
+        if len(self.base_curves) == 0:
             if self.equipment.type == "chiller":
                 # TODO: implement other methods
                 if self.method == "typical":
@@ -1109,6 +1103,13 @@ class GA:
                 self.base_curves = lib.find_set_of_curvess_from_lib(filters)
             elif self.method == "best_match":
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
+
+        self.set_of_base_curves = self.base_curves[0]
+        self.base_curves_data = {}
+        for curve in self.set_of_base_curves.curves:
+            self.base_curves_data[
+                curve.out_var
+            ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
         # Run GA
         self.run_ga(curves=self.base_curves)
