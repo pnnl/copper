@@ -298,7 +298,7 @@ class Chiller:
         random_select=0.1,
         mutate=0.95,
         bounds=(6, 10),
-        base_curves=""
+        base_curves="",
     ):
         """Generate a set of curves for a particular Chiller() object.
 
@@ -557,8 +557,8 @@ class SetsofCurves:
                 self.ref_evap_fluid_flow = 0
                 self.ref_cond_fluid_flow = 0
                 if agg_set_of_curves.model == "ect_lwt":
-                    self.ref_lwt = ref_x
-                    self.ref_ect = ref_y
+                    self.ref_lwt = ref_y
+                    self.ref_ect = ref_x
                 else:
                     raise ValueError("Algorithm not supported.")
 
@@ -655,6 +655,48 @@ class SetofCurves:
                     },
                 }
 
+    def get_data_for_plotting(self, curve, norm):
+        var = curve.out_var
+        nb_vals = self.plotting_range[var]["nbval"]
+        x1_min = self.plotting_range[var]["x1_min"]
+        x1_max = self.plotting_range[var]["x1_max"]
+        x_1_vals = np.linspace(x1_min, x1_max, nb_vals)
+
+        if "x2_min" in self.plotting_range[var].keys():
+            x2_min = self.plotting_range[var]["x2_min"]
+            x2_max = self.plotting_range[var]["x2_max"]
+            x_2_vals = np.linspace(x2_min, x2_max, nb_vals)
+        else:
+            x_2_vals = [0]
+
+        y = []
+        for v in range(nb_vals):
+            if "x2_min" in self.plotting_range[var].keys():
+                norm_fac = (
+                    curve.evaluate(
+                        self.plotting_range[var]["x1_norm"],
+                        self.plotting_range[var]["x2_norm"],
+                    )
+                    if norm
+                    else 1
+                )
+                y_val = curve.evaluate(x_1_vals[v], x_2_vals[v]) / norm_fac
+            else:
+                norm_fac = (
+                    curve.evaluate(
+                        self.plotting_range[var]["x1_norm"],
+                        self.plotting_range[var]["x1_norm"],
+                    )
+                    if norm
+                    else 1
+                )
+                y_val = curve.evaluate(x_1_vals[v], x_1_vals[v]) / norm_fac
+            y.append(y_val)
+
+        x = x_1_vals if len(set(x_1_vals)) > len(set(x_2_vals)) else x_2_vals
+
+        return [x, y]
+
     def plot(self, out_var=[], axes=[], norm=True, color="Black", alpha=0.3):
         """Plot set of curves.
 
@@ -671,47 +713,7 @@ class SetofCurves:
         for i, var in enumerate(out_var):
             for curve in self.curves:
                 if curve.out_var == var:
-                    nb_vals = self.plotting_range[var]["nbval"]
-                    x1_min = self.plotting_range[var]["x1_min"]
-                    x1_max = self.plotting_range[var]["x1_max"]
-                    x_1_vals = np.linspace(x1_min, x1_max, nb_vals)
-
-                    if "x2_min" in self.plotting_range[var].keys():
-                        x2_min = self.plotting_range[var]["x2_min"]
-                        x2_max = self.plotting_range[var]["x2_max"]
-                        x_2_vals = np.linspace(x2_min, x2_max, nb_vals)
-                    else:
-                        x_2_vals = [0]
-
-                    y = []
-                    for v in range(nb_vals):
-                        if "x2_min" in self.plotting_range[var].keys():
-                            norm_fac = (
-                                curve.evaluate(
-                                    self.plotting_range[var]["x1_norm"],
-                                    self.plotting_range[var]["x2_norm"],
-                                )
-                                if norm
-                                else 1
-                            )
-                            y_val = curve.evaluate(x_1_vals[v], x_2_vals[v]) / norm_fac
-                        else:
-                            norm_fac = (
-                                curve.evaluate(
-                                    self.plotting_range[var]["x1_norm"],
-                                    self.plotting_range[var]["x1_norm"],
-                                )
-                                if norm
-                                else 1
-                            )
-                            y_val = curve.evaluate(x_1_vals[v], x_1_vals[v]) / norm_fac
-                        y.append(y_val)
-
-                    x = (
-                        x_1_vals
-                        if len(set(x_1_vals)) > len(set(x_2_vals))
-                        else x_2_vals
-                    )
+                    x, y = self.get_data_for_plotting(curve, norm)
                     axes[i].plot(x, y, color=color, alpha=alpha)
                     axes[i].set_title(var)
         return True
@@ -794,7 +796,7 @@ class SetofCurves:
 
     def list_to_dict(self):
         """
-        Convert curves fo the set from a list to a dictionary, the key being the output variable type.
+        Convert curves from the set from a list to a dictionary, the key being the output variable type.
 
         :return: Dictionary of curves
         :rtype: dict
@@ -953,6 +955,15 @@ class Curve:
                     )
                 )
 
+    def get_out_reference(self):
+        if "-t" in self.out_var:
+            x_ref = self.ref_lwt
+            y_ref = self.ref_ect
+        else:
+            x_ref = 1
+            y_ref = 0
+        return self.evaluate(x_ref, y_ref)
+
     def normalized(self, data, x_norm, y_norm):
         """Normalize curve around the reference data points.
 
@@ -1045,6 +1056,12 @@ class GA:
         self.mutate = mutate
         self.bounds = bounds
         self.base_curves = base_curves
+        self.set_of_base_curves = self.base_curves[0]
+        self.base_curves_data = {}
+        for curve in self.set_of_base_curves.curves:
+            self.base_curves_data[
+                curve.out_var
+            ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
     def generate_set_of_curves(self):
         """Generate set of curves using genetic algorithm.
@@ -1127,15 +1144,23 @@ class GA:
             if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_eff(eff_type="iplv")
                 full_rating = self.equipment.calc_eff(eff_type="kwpton")
+                cap_rating = 0
+                if "cap-f-t" in self.vars:
+                    for c in self.equipment.set_of_curves:
+                        if "cap" in c.out_var:
+                            cap_rating += abs(1 - c.get_out_reference())
             else:
                 return False
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
+
         if (
             (part_rating < self.target * (1 + self.tol))
             and (part_rating > self.target * (1 - self.tol))
             and (full_rating < self.full_eff * (1 + self.tol))
             and (full_rating > self.full_eff * (1 - self.tol))
+            and (cap_rating < self.tol)
+            and (cap_rating > -self.tol)
         ):
             return True
         else:
@@ -1250,20 +1275,20 @@ class GA:
         # Temporary assign curve to equipment
         self.equipment.set_of_curves = set_of_curves.curves
 
-        # Normalization score
+        # Compute normalization score
+        # and RSME with base curve
+        # TODO: Try PCM
+        # TODO: Try Frechet distance
+        # TODO: Area between two curves
+        # TODO: Dynamic Time Warping distance
         curve_normal_score = 0
+        rsme = 0
         for c in set_of_curves.curves:
-            if self.equipment.type == "chiller":
-                if "-t" in c.out_var:
-                    if self.equipment.model == "ect_lwt":
-                        x_ref = c.ref_ect
-                        y_ref = c.ref_lwt
-                else:
-                    x_ref = 1
-                    y_ref = 0
-            else:
-                raise ValueError("This type of equipment has not yet been implemented.")
-            curve_normal_score += abs(1 - c.evaluate(x_ref, y_ref))
+            if c.out_var in self.vars:
+                curve_normal_score += abs(1 - c.get_out_reference())
+                x, y = set_of_curves.get_data_for_plotting(c, False)
+                base_x, base_y = self.base_curves_data[c.out_var]
+                rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
 
         if self.equipment.type == "chiller":
             iplv_score = abs(self.equipment.calc_eff(eff_type="iplv") - self.target)
@@ -1272,11 +1297,19 @@ class GA:
             )
             iplv_weight = 1
             eff_weight = 1
+            curve_normal_score_weight = 1
+            rsme_weight = 0.5
             fit_score = (
                 iplv_score * iplv_weight
                 + full_eff_score * eff_weight
-                + curve_normal_score
-            ) / (iplv_weight + eff_weight + len(set_of_curves.curves))
+                + curve_normal_score * curve_normal_score_weight
+                + rsme * rsme_weight
+            ) / (
+                iplv_weight
+                + eff_weight
+                + curve_normal_score_weight * len(set_of_curves.curves)
+                + rsme_weight
+            )
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
 
