@@ -18,10 +18,15 @@ import matplotlib.pyplot as plt
 import json, copy, random, statistics, itertools
 
 
+import criteria
+
+
 class Library:
-    def __init__(self, path="./fixtures/chiller_curves.json"):
+    def __init__(self, path="~/PycarmProjects/codes/copper/fixtures/chiller_curves.json"): #./fixtures/chiller_curves.json"
+
         self.path = path
         self.data = json.loads(open(self.path, "r").read())
+
 
     def content(self):
         return self.data
@@ -449,7 +454,10 @@ class SetsofCurves:
         # - the same output variables
         # - of the same type
         # - defined for the same type of units
+
+        'first entry -> refsetofcurves'
         ref_setofcurves = self.sets_of_curves[0].list_to_dict()
+
         for set_of_curves in self.sets_of_curves:
             if set(ref_setofcurves.keys()) != set_of_curves.list_to_dict().keys():
                 raise ValueError(
@@ -655,6 +663,8 @@ class SetofCurves:
                     },
                 }
 
+
+
     def get_data_for_plotting(self, curve, norm):
         var = curve.out_var
         nb_vals = self.plotting_range[var]["nbval"]
@@ -716,6 +726,8 @@ class SetofCurves:
                     x, y = self.get_data_for_plotting(curve, norm)
                     axes[i].plot(x, y, color=color, alpha=alpha)
                     axes[i].set_title(var)
+                    #plt.show()
+
         return True
 
     def export(self, path="./curves", fmt="idf"):
@@ -1044,7 +1056,7 @@ class GA:
         bounds=(6, 10),
         base_curves=[],
     ):
-        self.equipment = equipment
+        self.equipment = equipment #chiller
         self.method = method
         self.pop_size = pop_size
         self.tol = tol
@@ -1082,6 +1094,7 @@ class GA:
                 # TODO: implement other methods
                 if self.method == "typical":
                     lib = Library(path="./fixtures/typical_curves.json")
+                    #lib = Library(path="./fixtures/typical_curves.json")
                 elif self.method == "best_match":
                     lib = Library(path="./fixtures/chiller_curves.json")
 
@@ -1124,6 +1137,8 @@ class GA:
 
         """
         self.pop = self.generate_population(curves)
+
+
         gen = 0
         self.equipment.curves = curves
         while gen <= self.max_gen and not self.is_target_met():
@@ -1141,19 +1156,24 @@ class GA:
         :rtype: boolean
 
         """
+        'Troubleshoot'
+
+
         if self.equipment.type == "chiller":
             if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_eff(eff_type="iplv")
                 full_rating = self.equipment.calc_eff(eff_type="kwpton")
                 cap_rating = 0
                 if "cap-f-t" in self.vars:
-                    for c in self.equipment.set_of_curves:
+                    for c in self.equipment.set_of_curves: #list of objects  # c in curves
+                        #set_of_curves
                         if "cap" in c.out_var:
                             cap_rating += abs(1 - c.get_out_reference())
             else:
                 return False
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
+
 
         if (
             (part_rating < self.target * (1 + self.tol))
@@ -1162,7 +1182,51 @@ class GA:
             and (full_rating > self.full_eff * (1 - self.tol))
             and (cap_rating < self.tol)
             and (cap_rating > -self.tol)
+            and self.check_gradients()
         ):
+            return True
+        else:
+            return False
+
+
+
+    'Aowabins function'
+    def check_gradients(self):
+
+        'This function checks the gradient and sees if they are monotonic'
+        if self.equipment.type == "chiller":
+            if self.equipment.set_of_curves != "":
+
+                grad_list = []
+                for c in self.equipment.set_of_curves:
+                    if c.out_var == 'eir-f-t' or c.out_var == 'eir-f-plr':
+                        sign_val = +1
+                    elif c.out_var == 'cap-f-t':
+                        sign_val = -1
+                    else:
+                        raise ValueError('this curve output has not been implemented')
+
+                    #to DO
+                    x, y = self.set_of_base_curves.get_data_for_plotting(c, False)
+                    grad_list.append(self.compute_grad(x=x, y=y, sign_val=sign_val))
+
+                if np.all(np.asarray(grad_list)):
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+
+
+
+    def compute_grad(self, x, y, sign_val):
+
+        grad = np.gradient(y, x)
+        sign = np.sign(grad)
+
+        if np.all(sign == sign_val):
             return True
         else:
             return False
@@ -1299,7 +1363,7 @@ class GA:
             iplv_weight = 1
             eff_weight = 1
             curve_normal_score_weight = 1
-            rsme_weight = 0.5
+            rsme_weight = 1 #0.5
             fit_score = (
                 iplv_score * iplv_weight
                 + full_eff_score * eff_weight
