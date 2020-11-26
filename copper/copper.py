@@ -1226,7 +1226,7 @@ class GA:
         grad = np.gradient(y, x)
         sign = np.sign(grad)
 
-        if np.all(sign == sign_val):
+        if np.any(sign != -sign_val): #include 0 and +1/-1 gradients. but not gradients of the opposite sign
             return True
         else:
             return False
