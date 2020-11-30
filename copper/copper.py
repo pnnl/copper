@@ -18,8 +18,6 @@ import matplotlib.pyplot as plt
 import json, copy, random, statistics, itertools
 
 
-import criteria
-
 
 class Library:
     def __init__(self, path="~/PycarmProjects/codes/copper/fixtures/chiller_curves.json"): #./fixtures/chiller_curves.json"
@@ -1226,7 +1224,7 @@ class GA:
         grad = np.gradient(y, x)
         sign = np.sign(grad)
 
-        if np.any(sign != -sign_val): #include 0 and +1/-1 gradients. but not gradients of the opposite sign
+        if np.any(sign !=  -sign_val): #include 0 and +1/-1 gradients. but not gradients of the opposite sign
             return True
         else:
             return False
