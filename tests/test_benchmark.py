@@ -31,16 +31,15 @@ class TestBenchmark(TestCase):
             # Store initial stdout
             stdout_ = sys.stdout
             sys.stdout = io.StringIO()
-            
+
             # Generate a set of performance curves for targeted equipment
             chlr.generate_set_of_curves(
-                vars=["eir-f-t", "cap-f-t", "eir-f-plr"],
-                method="typical"
+                vars=["eir-f-t", "cap-f-t", "eir-f-plr"], method="typical"
             )
 
             # Extract number of generation needed to reach goal
             output = sys.stdout.getvalue()
-            
+
             # Restore initial stdout
             sys.stdout = stdout_
 
@@ -49,7 +48,10 @@ class TestBenchmark(TestCase):
 
             # Calculate elapsed time
             times.append(float(time.process_time() - start_time))
-        
-        f = open("/tmp/artifacts/benchmark_results.txt", "w")
-        f.write("Avg. generations: {}\nAvg. time: {}".format(round(sum(nb_gens)/len(nb_gens),2), round(sum(times)/len(times),2)))
 
+        f = open("/tmp/artifacts/benchmark_results.txt", "w")
+        f.write(
+            "Avg. generations: {}\nAvg. time: {}".format(
+                round(sum(nb_gens) / len(nb_gens), 2), round(sum(times) / len(times), 2)
+            )
+        )
