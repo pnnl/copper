@@ -1,7 +1,8 @@
 from unittest import TestCase
 
 import copper as cp
-import time, sys, io
+import numpy as np
+import time, sys, io, pickle
 
 
 class TestBenchmark(TestCase):
@@ -22,7 +23,8 @@ class TestBenchmark(TestCase):
 
         times = []
         nb_gens = []
-        iterations = 2
+        setsofcurves = []
+        iterations = 20
 
         for _ in range(iterations):
             # Initialise time counter
@@ -39,19 +41,32 @@ class TestBenchmark(TestCase):
 
             # Extract number of generation needed to reach goal
             output = sys.stdout.getvalue()
+            nb_gens.append(float(output.split(" ")[4]))
 
             # Restore initial stdout
             sys.stdout = stdout_
 
-            print(float(output.split(" ")[4]))
-            nb_gens.append(float(output.split(" ")[4]))
-
             # Calculate elapsed time
             times.append(float(time.process_time() - start_time))
 
-        f = open("/tmp/artifacts/benchmark_results.txt", "w+")
-        f.write(
-            "Avg. generations: {}\nAvg. time: {}".format(
-                round(sum(nb_gens) / len(nb_gens), 2), round(sum(times) / len(times), 2)
-            )
-        )
+            # Store sets of curves
+            setsofcurves.append(chlr.set_of_curves)
+
+        # Store sets of curves
+        with open("/tmp/artifacts/setsofcurves.pkl", "wb") as f:
+            pickle.dump(setsofcurves, f, pickle.HIGHEST_PROTOCOL)
+
+        # Store benchmark results
+        f = open("/tmp/artifacts/benchmark_results.md", "w+")
+        f.write("# Iterations\n")
+        f.write(" * Number: {}\n")
+        f.write("# Number of Generations\n")
+        f.write(" * Minimum: {}\n".format(min(nb_gens)))
+        f.write(" * Maximum: {}\n".format(max(nb_gens)))
+        f.write(" * Mean: {}\n".format(round(sum(nb_gens) / len(nb_gens), 2)))
+        f.write(" * Std. Dev.: {}\n".format(np.std(nb_gens)))
+        f.write("# Computing Time\n")
+        f.write(" * Minimum: {}\n".format(min(times)))
+        f.write(" * Maximum: {}\n".format(max(times)))
+        f.write(" * Mean: {}\n".format(round(sum(times) / len(times), 2)))
+        f.write(" * Std. Dev.: {}\n".format(np.std(times)))
