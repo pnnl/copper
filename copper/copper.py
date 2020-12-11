@@ -1208,6 +1208,7 @@ class GA:
             if len(self.vars) == 0 or curve.out_var in self.vars:
                 for idx in range(1, 11):
                     try:
+                        # TODO: screening criteria
                         setattr(
                             curve,
                             "coeff{}".format(idx),

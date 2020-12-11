@@ -22,7 +22,7 @@ class TestBenchmark(TestCase):
 
         times = []
         nb_gens = []
-        iterations = 20
+        iterations = 2
 
         for _ in range(iterations):
             # Initialise time counter
@@ -49,7 +49,7 @@ class TestBenchmark(TestCase):
             # Calculate elapsed time
             times.append(float(time.process_time() - start_time))
 
-        f = open("/tmp/artifacts/benchmark_results.txt", "w")
+        f = open("/tmp/artifacts/benchmark_results.txt", "w+")
         f.write(
             "Avg. generations: {}\nAvg. time: {}".format(
                 round(sum(nb_gens) / len(nb_gens), 2), round(sum(times) / len(times), 2)

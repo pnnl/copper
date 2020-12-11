@@ -39,6 +39,11 @@ jobs:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
+      - run:
+          name: Create artifacts folder
+          command: |
+            mkdir /tmp/artifacts;
+
       # run tests!
       - run:
           name: run tests
