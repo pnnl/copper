@@ -50,6 +50,7 @@ jobs:
           command: |
             . venv/bin/activate
             nosetests -v --with-coverage --cover-package=neo
+          no_output_timeout: 2h
 
       - store_artifacts:
           path: /tmp/artifacts
