@@ -47,5 +47,4 @@ jobs:
             nosetests -v --with-coverage --cover-package=neo
 
       - store_artifacts:
-          path: test-reports
-          destination: test-reports
+          path: /tmp/artifacts
