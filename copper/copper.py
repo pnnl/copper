@@ -19,7 +19,10 @@ import json, copy, random, statistics, itertools
 
 
 class Library:
-    def __init__(self, path="./fixtures/chiller_curves.json"):
+    def __init__(
+        self, path="./fixtures/chiller_curves.json"
+    ):  # ./fixtures/chiller_curves.json"
+
         self.path = path
         self.data = json.loads(open(self.path, "r").read())
 
@@ -90,15 +93,15 @@ class Library:
 
     def find_equipment(self, filters=[]):
         """Find equipment matching specified filter in the curve library.
-        
+
         Special filter characters:
-        
+
         - ~! means "all except..."
         - ! means "do not include..."
         - ~ means "include..."
 
         :param list(tuple()) filters: Filter represented by tuples (field, val)
-        :return: Dictionary of field for each equipment matching specified filter 
+        :return: Dictionary of field for each equipment matching specified filter
         :rtype: dict[str,dict[]]
 
         """
@@ -339,7 +342,7 @@ class Chiller:
     def calc_eff(self, eff_type, unit="kw/ton"):
         """Calculate chiller efficiency.
 
-        :param str eff_type: Chiller performance indicator, currently supported `kw/ton` (full load rating) 
+        :param str eff_type: Chiller performance indicator, currently supported `kw/ton` (full load rating)
                              and `iplv` (part load rating)
         :param str unit: Unit of the efficiency indicator
         :return: Chiller performance indicator
@@ -449,7 +452,10 @@ class SetsofCurves:
         # - the same output variables
         # - of the same type
         # - defined for the same type of units
+
+        "first entry -> refsetofcurves"
         ref_setofcurves = self.sets_of_curves[0].list_to_dict()
+
         for set_of_curves in self.sets_of_curves:
             if set(ref_setofcurves.keys()) != set_of_curves.list_to_dict().keys():
                 raise ValueError(
@@ -716,13 +722,14 @@ class SetofCurves:
                     x, y = self.get_data_for_plotting(curve, norm)
                     axes[i].plot(x, y, color=color, alpha=alpha)
                     axes[i].set_title(var)
+
         return True
 
     def export(self, path="./curves", fmt="idf"):
         """Export curves to simulation engine input format.
 
         :param str path: Path and file name, do not include the extension,
-                         it will be added based on the simulation engine 
+                         it will be added based on the simulation engine
                          of the SetofCurves() object.
         :param str fmt: Input format type, currently not used. TODO: json, idf, inp.
         :return: Success
@@ -944,9 +951,14 @@ class Curve:
 
             X = sm.add_constant(X)
             model = sm.OLS(y, X).fit()
-            self.coeff1, self.coeff2, self.coeff3, self.coeff4, self.coeff5, self.coeff6 = (
-                model.params
-            )
+            (
+                self.coeff1,
+                self.coeff2,
+                self.coeff3,
+                self.coeff4,
+                self.coeff5,
+                self.coeff6,
+            ) = model.params
             r_sqr = model.rsquared
             if r_sqr < 0.8:
                 print(
@@ -1118,11 +1130,11 @@ class GA:
     def run_ga(self, curves):
         """Run genetic algorithm.
 
-        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
-        :return: Final population of sets of curves
-        :rtype: list()
+            :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
+            :return: Final population of sets of curves
+            :rtype: list()
 
-        """
+        ]"""
         self.pop = self.generate_population(curves)
         gen = 0
         self.equipment.curves = curves
@@ -1147,7 +1159,10 @@ class GA:
                 full_rating = self.equipment.calc_eff(eff_type="kwpton")
                 cap_rating = 0
                 if "cap-f-t" in self.vars:
-                    for c in self.equipment.set_of_curves:
+                    for (
+                        c
+                    ) in self.equipment.set_of_curves:  # list of objects  # c in curves
+                        # set_of_curves
                         if "cap" in c.out_var:
                             cap_rating += abs(1 - c.get_out_reference())
             else:
@@ -1162,7 +1177,65 @@ class GA:
             and (full_rating > self.full_eff * (1 - self.tol))
             and (cap_rating < self.tol)
             and (cap_rating > -self.tol)
+            and self.check_gradients()
         ):
+            return True
+        else:
+            return False
+
+    def check_gradients(self):
+
+        """Check if the objective of the gradient of the three curves are monotonic and have the sign we expect.
+
+        :return: Verification result
+        :rtype: boolean
+
+        """
+        if self.equipment.type == "chiller":
+            if self.equipment.set_of_curves != "":
+
+                grad_list = []
+                for c in self.equipment.set_of_curves:
+                    if c.out_var == "eir-f-t" or c.out_var == "eir-f-plr":
+                        sign_val = +1
+                    elif c.out_var == "cap-f-t":
+                        sign_val = -1
+                    else:
+                        raise ValueError("this curve output has not been implemented")
+
+                    x, y = self.set_of_base_curves.get_data_for_plotting(c, False)
+                    grad_list.append(self.compute_grad(x=x, y=y, sign_val=sign_val))
+
+                if np.all(np.asarray(grad_list)):
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+
+    def compute_grad(self, x, y, sign_val, threshold=1e-5):
+
+        """Check, for a single curve, if the gradient has the sign we expect. called by check_gradients.
+
+        :return: Verification result
+        :rtype: boolean
+
+        """
+        grad = np.around(
+            np.gradient(y, x), 2
+        )  # add a small number to get rid of very small negative values
+        grad[
+            np.abs(grad) <= threshold
+        ] = 0  # making sure that small gradients are set to zero to avoid
+        sign = np.sign(grad)
+
+        if np.all(np.asarray(y) == 0):  # all values are false
+            return False
+        elif np.all(
+            sign != -sign_val
+        ):  # include 0 and +1/-1 gradients. but not gradients of the opposite sign
             return True
         else:
             return False
@@ -1301,6 +1374,7 @@ class GA:
             eff_weight = 1
             curve_normal_score_weight = 1
             rsme_weight = 0.5
+
             fit_score = (
                 iplv_score * iplv_weight
                 + full_eff_score * eff_weight
@@ -1454,9 +1528,7 @@ class GA:
         self.pop = parents
 
     def identify_best_performer(self):
-        """Assign the best individual to the equipment.
-
-        """
+        """Assign the best individual to the equipment."""
         # Re-compute fitness, scaling and grading
         pop_graded = self.fitness_scale_grading(self.pop, scaling=True)
 
