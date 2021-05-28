@@ -42,9 +42,3 @@ def curve_csv_to_json(csv_path, equip_type="chiller"):
     with open(csv_path.replace(".csv", ".json"), "w", encoding="utf-8") as f:
         json.dump(json_c, f, ensure_ascii=False, indent=4)
     return True
-
-
-if __name__ == "__main__":
-    # first argument is the name of the helper function to call
-    # second agrument is the name of the arguments for the function
-    eval('{}("{}")'.format(sys.argv[1], str(sys.argv[2])))
