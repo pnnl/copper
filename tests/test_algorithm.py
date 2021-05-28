@@ -18,12 +18,9 @@ class TestAlgorithm(TestCase):
             compressor_speed="constant",
         )
 
-
         set_of_curves = chlr.generate_set_of_curves(
-            vars=["eir-f-t", "cap-f-t", "eir-f-plr"],
-            method="typical"
+            vars=["eir-f-t", "cap-f-t", "eir-f-plr"], method="typical"
         )
-
 
         res = "Efficiency: {} kW/ton, IPLV: {} kW/ton.".format(
             round(chlr.calc_eff(eff_type="kwpton"), 2),
@@ -31,8 +28,6 @@ class TestAlgorithm(TestCase):
         )
 
         self.assertTrue(res == "Efficiency: 0.65 kW/ton, IPLV: 0.48 kW/ton.")
-
-
 
     def test_gradients(self):
         chlr = cp.Chiller(
@@ -48,9 +43,8 @@ class TestAlgorithm(TestCase):
             condenser_type="water",
             compressor_speed="constant",
         )
-        #chlr.generate_set_of_curves(vars=["eir-f-t", "cap-f-t", "eir-f-plr"],
+        # chlr.generate_set_of_curves(vars=["eir-f-t", "cap-f-t", "eir-f-plr"],
         #                            method="typical")
-
 
         algo = cp.GA(equipment=chlr, method="typical")
         algo.generate_set_of_curves()
@@ -59,11 +53,6 @@ class TestAlgorithm(TestCase):
         self.assertTrue(grad_val == True)
 
 
-
-
-
-
 if __name__ == "__main__":
     algoTest = TestAlgorithm()
     algoTest.test_gradients()
-
