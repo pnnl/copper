@@ -1,3 +1,4 @@
 *.cpython-37.pyc
 /copper/__pycache__/
 dev
+aggregate_test.py
