@@ -10,7 +10,6 @@ This is the core module of Copper. It handles the following:
 - Genetic algorithm
 - Curve library manipulations
 """
-
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
@@ -20,7 +19,7 @@ import json, copy, random, statistics, itertools
 
 class Library:
     def __init__(
-        self, path="./fixtures/chiller_curves.json"
+            self, path="./fixtures/chiller_curves.json"
     ):  # ./fixtures/chiller_curves.json"
 
         self.path = path
@@ -261,19 +260,19 @@ class Library:
 
 class Chiller:
     def __init__(
-        self,
-        ref_cap,
-        ref_cap_unit,
-        full_eff,
-        full_eff_unit,
-        part_eff,
-        part_eff_unit,
-        compressor_type,
-        condenser_type,
-        compressor_speed,
-        set_of_curves="",
-        model="ect_lwt",
-        sim_engine="energyplus",
+            self,
+            ref_cap,
+            ref_cap_unit,
+            full_eff,
+            full_eff_unit,
+            part_eff,
+            part_eff_unit,
+            compressor_type,
+            condenser_type,
+            compressor_speed,
+            set_of_curves="",
+            model="ect_lwt",
+            sim_engine="energyplus",
     ):
         self.type = "chiller"
         self.compressor_type = compressor_type
@@ -290,18 +289,18 @@ class Chiller:
         self.set_of_curves = set_of_curves
 
     def generate_set_of_curves(
-        self,
-        method="typical",
-        pop_size=100,
-        tol=0.005,
-        max_gen=15000,
-        vars="",
-        sFac=0.5,
-        retain=0.2,
-        random_select=0.1,
-        mutate=0.95,
-        bounds=(6, 10),
-        base_curves=[],
+            self,
+            method="typical",
+            pop_size=100,
+            tol=0.005,
+            max_gen=15000,
+            vars="",
+            sFac=0.5,
+            retain=0.2,
+            random_select=0.1,
+            mutate=0.95,
+            bounds=(6, 10),
+            base_curves=[],
     ):
         """Generate a set of curves for a particular Chiller() object.
 
@@ -323,6 +322,9 @@ class Chiller:
         :rtype: SetofCurves()
 
         """
+
+        # TO DO
+        # 1. b
         ga = GA(
             self,
             method,
@@ -402,7 +404,7 @@ class Chiller:
                     eir_f_chw_ect = eir_f_t.evaluate(chw, ect[idx])
                     cap_op = load_ref * cap_f_chw_ect
                     plr = (
-                        load * cap_f_t.evaluate(chw, ect[0]) / cap_op
+                            load * cap_f_t.evaluate(chw, ect[0]) / cap_op
                     )  # Pending EnergyPlus development team review otherwise load / cap_op
                     eir_plr = eir_f_plr.evaluate(plr, dt)
                     # eir = power / load so eir * plr = (power / load) * (load / cap_op)
@@ -414,10 +416,10 @@ class Chiller:
 
                 # Coefficients from AHRI Std 550/590
                 iplv = 1 / (
-                    (0.01 / kwpton_lst[0])
-                    + (0.42 / kwpton_lst[1])
-                    + (0.45 / kwpton_lst[2])
-                    + (0.12 / kwpton_lst[3])
+                        (0.01 / kwpton_lst[0])
+                        + (0.42 / kwpton_lst[1])
+                        + (0.45 / kwpton_lst[2])
+                        + (0.12 / kwpton_lst[3])
                 )
             except:
                 return -999
@@ -438,13 +440,14 @@ class SetsofCurves:
         self.eqp_type = eqp_type
         self.sets_of_curves = sets
 
-    def get_aggregated_set_of_curves(self, method="average", ranges={}, misc_attr={}):
+    def get_aggregated_set_of_curves(self, method="weighted-average", N=None, ranges={}, misc_attr={}):
         """
         Determine sets of curves based on aggregation.
 
         :param string method: Type of aggregation, currently supported: 'average' and 'median.
         :param dict ranges: Dictionary that defines the ranges of values for each independent variable used to calculate aggregated dependent variable values.
         :param dict misc_attr: Dictionary that provides values for the aggregated set of curves.
+        :param N: Number of nearest neighbors to consider for computing weighted average
         :return: Aggregated set of curves.
         :rtype: SetofCurves()
         """
@@ -452,6 +455,14 @@ class SetsofCurves:
         # - the same output variables
         # - of the same type
         # - defined for the same type of units
+
+        # check that the method is valid
+        try:
+            assert method in ["average", "median", "weighted-average", "NN-weighted-average"]
+        except AssertionError as err:
+            err.args = ('Please enter a valid method for aggregation. Currently supported types are '
+                        '"average", "median", "weighted-average", "NN-weighted-average"')
+            raise
 
         "first entry -> refsetofcurves"
         ref_setofcurves = self.sets_of_curves[0].list_to_dict()
@@ -467,6 +478,7 @@ class SetsofCurves:
                         "Curve type in each set of curves are not consistently the same, aggregated set of curves cannot currently be determined."
                     )
                 if not c.out_var in list(ranges.keys()):
+                    print(list(ranges.keyes()))
                     raise ValueError(
                         "Ranges provided do not cover some of the output variables. Ranges: {}, output variables not found in ranges {}.".format(
                             list(ranges.keys()), c.out_var
@@ -517,18 +529,30 @@ class SetsofCurves:
                 y_s = [list(map(lambda x: sum(x) / len(x), zip(*vals)))]
             elif method == "median":
                 y_s = [list(map(lambda x: statistics.median(x), zip(*vals)))]
+            elif method == "weighted-average":
+                df, _ = self.nearest_neighbor_sort(target_attr=misc_attr)
+                y_s = [list(map(lambda x: np.dot(df['score'].values, x), zip(*vals)))]
+            elif method == "NN-weighted-average":
+                # first make sure that the user has specified to pick N values
+                try:
+                    assert N is not None
+                except AssertionError:
+                    print("Need to specify number of nearest neighbors N")
+                df, _ = self.nearest_neighbor_sort(target_attr=misc_attr, N=N)
+                sorted_vals = list(map(vals.__getitem__, df.index.values))
+                y_s = [list(map(lambda x: np.dot(df['score'].values, x), zip(*sorted_vals)))]
 
             data = pd.DataFrame(
                 [
                     list(xs + (y,))
                     for xs, y in zip(
-                        list(
-                            itertools.product(
-                                input_values[var][0], input_values[var][1]
-                            )
-                        ),
-                        y_s[0],
-                    )
+                    list(
+                        itertools.product(
+                            input_values[var][0], input_values[var][1]
+                        )
+                    ),
+                    y_s[0],
+                )
                 ]
             )
             data.columns = ["X1", "X2", "Y"]
@@ -576,6 +600,171 @@ class SetsofCurves:
 
             agg_set_of_curves.curves.append(new_curve)
         return agg_set_of_curves
+
+    def nearest_neighbor_sort(
+            self, target_attr=None, vars=["ref_cap", "ref_eff"], N=None
+    ):
+
+        """
+        :param target_attr: dict containing target attributes we want to match
+        :param vars: list of str containing the variables we want to use to compute our l2 score. note COP will be added
+        :return df: dataframe containing the attribtes of all the set of curve in self.sets_of_curves
+        :return best_idx: int -> index of set_of_curve that should be the closest fit
+        """
+        # TO DO:
+        # [1] wrapper for equipment attributes
+        # [2] Unit Tests for functions created
+        # [3] assert vars is in filters
+
+        # check vars is in the dict keys
+        vars_not_in_dict = self.check_vars_in_dictionary(vars=vars, target_attr=target_attr)
+        try:
+            assert target_attr is not None and not vars_not_in_dict
+        except AssertionError as err:
+            err.args = ('The following variables not in equipment library: ', vars_not_in_dict)
+            raise
+
+        df_list = []
+        data = {}
+        # this function finds the nearest neighbors based on
+        if target_attr is None:
+            print("Enter valid attributes. Returning Empty DataFrame")
+            df = pd.DataFrame
+            best_idx = None
+        else:
+            for setofcurve in self.sets_of_curves:
+                data["name"] = [setofcurve.name]
+                for var in vars:
+                    data[var] = [setofcurve.__dict__[var]]
+                df_list.append(pd.DataFrame(data))
+            df = pd.concat(df_list)
+            if N is not None:
+                df, target_attr, best_idx = self.normalize_vars(
+                    df=df, target_attr=target_attr, N=N
+                )
+            else:
+                df, target_attr, best_idx = self.normalize_vars(
+                    df=df, target_attr=target_attr
+                )
+            # if N is not None:
+
+            # sort the best items if N is not None
+
+        return df, best_idx
+
+    def get_COP(self, name, eqp_type="chiller"):
+        """
+        method to extract COP from name
+        :param name: str -> SetofCurves['name']
+        :return: int -> COP
+        """
+        if eqp_type == "chiller":
+            cop_str = name.split("/")[-2]
+            cop = cop_str[:-3]
+            cop = float(cop)
+        else:
+            cop = None
+            print("Only chiller supported till now")
+
+        return cop
+
+    def normalize_vars(
+            self,
+            df,
+            target_attr=None,
+            vars=["ref_cap", "ref_eff"],
+            epsilon=0.00001,
+            weights=None,
+            N=None
+    ):
+
+        """
+        :param df: df -> input dataframe containing the variable inputs
+        :param target_attr: dict -> reference targets with respect to which l2 score needs to computed
+        :param vars: list -> list of str for variables we want to normalize
+        :param: weights: list -> weights associated with each variable in vars
+        :param: N: Number of nearest neighbors. should be none unless method = "NN-weighted-average"
+        :return: df: df with added columns with normalized variables
+        :return target_attr: dict -> added normalized values of var in vars
+        :return best_curve_index: int -> corresponding to the best curve
+        """
+
+        # compute weights if weights are None
+        if weights is None:
+            weights = [(1.0) / len(vars) for var in vars]
+
+        for var in vars:
+            # find the normalized
+            var_name = var + "_norm"
+            df[var_name] = (df[var] - df[var].mean()) / (df[var].std() + epsilon)
+
+            if target_attr is not None and var in target_attr.keys():
+                target_attr[var_name] = (target_attr[var] - df[var].mean()) / (
+                        df[var].std() + epsilon
+                )
+            else:
+                print(
+                    "Please enter valid target_attr. Also the variable name must be in dictionary"
+                )
+                target_attr[var_name] = None
+
+        # compute the l2 norm
+        x = -self.l2_norm(df=df, target_attr=target_attr, weights=weights)
+
+        if N is not None:
+            df['score'] = x
+            # sofrt and pick best N value
+            df = df.reset_index(drop=True)
+            df = df.sort_values(by="score", ascending=False)
+            df = df.iloc[:N]
+            df['score'] = self.softmax(df['score'])
+        else:
+            df['score'] = self.softmax(x)
+            df = df.reset_index(drop=True)
+
+        best_curve_idx = df.iloc[0].index
+
+        return df, target_attr, best_curve_idx
+
+    def l2_norm(
+            self,
+            df,
+            target_attr,
+            weights,
+            vars=["ref_eff", "ref_cap"],
+    ):
+
+        """
+        :param df: df -> dataframe containing the attributes of different equipments for a givne equipment type
+        :param target_attr: dict -> contains the target attribute we want to find the closest match
+        :param weights: list/np.array -> 1D list of weights. must have the same dimensions as vars
+        :param vars: list -> list of str containing variable names we want to compute l2 norm with
+        :return Y: np.array -> l2 scores for all equiplemts/curves. same dimension as the size of df
+        """
+
+        # get string for normalized variables
+        norm_vars = [var + "_norm" for var in vars]
+        ref_data = [target_attr[var] for var in norm_vars]
+        # convert to a numpy array
+        data = df[norm_vars].values
+
+        # to get the output, multiple l2 distance with weighted
+        Y = np.matmul(np.sqrt((data - ref_data) ** 2), weights)
+
+        return Y
+
+    def softmax(self, x):
+
+        return np.exp(x) / np.sum(np.exp(x), axis=0)
+
+    def check_vars_in_dictionary(self, vars, target_attr):
+        not_in_dict = []
+
+        for var in vars:
+            if var not in target_attr.keys():
+                not_in_dict.append(var)
+
+        return not_in_dict
 
 
 class SetofCurves:
@@ -887,26 +1076,26 @@ class Curve:
 
         if self.type == "bi_quad":
             out = (
-                self.coeff1
-                + self.coeff2 * x
-                + self.coeff3 * x ** 2
-                + self.coeff4 * y
-                + self.coeff5 * y ** 2
-                + self.coeff6 * x * y
+                    self.coeff1
+                    + self.coeff2 * x
+                    + self.coeff3 * x ** 2
+                    + self.coeff4 * y
+                    + self.coeff5 * y ** 2
+                    + self.coeff6 * x * y
             )
             return min(max(out, self.out_min), self.out_max)
         if self.type == "bi_cub":
             out = (
-                self.coeff1
-                + self.coeff2 * x
-                + self.coeff3 * x ** 2
-                + self.coeff4 * y
-                + self.coeff5 * y ** 2
-                + self.coeff6 * x * y
-                + self.coeff7 * x ** 3
-                + self.coeff8 * y ** 3
-                + self.coeff9 * y * x ** 2
-                + self.coeff10 * x * y ** 2
+                    self.coeff1
+                    + self.coeff2 * x
+                    + self.coeff3 * x ** 2
+                    + self.coeff4 * y
+                    + self.coeff5 * y ** 2
+                    + self.coeff6 * x * y
+                    + self.coeff7 * x ** 3
+                    + self.coeff8 * y ** 3
+                    + self.coeff9 * y * x ** 2
+                    + self.coeff10 * x * y ** 2
             )
             return min(max(out, self.out_min), self.out_max)
         if self.type == "quad":
@@ -986,13 +1175,17 @@ class Curve:
         """
         data["Y"] = data.apply(
             lambda row: self.evaluate(row["X1"], row["X2"])
-            / self.evaluate(x_norm, y_norm),
+                        / self.evaluate(x_norm, y_norm),
             axis=1,
         )
         self.regression(data)
 
 
 class Unit:
+
+    #TO DO:
+    #[1] unit conversion for a given eqp type -> homogenize
+
     def __init__(self, value, unit):
         self.value = value
         self.unit = unit
@@ -1042,19 +1235,19 @@ class Unit:
 
 class GA:
     def __init__(
-        self,
-        equipment,
-        method="typical",
-        pop_size=100,
-        tol=0.005,
-        max_gen=15000,
-        vars="",
-        sFac=0.5,
-        retain=0.2,
-        random_select=0.1,
-        mutate=0.95,
-        bounds=(6, 10),
-        base_curves=[],
+            self,
+            equipment,
+            method="typical",
+            pop_size=100,
+            tol=0.005,
+            max_gen=15000,
+            vars="",
+            sFac=0.5,
+            retain=0.2,
+            random_select=0.1,
+            mutate=0.95,
+            bounds=(6, 10),
+            base_curves=[],
     ):
         self.equipment = equipment
         self.method = method
@@ -1100,6 +1293,7 @@ class GA:
                 # Define chiller properties
                 filters = [
                     ("eqp_type", self.equipment.type),
+                    ("comp_type", self.equipment.compressor_type),
                     ("comp_type", self.equipment.compressor_type),
                     ("cond_type", self.equipment.condenser_type),
                     ("comp_speed", self.equipment.compressor_speed),
@@ -1160,7 +1354,7 @@ class GA:
                 cap_rating = 0
                 if "cap-f-t" in self.vars:
                     for (
-                        c
+                            c
                     ) in self.equipment.set_of_curves:  # list of objects  # c in curves
                         # set_of_curves
                         if "cap" in c.out_var:
@@ -1171,13 +1365,13 @@ class GA:
             raise ValueError("This type of equipment has not yet been implemented.")
 
         if (
-            (part_rating < self.target * (1 + self.tol))
-            and (part_rating > self.target * (1 - self.tol))
-            and (full_rating < self.full_eff * (1 + self.tol))
-            and (full_rating > self.full_eff * (1 - self.tol))
-            and (cap_rating < self.tol)
-            and (cap_rating > -self.tol)
-            and self.check_gradients()
+                (part_rating < self.target * (1 + self.tol))
+                and (part_rating > self.target * (1 - self.tol))
+                and (full_rating < self.full_eff * (1 + self.tol))
+                and (full_rating > self.full_eff * (1 - self.tol))
+                and (cap_rating < self.tol)
+                and (cap_rating > -self.tol)
+                and self.check_gradients()
         ):
             return True
         else:
@@ -1228,13 +1422,13 @@ class GA:
         )  # add a small number to get rid of very small negative values
         grad[
             np.abs(grad) <= threshold
-        ] = 0  # making sure that small gradients are set to zero to avoid
+            ] = 0  # making sure that small gradients are set to zero to avoid
         sign = np.sign(grad)
 
         if np.all(np.asarray(y) == 0):  # all values are false
             return False
         elif np.all(
-            sign != -sign_val
+                sign != -sign_val
         ):  # include 0 and +1/-1 gradients. but not gradients of the opposite sign
             return True
         else:
@@ -1265,6 +1459,7 @@ class GA:
                 random.randrange(-99999, 99999)
                 / 10 ** (random.randint(self.bounds[0], self.bounds[1]))
             )
+
             if val != 0:
                 return val
 
@@ -1375,16 +1570,16 @@ class GA:
             rsme_weight = 0.5
 
             fit_score = (
-                iplv_score * iplv_weight
-                + full_eff_score * eff_weight
-                + curve_normal_score * curve_normal_score_weight
-                + rsme * rsme_weight
-            ) / (
-                iplv_weight
-                + eff_weight
-                + curve_normal_score_weight * len(set_of_curves.curves)
-                + rsme_weight
-            )
+                                iplv_score * iplv_weight
+                                + full_eff_score * eff_weight
+                                + curve_normal_score * curve_normal_score_weight
+                                + rsme * rsme_weight
+                        ) / (
+                                iplv_weight
+                                + eff_weight
+                                + curve_normal_score_weight * len(set_of_curves.curves)
+                                + rsme_weight
+                        )
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
 
