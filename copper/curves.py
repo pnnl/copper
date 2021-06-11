@@ -9,7 +9,9 @@ class SetsofCurves:
         self.eqp_type = eqp_type
         self.sets_of_curves = sets
 
-    def get_aggregated_set_of_curves(self, method="average", ranges={}, misc_attr={}):
+    def get_aggregated_set_of_curves(
+        self, method="weighted-average", N=None, ranges={}, misc_attr={}
+    ):
         """
         Determine sets of curves based on aggregation.
 
@@ -88,6 +90,22 @@ class SetsofCurves:
                 y_s = [list(map(lambda x: sum(x) / len(x), zip(*vals)))]
             elif method == "median":
                 y_s = [list(map(lambda x: statistics.median(x), zip(*vals)))]
+            elif method == "weighted-average":
+                df, _ = self.nearest_neighbor_sort(target_attr=misc_attr)
+                y_s = [list(map(lambda x: np.dot(df["score"].values, x), zip(*vals)))]
+            elif method == "NN-weighted-average":
+                # first make sure that the user has specified to pick N values
+                try:
+                    assert N is not None
+                except AssertionError:
+                    print("Need to specify number of nearest neighbors N")
+                df, _ = self.nearest_neighbor_sort(target_attr=misc_attr, N=N)
+                sorted_vals = list(map(vals.__getitem__, df.index.values))
+                y_s = [
+                    list(
+                        map(lambda x: np.dot(df["score"].values, x), zip(*sorted_vals))
+                    )
+                ]
 
             data = pd.DataFrame(
                 [
@@ -147,6 +165,159 @@ class SetsofCurves:
 
             agg_set_of_curves.curves.append(new_curve)
         return agg_set_of_curves
+
+    def nearest_neighbor_sort(
+        self, target_attr=None, vars=["ref_cap", "ref_eff"], N=None
+    ):
+
+        """
+        :param target_attr: dict -> target attributes we want to match
+        :param vars: list of str -> the variables we want to use to compute our l2 score. note COP will be added
+        :param N: int -> indicates the number of nearest neighbors to consider. N=None for weighted-average
+        :return best_idx: int -> index of set_of_curve that should be the closest fit
+        """
+
+        if target_attr is None:
+            raise ValueError("target_attr cannot be None. Enter valid attributes")
+
+        vars_not_in_dict = self.check_vars_in_dictionary(
+            vars=vars, target_attr=target_attr
+        )
+
+        try:
+            assert not vars_not_in_dict
+        except AssertionError as err:
+            err.args = (
+                "The following variables not in equipment library: ",
+                vars_not_in_dict,
+            )
+            raise
+
+        df_list = []
+        data = {}
+
+        if target_attr is None:
+            print("Enter valid attributes. Returning Empty DataFrame")
+            df = pd.DataFrame
+            best_idx = None
+        else:
+            for setofcurve in self.sets_of_curves:
+                data["name"] = [setofcurve.name]
+                for var in vars:
+                    data[var] = [setofcurve.__dict__[var]]
+                df_list.append(pd.DataFrame(data))
+            df = pd.concat(df_list)
+            if N is not None:
+                df, target_attr, best_idx = self.normalize_vars(
+                    df=df, target_attr=target_attr, N=N
+                )
+            else:
+                df, target_attr, best_idx = self.normalize_vars(
+                    df=df, target_attr=target_attr
+                )
+
+        return df, best_idx
+
+    def normalize_vars(
+        self,
+        df,
+        target_attr=None,
+        vars=["ref_cap", "ref_eff"],
+        epsilon=0.00001,
+        weights=None,
+        N=None,
+    ):
+
+        """
+        :param df: df -> input dataframe containing the variable inputs
+        :param target_attr: dict -> reference targets with respect to which l2 score needs to computed
+        :param vars: list -> list of str for variables we want to normalize
+        :param: weights: list -> weights associated with each variable in vars
+        :param: N: Number of nearest neighbors. should be none unless method = "NN-weighted-average"
+        :return: df: df with added columns with normalized variables
+        :return target_attr: dict -> added normalized values of var in vars
+        :return best_curve_index: int -> corresponding to the best curve
+        """
+
+        # compute weights if weights are None
+        if weights is None:
+            weights = [(1.0) / len(vars) for var in vars]
+
+        for var in vars:
+            var_name = var + "_norm"
+            df[var_name] = (df[var] - df[var].mean()) / (df[var].std() + epsilon)
+
+            if target_attr is not None and var in target_attr.keys():
+                target_attr[var_name] = (target_attr[var] - df[var].mean()) / (
+                    df[var].std() + epsilon
+                )
+            else:
+                print(
+                    "Please enter valid target_attr. Also the variable name must be in dictionary"
+                )
+                target_attr[var_name] = None
+
+        # compute the l2 norm
+        x = -self.l2_norm(df=df, target_attr=target_attr, weights=weights)
+
+        if N is not None:
+            df["score"] = x
+            # first sort and pick top N candidate
+            df = df.reset_index(drop=True)
+            df = df.sort_values(by="score", ascending=False)
+            df = df.iloc[:N]
+            df["score"] = self.softmax(df["score"])
+        else:
+            df["score"] = self.softmax(x)
+            df = df.reset_index(drop=True)
+
+        best_curve_idx = df.index.values[np.argmax(df["score"].values)]
+
+        return df, target_attr, best_curve_idx
+
+    def l2_norm(
+        self,
+        df,
+        target_attr,
+        weights,
+        vars=["ref_eff", "ref_cap"],
+    ):
+
+        """
+        :param df: df -> dataframe containing the attributes of different equipments for a givne equipment type
+        :param target_attr: dict -> contains the target attribute we want to find the closest match
+        :param weights: list/np.array -> 1D list of weights. must have the same dimensions as vars
+        :param vars: list -> list of str containing variable names we want to compute l2 norm with
+        :return Y: np.array -> l2 scores for all equiplemts/curves. same dimension as the size of df
+        """
+
+        norm_vars = [var + "_norm" for var in vars]
+        ref_data = [target_attr[var] for var in norm_vars]
+        data = df[norm_vars].values
+        Y = np.matmul(np.sqrt((data - ref_data) ** 2), weights)
+
+        return Y
+
+    def softmax(self, x):
+        """
+        softmax function
+        :param x: float -> convert distances to scores/weights using softmax function
+        """
+        return np.exp(x) / np.sum(np.exp(x), axis=0)
+
+    def check_vars_in_dictionary(self, vars, target_attr):
+        """
+        method to check that the vars specified by the user exists in target_attr
+        :param vars: list -> vars to calculate weights with, as specified by the user
+        :param target_attr: list -> target attributes
+        :return not_in_dict: list -> list of vars not in target_attr
+        """
+        not_in_dict = []
+        for var in vars:
+            if var not in target_attr.keys():
+                not_in_dict.append(var)
+
+        return not_in_dict
 
 
 class SetofCurves:
