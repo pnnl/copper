@@ -76,7 +76,3 @@ class TestAggregate(TestCase):
         score = df.loc[[best_idx], ['score']]['score'].values[0]
         self.assertEqual(best_idx, 8)  # the best index for this test is STILL 8
         self.assertEqual(np.round(score, 3), 0.159)
-
-
-if __name__ == "__main__":
-    unittest.main()
