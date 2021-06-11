@@ -461,7 +461,7 @@
                 "coeff9": 0.0,
                 "coeff10": 0.0
             },
-            "eir-f-plr-dt": {
+            "eir-f-plr": {
                 "out_var": "eir-f-plr",
                 "type": "quad",
                 "ref_evap_fluid_flow": null,
