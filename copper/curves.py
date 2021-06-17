@@ -28,8 +28,10 @@ class SetsofCurves:
 
         "first entry -> refsetofcurves"
         ref_setofcurves = self.sets_of_curves[0].list_to_dict()
+        print(ref_setofcurves.keys())
 
         for set_of_curves in self.sets_of_curves:
+            print(set_of_curves.list_to_dict())
             if set(ref_setofcurves.keys()) != set_of_curves.list_to_dict().keys():
                 raise ValueError(
                     "The output variables in each set of curves are not consistently the same, aggregated set of curves cannot currently be determined."
@@ -92,7 +94,12 @@ class SetsofCurves:
                 y_s = [list(map(lambda x: statistics.median(x), zip(*vals)))]
             elif method == "weighted-average":
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr)
-                y_s = [list(map(lambda x: np.dot(df["score"].values, x), zip(*vals)))]
+                sorted_vals = list(map(vals.__getitem__, df.index.values))
+                y_s = [
+                    list(
+                        map(lambda x: np.dot(df["score"].values, x), zip(*sorted_vals))
+                    )
+                ]
             elif method == "NN-weighted-average":
                 # first make sure that the user has specified to pick N values
                 try:
@@ -207,6 +214,17 @@ class SetsofCurves:
                     data[var] = [setofcurve.__dict__[var]]
                 df_list.append(pd.DataFrame(data))
             df = pd.concat(df_list)
+
+            #check if there is only a single curve.
+            #in that case, we select that curve, even if there ar NaN values
+            if len(df) == 1 and len(df.dropna())==0:
+                for var in vars:
+                    df[var] = target_attr[var]
+            else:
+                df = df.dropna()
+
+            assert len(df) > 0
+
             if N is not None:
                 df, target_attr, best_idx = self.normalize_vars(
                     df=df, target_attr=target_attr, N=N
@@ -239,13 +257,15 @@ class SetsofCurves:
         :return best_curve_index: int -> corresponding to the best curve
         """
 
-        # compute weights if weights are None
         if weights is None:
             weights = [(1.0) / len(vars) for var in vars]
 
         for var in vars:
             var_name = var + "_norm"
-            df[var_name] = (df[var] - df[var].mean()) / (df[var].std() + epsilon)
+            if len(df) == 1:
+                df[var_name] = 1
+            else:
+                df[var_name] = (df[var] - df[var].mean()) / (df[var].std() + epsilon)
 
             if target_attr is not None and var in target_attr.keys():
                 target_attr[var_name] = (target_attr[var] - df[var].mean()) / (
@@ -260,7 +280,9 @@ class SetsofCurves:
         # compute the l2 norm
         x = -self.l2_norm(df=df, target_attr=target_attr, weights=weights)
 
-        if N is not None:
+        if len(df) == 1:
+            df['score'] = 1
+        elif N is not None:
             df["score"] = x
             # first sort and pick top N candidate
             df = df.reset_index(drop=True)
@@ -308,7 +330,7 @@ class SetsofCurves:
     def check_vars_in_dictionary(self, vars, target_attr):
         """
         method to check that the vars specified by the user exists in target_attr
-        :param vars: list -> vars to calculate weights with, as specified by the user
+        :param vars: list -> vars to calculate weights with, as specified by the use
         :param target_attr: list -> target attributes
         :return not_in_dict: list -> list of vars not in target_attr
         """
