@@ -458,6 +458,8 @@ class GA:
                     if c.out_var in self.vars or len(self.vars) == 0:
                         if c.type == "quad":
                             positions = [[1], [2, 3]]  # cst  # x^?
+                        elif c.type == "cubic":
+                            positions = [[1], [2, 3, 4]]  # cst  # x^?
                         elif c.type == "bi_quad":
                             positions = [
                                 [1],  # cst
