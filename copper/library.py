@@ -1,15 +1,58 @@
-import json
+import json, inspect
 from copper.units import *
 from copper.curves import *
+import copper.chiller
 
 
 class Library:
-    def __init__(
-        self, path="./fixtures/chiller_curves.json"
-    ):  # ./fixtures/chiller_curves.json"
-
+    def __init__(self, path="./fixtures/chiller_curves.json"):
         self.path = path
+
+        # Load library
         self.data = json.loads(open(self.path, "r").read())
+
+        # Calculate part load efficiency for each item in the library
+        for item, vals in self.data.items():
+
+            # Cannot calculate the part load efficiency
+            # if full load efficiency is not specified
+            if not vals["full_eff"] is None:
+
+                # Get equipment properties
+                props = inspect.getfullargspec(
+                    eval("copper." + vals["eqp_type"]).__init__
+                )[0]
+                props.remove("self")
+
+                # Set the equipment properties
+                # using values from the library
+                obj_args = {}
+                for p in props:
+                    if not "part_eff" in p and not "set_of_curves" in p:
+                        obj_args[p] = vals[p]
+
+                # Temporarily set the part load efficiency to the
+                # full load efficiency, units are assumed to be
+                # the same
+                obj_args["part_eff_unit"] = vals["full_eff_unit"]
+                obj_args["part_eff"] = vals["full_eff"]
+
+                # Retrieve curves for library item
+                obj_args["set_of_curves"] = self.get_set_of_curves_by_name(
+                    vals["name"]
+                ).curves
+
+                # Create instance of the equipment
+                obj = eval("copper." + vals["eqp_type"])(**obj_args)
+
+                # Compute part load efficiency
+                part_eff = obj.calc_eff(eff_type="part", unit=vals["full_eff_unit"])
+
+                # Set part load efficiency if
+                # the calculation was sucessful
+                if part_eff > -999:
+                    vals["part_eff"] = part_eff
+                    vals["part_eff_unit"] = vals["full_eff_unit"]
 
     def content(self):
         return self.data
@@ -25,7 +68,7 @@ class Library:
         uni_field_val = {}
         for _, eqp_f in self.data.items():
             for field, val in eqp_f.items():
-                if field != "curves" and field != "name":
+                if field != "set_of_curves" and field != "name":
                     # Check if field has already been added
                     if field not in uni_field_val.keys():
                         uni_field_val[field] = [val]
@@ -65,7 +108,7 @@ class Library:
 
             # Create new SetofCurves and Curve objects for all the
             # sets of curves identified as matching the filters
-            for c in self.data[name]["curves"]:
+            for c in self.data[name]["set_of_curves"]:
                 c_lst.append(
                     self.get_curve(
                         c, self.data[name], eqp_type=self.data[name]["eqp_type"]
@@ -132,7 +175,7 @@ class Library:
         c_lst = []
         # Define curve objects
         try:
-            for c in self.data[name]["curves"]:
+            for c in self.data[name]["set_of_curves"]:
                 c_lst.append(
                     self.get_curve(
                         c, self.data[name], eqp_type=self.data[name]["eqp_type"]
@@ -155,7 +198,7 @@ class Library:
 
         """
         # Curve properties
-        c_prop = c_name["curves"][c]
+        c_prop = c_name["set_of_curves"][c]
         # Initialize curve object
         c_obj = Curve(eqp_type, c_prop["type"])
         c_obj.out_var = c
@@ -171,7 +214,7 @@ class Library:
         """Find an existing equipment curve that best matches the equipment.
 
         :param list(tuple()) filters: Filter represented by tuples (field, val)
-        :param eqp: Equipment object(e.g. Chiller())
+        :param eqp: Equipment object(e.g. chiller())
         :return: Set of curves object
         :rtype: SetofCurves()
 
@@ -197,7 +240,7 @@ class Library:
     def get_best_match(self, eqp, matches):
         """Find the set of curves matching the equipment characteristics the best.
 
-        :param eqp: Equipment object(e.g. Chiller())
+        :param eqp: Equipment object(e.g. chiller())
         :param dict[str,dict[]] matches: All potential matches
         :return: Name of the set of curves that best matches the equipment characteristics
         :rtype: str
@@ -213,8 +256,8 @@ class Library:
             if eqp.type == "chiller":
                 cap = val["ref_cap"]
                 cap_unit = val["ref_cap_unit"]
-                eff = val["ref_eff"]
-                eff_unit = matches[name]["ref_eff_unit"]
+                eff = val["full_eff"]
+                eff_unit = matches[name]["full_eff_unit"]
 
                 if not cap is None:
                     # Capacity conversion

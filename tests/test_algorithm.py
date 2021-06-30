@@ -4,7 +4,7 @@ import copper as cp
 
 class TestAlgorithm(TestCase):
     def test_tutorial(self):
-        chlr = cp.Chiller(
+        chlr = cp.chiller(
             ref_cap=300,
             ref_cap_unit="ton",
             full_eff=0.650,
@@ -23,14 +23,14 @@ class TestAlgorithm(TestCase):
         )
 
         res = "Efficiency: {} kW/ton, IPLV: {} kW/ton.".format(
-            round(chlr.calc_eff(eff_type="kwpton"), 2),
-            round(chlr.calc_eff(eff_type="iplv"), 2),
+            round(chlr.calc_eff(eff_type="full"), 2),
+            round(chlr.calc_eff(eff_type="part"), 2),
         )
 
         self.assertTrue(res == "Efficiency: 0.65 kW/ton, IPLV: 0.48 kW/ton.")
 
     def test_gradients(self):
-        chlr = cp.Chiller(
+        chlr = cp.chiller(
             ref_cap=300,
             ref_cap_unit="ton",
             full_eff=0.650,
@@ -49,4 +49,3 @@ class TestAlgorithm(TestCase):
 
         grad_val = algo.check_gradients()
         self.assertTrue(grad_val == True)
-

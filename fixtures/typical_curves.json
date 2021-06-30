@@ -7,16 +7,16 @@
         "validity": 1.0,
         "ref_cap": null,
         "ref_cap_unit": "ton",
-        "ref_eff": 5.5,
-        "ref_eff_unit": "cop",
-        "comp_type": "centrifugal",
-        "cond_type": "water",
-        "comp_speed": "constant",
+        "full_eff": 5.5,
+        "full_eff_unit": "cop",
+        "compressor_type": "centrifugal",
+        "condenser_type": "water",
+        "compressor_speed": "constant",
         "sim_engine": "energyplus",
         "min_plr": 0.1,
         "min_unloading": 0.2,
         "max_plr": 1.0,
-        "curves": {
+        "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
                 "type": "bi_quad",

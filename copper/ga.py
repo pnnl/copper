@@ -1,3 +1,7 @@
+import warnings
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
@@ -68,9 +72,9 @@ class GA:
                 # Define chiller properties
                 filters = [
                     ("eqp_type", self.equipment.type),
-                    ("comp_type", self.equipment.compressor_type),
-                    ("cond_type", self.equipment.condenser_type),
-                    ("comp_speed", self.equipment.compressor_speed),
+                    ("compressor_type", self.equipment.compressor_type),
+                    ("condenser_type", self.equipment.condenser_type),
+                    ("compressor_speed", self.equipment.compressor_speed),
                     ("sim_engine", self.equipment.sim_engine),
                     ("model", self.equipment.model),
                 ]
@@ -110,7 +114,7 @@ class GA:
             self.evolve_population(self.pop)
             gen += 1
             # For debugging
-            # print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="iplv"),2), round(self.equipment.calc_eff(eff_type="kwpton"),2)))
+            # print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="part"),2), round(self.equipment.calc_eff(eff_type="full"),2)))
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 
@@ -123,8 +127,8 @@ class GA:
         """
         if self.equipment.type == "chiller":
             if self.equipment.set_of_curves != "":
-                part_rating = self.equipment.calc_eff(eff_type="iplv")
-                full_rating = self.equipment.calc_eff(eff_type="kwpton")
+                part_rating = self.equipment.calc_eff(eff_type="part")
+                full_rating = self.equipment.calc_eff(eff_type="full")
                 cap_rating = 0
                 if "cap-f-t" in self.vars:
                     for (
@@ -334,9 +338,9 @@ class GA:
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
 
         if self.equipment.type == "chiller":
-            iplv_score = abs(self.equipment.calc_eff(eff_type="iplv") - self.target)
+            iplv_score = abs(self.equipment.calc_eff(eff_type="part") - self.target)
             full_eff_score = abs(
-                self.equipment.calc_eff(eff_type="kwpton") - self.equipment.full_eff
+                self.equipment.calc_eff(eff_type="full") - self.equipment.full_eff
             )
             iplv_weight = 1
             eff_weight = 1

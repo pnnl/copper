@@ -25,7 +25,7 @@ class TestCurves(TestCase):
             ("eqp_type", "chiller"),
             ("sim_engine", "energyplus"),
             ("model", "ect_lwt"),
-            ("cond_type", "air"),
+            ("condenser_type", "air"),
             ("source", "EnergyPlus chiller dataset"),
         ]
 
