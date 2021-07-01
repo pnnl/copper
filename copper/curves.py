@@ -28,19 +28,18 @@ class SetsofCurves:
 
         "first entry -> refsetofcurves"
         ref_setofcurves = self.sets_of_curves[0].list_to_dict()
-        print(ref_setofcurves.keys())
-
+        avail_types = {}
         for set_of_curves in self.sets_of_curves:
-            print(set_of_curves.list_to_dict())
             if set(ref_setofcurves.keys()) != set_of_curves.list_to_dict().keys():
                 raise ValueError(
                     "The output variables in each set of curves are not consistently the same, aggregated set of curves cannot currently be determined."
                 )
+            # Retrieve type curve types used for each output variables
             for c in set_of_curves.curves:
-                if c.type != ref_setofcurves[c.out_var].type:
-                    raise ValueError(
-                        "Curve type in each set of curves are not consistently the same, aggregated set of curves cannot currently be determined."
-                    )
+                if c.out_var in avail_types.keys():
+                    avail_types[c.out_var].append(c.type)
+                else:
+                    avail_types[c.out_var] = [c.type]
                 if not c.out_var in list(ranges.keys()):
                     raise ValueError(
                         "Ranges provided do not cover some of the output variables. Ranges: {}, output variables not found in ranges {}.".format(
@@ -94,12 +93,7 @@ class SetsofCurves:
                 y_s = [list(map(lambda x: statistics.median(x), zip(*vals)))]
             elif method == "weighted-average":
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr)
-                sorted_vals = list(map(vals.__getitem__, df.index.values))
-                y_s = [
-                    list(
-                        map(lambda x: np.dot(df["score"].values, x), zip(*sorted_vals))
-                    )
-                ]
+                y_s = [list(map(lambda x: np.dot(df["score"].values, x), zip(*vals)))]
             elif method == "NN-weighted-average":
                 # first make sure that the user has specified to pick N values
                 try:
@@ -130,7 +124,7 @@ class SetsofCurves:
             data.columns = ["X1", "X2", "Y"]
 
             # Create new curve
-            new_curve = Curve(eqp_type=self.eqp_type, c_type=ref_setofcurves[var].type)
+            new_curve = Curve(eqp_type=self.eqp_type, c_type="") # curve type is set later on
 
             # Assign curve attributes, assume no min/max
             # TODO: Allow min/max to be passed by user
@@ -165,7 +159,7 @@ class SetsofCurves:
                     raise ValueError("Algorithm not supported.")
 
             # Find curves coefficients
-            new_curve.regression(data)
+            new_curve.regression(data, list(set(avail_types[new_curve.out_var])))
 
             # Normalize curve to reference point
             new_curve.normalized(data, ref_x, ref_y)
@@ -215,9 +209,9 @@ class SetsofCurves:
                 df_list.append(pd.DataFrame(data))
             df = pd.concat(df_list)
 
-            #check if there is only a single curve.
-            #in that case, we select that curve, even if there ar NaN values
-            if len(df) == 1 and len(df.dropna())==0:
+            # check if there is only a single curve.
+            # in that case, we select that curve, even if there ar NaN values
+            if len(df) == 1 and len(df.dropna()) == 0:
                 for var in vars:
                     df[var] = target_attr[var]
             else:
@@ -269,7 +263,7 @@ class SetsofCurves:
 
             if target_attr is not None and var in target_attr.keys():
                 target_attr[var_name] = (target_attr[var] - df[var].mean()) / (
-                    df[var].std() + epsilon
+                        df[var].std() + epsilon
                 )
             else:
                 print(
@@ -330,7 +324,7 @@ class SetsofCurves:
     def check_vars_in_dictionary(self, vars, target_attr):
         """
         method to check that the vars specified by the user exists in target_attr
-        :param vars: list -> vars to calculate weights with, as specified by the use
+        :param vars: list -> vars to calculate weights with, as specified by the user
         :param target_attr: list -> target attributes
         :return not_in_dict: list -> list of vars not in target_attr
         """
@@ -596,6 +590,11 @@ class Curve:
             self.coeff1 = 0
             self.coeff2 = 0
             self.coeff3 = 0
+        elif self.type == "cubic":
+            self.coeff1 = 0
+            self.coeff2 = 0
+            self.coeff3 = 0
+            self.coeff4 = 0
         elif self.type == "bi_quad":
             self.coeff1 = 0
             self.coeff2 = 0
@@ -676,6 +675,9 @@ class Curve:
         if self.type == "quad":
             out = self.coeff1 + self.coeff2 * x + self.coeff3 * x ** 2
             return min(max(out, self.out_min), self.out_max)
+        if self.type == "cubic":
+            out = self.coeff1 + self.coeff2 * x + self.coeff3 * x ** 2 + self.coeff4 * x ** 3
+            return min(max(out, self.out_min), self.out_max)
 
     def nb_coeffs(self):
         """Find number of curve coefficients.
@@ -690,22 +692,42 @@ class Curve:
                 ids.append(int(key.split("coeff")[-1]))
         return max(ids)
 
-    def regression(self, data):
+    def regression(self, data, curve_types):
         """Find curve coefficient by running a multivariate linear regression.
 
         :param DataFrame() data: DataFrame() object with the following columns: "X1","X1^2","X2","X2^2","X1*X2", "Y"
+        :param list() curve_types: List of curves types
 
         """
-        # TODO: implement bi_cubic
-        if self.type == "quad":
+        # Global R^2
+        r_sqr = 0
+        if "quad" in curve_types:
             data["X1^2"] = data["X1"] * data["X1"]
             X = data[["X1", "X1^2"]]
             y = data["Y"]
 
             X = sm.add_constant(X)
             model = sm.OLS(y, X).fit()
-            self.coeff1, self.coeff2, self.coeff3 = model.params
-        elif self.type == "bi_quad":
+            reg_r_sqr = model.rsquared
+            if reg_r_sqr > r_sqr:
+                self.coeff1, self.coeff2, self.coeff3 = model.params
+                self.type = "quad"
+                r_sqr = reg_r_sqr
+                #print("quad: {}".format(r_sqr))
+        if "cubic" in curve_types:
+            data["X1^2"] = data["X1"] * data["X1"]
+            data["X1^3"] = data["X1"] * data["X1"] * data["X1"]
+            X = data[["X1", "X1^2", "X1^3"]]
+            y = data["Y"]
+            X = sm.add_constant(X)
+            model = sm.OLS(y, X).fit()
+            reg_r_sqr = model.rsquared
+            if reg_r_sqr > r_sqr:
+                self.coeff1, self.coeff2, self.coeff3, self.coeff4 = model.params
+                self.type = "cubic"
+                r_sqr = reg_r_sqr
+                print("cub: {}".format(r_sqr))
+        if "bi_quad" in curve_types:
             data["X1^2"] = data["X1"] * data["X1"]
             data["X2^2"] = data["X2"] * data["X2"]
             data["X1*X2"] = data["X1"] * data["X2"]
@@ -715,21 +737,60 @@ class Curve:
 
             X = sm.add_constant(X)
             model = sm.OLS(y, X).fit()
-            (
-                self.coeff1,
-                self.coeff2,
-                self.coeff3,
-                self.coeff4,
-                self.coeff5,
-                self.coeff6,
-            ) = model.params
-            r_sqr = model.rsquared
-            if r_sqr < 0.8:
+            reg_r_sqr = model.rsquared
+            if reg_r_sqr < 0.8:
                 print(
                     "Performance of the regression for {} is poor, r2: {}".format(
                         self.out_var, round(r_sqr, 2)
                     )
                 )
+            if reg_r_sqr > r_sqr:
+                (
+                    self.coeff1,
+                    self.coeff2,
+                    self.coeff3,
+                    self.coeff4,
+                    self.coeff5,
+                    self.coeff6,
+                ) = model.params
+                self.type = "bi_quad"
+                r_sqr = reg_r_sqr
+        if "bi_cub" in curve_types:
+            data["X1^2"] = data["X1"] * data["X1"]
+            data["X1^3"] = data["X1"] * data["X1"] * data["X1"]
+            data["X2^2"] = data["X2"] * data["X2"]
+            data["X2^3"] = data["X2"] * data["X2"] * data["X2"]
+            data["X1*X2"] = data["X1"] * data["X2"]
+            data["X1^2*X2"] = data["X1^2"] * data["X2"]
+            data["X1*X2^2"] = data["X1"] * data["X2^2"]
+
+            X = data[["X1", "X1^2", "X2", "X2^2", "X1*X2", "X1^3", "X2^3", "X1^2*X2", "X1^*X2^2"]]
+            y = data["Y"]
+
+            X = sm.add_constant(X)
+            model = sm.OLS(y, X).fit()
+            reg_r_sqr = model.rsquared
+            if reg_r_sqr < 0.8:
+                print(
+                    "Performance of the regression for {} is poor, r2: {}".format(
+                        self.out_var, round(r_sqr, 2)
+                    )
+                )
+            if reg_r_sqr > r_sqr:
+                (
+                    self.coeff1,
+                    self.coeff2,
+                    self.coeff3,
+                    self.coeff4,
+                    self.coeff5,
+                    self.coeff6,
+                    self.coeff7,
+                    self.coeff8,
+                    self.coeff9,
+                    self.coeff10,
+                ) = model.params
+                self.type = "bi_cub"
+                r_sqr = reg_r_sqr
 
     def get_out_reference(self):
         if "-t" in self.out_var:
@@ -748,9 +809,12 @@ class Curve:
         :param DataFrame() data: DataFrame() object with the following columns: "X1","X1^2","X2","X2^2","X1*X2", "Y".
 
         """
+        # Normalization point
+        norm_out = self.evaluate(x_norm, y_norm)
         data["Y"] = data.apply(
             lambda row: self.evaluate(row["X1"], row["X2"])
-            / self.evaluate(x_norm, y_norm),
+            / norm_out,
             axis=1,
         )
-        self.regression(data)
+
+        self.regression(data, [self.type])

@@ -14,7 +14,7 @@ class GA:
         equipment,
         method="typical",
         pop_size=100,
-        tol=0.02,
+        tol=0.005,
         max_gen=15000,
         vars="",
         sFac=0.5,
@@ -109,8 +109,8 @@ class GA:
         while gen <= self.max_gen and not self.is_target_met():
             self.evolve_population(self.pop)
             gen += 1
-            #For debugging
-            #print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="iplv"),4), round(self.equipment.calc_eff(eff_type="kwpton"),4)))
+            # For debugging
+            # print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="iplv"),2), round(self.equipment.calc_eff(eff_type="kwpton"),2)))
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 
@@ -137,7 +137,6 @@ class GA:
                 return False
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
-
 
         if (
             (part_rating < self.target * (1 + self.tol))
@@ -172,10 +171,9 @@ class GA:
                     else:
                         raise ValueError("this curve output has not been implemented")
 
-                    #check if c_out var is in self.vars
-                    if c.out_var in self.vars:
-                        x, y = self.set_of_base_curves.get_data_for_plotting(c, False)
-                        grad_list.append(self.compute_grad(x=x, y=y, sign_val=sign_val))
+                    x, y = self.set_of_base_curves.get_data_for_plotting(c, False)
+                    grad_list.append(self.compute_grad(x=x, y=y, sign_val=sign_val))
+
                 if np.all(np.asarray(grad_list)):
                     return True
                 else:
@@ -185,7 +183,7 @@ class GA:
         else:
             return False
 
-    def compute_grad(self, x, y, sign_val, threshold=0.15):
+    def compute_grad(self, x, y, sign_val, threshold=1e-5):
 
         """Check, for a single curve, if the gradient has the sign we expect. called by check_gradients.
 
@@ -199,8 +197,8 @@ class GA:
         grad[
             np.abs(grad) <= threshold
         ] = 0  # making sure that small gradients are set to zero to avoid
-    
         sign = np.sign(grad)
+
         if np.all(np.asarray(y) == 0):  # all values are false
             return False
         elif np.all(
@@ -460,6 +458,8 @@ class GA:
                     if c.out_var in self.vars or len(self.vars) == 0:
                         if c.type == "quad":
                             positions = [[1], [2, 3]]  # cst  # x^?
+                        elif c.type == "cubic":
+                            positions = [[1], [2, 3, 4]]  # cst  # x^?
                         elif c.type == "bi_quad":
                             positions = [
                                 [1],  # cst
