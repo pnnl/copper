@@ -1,3 +1,7 @@
+import warnings
+
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
@@ -168,7 +172,7 @@ class SetsofCurves:
         return agg_set_of_curves
 
     def nearest_neighbor_sort(
-        self, target_attr=None, vars=["ref_cap", "ref_eff"], N=None
+        self, target_attr=None, vars=["ref_cap", "full_eff"], N=None
     ):
 
         """
@@ -234,7 +238,7 @@ class SetsofCurves:
         self,
         df,
         target_attr=None,
-        vars=["ref_cap", "ref_eff"],
+        vars=["ref_cap", "full_eff"],
         epsilon=0.00001,
         weights=None,
         N=None,
@@ -291,13 +295,7 @@ class SetsofCurves:
 
         return df, target_attr, best_curve_idx
 
-    def l2_norm(
-        self,
-        df,
-        target_attr,
-        weights,
-        vars=["ref_eff", "ref_cap"],
-    ):
+    def l2_norm(self, df, target_attr, weights, vars=["full_eff", "ref_cap"]):
 
         """
         :param df: df -> dataframe containing the attributes of different equipments for a givne equipment type
@@ -347,16 +345,16 @@ class SetofCurves:
         if eqp_type == "chiller":
             self.ref_cap = 0
             self.ref_cap_unit = ""
-            self.ref_eff = 0
-            self.ref_eff_unit = ""
-            self.comp_type = ""
-            self.cond_type = ""
-            self.comp_speed = ""
+            self.full_eff = 0
+            self.full_eff_unit = ""
+            self.compressor_type = ""
+            self.condenser_type = ""
+            self.compressor_speed = ""
             self.sim_engine = ""
             self.min_plr = 0
             self.min_unloading = 0
             self.max_plr = 0
-            if self.cond_type == "water":
+            if self.condenser_type == "water":
                 self.plotting_range = {
                     "eir-f-t": {
                         "x1_min": 6.67,
