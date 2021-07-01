@@ -53,6 +53,11 @@ class Library:
                 if part_eff > -999:
                     vals["part_eff"] = part_eff
                     vals["part_eff_unit"] = vals["full_eff_unit"]
+                else:
+                    if "part_eff" in vals.keys():
+                        del vals["part_eff"]
+                    if "part_eff_unit" in vals.keys():
+                        del vals["part_eff_unit"]
 
     def content(self):
         return self.data
