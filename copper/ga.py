@@ -14,7 +14,7 @@ class GA:
         equipment,
         method="typical",
         pop_size=100,
-        tol=0.005,
+        tol=0.06,
         max_gen=15000,
         vars="",
         sFac=0.5,
@@ -110,7 +110,7 @@ class GA:
             self.evolve_population(self.pop)
             gen += 1
             # For debugging
-            # print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="iplv"),2), round(self.equipment.calc_eff(eff_type="kwpton"),2)))
+            print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="iplv"),2), round(self.equipment.calc_eff(eff_type="kwpton"),2)))
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 
@@ -138,6 +138,23 @@ class GA:
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
 
+
+        #debugging
+        print('Condition 1: ', (part_rating < self.target * (1 + self.tol)))
+        print('Condition 2: ', (part_rating > self.target * (1 - self.tol)))
+        print('Condition 3: ', (full_rating < self.full_eff * (1 + self.tol)))
+        print(full_rating, self.full_eff, self.full_eff * (1 + self.tol))
+        print('Condition 4: ', (full_rating > self.full_eff * (1 - self.tol)))
+        print('Condition 5: ', (cap_rating < self.tol))
+        print('Condition 6: ', (cap_rating > -self.tol))
+        print('---Final condition-----')
+        print((part_rating < self.target * (1 + self.tol))
+            and (part_rating > self.target * (1 - self.tol))
+            and (full_rating < self.full_eff * (1 + self.tol))
+            and (full_rating > self.full_eff * (1 - self.tol))
+            and (cap_rating < self.tol)
+            and (cap_rating > -self.tol))
+
         if (
             (part_rating < self.target * (1 + self.tol))
             and (part_rating > self.target * (1 - self.tol))
@@ -145,7 +162,7 @@ class GA:
             and (full_rating > self.full_eff * (1 - self.tol))
             and (cap_rating < self.tol)
             and (cap_rating > -self.tol)
-            and self.check_gradients()
+            #and self.check_gradients()
         ):
             return True
         else:
