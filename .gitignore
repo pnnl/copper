@@ -4,3 +4,10 @@ dev
 aggregate_test.py
 test-1.py
 venv
+res
+*.svg
+/copper/*.pyc
+*.py
+data/
+makefile
+template.txt
