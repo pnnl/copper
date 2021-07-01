@@ -16,7 +16,7 @@ class Units:
                 return 12.0 / (self.value * 3.412)
             elif self.unit == "kw/ton":
                 return self.value
-            elif self.unit == "EER":
+            elif self.unit == "eer":
                 return 12.0 / self.value
             else:
                 return self.value
@@ -25,14 +25,14 @@ class Units:
                 return 12.0 / self.value / 3.412
             elif self.unit == "cop":
                 return self.value
-            elif self.unit == "EER":
+            elif self.unit == "eer":
                 return self.value / 3.412
             else:
                 return self.value
-        elif new_unit == "EER":
+        elif new_unit == "eer":
             if self.unit == "kw/ton":
                 return 12.0 / self.value
-            elif self.unit == "EER":
+            elif self.unit == "eer":
                 return self.value
             elif self.unit == "cop":
                 return 3.412 * self.value
