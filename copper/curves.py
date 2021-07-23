@@ -172,7 +172,7 @@ class SetsofCurves:
         return agg_set_of_curves
 
     def nearest_neighbor_sort(
-        self, target_attr=None, vars=["ref_cap", "full_eff"], N=None
+        self, target_attr=None, vars=["ref_cap", "full_eff", "part_eff"], N=None
     ):
 
         """
@@ -225,11 +225,11 @@ class SetsofCurves:
 
             if N is not None:
                 df, target_attr, best_idx = self.normalize_vars(
-                    df=df, target_attr=target_attr, N=N
+                    df=df, target_attr=target_attr, N=N, vars=vars
                 )
             else:
                 df, target_attr, best_idx = self.normalize_vars(
-                    df=df, target_attr=target_attr
+                    df=df, target_attr=target_attr, vars=vars
                 )
 
         return df, best_idx
@@ -276,7 +276,7 @@ class SetsofCurves:
                 target_attr[var_name] = None
 
         # compute the l2 norm
-        x = -self.l2_norm(df=df, target_attr=target_attr, weights=weights)
+        x = -self.l2_norm(df=df, target_attr=target_attr, weights=weights, vars=vars)
 
         if len(df) == 1:
             df['score'] = 1
@@ -347,6 +347,8 @@ class SetofCurves:
             self.ref_cap_unit = ""
             self.full_eff = 0
             self.full_eff_unit = ""
+            self.part_eff = None
+            self.part_eff_unit = None
             self.compressor_type = ""
             self.condenser_type = ""
             self.compressor_speed = ""
@@ -712,6 +714,7 @@ class Curve:
                 self.type = "quad"
                 r_sqr = reg_r_sqr
                 #print("quad: {}".format(r_sqr))
+
         if "cubic" in curve_types:
             data["X1^2"] = data["X1"] * data["X1"]
             data["X1^3"] = data["X1"] * data["X1"] * data["X1"]
@@ -724,7 +727,7 @@ class Curve:
                 self.coeff1, self.coeff2, self.coeff3, self.coeff4 = model.params
                 self.type = "cubic"
                 r_sqr = reg_r_sqr
-                print("cub: {}".format(r_sqr))
+                #print("cub: {}".format(r_sqr))
         if "bi_quad" in curve_types:
             data["X1^2"] = data["X1"] * data["X1"]
             data["X2^2"] = data["X2"] * data["X2"]
