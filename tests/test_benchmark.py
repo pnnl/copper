@@ -52,6 +52,9 @@ class TestBenchmark(TestCase):
             # Store sets of curves
             setsofcurves.append(chlr.set_of_curves)
 
+            # Reset chiller curves
+            chlr.set_of_curves = ""
+
         art_path = "/tmp/artifacts"
         if os.path.isfile(art_path):
             # Store sets of curves
