@@ -522,6 +522,8 @@ class SetofCurves:
                     cuvre_type = "Curve:Biquadratic"
                 elif curve_type == "bi_cub":
                     cuvre_type = "Curve:Bicubic"
+                elif curve_type == "cubic":
+                    cuvre_type = "Curve:Cubic"
                 curve_export += (
                     "\n{},\n".format(cuvre_type)
                     if len(curve_export)
@@ -538,7 +540,7 @@ class SetofCurves:
                 curve_export += (
                     "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
                 )
-                if curve_type != "quad":
+                if curve_type != "quad" and curve_type != "cubic":
                     curve_export += (
                         "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
                     )
@@ -546,7 +548,7 @@ class SetofCurves:
                         "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
                     )
                 curve_export += (
-                    "   {},\n".format(curve.out_min) if curve.out_min else "    ,\n"
+                    "   {},\n".format(0) if curve.out_min else "    ,\n"
                 )
                 curve_export += (
                     "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
