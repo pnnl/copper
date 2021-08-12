@@ -1,6 +1,9 @@
+import CoolProp.CoolProp as CP
+from scipy import optimize
 from copper.ga import *
 from copper.units import *
 from copper.curves import *
+import math
 
 
 class chiller:
@@ -18,6 +21,7 @@ class chiller:
         set_of_curves="",
         model="ect_lwt",
         sim_engine="energyplus",
+        min_unloading=0.1
     ):
         self.type = "chiller"
         self.compressor_type = compressor_type
@@ -29,6 +33,7 @@ class chiller:
         self.full_eff_unit = full_eff_unit
         self.part_eff = part_eff
         self.part_eff_unit = part_eff_unit
+        self.min_unloading = min_unloading
         self.model = model
         self.sim_engine = sim_engine
         self.set_of_curves = set_of_curves
@@ -103,6 +108,7 @@ class chiller:
             kwpton_ref = kwpton_ref_unit.conversion("kw/ton")
 
         # Conversion factors
+        # TODO: remove these and use the unit class
         ton_to_kbtu = 12
         kbtu_to_kw = 3.412141633
 
@@ -110,63 +116,133 @@ class chiller:
         load_ref = 1
         eir_ref = 1 / (ton_to_kbtu / kwpton_ref / kbtu_to_kw)
 
-        # Test conditions
-        # Same approach as EnergyPlus
-        # Same as AHRI Std 550/590
+        # Rated conditions as per AHRI Std 551/591
         loads = [1, 0.75, 0.5, 0.25]
 
         # List of equipment efficiency for each load
         kwpton_lst = []
 
-        # DOE-2 chiller model
-        if self.model == "ect_lwt":
-            if self.condenser_type == "air":
-                # Temperatures from AHRI Std 550/590
-                chw = 6.67
-                ect = [3 + 32 * loads[0], 3 + 32 * loads[1], 3 + 32 * loads[2], 13]
-            elif self.condenser_type == "water":
-                # Temperatures from AHRI Std 550/590
-                chw = 6.67
-                ect = [8 + 22 * loads[0], 8 + 22 * loads[1], 19, 19]
+        # Temperatures from AHRI Std 551/591
+        if self.condenser_type == "air":
+            lwt = 6.67
+            ect = [3 + 32 * loads[0], 3 + 32 * loads[1], 3 + 32 * loads[2], 13]
+        elif self.condenser_type == "water":
+            lwt = 6.67
+            ect = [8 + 22 * loads[0], 8 + 22 * loads[1], 19, 19]
 
-            # Retrieve curves
-            for curve in self.set_of_curves:
-                if curve.out_var == "cap-f-t":
-                    cap_f_t = curve
-                elif curve.out_var == "eir-f-t":
-                    eir_f_t = curve
-                else:
-                    eir_f_plr = curve
+        # Retrieve curves
+        for curve in self.set_of_curves:
+            if curve.out_var == "cap-f-t":
+                cap_f_t = curve
+            elif curve.out_var == "eir-f-t":
+                eir_f_t = curve
+            else:
+                eir_f_plr = curve
 
-            # Calculate EIR for each testing conditions
-            try:
-                for idx, load in enumerate(loads):
-                    dt = ect[idx] - chw
-                    cap_f_chw_ect = cap_f_t.evaluate(chw, ect[idx])
-                    eir_f_chw_ect = eir_f_t.evaluate(chw, ect[idx])
-                    cap_op = load_ref * cap_f_chw_ect
-                    plr = (
-                        load * cap_f_t.evaluate(chw, ect[0]) / cap_op
-                    )  # Pending EnergyPlus development team review otherwise load / cap_op
+        try:
+            for idx, load in enumerate(
+                loads
+            ):  # Calculate efficiency for each testing conditions
+                if self.model == "ect_lwt":  # DOE-2 chiller model
+                    # Temperature adjustments
+                    dt = ect[idx] - lwt
+                    cap_f_lwt_ect = cap_f_t.evaluate(lwt, ect[idx])
+                    eir_f_lwt_ect = eir_f_t.evaluate(lwt, ect[idx])
+                    cap_op = load_ref * cap_f_lwt_ect
+
+                    # PLR adjustments
+                    plr = load * cap_f_t.evaluate(lwt, ect[0]) / cap_op
+                    if plr <= self.min_unloading:
+                        plr = self.min_unloading
                     eir_plr = eir_f_plr.evaluate(plr, dt)
-                    # eir = power / load so eir * plr = (power / load) * (load / cap_op)
-                    eir = eir_ref * eir_f_chw_ect * eir_plr / plr
-                    kwpton = eir / kbtu_to_kw * ton_to_kbtu
-                    if eff_type == "full" and idx == 0:
-                        return kwpton
-                    kwpton_lst.append(eir / kbtu_to_kw * ton_to_kbtu)
 
-                # Coefficients from AHRI Std 550/590
-                iplv = 1 / (
-                    (0.01 / kwpton_lst[0])
-                    + (0.42 / kwpton_lst[1])
-                    + (0.45 / kwpton_lst[2])
-                    + (0.12 / kwpton_lst[3])
-                )
-            except:
-                return -999
-        else:
-            # TODO: implement IPLV calcs for other chiller algorithm
+                    # Efficiency calculation
+                    eir = eir_ref * eir_f_lwt_ect * eir_plr / plr
+
+                elif self.model == "lct_lwt":  # Reformulated EIR chiller model
+                    # Determine water properties
+                    c_p = CP.PropsSI("C", "P", 101325, "T", ect[idx] + 273.15, "Water")
+                    rho = CP.PropsSI("D", "P", 101325, "T", ect[idx] + 273.15, "Water")
+
+                    # Gather arguments for determination fo leaving condenser temperature through iteration
+                    if idx == 0:  # Full load rated conditions
+                        args = [
+                            lwt,
+                            cap_f_t,
+                            eir_f_t,
+                            eir_f_plr,
+                            load,
+                            -999,
+                            1 / eir_ref,
+                            ect[idx],
+                            self.set_of_curves[0].ref_evap_fluid_flow * rho,
+                            c_p,
+                        ]
+                    else:
+                        args = [
+                            lwt,
+                            cap_f_t,
+                            eir_f_t,
+                            eir_f_plr,
+                            load,
+                            cap_f_lwt_lct_rated,
+                            1 / eir_ref,
+                            ect[idx],
+                            self.set_of_curves[0].ref_evap_fluid_flow * rho,
+                            c_p,
+                        ]
+
+                    # Determine leaving condenser temperature
+                    result = optimize.root_scalar(
+                        self.cond_inlet_temp_residual,
+                        args=(args),
+                        method="secant",
+                        x0=ect[idx] + 0.1,
+                        x1=ect[idx] + 10,
+                        rtol=0.001,
+                    )
+                    lct = result.root
+
+                    # Determine rated capacity curve modifier
+                    if idx == 0:
+                        cap_f_lwt_lct_rated = cap_f_t.evaluate(lwt, lct)
+
+                    # Temperature adjustments
+                    dt = ect[idx] - lwt
+                    cap_f_lwt_lct = cap_f_t.evaluate(lwt, lct)
+                    eir_f_lwt_lct = eir_f_t.evaluate(lwt, lct)
+                    cap_op = load_ref * cap_f_lwt_lct
+
+                    # PLR adjustments
+                    plr = load * cap_f_lwt_lct_rated / cap_op
+                    if plr <= self.min_unloading:
+                        plr = self.min_unloading
+                    eir_plr = eir_f_plr.evaluate(lct, plr)
+
+                    # Efficiency calculation
+                    eir = eir_ref * eir_f_lwt_lct * eir_plr / plr
+
+                else:
+                    return -999
+
+                # Convert efficiency to kW/ton
+                kwpton = eir / kbtu_to_kw * ton_to_kbtu
+
+                # Store efficiency for IPLV calculation
+                kwpton_lst.append(eir / kbtu_to_kw * ton_to_kbtu)
+
+                # Stop here for full load calculations
+                if eff_type == "full" and idx == 0:
+                    return kwpton
+
+            # Coefficients from AHRI Std 551/591
+            iplv = 1 / (
+                (0.01 / kwpton_lst[0])
+                + (0.42 / kwpton_lst[1])
+                + (0.45 / kwpton_lst[2])
+                + (0.12 / kwpton_lst[3])
+            )
+        except:
             return -999
 
         # Convert IPLV to desired unit
@@ -175,3 +251,40 @@ class chiller:
             iplv = iplv_org.conversion(unit)
 
         return iplv
+
+    def cond_inlet_temp_residual(self, lct, args):
+        # Get arguments
+        lwt, cap_f_t, eir_f_t, eir_f_plr, load, cap_f_lwt_lct_rated, ref_cop, ect, m_c, c_p = (
+            args
+        )
+
+        # Temperature dependent curve modifiers
+        cap_f_lwt_lct = cap_f_t.evaluate(lwt, lct)
+        eir_f_lwt_lct = eir_f_t.evaluate(lwt, lct)
+
+        # Operating varibles
+        cap_op = self.ref_cap * cap_f_lwt_lct
+        if cap_f_lwt_lct_rated == -999:
+            plr = load
+        else:
+            plr = load * cap_f_lwt_lct_rated / cap_f_lwt_lct
+
+        # PLR and temperature curve modifier
+        eir_f_plr_lct = eir_f_plr.evaluate(lct, plr)
+
+        # Evaporator operating capacity
+        q_e = cap_op * plr
+
+        # Chiller power
+        p = (cap_op / ref_cop) * eir_f_lwt_lct * eir_f_plr_lct
+
+        # Condenser heat transfer
+        q_c = p + q_e
+
+        # Store original ECT
+        ect_org = ect
+
+        # Recalculate ECT
+        ect = lct - q_c / (m_c * c_p)
+
+        return (ect_org - ect) / ect_org
