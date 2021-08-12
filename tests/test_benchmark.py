@@ -53,7 +53,7 @@ class TestBenchmark(TestCase):
             setsofcurves.append(chlr.set_of_curves)
 
         art_path = "/tmp/artifacts"
-        if os.path.isfile(art_path):
+        if os.path.isdir(art_path):
             # Store sets of curves
             with open(f"{art_path}/setsofcurves.pkl", "wb") as f:
                 pickle.dump(setsofcurves, f, pickle.HIGHEST_PROTOCOL)

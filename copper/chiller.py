@@ -13,15 +13,15 @@ class chiller:
         ref_cap_unit,
         full_eff,
         full_eff_unit,
-        part_eff,
-        part_eff_unit,
         compressor_type,
         condenser_type,
         compressor_speed,
+        part_eff=0,
+        part_eff_unit="",
         set_of_curves="",
         model="ect_lwt",
         sim_engine="energyplus",
-        min_unloading=0.1
+        min_unloading=0.1,
     ):
         self.type = "chiller"
         self.compressor_type = compressor_type
@@ -217,10 +217,10 @@ class chiller:
                     plr = load * cap_f_lwt_lct_rated / cap_op
                     if plr <= self.min_unloading:
                         plr = self.min_unloading
-                    eir_plr = eir_f_plr.evaluate(lct, plr)
+                    eir_plr_lct = eir_f_plr.evaluate(lct, plr)
 
                     # Efficiency calculation
-                    eir = eir_ref * eir_f_lwt_lct * eir_plr / plr
+                    eir = eir_ref * eir_f_lwt_lct * eir_plr_lct / plr
 
                 else:
                     return -999

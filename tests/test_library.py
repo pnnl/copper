@@ -18,19 +18,38 @@ class TestLibrary(TestCase):
             > 0
         )
 
+        # Check calculation for the chiller EIR model
         chlr = cp.chiller(
-            compressor_type = "centrifugal",
-            condenser_type = "water",
-            compressor_speed = "constant",
-            ref_cap = 471000,
-            ref_cap_unit = "W",
-            full_eff = 5.89,
-            full_eff_unit = "cop",
-            part_eff = 6.0,
-            part_eff_unit = "kw/ton",
-            model = "lct_lwt",
-            sim_engine = "energyplus",
-            set_of_curves = lib.get_set_of_curves_by_name("ReformEIRChiller_McQuay_WSC_471kW/5.89COP/Vanes").curves
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant",
+            ref_cap=471000,
+            ref_cap_unit="W",
+            full_eff=5.89,
+            full_eff_unit="cop",
+            model="ect_lwt",
+            sim_engine="energyplus",
+            set_of_curves=lib.get_set_of_curves_by_name(
+                "ElectricEIRChiller_McQuay_WSC_471kW/5.89COP/Vanes"
+            ).curves,
         )
 
-        assert(round(chlr.calc_eff('part', 'cop'),2) == 4.81)
+        assert round(chlr.calc_eff("part", "cop"), 2) == 5.83
+
+        # Check calculation for the reformulated chiller EIR model
+        chlr = cp.chiller(
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant",
+            ref_cap=471000,
+            ref_cap_unit="W",
+            full_eff=5.89,
+            full_eff_unit="cop",
+            model="lct_lwt",
+            sim_engine="energyplus",
+            set_of_curves=lib.get_set_of_curves_by_name(
+                "ReformEIRChiller_McQuay_WSC_471kW/5.89COP/Vanes"
+            ).curves,
+        )
+
+        assert round(chlr.calc_eff("part", "cop"), 2) == 4.81
