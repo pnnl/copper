@@ -3,7 +3,6 @@ from scipy import optimize
 from copper.ga import *
 from copper.units import *
 from copper.curves import *
-import math
 
 
 class chiller:
@@ -37,6 +36,99 @@ class chiller:
         self.model = model
         self.sim_engine = sim_engine
         self.set_of_curves = set_of_curves
+        if self.condenser_type == "water":
+            if self.model == "ect_lwt":
+                self.plotting_range = {
+                    "eir-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 40,
+                        "x2_norm": 35,
+                    },
+                    "cap-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 40,
+                        "x2_norm": 35,
+                    },
+                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
+                    "eir-f-plr-dt": {
+                        "x1_min": 0,
+                        "x1_max": 1,
+                        "x1_norm": 1,
+                        "nbval": 50,
+                        "x2_min": 28.33,
+                        "x2_max": 28.33,
+                        "x2_norm": 28.33,
+                    },
+                }
+            else:
+                self.plotting_range = {
+                    "eir-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 60,
+                        "x2_norm": 35,
+                    },
+                    "cap-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 60,
+                        "x2_norm": 35,
+                    },
+                    "eir-f-plr-dt": {
+                        "x1_min": 35.0,
+                        "x1_max": 35.0,
+                        "x1_norm": 35.0,
+                        "nbval": 50,
+                        "x2_min": 0.0,
+                        "x2_max": 1.0,
+                        "x2_norm": 1.0,
+                    },
+                }
+        else:
+            self.plotting_range = {
+                "eir-f-t": {
+                    "x1_min": 6.67,
+                    "x1_max": 6.67,
+                    "x1_norm": 6.67,
+                    "nbval": 50,
+                    "x2_min": 10,
+                    "x2_max": 40,
+                    "x2_norm": 29.44,
+                },
+                "cap-f-t": {
+                    "x1_min": 6.67,
+                    "x1_max": 6.67,
+                    "x1_norm": 6.67,
+                    "nbval": 50,
+                    "x2_min": 10,
+                    "x2_max": 40,
+                    "x2_norm": 29.44,
+                },
+                "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
+                "eir-f-plr-dt": {
+                    "x1_min": 0.3,
+                    "x1_max": 1,
+                    "x1_norm": 1,
+                    "nbval": 50,
+                    "x2_min": 22.77,
+                    "x2_max": 22.77,
+                    "x2_norm": 22.77,
+                },
+            }
 
     def generate_set_of_curves(
         self,

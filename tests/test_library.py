@@ -34,7 +34,7 @@ class TestLibrary(TestCase):
             ).curves,
         )
 
-        assert round(chlr.calc_eff("part", "cop"), 2) == 5.83
+        assert round(chlr.calc_eff("part", "cop"), 2) == 5.44
 
         # Check calculation for the reformulated chiller EIR model
         chlr = cp.chiller(

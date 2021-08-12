@@ -85,7 +85,7 @@ class SetsofCurves:
                     output_values[c.out_var].append(output_value)
 
         # Create new set of curves and assign its attributes based on user defined inputs
-        agg_set_of_curves = SetofCurves(eqp_type=self.eqp_type)
+        agg_set_of_curves = SetofCurves()
         for att, att_val in misc_attr.items():
             setattr(agg_set_of_curves, att, att_val)
 
@@ -128,7 +128,9 @@ class SetsofCurves:
             data.columns = ["X1", "X2", "Y"]
 
             # Create new curve
-            new_curve = Curve(eqp_type=self.eqp_type, c_type="") # curve type is set later on
+            new_curve = Curve(
+                eqp_type=self.eqp_type, c_type=""
+            )  # curve type is set later on
 
             # Assign curve attributes, assume no min/max
             # TODO: Allow min/max to be passed by user
@@ -159,6 +161,9 @@ class SetsofCurves:
                 if agg_set_of_curves.model == "ect_lwt":
                     self.ref_lwt = ref_y
                     self.ref_ect = ref_x
+                elif agg_set_of_curves.model == "lct_lwt":
+                    self.ref_lwt = ref_y
+                    self.ref_lct = ref_x
                 else:
                     raise ValueError("Algorithm not supported.")
 
@@ -320,109 +325,32 @@ class SetsofCurves:
 
 
 class SetofCurves:
-    def __init__(self, eqp_type):
+    def __init__(self):
         self.name = ""
         self.curves = []
-        self.validity = 1.0
-        self.source = ""
-        self.eqp_type = eqp_type
-        self.model = ""
-        if eqp_type == "chiller":
-            self.ref_cap = 0
-            self.ref_cap_unit = ""
-            self.full_eff = 0
-            self.full_eff_unit = ""
-            self.compressor_type = ""
-            self.condenser_type = ""
-            self.compressor_speed = ""
-            self.sim_engine = ""
-            self.min_plr = 0
-            self.min_unloading = 0
-            self.max_plr = 0
-            if self.condenser_type == "water":
-                self.plotting_range = {
-                    "eir-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 35,
-                    },
-                    "cap-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 35,
-                    },
-                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
-                    "eir-f-plr-dt": {
-                        "x1_min": 0.3,
-                        "x1_max": 1,
-                        "x1_norm": 1,
-                        "nbval": 50,
-                        "x2_min": 28.33,
-                        "x2_max": 28.33,
-                        "x2_norm": 28.33,
-                    },
-                }
-            else:
-                self.plotting_range = {
-                    "eir-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 29.44,
-                    },
-                    "cap-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 29.44,
-                    },
-                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
-                    "eir-f-plr-dt": {
-                        "x1_min": 0.3,
-                        "x1_max": 1,
-                        "x1_norm": 1,
-                        "nbval": 50,
-                        "x2_min": 22.77,
-                        "x2_max": 22.77,
-                        "x2_norm": 22.77,
-                    },
-                }
+        self.eqp = ""
 
     def get_data_for_plotting(self, curve, norm):
         var = curve.out_var
-        nb_vals = self.plotting_range[var]["nbval"]
-        x1_min = self.plotting_range[var]["x1_min"]
-        x1_max = self.plotting_range[var]["x1_max"]
+        nb_vals = self.eqp.plotting_range[var]["nbval"]
+        x1_min = self.eqp.plotting_range[var]["x1_min"]
+        x1_max = self.eqp.plotting_range[var]["x1_max"]
         x_1_vals = np.linspace(x1_min, x1_max, nb_vals)
 
-        if "x2_min" in self.plotting_range[var].keys():
-            x2_min = self.plotting_range[var]["x2_min"]
-            x2_max = self.plotting_range[var]["x2_max"]
+        if "x2_min" in self.eqp.plotting_range[var].keys():
+            x2_min = self.eqp.plotting_range[var]["x2_min"]
+            x2_max = self.eqp.plotting_range[var]["x2_max"]
             x_2_vals = np.linspace(x2_min, x2_max, nb_vals)
         else:
             x_2_vals = [0]
 
         y = []
         for v in range(nb_vals):
-            if "x2_min" in self.plotting_range[var].keys():
+            if "x2_min" in self.eqp.plotting_range[var].keys():
                 norm_fac = (
                     curve.evaluate(
-                        self.plotting_range[var]["x1_norm"],
-                        self.plotting_range[var]["x2_norm"],
+                        self.eqp.plotting_range[var]["x1_norm"],
+                        self.eqp.plotting_range[var]["x2_norm"],
                     )
                     if norm
                     else 1
@@ -431,8 +359,8 @@ class SetofCurves:
             else:
                 norm_fac = (
                     curve.evaluate(
-                        self.plotting_range[var]["x1_norm"],
-                        self.plotting_range[var]["x1_norm"],
+                        self.eqp.plotting_range[var]["x1_norm"],
+                        self.eqp.plotting_range[var]["x1_norm"],
                     )
                     if norm
                     else 1
@@ -480,7 +408,7 @@ class SetofCurves:
         curve_export = ""
         for curve in self.curves:
             curve_type = curve.type
-            if self.sim_engine == "energyplus":
+            if self.eqp.sim_engine == "energyplus":
                 if curve_type == "quad":
                     cuvre_type = "Curve:Quadratic"
                 elif curve_type == "bi_quad":
@@ -659,7 +587,12 @@ class Curve:
             out = self.coeff1 + self.coeff2 * x + self.coeff3 * x ** 2
             return min(max(out, self.out_min), self.out_max)
         if self.type == "cubic":
-            out = self.coeff1 + self.coeff2 * x + self.coeff3 * x ** 2 + self.coeff4 * x ** 3
+            out = (
+                self.coeff1
+                + self.coeff2 * x
+                + self.coeff3 * x ** 2
+                + self.coeff4 * x ** 3
+            )
             return min(max(out, self.out_min), self.out_max)
 
     def nb_coeffs(self):
@@ -747,7 +680,19 @@ class Curve:
             data["X1^2*X2"] = data["X1^2"] * data["X2"]
             data["X1*X2^2"] = data["X1"] * data["X2^2"]
 
-            X = data[["X1", "X1^2", "X2", "X2^2", "X1*X2", "X1^3", "X2^3", "X1^2*X2", "X1^*X2^2"]]
+            X = data[
+                [
+                    "X1",
+                    "X1^2",
+                    "X2",
+                    "X2^2",
+                    "X1*X2",
+                    "X1^3",
+                    "X2^3",
+                    "X1^2*X2",
+                    "X1^*X2^2",
+                ]
+            ]
             y = data["Y"]
 
             X = sm.add_constant(X)
@@ -778,7 +723,7 @@ class Curve:
     def get_out_reference(self):
         if "-t" in self.out_var:
             x_ref = self.ref_lwt
-            y_ref = self.ref_ect
+            y_ref = self.ref_lct
         else:
             x_ref = 1
             y_ref = 0
@@ -795,9 +740,7 @@ class Curve:
         # Normalization point
         norm_out = self.evaluate(x_norm, y_norm)
         data["Y"] = data.apply(
-            lambda row: self.evaluate(row["X1"], row["X2"])
-            / norm_out,
-            axis=1,
+            lambda row: self.evaluate(row["X1"], row["X2"]) / norm_out, axis=1
         )
 
         self.regression(data, [self.type])

@@ -100,7 +100,7 @@ class Library:
 
         # Retrieve identified equipment's sets of curves from the library
         for name, props in eqp_match.items():
-            c_set = SetofCurves(props["eqp_type"])
+            c_set = SetofCurves()
 
             # Retrive all attributes of the sets of curves object
             for c_att in list(c_set.__dict__):
@@ -173,7 +173,7 @@ class Library:
 
         """
         # Initialize set of curves object
-        c_set = SetofCurves("chiller")
+        c_set = SetofCurves()
         c_set.name = name
 
         # List of curves
@@ -264,7 +264,7 @@ class Library:
                 eff = val["full_eff"]
                 eff_unit = matches[name]["full_eff_unit"]
 
-                if not cap is None:
+                if cap is not None:
                     # Capacity conversion
                     if cap_unit != eqp.ref_cap_unit:
                         c_unit = Units(cap, cap_unit)

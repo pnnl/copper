@@ -89,6 +89,7 @@ class GA:
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
 
         self.set_of_base_curves = self.base_curves[0]
+        self.set_of_base_curves.eqp = self.equipment
         self.base_curves_data = {}
         for curve in self.set_of_base_curves.curves:
             self.base_curves_data[
@@ -114,7 +115,13 @@ class GA:
             self.evolve_population(self.pop)
             gen += 1
             # For debugging
-            # print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="part"),2), round(self.equipment.calc_eff(eff_type="full"),2)))
+            print(
+                "GEN: {}, IPLV: {}, KW/TON: {}".format(
+                    gen,
+                    round(self.equipment.calc_eff(eff_type="part"), 2),
+                    round(self.equipment.calc_eff(eff_type="full"), 2),
+                )
+            )
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 
@@ -168,7 +175,11 @@ class GA:
 
                 grad_list = []
                 for c in self.equipment.set_of_curves:
-                    if c.out_var == "eir-f-t" or c.out_var == "eir-f-plr":
+                    if (
+                        c.out_var == "eir-f-t"
+                        or c.out_var == "eir-f-plr"
+                        or c.out_var == "eir-f-plr-dt"
+                    ):
                         sign_val = +1
                     elif c.out_var == "cap-f-t":
                         sign_val = -1
@@ -453,7 +464,8 @@ class GA:
             if male != female:
                 male = parents[male]
                 female = parents[female]
-                child = SetofCurves(eqp_type=self.equipment.type)
+                child = SetofCurves()
+                child.eqp = self.equipment
                 curves = []
                 # male and female curves are structured the same way
                 for _, c in enumerate(male.curves):
