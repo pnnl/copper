@@ -17,6 +17,7 @@ class chiller:
         compressor_speed,
         part_eff=0,
         part_eff_unit="",
+        part_eff_ref_std="ahri_551/591",
         set_of_curves="",
         model="ect_lwt",
         sim_engine="energyplus",
@@ -32,6 +33,7 @@ class chiller:
         self.full_eff_unit = full_eff_unit
         self.part_eff = part_eff
         self.part_eff_unit = part_eff_unit
+        self.part_eff_ref_std = part_eff_ref_std
         self.min_unloading = min_unloading
         self.model = model
         self.sim_engine = sim_engine
@@ -214,13 +216,27 @@ class chiller:
         # List of equipment efficiency for each load
         kwpton_lst = []
 
-        # Temperatures from AHRI Std 551/591
-        if self.condenser_type == "air":
-            lwt = 6.67
-            ect = [3 + 32 * loads[0], 3 + 32 * loads[1], 3 + 32 * loads[2], 13]
-        elif self.condenser_type == "water":
-            lwt = 6.67
-            ect = [8 + 22 * loads[0], 8 + 22 * loads[1], 19, 19]
+        # Temperatures at rated conditions
+        if self.part_eff_ref_std == "ahri_551/591": # IPLV.SI
+            if self.condenser_type == "air":
+                lwt = 7.0
+                ect = [35, 27, 19, 13]
+            elif self.condenser_type == "water":
+                lwt = 7.0
+                ect = [30.0, 24.5, 19.0, 19.0]
+        elif self.part_eff_ref_std == "ahri_550/590": # IPLV.IP
+            if self.condenser_type == "air":
+                lwt = 44.0
+                ect = [95.0, 80.0, 65.0, 55.0]
+            elif self.condenser_type == "water":
+                lwt = 44.0
+                ect = [85.0, 75.0, 65.0, 65.0]
+            # Convert to SI
+            lwt = (lwt - 32.0) * 5 / 9
+            ect = [(t - 32.0) * 5 / 9 for t in ect]
+        else:
+            raise ValueError("Reference standard provided isn't implemented.")
+
 
         # Retrieve curves
         for curve in self.set_of_curves:
