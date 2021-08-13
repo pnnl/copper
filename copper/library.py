@@ -102,6 +102,23 @@ class Library:
         for name, props in eqp_match.items():
             c_set = SetofCurves()
 
+            # Get equipment properties
+            eqp_props = inspect.getfullargspec(
+                eval("copper." + props["eqp_type"]).__init__
+            )[0]
+            eqp_props.remove("self")
+
+            # Set the equipment properties
+            # using values from the library
+            obj_args = {}
+            for p in eqp_props:
+                if not "part_eff" in p and not "set_of_curves" in p:
+                    obj_args[p] = props[p]
+
+            # Create instance of the equipment
+            obj = eval("copper." + props["eqp_type"])(**obj_args)
+            c_set.eqp = obj
+
             # Retrive all attributes of the sets of curves object
             for c_att in list(c_set.__dict__):
                 # Set the attribute of new Curve object

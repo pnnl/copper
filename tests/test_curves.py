@@ -43,10 +43,23 @@ class TestCurves(TestCase):
         self.assertTrue(all(plot_res))
 
         # Evaluate curve values
+        chlr = cp.chiller(
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="variable",
+            ref_cap=256800,
+            ref_cap_unit="W",
+            full_eff=3.355,
+            full_eff_unit="cop",
+            model="ect_lwt",
+            sim_engine="energyplus",
+        )
+        c_set.eqp = chlr
         set_of_curves = lib.get_set_of_curves_by_name(c_name)
         self.assertTrue(round(set_of_curves.curves[0].evaluate(6.67, 35), 2) == 0.96)
 
-        # Eport curves
+        # Export curves
         set_of_curves.name = set_of_curves.name.replace("/", "_")
+        set_of_curves.eqp = chlr
         set_of_curves.sim_engine = "energyplus"
         self.assertTrue(set_of_curves.export())

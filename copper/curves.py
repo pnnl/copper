@@ -214,7 +214,7 @@ class SetsofCurves:
             for setofcurve in self.sets_of_curves:
                 data["name"] = [setofcurve.name]
                 for var in vars:
-                    data[var] = [setofcurve.__dict__[var]]
+                    data[var] = [setofcurve.eqp.__dict__[var]]
                 df_list.append(pd.DataFrame(data))
             df = pd.concat(df_list)
             if N is not None:
