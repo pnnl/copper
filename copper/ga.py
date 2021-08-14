@@ -115,13 +115,13 @@ class GA:
             self.evolve_population(self.pop)
             gen += 1
             # For debugging
-            print(
-                "GEN: {}, IPLV: {}, KW/TON: {}".format(
-                    gen,
-                    round(self.equipment.calc_eff(eff_type="part"), 2),
-                    round(self.equipment.calc_eff(eff_type="full"), 2),
-                )
-            )
+            #print(
+            #    "GEN: {}, IPLV: {}, KW/TON: {}".format(
+            #        gen,
+            #        round(self.equipment.calc_eff(eff_type="part"), 2),
+            #        round(self.equipment.calc_eff(eff_type="full"), 2),
+            #    )
+            #)
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 
@@ -143,7 +143,7 @@ class GA:
                     ) in self.equipment.set_of_curves:  # list of objects  # c in curves
                         # set_of_curves
                         if "cap" in c.out_var:
-                            cap_rating += abs(1 - c.get_out_reference())
+                            cap_rating += abs(1 - c.get_out_reference(self.equipment))
             else:
                 return False
         else:
@@ -343,7 +343,7 @@ class GA:
         rsme = 0
         for c in set_of_curves.curves:
             if c.out_var in self.vars:
-                curve_normal_score += abs(1 - c.get_out_reference())
+                curve_normal_score += abs(1 - c.get_out_reference(self.equipment))
                 x, y = set_of_curves.get_data_for_plotting(c, False)
                 base_x, base_y = self.base_curves_data[c.out_var]
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())

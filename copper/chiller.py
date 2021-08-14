@@ -217,14 +217,14 @@ class chiller:
         kwpton_lst = []
 
         # Temperatures at rated conditions
-        if self.part_eff_ref_std == "ahri_551/591": # IPLV.SI
+        if self.part_eff_ref_std == "ahri_551/591":  # IPLV.SI
             if self.condenser_type == "air":
                 lwt = 7.0
                 ect = [35, 27, 19, 13]
             elif self.condenser_type == "water":
                 lwt = 7.0
                 ect = [30.0, 24.5, 19.0, 19.0]
-        elif self.part_eff_ref_std == "ahri_550/590": # IPLV.IP
+        elif self.part_eff_ref_std == "ahri_550/590":  # IPLV.IP
             if self.condenser_type == "air":
                 lwt = 44.0
                 ect = [95.0, 80.0, 65.0, 55.0]
@@ -236,7 +236,6 @@ class chiller:
             ect = [(t - 32.0) * 5 / 9 for t in ect]
         else:
             raise ValueError("Reference standard provided isn't implemented.")
-
 
         # Retrieve curves
         for curve in self.set_of_curves:

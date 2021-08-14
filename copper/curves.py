@@ -771,10 +771,13 @@ class Curve:
                 self.type = "bi_cub"
                 r_sqr = reg_r_sqr
 
-    def get_out_reference(self):
+    def get_out_reference(self, eqp):
         if "-t" in self.out_var:
             x_ref = self.ref_lwt
-            y_ref = self.ref_lct
+            if eqp.model == "ect_lwt":
+                y_ref = self.ref_ect
+            elif eqp.model == "lct_lwt":
+                y_ref = self.ref_lct
         else:
             x_ref = 1
             y_ref = 0
