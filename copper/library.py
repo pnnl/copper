@@ -16,7 +16,7 @@ class Library:
 
             # Cannot calculate the part load efficiency
             # if full load efficiency is not specified
-            if not vals["full_eff"] is None:
+            if not vals["full_eff"] is None and vals["condenser_type"] != "hr_scroll":
 
                 # Get equipment properties
                 props = inspect.getfullargspec(
@@ -37,12 +37,15 @@ class Library:
                 obj_args["part_eff_unit"] = vals["full_eff_unit"]
                 obj_args["part_eff"] = vals["full_eff"]
 
+                # Create instance of the equipment
+                obj = eval("copper." + vals["eqp_type"])(**obj_args)
+
                 # Retrieve curves for library item
                 obj_args["set_of_curves"] = self.get_set_of_curves_by_name(
                     vals["name"]
                 ).curves
 
-                # Create instance of the equipment
+                # Update instance of the equipment
                 obj = eval("copper." + vals["eqp_type"])(**obj_args)
 
                 # Compute part load efficiency
@@ -58,6 +61,29 @@ class Library:
                         del vals["part_eff"]
                     if "part_eff_unit" in vals.keys():
                         del vals["part_eff_unit"]
+
+    def load_obj(self, data):
+        # Get equipment properties
+        props = inspect.getfullargspec(eval("copper." + data["eqp_type"]).__init__)[0]
+        props.remove("self")
+
+        # Set the equipment properties
+        # using values from the library
+        obj_args = {}
+        for p in props:
+            if not "part_eff" in p and not "set_of_curves" in p:
+                obj_args[p] = data[p]
+
+        # Temporarily set the part load efficiency to the
+        # full load efficiency, units are assumed to be
+        # the same
+        obj_args["part_eff_unit"] = data["full_eff_unit"]
+        obj_args["part_eff"] = data["full_eff"]
+
+        # Create instance of the equipment
+        obj = eval("copper." + data["eqp_type"])(**obj_args)
+
+        return obj
 
     def content(self):
         return self.data
@@ -133,7 +159,7 @@ class Library:
             for c in self.data[name]["set_of_curves"]:
                 c_lst.append(
                     self.get_curve(
-                        c, self.data[name], eqp_type=self.data[name]["eqp_type"]
+                        c, self.data[name], eqp=self.load_obj(self.data[name])
                     )
                 )
             c_set.curves = c_lst
@@ -200,7 +226,7 @@ class Library:
             for c in self.data[name]["set_of_curves"]:
                 c_lst.append(
                     self.get_curve(
-                        c, self.data[name], eqp_type=self.data[name]["eqp_type"]
+                        c, self.data[name], eqp=self.load_obj(self.data[name])
                     )
                 )
             # Add curves to set of curves object
@@ -209,7 +235,7 @@ class Library:
         except:
             raise ValueError("Cannot find curve in library.")
 
-    def get_curve(self, c, c_name, eqp_type):
+    def get_curve(self, c, c_name, eqp):
         """Retrieve individual attribute of a curve object.
 
         :param Curve() c: Curve object
@@ -222,10 +248,10 @@ class Library:
         # Curve properties
         c_prop = c_name["set_of_curves"][c]
         # Initialize curve object
-        c_obj = Curve(eqp_type, c_prop["type"])
+        c_obj = Curve(eqp, c_prop["type"])
         c_obj.out_var = c
         # Retrive all attributes of the curve object
-        for c_att in list(Curve(eqp_type, c_prop["type"]).__dict__):
+        for c_att in list(Curve(eqp, c_prop["type"]).__dict__):
             # Set the attribute of new Curve object
             # if attrubute are identified in database entry
             if c_att in list(c_prop.keys()):

@@ -115,13 +115,13 @@ class GA:
             self.evolve_population(self.pop)
             gen += 1
             # For debugging
-            #print(
+            # print(
             #    "GEN: {}, IPLV: {}, KW/TON: {}".format(
             #        gen,
             #        round(self.equipment.calc_eff(eff_type="part"), 2),
             #        round(self.equipment.calc_eff(eff_type="full"), 2),
             #    )
-            #)
+            # )
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 

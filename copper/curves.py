@@ -9,8 +9,9 @@ import statistics, itertools
 
 
 class SetsofCurves:
-    def __init__(self, eqp_type, sets):
-        self.eqp_type = eqp_type
+    def __init__(self, eqp, sets):
+        self.eqp = eqp
+        self.eqp_type = eqp.type
         self.sets_of_curves = sets
 
     def get_aggregated_set_of_curves(
@@ -129,7 +130,7 @@ class SetsofCurves:
 
             # Create new curve
             new_curve = Curve(
-                eqp_type=self.eqp_type, c_type=""
+                eqp_type=self.eqp, c_type=""
             )  # curve type is set later on
 
             # Assign curve attributes, assume no min/max
@@ -484,8 +485,9 @@ class SetofCurves:
 
 
 class Curve:
-    def __init__(self, eqp_type, c_type):
+    def __init__(self, eqp, c_type):
         # General charactersitics
+        self.eqp = eqp
         self.out_var = ""
         self.type = c_type
         self.units = "si"
@@ -525,13 +527,25 @@ class Curve:
             self.coeff9 = 0
             self.coeff10 = 0
 
-        # Equipment specific charcatertics
-        if eqp_type == "chiller":
+        # Equipment specific charactertics
+        # TODO: move under a function in the chiller class
+        if self.eqp.type == "chiller":
             self.ref_evap_fluid_flow = 0
             self.ref_cond_fluid_flow = 0
-            self.ref_lwt = 6.67
-            self.ref_ect = 29.4
-            self.ref_lct = 35
+            if self.eqp.part_eff_ref_std == "ahri_550/590":
+                self.ref_lwt = (44.0 - 32.0) * 5 / 9
+                if self.eqp.condenser_type == "water":
+                    self.ref_ect = (85.0 - 32.0) * 5 / 9
+                else:
+                    self.ref_ect = (95.0 - 32.0) * 5 / 9
+            elif self.eqp.part_eff_ref_std == "ahri_551/591":
+                self.ref_lwt = 7.0
+                if self.eqp.condenser_type == "water":
+                    self.ref_ect = 30.0
+                else:
+                    self.ref_ect = 35.0
+            if self.eqp.model == "lct_lwt":
+                self.ref_lct = eqp.get_ref_lct()
 
     def evaluate(self, x, y):
         """Return the output of a curve.
@@ -679,10 +693,10 @@ class Curve:
             model = sm.OLS(y, X).fit()
             reg_r_sqr = model.rsquared
 
-            # Compute indenpent variable using model
+            # Compute independent variable using model
             # to see if curve is monotonic
             vals = []
-            c = Curve(eqp_type="", c_type="cubic")
+            c = Curve(eqp=self.eqp, c_type="cubic")
             c.coeff1, c.coeff2, c.coeff3, c.coeff4 = model.params
             for x in data["X1"]:
                 vals.append(c.evaluate(x, 0))
