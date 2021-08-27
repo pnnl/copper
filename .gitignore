@@ -11,3 +11,7 @@ res
 data/
 makefile
 template.txt
+chiller_curves_updated.json
+*.txt
+env.sh
+pkl_0706/
