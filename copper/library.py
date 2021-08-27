@@ -94,14 +94,14 @@ class Library:
         """
         # Find name of equiment that match specified filter
         eqp_match = self.find_equipment(filters)
-
+        #print(eqp_match['ElectricEIRChiller_Carrier_19XR_742kW/5.42COP/VSD'].keys())
         # List of sets of curves that match specified filters
         set_of_curvess = []
 
         # Retrieve identified equipment's sets of curves from the library
         for name, props in eqp_match.items():
             c_set = SetofCurves(props["eqp_type"])
-
+            print('c_set: ', c_set)
             # Retrive all attributes of the sets of curves object
             for c_att in list(c_set.__dict__):
                 # Set the attribute of new Curve object
