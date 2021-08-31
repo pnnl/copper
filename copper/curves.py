@@ -130,7 +130,7 @@ class SetsofCurves:
 
             # Create new curve
             new_curve = Curve(
-                eqp_type=self.eqp, c_type=""
+                eqp=self.eqp, c_type=""
             )  # curve type is set later on
 
             # Assign curve attributes, assume no min/max
