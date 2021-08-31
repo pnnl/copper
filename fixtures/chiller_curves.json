@@ -31542,10 +31542,10 @@
                 "y_max": 1.0,
                 "out_min": 0.0,
                 "out_max": null,
-                "coeff1": -0.101644818,
-                "coeff2": 1.345793203,
-                "coeff3": -0.885173544,
-                "coeff4": 0.643289655,
+                "coeff1": -0.0875749495063914,
+                "coeff2": 1.45924001408333,
+                "coeff3": -0.794640137922161,
+                "coeff4": 0.424024066808501,
                 "coeff5": 0.0,
                 "coeff6": 0.0,
                 "coeff7": 0.0,
@@ -31947,7 +31947,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.026607028,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -32071,7 +32071,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.036983473,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -32195,7 +32195,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.024673314,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -32319,7 +32319,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.034350719,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -32443,7 +32443,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.036413138,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -32567,7 +32567,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.030176041,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -32691,7 +32691,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.031268763,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -32815,7 +32815,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.02534901,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -32939,7 +32939,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.026007041,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -33063,7 +33063,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.021140263,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -33187,7 +33187,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.013536002,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -33311,7 +33311,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.02166265,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -33435,7 +33435,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.050675307,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -33559,7 +33559,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.016275378,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -33683,7 +33683,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.02396418,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -33807,7 +33807,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.031292737,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -33931,7 +33931,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.041145533,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -34055,7 +34055,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.031434059,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -34179,7 +34179,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.019836189,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -34303,7 +34303,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.025525662,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -34427,7 +34427,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.0272026,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -34551,7 +34551,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.002958299,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -34675,7 +34675,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.01033102,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -34799,7 +34799,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.006754436,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -34923,7 +34923,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.013659027,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -35047,7 +35047,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.01266031,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -35171,7 +35171,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.012717722,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -35295,7 +35295,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.045093718,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -35419,7 +35419,7 @@
             },
             "eir-f-plr": {
                 "out_var": "eir-f-plr",
-                "type": "quad",
+                "type": "cubic",
                 "ref_evap_fluid_flow": 0.021976839,
                 "ref_cond_fluid_flow": null,
                 "ref_lwt": 6.666666667,
@@ -46819,9 +46819,9 @@
             }
         }
     },
-    "ElectricEIRChiller Trane RTHD 117.1kW/5.463COP/?": {
+    "ElectricEIRChiller Trane RTHD 117.1kW/5.463COP/SlideValve": {
         "eqp_type": "chiller",
-        "name": "ElectricEIRChiller Trane RTHD 117.1kW/5.463COP/?",
+        "name": "ElectricEIRChiller Trane RTHD 117.1kW/5.463COP/SlideValve",
         "source": "Trane TOPSS",
         "model": "ect_lwt",
         "validity": 3.0,
@@ -46831,7 +46831,7 @@
         "full_eff_unit": "cop",
         "compressor_type": "screw",
         "condenser_type": "water",
-        "compressor_speed": "?",
+        "compressor_speed": "variable",
         "sim_engine": "energyplus",
         "min_plr": 0.2,
         "min_unloading": 0.2,
@@ -46943,9 +46943,9 @@
             }
         }
     },
-    "ElectricEIRChiller Trane RTHD 190.1kW/5.735COP/?": {
+    "ElectricEIRChiller Trane RTHD 190.1kW/5.735COP/SlideValve": {
         "eqp_type": "chiller",
-        "name": "ElectricEIRChiller Trane RTHD 190.1kW/5.735COP/?",
+        "name": "ElectricEIRChiller Trane RTHD 190.1kW/5.735COP/SlideValve",
         "source": "Trane TOPSS",
         "model": "ect_lwt",
         "validity": 3.0,
@@ -46955,7 +46955,7 @@
         "full_eff_unit": "cop",
         "compressor_type": "screw",
         "condenser_type": "water",
-        "compressor_speed": "?",
+        "compressor_speed": "variable",
         "sim_engine": "energyplus",
         "min_plr": 0.2,
         "min_unloading": 0.2,
@@ -47067,9 +47067,9 @@
             }
         }
     },
-    "ElectricEIRChiller Trane RTHD 174.8kW/5.205COP/?": {
+    "ElectricEIRChiller Trane RTHD 174.8kW/5.205COP/SlideValve": {
         "eqp_type": "chiller",
-        "name": "ElectricEIRChiller Trane RTHD 174.8kW/5.205COP/?",
+        "name": "ElectricEIRChiller Trane RTHD 174.8kW/5.205COP/SlideValve",
         "source": "Trane TOPSS",
         "model": "ect_lwt",
         "validity": 3.0,
@@ -47079,7 +47079,7 @@
         "full_eff_unit": "cop",
         "compressor_type": "screw",
         "condenser_type": "water",
-        "compressor_speed": "?",
+        "compressor_speed": "variable",
         "sim_engine": "energyplus",
         "min_plr": 0.2,
         "min_unloading": 0.2,
@@ -47191,9 +47191,9 @@
             }
         }
     },
-    "ElectricEIRChiller Trane RTHD 124.3kW/5.741COP/?": {
+    "ElectricEIRChiller Trane RTHD 124.3kW/5.741COP/SlideValve": {
         "eqp_type": "chiller",
-        "name": "ElectricEIRChiller Trane RTHD 124.3kW/5.741COP/?",
+        "name": "ElectricEIRChiller Trane RTHD 124.3kW/5.741COP/SlideValve",
         "source": "Trane TOPSS",
         "model": "ect_lwt",
         "validity": 3.0,
@@ -47203,7 +47203,7 @@
         "full_eff_unit": "cop",
         "compressor_type": "screw",
         "condenser_type": "water",
-        "compressor_speed": "?",
+        "compressor_speed": "variable",
         "sim_engine": "energyplus",
         "min_plr": 0.2,
         "min_unloading": 0.2,

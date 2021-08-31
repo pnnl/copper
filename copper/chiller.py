@@ -153,6 +153,9 @@ class chiller:
                     eir = eir_ref * eir_f_chw_ect * eir_plr / plr
                     kwpton = eir / kbtu_to_kw * ton_to_kbtu
                     if eff_type == "full" and idx == 0:
+                        if unit != "kw/ton":
+                            kwpton_org = Units(kwpton, "kw/ton")
+                            kwpton = kwpton_org.conversion(unit)
                         return kwpton
                     kwpton_lst.append(eir / kbtu_to_kw * ton_to_kbtu)
 

@@ -61,10 +61,10 @@ class SetsofCurves:
             input_values[c.out_var] = []
             for vars_rng in ranges[c.out_var]["vars_range"]:
                 min_val, max_val = vars_rng
-                input_values[c.out_var].append(np.linspace(min_val, max_val, 4))
+                input_values[c.out_var].append(np.linspace(min_val, max_val, 20))
             # Add 0s for second independent variables for univariate curves
             if len(input_values[c.out_var]) == 1:
-                input_values[c.out_var].append(np.linspace(0.0, 0.0, 4))
+                input_values[c.out_var].append(np.linspace(0.0, 0.0, 20))
 
         output_values = {}
         # Calculate values of dependent variables using the user-specified ranges
@@ -128,7 +128,9 @@ class SetsofCurves:
             data.columns = ["X1", "X2", "Y"]
 
             # Create new curve
-            new_curve = Curve(eqp_type=self.eqp_type, c_type="") # curve type is set later on
+            new_curve = Curve(
+                eqp_type=self.eqp_type, c_type=""
+            )  # curve type is set later on
 
             # Assign curve attributes, assume no min/max
             # TODO: Allow min/max to be passed by user
@@ -365,6 +367,37 @@ class SetofCurves:
                         "nbval": 50,
                         "x2_min": 10,
                         "x2_max": 40,
+                        "x2_norm": 29.44,
+                    },
+                    "cap-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 40,
+                        "x2_norm": 29.44,
+                    },
+                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
+                    "eir-f-plr-dt": {
+                        "x1_min": 0.3,
+                        "x1_max": 1,
+                        "x1_norm": 1,
+                        "nbval": 50,
+                        "x2_min": 28.33,
+                        "x2_max": 28.33,
+                        "x2_norm": 28.33,
+                    },
+                }
+            elif self.condenser_type == "air":
+                self.plotting_range = {
+                    "eir-f-t": {
+                        "x1_min": 6.67,
+                        "x1_max": 6.67,
+                        "x1_norm": 6.67,
+                        "nbval": 50,
+                        "x2_min": 10,
+                        "x2_max": 40,
                         "x2_norm": 35,
                     },
                     "cap-f-t": {
@@ -504,6 +537,8 @@ class SetofCurves:
                     cuvre_type = "Curve:Biquadratic"
                 elif curve_type == "bi_cub":
                     cuvre_type = "Curve:Bicubic"
+                elif curve_type == "cubic":
+                    cuvre_type = "Curve:Cubic"
                 curve_export += (
                     "\n{},\n".format(cuvre_type)
                     if len(curve_export)
@@ -520,7 +555,7 @@ class SetofCurves:
                 curve_export += (
                     "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
                 )
-                if curve_type != "quad":
+                if curve_type != "quad" and curve_type != "cubic":
                     curve_export += (
                         "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
                     )
@@ -528,7 +563,7 @@ class SetofCurves:
                         "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
                     )
                 curve_export += (
-                    "   {},\n".format(curve.out_min) if curve.out_min else "    ,\n"
+                    "   {},\n".format(0) if curve.out_min else "    ,\n"
                 )
                 curve_export += (
                     "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
@@ -578,12 +613,12 @@ class Curve:
         self.out_var = ""
         self.type = c_type
         self.units = "si"
-        self.x_min = 0
-        self.y_min = 0
-        self.x_max = 0
-        self.y_max = 0
-        self.out_min = 0
-        self.out_max = 0
+        self.x_min = None
+        self.y_min = None
+        self.x_max = None
+        self.y_max = None
+        self.out_min = None
+        self.out_max = None
         self.ref_x = 0
         self.ref_y = 0
         if self.type == "quad":
@@ -676,7 +711,12 @@ class Curve:
             out = self.coeff1 + self.coeff2 * x + self.coeff3 * x ** 2
             return min(max(out, self.out_min), self.out_max)
         if self.type == "cubic":
-            out = self.coeff1 + self.coeff2 * x + self.coeff3 * x ** 2 + self.coeff4 * x ** 3
+            out = (
+                self.coeff1
+                + self.coeff2 * x
+                + self.coeff3 * x ** 2
+                + self.coeff4 * x ** 3
+            )
             return min(max(out, self.out_min), self.out_max)
 
     def nb_coeffs(self):
@@ -692,6 +732,30 @@ class Curve:
                 ids.append(int(key.split("coeff")[-1]))
         return max(ids)
 
+    def compute_grad(self, x, y, sign_val, threshold=1e-5):
+        """Check, for a single curve, if the gradient has the sign we expect. called by check_gradients.
+
+        :return: Verification result
+        :rtype: boolean
+
+        """
+        grad = np.around(
+            np.gradient(y, x), 2
+        )  # add a small number to get rid of very small negative values
+        grad[
+            np.abs(grad) <= threshold
+        ] = 0  # making sure that small gradients are set to zero to avoid
+        sign = np.sign(grad)
+
+        if np.all(np.asarray(y) == 0):  # all values are false
+            return False
+        elif np.all(
+            sign != -sign_val
+        ):  # include 0 and +1/-1 gradients. but not gradients of the opposite sign
+            return True
+        else:
+            return False
+
     def regression(self, data, curve_types):
         """Find curve coefficient by running a multivariate linear regression.
 
@@ -701,41 +765,67 @@ class Curve:
         """
         # Global R^2
         r_sqr = 0
+
+        # Define expected gradient sign
+        if self.out_var == "eir-f-t" or self.out_var == "eir-f-plr":
+            sign_val = +1
+        elif self.out_var == "cap-f-t":
+            sign_val = -1
+
+        # Drop duplicate entries
+        data.drop_duplicates(inplace=True)
+
+        # Find model that fits data the best
         if "quad" in curve_types:
+            # Prepare data for model
             data["X1^2"] = data["X1"] * data["X1"]
             X = data[["X1", "X1^2"]]
             y = data["Y"]
 
+            # OLS regression
             X = sm.add_constant(X)
             model = sm.OLS(y, X).fit()
             reg_r_sqr = model.rsquared
+
             if reg_r_sqr > r_sqr:
                 self.coeff1, self.coeff2, self.coeff3 = model.params
                 self.type = "quad"
                 r_sqr = reg_r_sqr
-                #print("quad: {}".format(r_sqr))
 
         if "cubic" in curve_types:
+            # Prepare data for model
             data["X1^2"] = data["X1"] * data["X1"]
             data["X1^3"] = data["X1"] * data["X1"] * data["X1"]
             X = data[["X1", "X1^2", "X1^3"]]
             y = data["Y"]
+
+            # OLS regression
             X = sm.add_constant(X)
             model = sm.OLS(y, X).fit()
             reg_r_sqr = model.rsquared
-            if reg_r_sqr > r_sqr:
+
+            # Compute indenpent variable using model
+            # to see if curve is monotonic
+            vals = []
+            c = Curve(eqp_type="", c_type="cubic")
+            c.coeff1, c.coeff2, c.coeff3, c.coeff4 = model.params
+            for x in data["X1"]:
+                vals.append(c.evaluate(x, 0))
+
+            if reg_r_sqr > r_sqr and self.compute_grad(data["X1"], vals, sign_val):
                 self.coeff1, self.coeff2, self.coeff3, self.coeff4 = model.params
                 self.type = "cubic"
                 r_sqr = reg_r_sqr
-                #print("cub: {}".format(r_sqr))
+
         if "bi_quad" in curve_types:
+            # Prepare data for model
             data["X1^2"] = data["X1"] * data["X1"]
             data["X2^2"] = data["X2"] * data["X2"]
             data["X1*X2"] = data["X1"] * data["X2"]
-
             X = data[["X1", "X1^2", "X2", "X2^2", "X1*X2"]]
             y = data["Y"]
 
+            # OLS regression
             X = sm.add_constant(X)
             model = sm.OLS(y, X).fit()
             reg_r_sqr = model.rsquared
@@ -757,6 +847,7 @@ class Curve:
                 self.type = "bi_quad"
                 r_sqr = reg_r_sqr
         if "bi_cub" in curve_types:
+            # Prepare data for model
             data["X1^2"] = data["X1"] * data["X1"]
             data["X1^3"] = data["X1"] * data["X1"] * data["X1"]
             data["X2^2"] = data["X2"] * data["X2"]
@@ -764,10 +855,22 @@ class Curve:
             data["X1*X2"] = data["X1"] * data["X2"]
             data["X1^2*X2"] = data["X1^2"] * data["X2"]
             data["X1*X2^2"] = data["X1"] * data["X2^2"]
-
-            X = data[["X1", "X1^2", "X2", "X2^2", "X1*X2", "X1^3", "X2^3", "X1^2*X2", "X1^*X2^2"]]
+            X = data[
+                [
+                    "X1",
+                    "X1^2",
+                    "X2",
+                    "X2^2",
+                    "X1*X2",
+                    "X1^3",
+                    "X2^3",
+                    "X1^2*X2",
+                    "X1^*X2^2",
+                ]
+            ]
             y = data["Y"]
 
+            # OLS regression
             X = sm.add_constant(X)
             model = sm.OLS(y, X).fit()
             reg_r_sqr = model.rsquared
@@ -813,9 +916,7 @@ class Curve:
         # Normalization point
         norm_out = self.evaluate(x_norm, y_norm)
         data["Y"] = data.apply(
-            lambda row: self.evaluate(row["X1"], row["X2"])
-            / norm_out,
-            axis=1,
+            lambda row: self.evaluate(row["X1"], row["X2"]) / norm_out, axis=1
         )
 
         self.regression(data, [self.type])
