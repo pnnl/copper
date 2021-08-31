@@ -9,7 +9,7 @@ class TestBenchmark(TestCase):
     def test_benchmark(self):
         chlr = cp.chiller(
             ref_cap=300,
-            ref_cap_unit="tons",
+            ref_cap_unit="ton",
             full_eff=0.650,
             full_eff_unit="kw/ton",
             part_eff=0.48,
@@ -36,7 +36,7 @@ class TestBenchmark(TestCase):
 
             # Generate a set of performance curves for targeted equipment
             chlr.generate_set_of_curves(
-                vars=["eir-f-t", "cap-f-t", "eir-f-plr"], method="typical"
+                vars=["eir-f-t", "cap-f-t", "eir-f-plr"], method="best_match"
             )
 
             # Extract number of generation needed to reach goal
@@ -56,7 +56,7 @@ class TestBenchmark(TestCase):
             chlr.set_of_curves = ""
 
         art_path = "/tmp/artifacts"
-        if os.path.isfile(art_path):
+        if os.path.isdir(art_path):
             # Store sets of curves
             with open(f"{art_path}/setsofcurves.pkl", "wb") as f:
                 pickle.dump(setsofcurves, f, pickle.HIGHEST_PROTOCOL)

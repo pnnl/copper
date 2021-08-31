@@ -9,8 +9,9 @@ import statistics, itertools
 
 
 class SetsofCurves:
-    def __init__(self, eqp_type, sets):
-        self.eqp_type = eqp_type
+    def __init__(self, eqp, sets):
+        self.eqp = eqp
+        self.eqp_type = eqp.type
         self.sets_of_curves = sets
 
     def get_aggregated_set_of_curves(
@@ -85,7 +86,7 @@ class SetsofCurves:
                     output_values[c.out_var].append(output_value)
 
         # Create new set of curves and assign its attributes based on user defined inputs
-        agg_set_of_curves = SetofCurves(eqp_type=self.eqp_type)
+        agg_set_of_curves = SetofCurves()
         for att, att_val in misc_attr.items():
             setattr(agg_set_of_curves, att, att_val)
 
@@ -129,7 +130,7 @@ class SetsofCurves:
 
             # Create new curve
             new_curve = Curve(
-                eqp_type=self.eqp_type, c_type=""
+                eqp_type=self.eqp, c_type=""
             )  # curve type is set later on
 
             # Assign curve attributes, assume no min/max
@@ -161,6 +162,9 @@ class SetsofCurves:
                 if agg_set_of_curves.model == "ect_lwt":
                     self.ref_lwt = ref_y
                     self.ref_ect = ref_x
+                elif agg_set_of_curves.model == "lct_lwt":
+                    self.ref_lwt = ref_y
+                    self.ref_lct = ref_x
                 else:
                     raise ValueError("Algorithm not supported.")
 
@@ -211,7 +215,7 @@ class SetsofCurves:
             for setofcurve in self.sets_of_curves:
                 data["name"] = [setofcurve.name]
                 for var in vars:
-                    data[var] = [setofcurve.__dict__[var]]
+                    data[var] = [setofcurve.eqp.__dict__[var]]
                 df_list.append(pd.DataFrame(data))
             df = pd.concat(df_list)
 
@@ -337,142 +341,32 @@ class SetsofCurves:
 
 
 class SetofCurves:
-    def __init__(self, eqp_type):
+    def __init__(self):
         self.name = ""
         self.curves = []
-        self.validity = 1.0
-        self.source = ""
-        self.eqp_type = eqp_type
-        self.model = ""
-        if eqp_type == "chiller":
-            self.ref_cap = 0
-            self.ref_cap_unit = ""
-            self.full_eff = 0
-            self.full_eff_unit = ""
-            self.part_eff = None
-            self.part_eff_unit = None
-            self.compressor_type = ""
-            self.condenser_type = ""
-            self.compressor_speed = ""
-            self.sim_engine = ""
-            self.min_plr = 0
-            self.min_unloading = 0
-            self.max_plr = 0
-            if self.condenser_type == "water":
-                self.plotting_range = {
-                    "eir-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 29.44,
-                    },
-                    "cap-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 29.44,
-                    },
-                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
-                    "eir-f-plr-dt": {
-                        "x1_min": 0.3,
-                        "x1_max": 1,
-                        "x1_norm": 1,
-                        "nbval": 50,
-                        "x2_min": 28.33,
-                        "x2_max": 28.33,
-                        "x2_norm": 28.33,
-                    },
-                }
-            elif self.condenser_type == "air":
-                self.plotting_range = {
-                    "eir-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 35,
-                    },
-                    "cap-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 35,
-                    },
-                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
-                    "eir-f-plr-dt": {
-                        "x1_min": 0.3,
-                        "x1_max": 1,
-                        "x1_norm": 1,
-                        "nbval": 50,
-                        "x2_min": 28.33,
-                        "x2_max": 28.33,
-                        "x2_norm": 28.33,
-                    },
-                }
-            else:
-                self.plotting_range = {
-                    "eir-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 29.44,
-                    },
-                    "cap-f-t": {
-                        "x1_min": 6.67,
-                        "x1_max": 6.67,
-                        "x1_norm": 6.67,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": 29.44,
-                    },
-                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
-                    "eir-f-plr-dt": {
-                        "x1_min": 0.3,
-                        "x1_max": 1,
-                        "x1_norm": 1,
-                        "nbval": 50,
-                        "x2_min": 22.77,
-                        "x2_max": 22.77,
-                        "x2_norm": 22.77,
-                    },
-                }
+        self.eqp = ""
 
     def get_data_for_plotting(self, curve, norm):
         var = curve.out_var
-        nb_vals = self.plotting_range[var]["nbval"]
-        x1_min = self.plotting_range[var]["x1_min"]
-        x1_max = self.plotting_range[var]["x1_max"]
+        nb_vals = self.eqp.plotting_range[var]["nbval"]
+        x1_min = self.eqp.plotting_range[var]["x1_min"]
+        x1_max = self.eqp.plotting_range[var]["x1_max"]
         x_1_vals = np.linspace(x1_min, x1_max, nb_vals)
 
-        if "x2_min" in self.plotting_range[var].keys():
-            x2_min = self.plotting_range[var]["x2_min"]
-            x2_max = self.plotting_range[var]["x2_max"]
+        if "x2_min" in self.eqp.plotting_range[var].keys():
+            x2_min = self.eqp.plotting_range[var]["x2_min"]
+            x2_max = self.eqp.plotting_range[var]["x2_max"]
             x_2_vals = np.linspace(x2_min, x2_max, nb_vals)
         else:
             x_2_vals = [0]
 
         y = []
         for v in range(nb_vals):
-            if "x2_min" in self.plotting_range[var].keys():
+            if "x2_min" in self.eqp.plotting_range[var].keys():
                 norm_fac = (
                     curve.evaluate(
-                        self.plotting_range[var]["x1_norm"],
-                        self.plotting_range[var]["x2_norm"],
+                        self.eqp.plotting_range[var]["x1_norm"],
+                        self.eqp.plotting_range[var]["x2_norm"],
                     )
                     if norm
                     else 1
@@ -481,8 +375,8 @@ class SetofCurves:
             else:
                 norm_fac = (
                     curve.evaluate(
-                        self.plotting_range[var]["x1_norm"],
-                        self.plotting_range[var]["x1_norm"],
+                        self.eqp.plotting_range[var]["x1_norm"],
+                        self.eqp.plotting_range[var]["x1_norm"],
                     )
                     if norm
                     else 1
@@ -530,7 +424,7 @@ class SetofCurves:
         curve_export = ""
         for curve in self.curves:
             curve_type = curve.type
-            if self.sim_engine == "energyplus":
+            if self.eqp.sim_engine == "energyplus":
                 if curve_type == "quad":
                     cuvre_type = "Curve:Quadratic"
                 elif curve_type == "bi_quad":
@@ -608,8 +502,9 @@ class SetofCurves:
 
 
 class Curve:
-    def __init__(self, eqp_type, c_type):
+    def __init__(self, eqp, c_type):
         # General charactersitics
+        self.eqp = eqp
         self.out_var = ""
         self.type = c_type
         self.units = "si"
@@ -649,13 +544,25 @@ class Curve:
             self.coeff9 = 0
             self.coeff10 = 0
 
-        # Equipment specific charcatertics
-        if eqp_type == "chiller":
+        # Equipment specific charactertics
+        # TODO: move under a function in the chiller class
+        if self.eqp.type == "chiller":
             self.ref_evap_fluid_flow = 0
             self.ref_cond_fluid_flow = 0
-            self.ref_lwt = 6.67
-            self.ref_ect = 29.4
-            self.ref_lct = 35
+            if self.eqp.part_eff_ref_std == "ahri_550/590":
+                self.ref_lwt = (44.0 - 32.0) * 5 / 9
+                if self.eqp.condenser_type == "water":
+                    self.ref_ect = (85.0 - 32.0) * 5 / 9
+                else:
+                    self.ref_ect = (95.0 - 32.0) * 5 / 9
+            elif self.eqp.part_eff_ref_std == "ahri_551/591":
+                self.ref_lwt = 7.0
+                if self.eqp.condenser_type == "water":
+                    self.ref_ect = 30.0
+                else:
+                    self.ref_ect = 35.0
+            if self.eqp.model == "lct_lwt":
+                self.ref_lct = eqp.get_ref_lct()
 
     def evaluate(self, x, y):
         """Return the output of a curve.
@@ -804,10 +711,10 @@ class Curve:
             model = sm.OLS(y, X).fit()
             reg_r_sqr = model.rsquared
 
-            # Compute indenpent variable using model
+            # Compute independent variable using model
             # to see if curve is monotonic
             vals = []
-            c = Curve(eqp_type="", c_type="cubic")
+            c = Curve(eqp=self.eqp, c_type="cubic")
             c.coeff1, c.coeff2, c.coeff3, c.coeff4 = model.params
             for x in data["X1"]:
                 vals.append(c.evaluate(x, 0))
@@ -855,6 +762,7 @@ class Curve:
             data["X1*X2"] = data["X1"] * data["X2"]
             data["X1^2*X2"] = data["X1^2"] * data["X2"]
             data["X1*X2^2"] = data["X1"] * data["X2^2"]
+
             X = data[
                 [
                     "X1",
@@ -865,7 +773,7 @@ class Curve:
                     "X1^3",
                     "X2^3",
                     "X1^2*X2",
-                    "X1^*X2^2",
+                    "X1*X2^2",
                 ]
             ]
             y = data["Y"]
@@ -896,10 +804,13 @@ class Curve:
                 self.type = "bi_cub"
                 r_sqr = reg_r_sqr
 
-    def get_out_reference(self):
+    def get_out_reference(self, eqp):
         if "-t" in self.out_var:
             x_ref = self.ref_lwt
-            y_ref = self.ref_ect
+            if eqp.model == "ect_lwt":
+                y_ref = self.ref_ect
+            elif eqp.model == "lct_lwt":
+                y_ref = self.ref_lct
         else:
             x_ref = 1
             y_ref = 0

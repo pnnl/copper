@@ -89,6 +89,7 @@ class GA:
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
 
         self.set_of_base_curves = self.base_curves[0]
+        self.set_of_base_curves.eqp = self.equipment
         self.base_curves_data = {}
         for curve in self.set_of_base_curves.curves:
             self.base_curves_data[
@@ -107,6 +108,7 @@ class GA:
             :rtype: list()
 
         ]"""
+<<<<<<< HEAD
 
         while not self.is_target_met():
             self.pop = self.generate_population(curves)
@@ -120,6 +122,22 @@ class GA:
             if not self.is_target_met():
                 print(f"Target not met after {self.max_gen}; Restarting the GA.")
 
+=======
+        self.pop = self.generate_population(curves)
+        gen = 0
+        self.equipment.curves = curves
+        while gen <= self.max_gen and not self.is_target_met():
+            self.evolve_population(self.pop)
+            gen += 1
+            # For debugging
+            # print(
+            #    "GEN: {}, IPLV: {}, KW/TON: {}".format(
+            #        gen,
+            #        round(self.equipment.calc_eff(eff_type="part"), 2),
+            #        round(self.equipment.calc_eff(eff_type="full"), 2),
+            #    )
+            # )
+>>>>>>> e79e8e8675bd9b54cb531ef2cc2b1144f77260a4
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 
@@ -141,7 +159,7 @@ class GA:
                     ) in self.equipment.set_of_curves:  # list of objects  # c in curves
                         # set_of_curves
                         if "cap" in c.out_var:
-                            cap_rating += abs(1 - c.get_out_reference())
+                            cap_rating += abs(1 - c.get_out_reference(self.equipment))
             else:
                 return False
         else:
@@ -190,7 +208,11 @@ class GA:
 
                 grad_list = []
                 for c in self.equipment.set_of_curves:
-                    if c.out_var == "eir-f-t" or c.out_var == "eir-f-plr":
+                    if (
+                        c.out_var == "eir-f-t"
+                        or c.out_var == "eir-f-plr"
+                        or c.out_var == "eir-f-plr-dt"
+                    ):
                         sign_val = +1
                     elif c.out_var == "cap-f-t":
                         sign_val = -1
@@ -354,7 +376,7 @@ class GA:
         rsme = 0
         for c in set_of_curves.curves:
             if c.out_var in self.vars:
-                curve_normal_score += abs(1 - c.get_out_reference())
+                curve_normal_score += abs(1 - c.get_out_reference(self.equipment))
                 x, y = set_of_curves.get_data_for_plotting(c, False)
                 base_x, base_y = self.base_curves_data[c.out_var]
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
@@ -475,7 +497,8 @@ class GA:
             if male != female:
                 male = parents[male]
                 female = parents[female]
-                child = SetofCurves(eqp_type=self.equipment.type)
+                child = SetofCurves()
+                child.eqp = self.equipment
                 curves = []
                 # male and female curves are structured the same way
                 for _, c in enumerate(male.curves):
