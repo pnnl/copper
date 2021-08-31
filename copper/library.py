@@ -5,8 +5,9 @@ import copper.chiller
 
 
 class Library:
-    def __init__(self, path="./fixtures/chiller_curves.json"):
+    def __init__(self, path="./fixtures/chiller_curves.json", rating_std=""):
         self.path = path
+        self.rating_std = rating_std
 
         # Load library
         self.data = json.loads(open(self.path, "r").read())
@@ -44,6 +45,10 @@ class Library:
                 obj_args["set_of_curves"] = self.get_set_of_curves_by_name(
                     vals["name"]
                 ).curves
+
+                # Set rating Stds
+                if self.rating_std != "":
+                    obj_args["part_eff_ref_std"] = self.rating_std
 
                 # Update instance of the equipment
                 obj = eval("copper." + vals["eqp_type"])(**obj_args)
@@ -110,7 +115,7 @@ class Library:
             uni_field_val[field] = set(val)
         return uni_field_val
 
-    def find_set_of_curvess_from_lib(self, filters=[]):
+    def find_set_of_curvess_from_lib(self, filters=[], part_eff_flag=False):
         """Retrieve sets of curves from a library matching specific filters.
 
         :param list(tuple()) filters: Filter represented by tuples (field, val)
@@ -138,8 +143,17 @@ class Library:
             # using values from the library
             obj_args = {}
             for p in eqp_props:
-                if not "part_eff" in p and not "set_of_curves" in p:
-                    obj_args[p] = props[p]
+                if not "set_of_curves" in p:
+                    if part_eff_flag and "part_eff" in p:
+                        if p == "part_eff_ref_std":
+                            obj_args["part_eff_ref_std"] = "ahri_550/590"
+                        else:
+                            if p in props.keys():
+                                obj_args[p] = props[p]
+                    elif "part_eff" in p:
+                        pass
+                    else:
+                        obj_args[p] = props[p]
 
             # Create instance of the equipment
             obj = eval("copper." + props["eqp_type"])(**obj_args)
