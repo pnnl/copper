@@ -129,9 +129,7 @@ class SetsofCurves:
             data.columns = ["X1", "X2", "Y"]
 
             # Create new curve
-            new_curve = Curve(
-                eqp=self.eqp, c_type=""
-            )  # curve type is set later on
+            new_curve = Curve(eqp=self.eqp, c_type="")  # curve type is set later on
 
             # Assign curve attributes, assume no min/max
             # TODO: Allow min/max to be passed by user
@@ -174,11 +172,16 @@ class SetsofCurves:
             # Normalize curve to reference point
             new_curve.normalized(data, ref_x, ref_y)
 
+            # Apply cap to avoid non-monotonicity
+            if len(ranges) > 0:
+                new_curve.cap(ranges)
+
             agg_set_of_curves.curves.append(new_curve)
+
         return agg_set_of_curves
 
     def nearest_neighbor_sort(
-        self, target_attr=None, vars=["ref_cap", "full_eff", "part_eff"], N=None
+        self, target_attr=None, vars=["ref_cap", "full_eff"], N=None
     ):
 
         """
@@ -273,7 +276,7 @@ class SetsofCurves:
 
             if target_attr is not None and var in target_attr.keys():
                 target_attr[var_name] = (target_attr[var] - df[var].mean()) / (
-                        df[var].std() + epsilon
+                    df[var].std() + epsilon
                 )
             else:
                 print(
@@ -285,7 +288,7 @@ class SetsofCurves:
         x = -self.l2_norm(df=df, target_attr=target_attr, weights=weights, vars=vars)
 
         if len(df) == 1:
-            df['score'] = 1
+            df["score"] = 1
         elif N is not None:
             df["score"] = x
             # first sort and pick top N candidate
@@ -444,7 +447,9 @@ class SetofCurves:
                         getattr(curve, "coeff{}".format(i))
                     )
                 curve_export += (
-                    "   {},\n".format(curve.x_min) if curve.x_min else "    ,\n"
+                    "   {},\n".format(curve.x_min)
+                    if curve.x_min
+                    else "   0.0,\n"  # TODO: Temporary fix
                 )
                 curve_export += (
                     "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
@@ -456,9 +461,7 @@ class SetofCurves:
                     curve_export += (
                         "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
                     )
-                curve_export += (
-                    "   {},\n".format(0) if curve.out_min else "    ,\n"
-                )
+                curve_export += "   {},\n".format(0) if curve.out_min else "    ,\n"
                 curve_export += (
                     "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
                 )
@@ -831,3 +834,34 @@ class Curve:
         )
 
         self.regression(data, [self.type])
+
+    def cap(self, ranges):
+        min_val = 999
+        max_val = -999
+        x_max = -999
+        y_max = -999
+        if len(ranges[self.out_var]) > 1:
+            x_s, y_s = ranges[self.out_var]
+        else:
+            x_s = ranges[self.out_var][0]
+            y_s = (0, 0)
+
+        for x, y in zip(
+            np.linspace(x_s[0], x_s[1], 1000), np.linspace(y_s[0], y_s[1], 1000)
+        ):
+            val = self.evaluate(x, y)
+            if val < min_val:
+                x_min = x
+                y_min = y
+                min_val = min(self.evaluate(x, y), min_val)
+            if val > max_val:
+                x_max = x
+                y_max = y
+                max_val = max(self.evaluate(x, y), max_val)
+
+        if self.out_var == "cap-f-t":
+            self.x_min = x_max
+            self.y_min = y_max
+        else:
+            self.x_min = x_min
+            self.y_min = y_min
