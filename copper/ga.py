@@ -109,21 +109,17 @@ class GA:
 
         ]"""
 
-        self.pop = self.generate_population(curves)
-        gen = 0
-        self.equipment.curves = curves
-        while gen <= self.max_gen and not self.is_target_met():
-            self.evolve_population(self.pop)
-            gen += 1
-            # For debugging
-            # print(
-            #    "GEN: {}, IPLV: {}, KW/TON: {}".format(
-            #        gen,
-            #        round(self.equipment.calc_eff(eff_type="part"), 2),
-            #        round(self.equipment.calc_eff(eff_type="full"), 2),
-            #    )
-            # )
-
+        while not self.is_target_met():
+            self.pop = self.generate_population(curves)
+            gen = 0
+            self.equipment.curves = curves
+            while gen <= self.max_gen and not self.is_target_met():
+                self.evolve_population(self.pop)
+                gen += 1
+                #For debugging
+                #print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="part"),2), round(self.equipment.calc_eff(eff_type="full"),2)))
+            if not self.is_target_met():
+                print(f"Target not met after {self.max_gen}; Restarting the GA.")
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 

@@ -131,7 +131,7 @@ class chiller:
         self,
         method="typical",
         pop_size=100,
-        tol=0.04,
+        tol=0.005,
         max_gen=500,
         vars="",
         sFac=0.5,
