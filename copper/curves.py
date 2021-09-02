@@ -174,7 +174,7 @@ class SetsofCurves:
 
             # Apply cap to avoid non-monotonicity
             if len(ranges) > 0:
-                new_curve.cap(ranges)
+                new_curve.cap()
 
             agg_set_of_curves.curves.append(new_curve)
 
@@ -835,11 +835,18 @@ class Curve:
 
         self.regression(data, [self.type])
 
-    def cap(self, ranges):
+    def cap(self):
         min_val = 999
         max_val = -999
         x_max = -999
         y_max = -999
+
+        ranges = {
+            'eir-f-t': [(4, 10), (10.0, 40.0)],
+            'cap-f-t': [(8, 10), (10.0, 40.0)],
+            'eir-f-plr': [(0.0, 1.0)]
+        }
+
         if len(ranges[self.out_var]) > 1:
             x_s, y_s = ranges[self.out_var]
         else:
