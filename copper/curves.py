@@ -129,9 +129,7 @@ class SetsofCurves:
             data.columns = ["X1", "X2", "Y"]
 
             # Create new curve
-            new_curve = Curve(
-                eqp=self.eqp, c_type=""
-            )  # curve type is set later on
+            new_curve = Curve(eqp=self.eqp, c_type="")  # curve type is set later on
 
             # Assign curve attributes, assume no min/max
             # TODO: Allow min/max to be passed by user
@@ -175,10 +173,11 @@ class SetsofCurves:
             new_curve.normalized(data, ref_x, ref_y)
 
             agg_set_of_curves.curves.append(new_curve)
+
         return agg_set_of_curves
 
     def nearest_neighbor_sort(
-        self, target_attr=None, vars=["ref_cap", "full_eff", "part_eff"], N=None
+        self, target_attr=None, vars=["ref_cap", "full_eff"], N=None
     ):
 
         """
@@ -273,7 +272,7 @@ class SetsofCurves:
 
             if target_attr is not None and var in target_attr.keys():
                 target_attr[var_name] = (target_attr[var] - df[var].mean()) / (
-                        df[var].std() + epsilon
+                    df[var].std() + epsilon
                 )
             else:
                 print(
@@ -285,7 +284,7 @@ class SetsofCurves:
         x = -self.l2_norm(df=df, target_attr=target_attr, weights=weights, vars=vars)
 
         if len(df) == 1:
-            df['score'] = 1
+            df["score"] = 1
         elif N is not None:
             df["score"] = x
             # first sort and pick top N candidate
@@ -444,7 +443,9 @@ class SetofCurves:
                         getattr(curve, "coeff{}".format(i))
                     )
                 curve_export += (
-                    "   {},\n".format(curve.x_min) if curve.x_min else "    ,\n"
+                    "   {},\n".format(curve.x_min)
+                    if curve.x_min
+                    else "   0.0,\n"  # TODO: Temporary fix
                 )
                 curve_export += (
                     "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
@@ -456,9 +457,7 @@ class SetofCurves:
                     curve_export += (
                         "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
                     )
-                curve_export += (
-                    "   {},\n".format(0) if curve.out_min else "    ,\n"
-                )
+                curve_export += "   {},\n".format(0) if curve.out_min else "    ,\n"
                 curve_export += (
                     "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
                 )
