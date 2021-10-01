@@ -151,8 +151,7 @@ class GA:
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
 
-
-        #debugging
+        # debugging
         # print('Condition 1: ', (part_rating < self.target * (1 + self.tol)))
         # print('Condition 2: ', (part_rating > self.target * (1 - self.tol)))
         # print('Condition 3: ', (full_rating < self.full_eff * (1 + self.tol)))
@@ -175,7 +174,7 @@ class GA:
             and (full_rating > self.full_eff * (1 - self.tol))
             and (cap_rating < self.tol)
             and (cap_rating > -self.tol)
-            #and self.check_gradients()
+            # and self.check_gradients()
         ):
             return True
         else:
