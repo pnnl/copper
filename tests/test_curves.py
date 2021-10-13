@@ -109,4 +109,4 @@ class TestCurves(TestCase):
         assert(c.x_min == 39.2)
         assert(c.y_min == 50.0)
         assert(c.x_max == 60.08)
-        assert(c.y_max == 122.0)
+        assert(c.y_max == 104)
