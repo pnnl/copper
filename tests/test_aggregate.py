@@ -27,13 +27,13 @@ class TestAggregate(TestCase):
 
         sets = centrifugal_chlr
         chlr = cp.chiller(
-            ref_cap = 200,
+            ref_cap=200,
             ref_cap_unit="ton",
             full_eff=5.0,
             full_eff_unit="cop",
-            compressor_type= "aggregated",
-            condenser_type= "water",
-            compressor_speed= "aggregated"
+            compressor_type="aggregated",
+            condenser_type="water",
+            compressor_speed="aggregated",
         )
         water_cooled_curves = cp.SetsofCurves(sets=sets, eqp=chlr)
         # remove sets
