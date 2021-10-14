@@ -63,3 +63,54 @@ class TestCurves(TestCase):
         set_of_curves.eqp = chlr
         set_of_curves.sim_engine = "energyplus"
         self.assertTrue(set_of_curves.export())
+
+    def test_curve_conversion(self):
+        # Define equipment
+        lib = cp.Library(
+            path="./fixtures/chiller_curves.json", rating_std="ahri_550/590"
+        )
+        chlr = cp.chiller(
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant",
+            ref_cap=471000,
+            ref_cap_unit="W",
+            full_eff=5.89,
+            full_eff_unit="cop",
+            part_eff_ref_std="ahri_551/591",
+            model="ect_lwt",
+            sim_engine="energyplus",
+            set_of_curves=lib.get_set_of_curves_by_name(
+                "ElectricEIRChiller_McQuay_WSC_471kW/5.89COP/Vanes"
+            ).curves,
+        )
+
+        # Define curve
+        c = cp.Curve(eqp=chlr, c_type="bi_quad")
+        c.coeff1 = 0.8205623152958919
+        c.coeff2 = 0.015666171280029038
+        c.coeff3 = -0.0009618860655775869
+        c.coeff4 = 0.00999598253118077
+        c.coeff5 = -0.00029391662581783687
+        c.coeff6 = 0.0003883447155134793
+        c.x_min = 4.0
+        c.x_max = 15.6
+        c.y_min = 10.0
+        c.y_max = 40.0
+        c.out_var = "cap-f-t"
+
+        # Convert curves coefficient to IP
+        c.convert_coefficients_to_ip()
+
+        # Verify curve coefficients
+        assert round(c.coeff1, 3) == 0.090
+        assert round(c.coeff2, 3) == 0.024
+        assert round(c.coeff3, 3) == 0.000
+        assert round(c.coeff4, 3) == 0.008
+        assert round(c.coeff5, 3) == -0.000
+        assert round(c.coeff6, 3) == 0.000
+
+        assert c.x_min == 39.2
+        assert c.y_min == 50.0
+        assert c.x_max == 60.08
+        assert c.y_max == 104

@@ -19,7 +19,7 @@ class TestAlgorithm(TestCase):
         )
 
         set_of_curves = chlr.generate_set_of_curves(
-            vars=["eir-f-plr"], method="best_match"
+            vars=["eir-f-plr"], method="best_match", tol=0.005
         )
 
         res = "Efficiency: {} kW/ton, IPLV: {} kW/ton.".format(
