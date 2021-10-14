@@ -569,7 +569,7 @@ class Curve:
                 else:
                     self.ref_ect = 35.0
             if self.eqp.model == "lct_lwt":
-                self.ref_lct = eqp.get_ref_lct()
+                self.ref_lct = eqp.get_ref_lct(False)
 
     def evaluate(self, x, y):
         """Return the output of a curve.

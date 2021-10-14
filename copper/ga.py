@@ -50,16 +50,24 @@ class GA:
         """
         self.target = self.equipment.part_eff
         self.full_eff = self.equipment.full_eff
+        self.target_bis = self.equipment.part_eff_bis
+        self.full_eff_bis = self.equipment.full_eff_bis
 
         # Convert target if different than kw/ton
         if self.equipment.part_eff_unit != "kw/ton":
             target_c = Units(self.target, self.equipment.part_eff_unit)
             self.target = target_c.conversion("kw/ton")
+        if self.equipment.part_eff_unit_bis != "kw/ton":
+            target_c = Units(self.target_bis, self.equipment.part_eff_unit_bis)
+            self.target_bis = target_c.conversion("kw/ton")
 
-        # Convert target if different than kw/ton
+        # Convert full load efficiency if different than kw/ton
         if self.equipment.full_eff_unit != "kw/ton":
             full_eff_c = Units(self.equipment.full_eff, self.equipment.full_eff_unit)
             self.full_eff = full_eff_c.conversion("kw/ton")
+        if self.equipment.full_eff_unit_bis != "kw/ton":
+            full_eff_c = Units(self.equipment.full_eff_bis, self.equipment.full_eff_unit_bis)
+            self.full_eff_bis = full_eff_c.conversion("kw/ton")
 
         if len(self.base_curves) == 0:
             if self.equipment.type == "chiller":
@@ -116,13 +124,15 @@ class GA:
             self.evolve_population(self.pop)
             gen += 1
             # For debugging
-            # print(
-            #    "GEN: {}, IPLV: {}, KW/TON: {}".format(
-            #        gen,
-            #        round(self.equipment.calc_eff(eff_type="part"), 2),
-            #        round(self.equipment.calc_eff(eff_type="full"), 2),
-            #    )
-            # )
+            print(
+               "GEN: {}, IPLV: {}, KW/TON: {}, IPLV: {}, KW/TON: {}".format(
+                   gen,
+                   round(self.equipment.calc_eff(eff_type="part"), 4),
+                   round(self.equipment.calc_eff(eff_type="full"), 4),
+                   round(self.equipment.calc_eff(eff_type="part", bis=True), 4),
+                   round(self.equipment.calc_eff(eff_type="full", bis=True), 4),
+               )
+            )
 
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
@@ -138,6 +148,8 @@ class GA:
             if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_eff(eff_type="part")
                 full_rating = self.equipment.calc_eff(eff_type="full")
+                part_rating_bis = self.equipment.calc_eff(eff_type="part", bis=True)
+                full_rating_bis = self.equipment.calc_eff(eff_type="full", bis=True)
                 cap_rating = 0
                 if "cap-f-t" in self.vars:
                     for (
@@ -170,8 +182,12 @@ class GA:
         if (
             (part_rating < self.target * (1 + self.tol))
             and (part_rating > self.target * (1 - self.tol))
+            and (part_rating_bis < self.target_bis * (1 + self.tol))
+            and (part_rating_bis > self.target_bis * (1 - self.tol))
             and (full_rating < self.full_eff * (1 + self.tol))
             and (full_rating > self.full_eff * (1 - self.tol))
+            and (full_rating_bis < self.full_eff_bis * (1 + self.tol))
+            and (full_rating_bis > self.full_eff_bis * (1 - self.tol))
             and (cap_rating < self.tol)
             and (cap_rating > -self.tol)
             # and self.check_gradients()
@@ -366,29 +382,32 @@ class GA:
                 base_x, base_y = self.base_curves_data[c.out_var]
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
 
-        if self.equipment.type == "chiller":
-            iplv_score = abs(self.equipment.calc_eff(eff_type="part") - self.target)
-            full_eff_score = abs(
-                self.equipment.calc_eff(eff_type="full") - self.equipment.full_eff
-            )
-            iplv_weight = 1
-            eff_weight = 1
-            curve_normal_score_weight = 1
-            rsme_weight = 0.5
+        part_eff_score = abs(self.equipment.calc_eff(eff_type="part") - self.target)
+        part_eff_score_bis = abs(self.equipment.calc_eff(eff_type="part", bis=True) - self.target_bis)
+        full_eff_score = abs(
+            self.equipment.calc_eff(eff_type="full") - self.equipment.full_eff
+        )
+        full_eff_score_bis = abs(
+            self.equipment.calc_eff(eff_type="full", bis=True) - self.equipment.full_eff_bis
+        )
+        part_eff_weight = 1
+        full_eff_weight = 1
+        curve_normal_score_weight = 1
+        rsme_weight = 0.5
 
-            fit_score = (
-                iplv_score * iplv_weight
-                + full_eff_score * eff_weight
-                + curve_normal_score * curve_normal_score_weight
-                + rsme * rsme_weight
-            ) / (
-                iplv_weight
-                + eff_weight
-                + curve_normal_score_weight * len(set_of_curves.curves)
-                + rsme_weight
-            )
-        else:
-            raise ValueError("This type of equipment has not yet been implemented.")
+        fit_score = (
+            part_eff_score * part_eff_weight
+            + part_eff_score_bis * part_eff_weight
+            + full_eff_score * full_eff_weight
+            + full_eff_score_bis * full_eff_weight
+            + curve_normal_score * curve_normal_score_weight
+            + rsme * rsme_weight
+        ) / (
+            part_eff_weight * 2
+            + full_eff_weight * 2
+            + curve_normal_score_weight * len(set_of_curves.curves)
+            + rsme_weight
+        )
 
         return fit_score
 

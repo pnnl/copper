@@ -29,7 +29,7 @@ class Library:
                 # using values from the library
                 obj_args = {}
                 for p in props:
-                    if not "part_eff" in p and not "set_of_curves" in p:
+                    if not "part_eff" in p and not "set_of_curves" in p and not "bis" in p:
                         obj_args[p] = vals[p]
 
                 # Temporarily set the part load efficiency to the
@@ -76,7 +76,7 @@ class Library:
         # using values from the library
         obj_args = {}
         for p in props:
-            if not "part_eff" in p and not "set_of_curves" in p:
+            if not "part_eff" in p and not "set_of_curves" in p and not "bis" in p:
                 obj_args[p] = data[p]
 
         # Temporarily set the part load efficiency to the
