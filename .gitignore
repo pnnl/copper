@@ -16,4 +16,8 @@ env.sh
 pkl_0706/
 template_appendixG.txt
 template_eplus96.txt
+*.csv
+/check_roundoff/
+*.sbatch
+/figures/
 
