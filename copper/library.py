@@ -150,7 +150,7 @@ class Library:
                         else:
                             if p in props.keys():
                                 obj_args[p] = props[p]
-                    elif "part_eff" in p:
+                    elif "part_eff" in p or "bis" in p:
                         pass
                     else:
                         obj_args[p] = props[p]
