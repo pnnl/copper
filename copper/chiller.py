@@ -147,8 +147,6 @@ class chiller:
         comp_power = self.ref_cap * full_eff  # note, full_eff has to e in kW per ton
         cond_cap = evap_power + comp_power
 
-        print('ref_lct: {}'.format(self.ref_lct, self.ref_ect))
-
         # determine specific heat capacity
         c_p = CP.PropsSI("C", "P", 101325, "T", 0.5 * (self.ref_ect + self.ref_lct) + 273.15, "Water") / 1000
         rho = CP.PropsSI("D", "P", 101325, "T", 0.5 * (self.ref_ect + self.ref_lct) + 273.15, "Water")
