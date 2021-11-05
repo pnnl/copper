@@ -96,8 +96,10 @@ class GA:
             elif self.method == "best_match":
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
 
+        #curves -> list of len 3, and set_of_curves -> object
         self.set_of_base_curves = self.base_curves[0]
         self.set_of_base_curves.eqp = self.equipment
+        self.set_of_base_curves.eqp.set_of_curves = self.set_of_base_curves.curves
         self.base_curves_data = {}
         for curve in self.set_of_base_curves.curves:
             self.base_curves_data[
@@ -126,12 +128,10 @@ class GA:
                 gen += 1
                 # For debugging
                 print(
-                   "GEN: {}, IPLV: {}, KW/TON: {}, IPLV: {}, KW/TON: {}".format(
+                   "GEN: {}, IPLV: {}, KW/TON: {}".format(
                        gen,
                        round(self.equipment.calc_eff(eff_type="part"), 4),
-                       round(self.equipment.calc_eff(eff_type="full"), 4),
-                       round(self.equipment.calc_eff(eff_type="part", bis=True), 4),
-                       round(self.equipment.calc_eff(eff_type="full", bis=True), 4),
+                       round(self.equipment.calc_eff(eff_type="full"), 4)
                    )
                 )
                 
@@ -388,13 +388,15 @@ class GA:
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
 
         part_eff_score = abs(self.equipment.calc_eff(eff_type="part") - self.target)
-        part_eff_score_bis = abs(self.equipment.calc_eff(eff_type="part", bis=True) - self.target_bis)
+        part_eff_score_bis = part_eff_score
+        #part_eff_score_bis = abs(self.equipment.calc_eff(eff_type="part", bis=True) - self.target_bis)
         full_eff_score = abs(
             self.equipment.calc_eff(eff_type="full") - self.equipment.full_eff
         )
-        full_eff_score_bis = abs(
-            self.equipment.calc_eff(eff_type="full", bis=True) - self.equipment.full_eff_bis
-        )
+        full_eff_score_bis = full_eff_score
+        # full_eff_score_bis = abs(
+        #     self.equipment.calc_eff(eff_type="full", bis=True) - self.equipment.full_eff_bis
+        # )
         part_eff_weight = 1
         full_eff_weight = 1
         curve_normal_score_weight = 1
