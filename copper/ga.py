@@ -88,8 +88,10 @@ class GA:
             elif self.method == "best_match":
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
 
+        #curves -> list, set_of_curves -> object
         self.set_of_base_curves = self.base_curves[0]
         self.set_of_base_curves.eqp = self.equipment
+        self.set_of_base_curves.eqp.set_of_curves = self.set_of_base_curves.curves
         self.base_curves_data = {}
         for curve in self.set_of_base_curves.curves:
             self.base_curves_data[
@@ -117,7 +119,7 @@ class GA:
                 self.evolve_population(self.pop)
                 gen += 1
                 #For debugging
-                #print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="part"),2), round(self.equipment.calc_eff(eff_type="full"),2)))
+                print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="part"),2), round(self.equipment.calc_eff(eff_type="full"),2)))
             if not self.is_target_met():
                 print(f"Target not met after {self.max_gen}; Restarting the GA.")
         print("Curve coefficients calculated in {} generations.".format(gen))
