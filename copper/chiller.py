@@ -224,7 +224,7 @@ class chiller:
 
         return eir_ref
 
-    def calc_eff(self, eff_type, unit="kw/ton"):
+    def calc_eff(self, eff_type, unit="kw/ton", output_report=False):
         """Calculate chiller efficiency.
 
         :param str eff_type: chiller performance indicator, currently supported `full` (full load rating)
@@ -340,6 +340,22 @@ class chiller:
                 # Convert efficiency to kW/ton
                 kwpton = eir / kbtu_to_kw * ton_to_kbtu
 
+                if output_report:
+                    cap_ton = self.ref_cap
+                    if self.ref_cap_unit != "ton":
+                        cap_ton = Units(self.ref_cap, self.ref_cap_unit).conversion(
+                            "ton"
+                        )
+                    part_report = f"""At {str(round(load * 100.0,0)).replace('.0','')}% load and AHRI rated conditions:
+                    - Entering condenser temperature: {round(ect[idx],2)},
+                    - Leaving chiller temperature: {round(lwt,2)},
+                    - Part load ratio: {round(plr,2)},
+                    - Operating capacity: {round(cap_op * cap_ton,2)} ton,
+                    - Power: {round(kwpton * cap_op * cap_ton,2)} kW,
+                    - Efficiency: {round(kwpton,3)} kW/ton
+                    """
+                    print(part_report)
+
                 # Store efficiency for IPLV calculation
                 kwpton_lst.append(eir / kbtu_to_kw * ton_to_kbtu)
 
@@ -354,6 +370,9 @@ class chiller:
                 + (0.45 / kwpton_lst[2])
                 + (0.12 / kwpton_lst[3])
             )
+
+            if output_report:
+                print(f"IPLV: {round(iplv,3)} kW/ton")
         except:
             return -999
 
@@ -368,7 +387,7 @@ class chiller:
         if self.part_eff_ref_std == "ahri_551/591":  # IPLV.SI
             lwt = 7.0
             if self.condenser_type == "air":
-                ect = [35, 27, 19, 13]
+                ect = [35.0, 27.0, 19.0, 13.0]
             elif self.condenser_type == "water":
                 ect = [30.0, 24.5, 19.0, 19.0]
         elif self.part_eff_ref_std == "ahri_550/590":  # IPLV.IP

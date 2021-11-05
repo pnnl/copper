@@ -122,6 +122,8 @@ class GA:
                 print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="part"),2), round(self.equipment.calc_eff(eff_type="full"),2)))
             if not self.is_target_met():
                 print(f"Target not met after {self.max_gen}; Restarting the GA.")
+
+
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 
@@ -149,8 +151,7 @@ class GA:
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
 
-
-        #debugging
+        # debugging
         # print('Condition 1: ', (part_rating < self.target * (1 + self.tol)))
         # print('Condition 2: ', (part_rating > self.target * (1 - self.tol)))
         # print('Condition 3: ', (full_rating < self.full_eff * (1 + self.tol)))
@@ -173,7 +174,7 @@ class GA:
             and (full_rating > self.full_eff * (1 - self.tol))
             and (cap_rating < self.tol)
             and (cap_rating > -self.tol)
-            #and self.check_gradients()
+            # and self.check_gradients()
         ):
             return True
         else:
