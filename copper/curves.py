@@ -108,6 +108,7 @@ class SetsofCurves:
                 except AssertionError:
                     print("Need to specify number of nearest neighbors N")
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr, N=N)
+                print("df: ", df)
                 sorted_vals = list(map(vals.__getitem__, df.index.values))
                 y_s = [
                     list(
@@ -352,6 +353,7 @@ class SetofCurves:
         nb_vals = self.eqp.plotting_range[var]["nbval"]
         x1_min = self.eqp.plotting_range[var]["x1_min"]
         x1_max = self.eqp.plotting_range[var]["x1_max"]
+        print("Min and max values are: {}  and {}".format(x1_min, x1_max))
         x_1_vals = np.linspace(x1_min, x1_max, nb_vals)
 
         if "x2_min" in self.eqp.plotting_range[var].keys():

@@ -7,26 +7,26 @@ from copper.curves import *
 
 class chiller:
     def __init__(
-        self,
-        ref_cap,
-        ref_cap_unit,
-        full_eff,
-        full_eff_unit,
-        compressor_type,
-        condenser_type,
-        compressor_speed,
-        part_eff=0,
-        part_eff_unit="",
-        part_eff_ref_std="ahri_550/590",
-        part_eff_bis=0,
-        part_eff_unit_bis="",
-        part_eff_ref_std_bis="ahri_550/590",
-        full_eff_bis="",
-        full_eff_unit_bis="",
-        set_of_curves="",
-        model="ect_lwt",
-        sim_engine="energyplus",
-        min_unloading=0.1,
+            self,
+            ref_cap,
+            ref_cap_unit,
+            full_eff,
+            full_eff_unit,
+            compressor_type,
+            condenser_type,
+            compressor_speed,
+            part_eff=0,
+            part_eff_unit="",
+            part_eff_ref_std="ahri_550/590",
+            part_eff_bis=0,
+            part_eff_unit_bis="",
+            part_eff_ref_std_bis="ahri_550/590",
+            full_eff_bis="",
+            full_eff_unit_bis="",
+            set_of_curves="",
+            model="ect_lwt",
+            sim_engine="energyplus",
+            min_unloading=0.1,
     ):
         self.type = "chiller"
         self.compressor_type = compressor_type
@@ -79,6 +79,7 @@ class chiller:
                 }
             else:
                 lct = self.get_ref_lct(False)
+
                 self.plotting_range = {
                     "eir-f-t": {
                         "x1_min": lwt,
@@ -98,7 +99,7 @@ class chiller:
                         "x2_max": 60,
                         "x2_norm": lct,
                     },
-                    "eir-f-plr-dt": {
+                    "eir-f-plr": {
                         "x1_min": lct,
                         "x1_max": lct,
                         "x1_norm": lct,
@@ -138,18 +139,18 @@ class chiller:
             }
 
     def generate_set_of_curves(
-        self,
-        method="typical",
-        pop_size=100,
-        tol=0.04,
-        max_gen=500,
-        vars="",
-        sFac=0.5,
-        retain=0.2,
-        random_select=0.1,
-        mutate=0.95,
-        bounds=(6, 10),
-        base_curves=[],
+            self,
+            method="typical",
+            pop_size=100,
+            tol=0.005,
+            max_gen=500,
+            vars="",
+            sFac=0.5,
+            retain=0.2,
+            random_select=0.1,
+            mutate=0.95,
+            bounds=(6, 10),
+            base_curves=[],
     ):
         """Generate a set of curves for a particular chiller() object.
 
@@ -248,7 +249,7 @@ class chiller:
 
         try:
             for idx, load in enumerate(
-                loads
+                    loads
             ):  # Calculate efficiency for each testing conditions
                 if self.model == "ect_lwt":  # DOE-2 chiller model
                     # Temperature adjustments
@@ -333,13 +334,13 @@ class chiller:
                         cap_ton = Units(self.ref_cap, self.ref_cap_unit).conversion(
                             "ton"
                         )
-                    part_report = f"""At {str(round(load * 100.0,0)).replace('.0','')}% load and AHRI rated conditions:
-                    - Entering condenser temperature: {round(ect[idx],2)},
-                    - Leaving chiller temperature: {round(lwt,2)},
-                    - Part load ratio: {round(plr,2)},
-                    - Operating capacity: {round(cap_op * cap_ton,2)} ton,
-                    - Power: {round(kwpton * cap_op * cap_ton,2)} kW,
-                    - Efficiency: {round(kwpton,3)} kW/ton
+                    part_report = f"""At {str(round(load * 100.0, 0)).replace('.0', '')}% load and AHRI rated conditions:
+                    - Entering condenser temperature: {round(ect[idx], 2)},
+                    - Leaving chiller temperature: {round(lwt, 2)},
+                    - Part load ratio: {round(plr, 2)},
+                    - Operating capacity: {round(cap_op * cap_ton, 2)} ton,
+                    - Power: {round(kwpton * cap_op * cap_ton, 2)} kW,
+                    - Efficiency: {round(kwpton, 3)} kW/ton
                     """
                     print(part_report)
 
@@ -352,14 +353,14 @@ class chiller:
 
             # Coefficients from AHRI Std 551/591
             iplv = 1 / (
-                (0.01 / kwpton_lst[0])
-                + (0.42 / kwpton_lst[1])
-                + (0.45 / kwpton_lst[2])
-                + (0.12 / kwpton_lst[3])
+                    (0.01 / kwpton_lst[0])
+                    + (0.42 / kwpton_lst[1])
+                    + (0.45 / kwpton_lst[2])
+                    + (0.12 / kwpton_lst[3])
             )
 
             if output_report:
-                print(f"IPLV: {round(iplv,3)} kW/ton")
+                print(f"IPLV: {round(iplv, 3)} kW/ton")
         except:
             return -999
 
@@ -408,6 +409,7 @@ class chiller:
 
     def get_ref_lct(self, bis):
         curves = self.get_chiller_curves()
+        print("Curves: {}".format(curves))
         if not curves == {}:
             cap_f_t = curves["cap_f_t"]
             eir_f_t = curves["eir_f_t"]
@@ -429,6 +431,8 @@ class chiller:
                 c_p,
             ]
             return self.get_lct(ect[0], args)
+        #else:
+            #print("Empty dictionary for curves")
 
     def get_lct(self, ect, args):
         result = optimize.root_scalar(
