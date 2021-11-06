@@ -88,7 +88,6 @@ class GA:
             elif self.method == "best_match":
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
 
-        #curves -> list, set_of_curves -> object
         self.set_of_base_curves = self.base_curves[0]
         self.set_of_base_curves.eqp = self.equipment
         self.set_of_base_curves.eqp.set_of_curves = self.set_of_base_curves.curves

@@ -157,8 +157,8 @@ class SetsofCurves:
             new_curve.ref_y = ref_y
             # TODO: update fields below when adding new equipment
             if self.eqp_type == "chiller":
-                self.ref_evap_fluid_flow = 0
-                self.ref_cond_fluid_flow = self.eqp.get_cond_flow_rate()
+                new_curve.ref_evap_fluid_flow = 0
+                new_curve.ref_cond_fluid_flow = self.eqp.get_cond_flow_rate()
                 if agg_set_of_curves.model == "ect_lwt":
                     self.ref_lwt = ref_y
                     self.ref_ect = ref_x
@@ -173,10 +173,6 @@ class SetsofCurves:
 
             # Normalize curve to reference point
             new_curve.normalized(data, ref_x, ref_y)
-
-            # Apply cap to avoid non-monotonicity
-            # if len(ranges) > 0:
-            #     new_curve.cap()
 
             agg_set_of_curves.curves.append(new_curve)
 
@@ -429,59 +425,62 @@ class SetofCurves:
         curve_export = ""
         for curve in self.curves:
             curve_type = curve.type
+            self.name = self.name.replace("/", "_").replace(" ", "_")
             if fmt == "idf":
-                if self.eqp.sim_engine == "energyplus":
-                    if curve_type == "quad":
-                        cuvre_type = "Curve:Quadratic"
-                    elif curve_type == "bi_quad":
-                        cuvre_type = "Curve:Biquadratic"
-                    elif curve_type == "bi_cub":
-                        cuvre_type = "Curve:Bicubic"
-                    elif curve_type == "cubic":
-                        cuvre_type = "Curve:Cubic"
+                #if self.eqp.sim_engine == "energyplus":
+                if curve_type == "quad":
+                    cuvre_type = "Curve:Quadratic"
+                elif curve_type == "bi_quad":
+                    cuvre_type = "Curve:Biquadratic"
+                elif curve_type == "bi_cub":
+                    cuvre_type = "Curve:Bicubic"
+                elif curve_type == "cubic":
+                    cuvre_type = "Curve:Cubic"
+                curve_export += (
+                    "\n{},\n".format(cuvre_type)
+                    if len(curve_export)
+                    else "{},\n".format(cuvre_type)
+                )
+                curve_export += "   {}_{},\n".format(self.name, curve.out_var)
+                for i in range(1, curve.nb_coeffs() + 1):
+                    curve_export += "   {},\n".format(
+                        getattr(curve, "coeff{}".format(i))
+                    )
+                curve_export += (
+                    "   {},\n".format(curve.x_min)
+                    if curve.x_min
+                    else "   0.0,\n"  # TODO: Temporary fix
+                )
+                curve_export += (
+                    "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
+                )
+                if curve_type != "quad" and curve_type != "cubic":
                     curve_export += (
-                        "\n{},\n".format(cuvre_type)
-                        if len(curve_export)
-                        else "{},\n".format(cuvre_type)
-                    )
-                    curve_export += "   {}_{},\n".format(self.name, curve.out_var)
-                    for i in range(1, curve.nb_coeffs() + 1):
-                        curve_export += "   {},\n".format(
-                            getattr(curve, "coeff{}".format(i))
-                        )
-                    curve_export += (
-                        "   {},\n".format(curve.x_min)
-                        if curve.x_min
-                        else "   0.0,\n"  # TODO: Temporary fix
+                        "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
                     )
                     curve_export += (
-                        "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
+                        "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
                     )
-                    if curve_type != "quad" and curve_type != "cubic":
-                        curve_export += (
-                            "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
-                        )
-                        curve_export += (
-                            "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
-                        )
-                    curve_export += "   {},\n".format(0) if curve.out_min else "    ,\n"
-                    curve_export += (
-                        "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
-                    )
-                else:
-                    # TODO: implement export to DOE-2 format
-                    raise ValueError(
-                        "Export to the {} input format is not yet implemented.".format(
-                            self.sim_engine
-                        )
-                    )
+                curve_export += "   {},\n".format(0) if curve.out_min else "    ,\n"
+                curve_export += (
+                    "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
+                )
+#                else:
+#                    # TODO: implement export to DOE-2 format
+#                    raise ValueError(
+#                        "Export to the {} input format is not yet implemented.".format(
+#                            self.sim_engine
+#                        )
+#                    )
+                filen = open(path + "/" + self.name + ".{}".format(fmt), "w+")
+                filen.write(curve_export)                
             elif fmt == "csv":
                 curve_export += f"{self.name},{curve.out_var},{curve.units},{curve.type},{curve.x_min},{curve.x_max},{curve.y_min},{curve.y_max}"
                 for i in range(1, curve.nb_coeffs() + 1):
                     curve_export += ",{}".format(getattr(curve, "coeff{}".format(i)))
                 curve_export += "\n"
-        filen = open(path + "self.name" + ".{}".format(fmt), "a+")
-        filen.write(curve_export)
+                filen = open(path + "/" + self.name + ".{}".format(fmt), "a+")
+                filen.write(curve_export)
         return True
 
     def remove_curve(self, out_var):
