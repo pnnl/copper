@@ -118,7 +118,7 @@ class GA:
             :rtype: list()
 
         ]"""
-
+        max_gen = 0
         while not self.is_target_met():
             self.pop = self.generate_population(curves)
             gen = 0
@@ -126,14 +126,17 @@ class GA:
             while gen <= self.max_gen and not self.is_target_met():
                 self.evolve_population(self.pop)
                 gen += 1
-                # For debugging
+                #For debugging
                 print(
-                   "GEN: {}, IPLV: {}, KW/TON: {}".format(
+                   "GEN: {}, IPLV: {}, KW/TON: {} IPLV-bis: {}, KW/TON-bis: {}".format(
                        gen,
                        round(self.equipment.calc_eff(eff_type="part"), 4),
-                       round(self.equipment.calc_eff(eff_type="full"), 4)
+                       round(self.equipment.calc_eff(eff_type="full"), 4),
+                       round(self.equipment.calc_eff(eff_type="part", bis=True), 4),
+                       round(self.equipment.calc_eff(eff_type="full", bis=True), 4),
                    )
                 )
+                max_gen = gen
                 
             if not self.is_target_met():
                 print(f"Target not met after {self.max_gen}; Restarting the GA.")
@@ -388,25 +391,27 @@ class GA:
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
 
         part_eff_score = abs(self.equipment.calc_eff(eff_type="part") - self.target)
-        part_eff_score_bis = part_eff_score
-        #part_eff_score_bis = abs(self.equipment.calc_eff(eff_type="part", bis=True) - self.target_bis)
+        #part_eff_score_bis = part_eff_score
+        part_eff_score_bis = abs(self.equipment.calc_eff(eff_type="part", bis=True) - self.target_bis)
         full_eff_score = abs(
             self.equipment.calc_eff(eff_type="full") - self.equipment.full_eff
         )
-        full_eff_score_bis = full_eff_score
-        # full_eff_score_bis = abs(
-        #     self.equipment.calc_eff(eff_type="full", bis=True) - self.equipment.full_eff_bis
-        # )
+        #full_eff_score_bis = full_eff_score
+        full_eff_score_bis = abs(
+            self.equipment.calc_eff(eff_type="full", bis=True) - self.equipment.full_eff_bis
+        )
         part_eff_weight = 1
+        part_eff_weight_bis = 1.0
         full_eff_weight = 1
+        full_eff_weight_bis = 1.0
         curve_normal_score_weight = 1
         rsme_weight = 0.5
 
         fit_score = (
             part_eff_score * part_eff_weight
-            + part_eff_score_bis * part_eff_weight
+            + part_eff_score_bis * part_eff_weight_bis
             + full_eff_score * full_eff_weight
-            + full_eff_score_bis * full_eff_weight
+            + full_eff_score_bis * full_eff_weight_bis
             + curve_normal_score * curve_normal_score_weight
             + rsme * rsme_weight
         ) / (

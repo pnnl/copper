@@ -112,13 +112,18 @@ class chiller:
                         "x2_norm": 1.0,
                     },
                 }
+
+
         elif self.condenser_type == "air":
             if self.part_eff_ref_std == "ahri_550/590":
                 lwt = (44.0 - 32.0) * 5 / 9
                 ect = (95.0 - 32.0) * 5 / 9
+                lct = None
             elif self.part_eff_ref_std == "ahri_551/591":
                 lwt = 7.0
                 ect = 35.0
+                lct = None
+
             self.plotting_range = {
                 "eir-f-t": {
                     "x1_min": lwt,
@@ -217,7 +222,7 @@ class chiller:
 
     def get_eir_ref(self, bis):
 
-        bis = False
+        #bis = False
         # Retrieve equipment efficiency and unit
         if bis:
             kwpton_ref = self.full_eff_bis

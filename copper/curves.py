@@ -108,7 +108,7 @@ class SetsofCurves:
                 except AssertionError:
                     print("Need to specify number of nearest neighbors N")
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr, N=N)
-                print("df: ", df)
+                #print("df: ", df)
                 sorted_vals = list(map(vals.__getitem__, df.index.values))
                 y_s = [
                     list(
@@ -159,11 +159,11 @@ class SetsofCurves:
             # TODO: update fields below when adding new equipment
             if self.eqp_type == "chiller":
                 self.ref_evap_fluid_flow = 0
-                self.ref_cond_fluid_flow = self.eqp.get_cond_flow_rate()
                 if agg_set_of_curves.model == "ect_lwt":
                     self.ref_lwt = ref_y
                     self.ref_ect = ref_x
                 elif agg_set_of_curves.model == "lct_lwt":
+                    self.ref_cond_fluid_flow = self.eqp.get_cond_flow_rate()
                     self.ref_lwt = ref_y
                     self.ref_lct = ref_x
                 else:
