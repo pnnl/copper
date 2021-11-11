@@ -119,10 +119,11 @@ class GA:
 
         ]"""
 
+        self.pop = []
+        gen = 0
+        self.equipment.curves = curves
         while not self.is_target_met():
             self.pop = self.generate_population(curves)
-            gen = 0
-            self.equipment.curves = curves
             while gen <= self.max_gen and not self.is_target_met():
                 self.evolve_population(self.pop)
                 gen += 1
