@@ -22,3 +22,6 @@ template_eplus96.txt
 /chillers
 /get_roundoff
 template_bis.txt
+template_*.txt
+template_reform.txt
+
