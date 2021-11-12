@@ -12249,6 +12249,7 @@
                }
           }
      },
+<<<<<<< HEAD
      "ReformEIRChiller_Trane_RTHB_1051kW/5.05COP/Valve": {
           "eqp_type": "chiller",
           "name": "ReformEIRChiller_Trane_RTHB_1051kW/5.05COP/Valve",
@@ -12347,6 +12348,8 @@
                }
           }
      },
+=======
+>>>>>>> 1db6357197abcf2a912a8a3b1da5fee3a09fdcde
      "ReformEIRChiller_Carrier_23XL_1062kW/5.50COP/Valve": {
           "eqp_type": "chiller",
           "name": "ReformEIRChiller_Carrier_23XL_1062kW/5.50COP/Valve",

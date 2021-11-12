@@ -14,19 +14,19 @@ from copper.curves import *
 
 class GA:
     def __init__(
-        self,
-        equipment,
-        method="typical",
-        pop_size=100,
-        tol=0.005,
-        max_gen=500,
-        vars="",
-        sFac=0.5,
-        retain=0.2,
-        random_select=0.1,
-        mutate=0.95,
-        bounds=(6, 10),
-        base_curves=[],
+            self,
+            equipment,
+            method="typical",
+            pop_size=100,
+            tol=0.005,
+            max_gen=500,
+            vars="",
+            sFac=0.5,
+            retain=0.2,
+            random_select=0.1,
+            mutate=0.95,
+            bounds=(6, 10),
+            base_curves=[],
     ):
         self.equipment = equipment
         self.method = method
@@ -96,7 +96,7 @@ class GA:
             elif self.method == "best_match":
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
 
-        #curves -> list of len 3, and set_of_curves -> object
+        # curves -> list of len 3, and set_of_curves -> object
         self.set_of_base_curves = self.base_curves[0]
         self.set_of_base_curves.eqp = self.equipment
         self.set_of_base_curves.eqp.set_of_curves = self.set_of_base_curves.curves
@@ -128,22 +128,25 @@ class GA:
             while gen <= self.max_gen and not self.is_target_met():
                 self.evolve_population(self.pop)
                 gen += 1
-                #For debugging
+                # For debugging
                 print(
-                   "GEN: {}, IPLV: {}, KW/TON: {} IPLV-bis: {}, KW/TON-bis: {}".format(
-                       gen,
-                       round(self.equipment.calc_eff(eff_type="part"), 4),
-                       round(self.equipment.calc_eff(eff_type="full"), 4),
-                       round(self.equipment.calc_eff(eff_type="part", bis=True), 4),
-                       round(self.equipment.calc_eff(eff_type="full", bis=True), 4),
-                   )
+                    "GEN: {}, IPLV: {}, KW/TON: {} IPLV-bis: {}, KW/TON-bis: {}".format(
+                        gen,
+                        round(self.equipment.calc_eff(eff_type="part"), 4),
+                        round(self.equipment.calc_eff(eff_type="full"), 4),
+                        round(self.equipment.calc_eff(eff_type="part", bis=True), 4),
+                        round(self.equipment.calc_eff(eff_type="full", bis=True), 4),
+                    )
                 )
                 max_gen = gen
-                
+
             if not self.is_target_met():
                 print(f"Target not met after {self.max_gen}; Restarting the GA.")
                 gen = 0
-                
+
+                print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="part"), 2),
+                                                             round(self.equipment.calc_eff(eff_type="full"), 2)))
+
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
 
@@ -163,7 +166,7 @@ class GA:
                 cap_rating = 0
                 if "cap-f-t" in self.vars:
                     for (
-                        c
+                            c
                     ) in self.equipment.set_of_curves:  # list of objects  # c in curves
                         # set_of_curves
                         if "cap" in c.out_var:
@@ -190,17 +193,17 @@ class GA:
         #     and (cap_rating > -self.tol))
 
         if (
-            (part_rating < self.target * (1 + self.tol))
-            and (part_rating > self.target * (1 - self.tol))
-            and (part_rating_bis < self.target_bis * (1 + self.tol))
-            and (part_rating_bis > self.target_bis * (1 - self.tol))
-            and (full_rating < self.full_eff * (1 + self.tol))
-            and (full_rating > self.full_eff * (1 - self.tol))
-            and (full_rating_bis < self.full_eff_bis * (1 + self.tol))
-            and (full_rating_bis > self.full_eff_bis * (1 - self.tol))
-            and (cap_rating < self.tol)
-            and (cap_rating > -self.tol)
-            # and self.check_gradients()
+                (part_rating < self.target * (1 + self.tol))
+                and (part_rating > self.target * (1 - self.tol))
+                and (part_rating_bis < self.target_bis * (1 + self.tol))
+                and (part_rating_bis > self.target_bis * (1 - self.tol))
+                and (full_rating < self.full_eff * (1 + self.tol))
+                and (full_rating > self.full_eff * (1 - self.tol))
+                and (full_rating_bis < self.full_eff_bis * (1 + self.tol))
+                and (full_rating_bis > self.full_eff_bis * (1 - self.tol))
+                and (cap_rating < self.tol)
+                and (cap_rating > -self.tol)
+                # and self.check_gradients()
         ):
             return True
         else:
@@ -220,9 +223,9 @@ class GA:
                 grad_list = []
                 for c in self.equipment.set_of_curves:
                     if (
-                        c.out_var == "eir-f-t"
-                        or c.out_var == "eir-f-plr"
-                        or c.out_var == "eir-f-plr-dt"
+                            c.out_var == "eir-f-t"
+                            or c.out_var == "eir-f-plr"
+                            or c.out_var == "eir-f-plr-dt"
                     ):
                         sign_val = +1
                     elif c.out_var == "cap-f-t":
@@ -255,13 +258,13 @@ class GA:
         )  # add a small number to get rid of very small negative values
         grad[
             np.abs(grad) <= threshold
-        ] = 0  # making sure that small gradients are set to zero to avoid
+            ] = 0  # making sure that small gradients are set to zero to avoid
         sign = np.sign(grad)
 
         if np.all(np.asarray(y) == 0):  # all values are false
             return False
         elif np.all(
-            sign != -sign_val
+                sign != -sign_val
         ):  # include 0 and +1/-1 gradients. but not gradients of the opposite sign
             return True
         else:
@@ -393,12 +396,12 @@ class GA:
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
 
         part_eff_score = abs(self.equipment.calc_eff(eff_type="part") - self.target)
-        #part_eff_score_bis = part_eff_score
+        # part_eff_score_bis = part_eff_score
         part_eff_score_bis = abs(self.equipment.calc_eff(eff_type="part", bis=True) - self.target_bis)
         full_eff_score = abs(
             self.equipment.calc_eff(eff_type="full") - self.equipment.full_eff
         )
-        #full_eff_score_bis = full_eff_score
+        # full_eff_score_bis = full_eff_score
         full_eff_score_bis = abs(
             self.equipment.calc_eff(eff_type="full", bis=True) - self.equipment.full_eff_bis
         )
@@ -410,18 +413,18 @@ class GA:
         rsme_weight = 0.5
 
         fit_score = (
-            part_eff_score * part_eff_weight
-            + part_eff_score_bis * part_eff_weight_bis
-            + full_eff_score * full_eff_weight
-            + full_eff_score_bis * full_eff_weight_bis
-            + curve_normal_score * curve_normal_score_weight
-            + rsme * rsme_weight
-        ) / (
-            part_eff_weight * 2
-            + full_eff_weight * 2
-            + curve_normal_score_weight * len(set_of_curves.curves)
-            + rsme_weight
-        )
+                            part_eff_score * part_eff_weight
+                            + part_eff_score_bis * part_eff_weight_bis
+                            + full_eff_score * full_eff_weight
+                            + full_eff_score_bis * full_eff_weight_bis
+                            + curve_normal_score * curve_normal_score_weight
+                            + rsme * rsme_weight
+                    ) / (
+                            part_eff_weight * 2
+                            + full_eff_weight * 2
+                            + curve_normal_score_weight * len(set_of_curves.curves)
+                            + rsme_weight
+                    )
 
         return fit_score
 

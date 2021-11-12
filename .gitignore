@@ -17,6 +17,7 @@ pkl_0706/
 template_appendixG.txt
 template_eplus96.txt
 *.sbatch
+<<<<<<< HEAD
 /figures/
 *_results.csv
 /chillers
@@ -25,3 +26,7 @@ template_bis.txt
 template_*.txt
 template_reform.txt
 
+/chillers/
+3SF_results.csv
+check_roundoff/
+/figures

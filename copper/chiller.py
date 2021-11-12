@@ -52,7 +52,8 @@ class chiller:
             if self.part_eff_ref_std == "ahri_550/590":
                 lwt = (44.0 - 32.0) * 5 / 9
                 ect = (85.0 - 32.0) * 5 / 9
-                lct = (94.3 - 32.0) * 5/ 9 #in accordance with standard
+                lct = (94.3 - 32.0) * 5 / 9  # in accordance with standard
+
             elif self.part_eff_ref_std == "ahri_551/591":
                 lwt = 7.0
                 ect = 30.0
@@ -81,7 +82,8 @@ class chiller:
                     "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
                 }
             else:
-                #lct = self.get_ref_lct(False)
+
+                # lct = self.get_ref_lct(False)
 
                 self.plotting_range = {
                     "eir-f-t": {
@@ -118,11 +120,11 @@ class chiller:
             if self.part_eff_ref_std == "ahri_550/590":
                 lwt = (44.0 - 32.0) * 5 / 9
                 ect = (95.0 - 32.0) * 5 / 9
-                lct = None
+                lct = (94.3 - 32.0) * 5 / 9
             elif self.part_eff_ref_std == "ahri_551/591":
                 lwt = 7.0
                 ect = 35.0
-                lct = None
+                lct = 35.0
 
             self.plotting_range = {
                 "eir-f-t": {
@@ -146,7 +148,6 @@ class chiller:
                 "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
             }
 
-        # Aowabin: assign the reference conditions as class variables
         self.ref_lwt, self.ref_ect, self.ref_lct = lwt, ect, lct
 
     def get_cond_flow_rate(self):
@@ -156,17 +157,17 @@ class chiller:
         :return:
         """
         evap_cap_ton = Units(value=self.ref_cap, unit="ton")
-        evap_power = evap_cap_ton.conversion(new_unit="W")/1000 #evaporator power in KW
+        evap_power = evap_cap_ton.conversion(new_unit="kW")  # evaporator power in KW
 
         full_eff_unit = Units(value=self.full_eff, unit=self.full_eff_unit)
-        full_eff = full_eff_unit.conversion(new_unit="kw/ton") #fulll eff needs to be in KW/ton
-        comp_power = self.ref_cap*full_eff #note, full_eff has to e in kW per ton
+        full_eff = full_eff_unit.conversion(new_unit="kw/ton")  # fulll eff needs to be in KW/ton
+        comp_power = self.ref_cap * full_eff  # note, full_eff has to e in kW per ton
         cond_cap = evap_power + comp_power
 
-        #determine specific heat capacity
-        c_p = CP.PropsSI("C", "P", 101325, "T", 0.5*(self.ref_ect + self.ref_lct) + 273.15, "Water")/1000
-        rho = CP.PropsSI("D", "P", 101325, "T", 0.5*(self.ref_ect + self.ref_lct) + 273.15, "Water")
-        ref_cond_flow_rate = (cond_cap)/((self.ref_lct - self.ref_ect)*c_p*rho)
+        # determine specific heat capacity
+        c_p = CP.PropsSI("C", "P", 101325, "T", 0.5 * (self.ref_ect + self.ref_lct) + 273.15, "Water") / 1000
+        rho = CP.PropsSI("D", "P", 101325, "T", 0.5 * (self.ref_ect + self.ref_lct) + 273.15, "Water")
+        ref_cond_flow_rate = (cond_cap) / ((self.ref_lct - self.ref_ect) * c_p * rho)
 
         return ref_cond_flow_rate
 
@@ -174,7 +175,7 @@ class chiller:
             self,
             method="typical",
             pop_size=100,
-            tol=0.005,
+            tol=0.0025,
             max_gen=500,
             vars="",
             sFac=0.5,
@@ -222,7 +223,7 @@ class chiller:
 
     def get_eir_ref(self, bis):
 
-        #bis = False
+        # bis = False
         # Retrieve equipment efficiency and unit
         if bis:
             kwpton_ref = self.full_eff_bis
@@ -464,8 +465,8 @@ class chiller:
                 c_p,
             ]
             return self.get_lct(ect[0], args)
-        #else:
-            #print("Empty dictionary for curves")
+        # else:
+        # print("Empty dictionary for curves")
 
     def get_lct(self, ect, args):
         result = optimize.root_scalar(

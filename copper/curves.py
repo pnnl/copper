@@ -159,6 +159,9 @@ class SetsofCurves:
             # TODO: update fields below when adding new equipment
             if self.eqp_type == "chiller":
                 self.ref_evap_fluid_flow = 0
+                new_curve.ref_evap_fluid_flow = 0
+                new_curve.ref_cond_fluid_flow = self.eqp.get_cond_flow_rate()
+
                 if agg_set_of_curves.model == "ect_lwt":
                     self.ref_lwt = ref_y
                     self.ref_ect = ref_x
@@ -428,59 +431,62 @@ class SetofCurves:
         curve_export = ""
         for curve in self.curves:
             curve_type = curve.type
+            self.name = self.name.replace("/", "_").replace(" ", "_")
             if fmt == "idf":
-                if self.eqp.sim_engine == "energyplus":
-                    if curve_type == "quad":
-                        cuvre_type = "Curve:Quadratic"
-                    elif curve_type == "bi_quad":
-                        cuvre_type = "Curve:Biquadratic"
-                    elif curve_type == "bi_cub":
-                        cuvre_type = "Curve:Bicubic"
-                    elif curve_type == "cubic":
-                        cuvre_type = "Curve:Cubic"
+                #if self.eqp.sim_engine == "energyplus":
+                if curve_type == "quad":
+                    cuvre_type = "Curve:Quadratic"
+                elif curve_type == "bi_quad":
+                    cuvre_type = "Curve:Biquadratic"
+                elif curve_type == "bi_cub":
+                    cuvre_type = "Curve:Bicubic"
+                elif curve_type == "cubic":
+                    cuvre_type = "Curve:Cubic"
+                curve_export += (
+                    "\n{},\n".format(cuvre_type)
+                    if len(curve_export)
+                    else "{},\n".format(cuvre_type)
+                )
+                curve_export += "   {}_{},\n".format(self.name, curve.out_var)
+                for i in range(1, curve.nb_coeffs() + 1):
+                    curve_export += "   {},\n".format(
+                        getattr(curve, "coeff{}".format(i))
+                    )
+                curve_export += (
+                    "   {},\n".format(curve.x_min)
+                    if curve.x_min
+                    else "   0.0,\n"  # TODO: Temporary fix
+                )
+                curve_export += (
+                    "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
+                )
+                if curve_type != "quad" and curve_type != "cubic":
                     curve_export += (
-                        "\n{},\n".format(cuvre_type)
-                        if len(curve_export)
-                        else "{},\n".format(cuvre_type)
-                    )
-                    curve_export += "   {}_{},\n".format(self.name, curve.out_var)
-                    for i in range(1, curve.nb_coeffs() + 1):
-                        curve_export += "   {},\n".format(
-                            getattr(curve, "coeff{}".format(i))
-                        )
-                    curve_export += (
-                        "   {},\n".format(curve.x_min)
-                        if curve.x_min
-                        else "   0.0,\n"  # TODO: Temporary fix
+                        "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
                     )
                     curve_export += (
-                        "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
+                        "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
                     )
-                    if curve_type != "quad" and curve_type != "cubic":
-                        curve_export += (
-                            "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
-                        )
-                        curve_export += (
-                            "   {},\n".format(curve.y_max) if curve.y_max else "    ,\n"
-                        )
-                    curve_export += "   {},\n".format(0) if curve.out_min else "    ,\n"
-                    curve_export += (
-                        "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
-                    )
-                else:
-                    # TODO: implement export to DOE-2 format
-                    raise ValueError(
-                        "Export to the {} input format is not yet implemented.".format(
-                            self.sim_engine
-                        )
-                    )
+                curve_export += "   {},\n".format(0) if curve.out_min else "    ,\n"
+                curve_export += (
+                    "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
+                )
+#                else:
+#                    # TODO: implement export to DOE-2 format
+#                    raise ValueError(
+#                        "Export to the {} input format is not yet implemented.".format(
+#                            self.sim_engine
+#                        )
+#                    )
+                filen = open(path + "/" + self.name + ".{}".format(fmt), "w+")
+                filen.write(curve_export)                
             elif fmt == "csv":
                 curve_export += f"{self.name},{curve.out_var},{curve.units},{curve.type},{curve.x_min},{curve.x_max},{curve.y_min},{curve.y_max}"
                 for i in range(1, curve.nb_coeffs() + 1):
                     curve_export += ",{}".format(getattr(curve, "coeff{}".format(i)))
                 curve_export += "\n"
-        filen = open(path + "self.name" + ".{}".format(fmt), "a+")
-        filen.write(curve_export)
+                filen = open(path + "/" + self.name + ".{}".format(fmt), "a+")
+                filen.write(curve_export)
         return True
 
     def remove_curve(self, out_var):
@@ -846,6 +852,46 @@ class Curve:
 
         self.regression(data, [self.type])
 
+
+    def cap(self):
+        min_val = 999
+        max_val = -999
+        x_max = -999
+        y_max = -999
+
+        ranges = {
+            'eir-f-t': [(4, 10), (10.0, 40.0)],
+            'cap-f-t': [(8, 10), (10.0, 40.0)],
+            'eir-f-plr': [(0.0, 1.0)]
+        }
+
+        if len(ranges[self.out_var]) > 1:
+            x_s, y_s = ranges[self.out_var]
+        else:
+            x_s = ranges[self.out_var][0]
+            y_s = (0, 0)
+
+        for x, y in zip(
+            np.linspace(x_s[0], x_s[1], 1000), np.linspace(y_s[0], y_s[1], 1000)
+        ):
+            val = self.evaluate(x, y)
+            if val < min_val:
+                x_min = x
+                y_min = y
+                min_val = min(self.evaluate(x, y), min_val)
+            if val > max_val:
+                x_max = x
+                y_max = y
+                max_val = max(self.evaluate(x, y), max_val)
+
+        if self.out_var == "cap-f-t":
+            self.x_min = x_max
+            self.y_min = y_max
+        else:
+            self.x_min = x_min
+            self.y_min = y_min
+
+
     def read_idf_curve(self, idf_curve):
         pass
 
@@ -871,3 +917,4 @@ class Curve:
                 self.y_min = Units(self.y_min, "degC").conversion("degF")
                 self.y_max = Units(self.y_max, "degC").conversion("degF")
                 self.units = "ip"
+

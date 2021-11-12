@@ -5,7 +5,7 @@ import copper.chiller
 
 
 class Library:
-    def __init__(self, path="./fixtures/chiller_curves.json", rating_std=""):
+    def __init__(self, path="./fixtures/chiller_curves.json", rating_std="", export=False):
         self.path = path
         self.rating_std = rating_std
 
@@ -45,6 +45,9 @@ class Library:
                 obj_args["set_of_curves"] = self.get_set_of_curves_by_name(
                     vals["name"]
                 ).curves
+
+                if export:
+                    self.get_set_of_curves_by_name(vals["name"]).export('./curves',fmt="idf")
 
                 # Set rating Stds
                 if self.rating_std != "":
