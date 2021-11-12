@@ -70,7 +70,6 @@ class chiller:
                     "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
                 }
             else:
-                #lct = self.get_ref_lct()
                 self.plotting_range = {
                     "eir-f-t": {
                         "x1_min": lwt,
@@ -104,7 +103,7 @@ class chiller:
             if self.part_eff_ref_std == "ahri_550/590":
                 lwt = (44.0 - 32.0) * 5 / 9
                 ect = (95.0 - 32.0) * 5 / 9
-                lct = (94.3 - 32.0) * 5 / 9  # in accordance with standard
+                lct = (94.3 - 32.0) * 5 / 9
             elif self.part_eff_ref_std == "ahri_551/591":
                 lwt = 7.0
                 ect = 35.0
@@ -295,7 +294,7 @@ class chiller:
                             -999,
                             1 / eir_ref,
                             ect[idx],
-                            self.set_of_curves[0].ref_evap_fluid_flow * rho,
+                            self.set_of_curves[0].ref_cond_fluid_flow * rho,
                             c_p,
                         ]
                     else:
@@ -308,12 +307,12 @@ class chiller:
                             cap_f_lwt_lct_rated,
                             1 / eir_ref,
                             ect[idx],
-                            self.set_of_curves[0].ref_evap_fluid_flow * rho,
+                            self.set_of_curves[0].ref_cond_fluid_flow * rho,
                             c_p,
                         ]
 
                     # Determine leaving condenser temperature
-                    #lct = self.get_lct(ect[idx], args)
+                    lct = self.get_lct(ect[idx], args)
 
                     # Determine rated capacity curve modifier
                     if idx == 0:
