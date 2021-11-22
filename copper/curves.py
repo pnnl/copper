@@ -73,8 +73,18 @@ class SetsofCurves:
         # Calculate values of dependent variables using the user-specified ranges
         for set_of_curves in self.sets_of_curves:
             for c in set_of_curves.curves:
+                if not "normalization" in ranges[c.out_var].keys():
+                    raise ValueError(
+                        "Normalization point not provided, the curve cannot be created."
+                    )
+                norm = ranges[c.out_var]["normalization"]
+                if isinstance(norm, float):
+                    ref_x = norm
+                    ref_y = 0
+                else:
+                    ref_x, ref_y = norm
                 output_value = [
-                    c.evaluate(x, y)
+                    c.evaluate(x, y) * c.evaluate(ref_x, ref_y) / c.evaluate(c.ref_x, c.ref_y)
                     for x, y in list(
                         itertools.product(
                             input_values[c.out_var][0], input_values[c.out_var][1]
@@ -144,16 +154,6 @@ class SetsofCurves:
             new_curve.y_max = 999
             new_curve.out_min = -999
             new_curve.out_max = 999
-            if not "normalization" in ranges[var].keys():
-                raise ValueError(
-                    "Normalization point not provided, the curve cannot be created."
-                )
-            norm = ranges[var]["normalization"]
-            if isinstance(norm, float):
-                ref_x = norm
-                ref_y = 0
-            else:
-                ref_x, ref_y = norm
             new_curve.ref_x = ref_x
             new_curve.ref_y = ref_y
             # TODO: update fields below when adding new equipment
@@ -569,16 +569,17 @@ class Curve:
                 self.ref_lwt = (44.0 - 32.0) * 5 / 9
                 if self.eqp.condenser_type == "water":
                     self.ref_ect = (85.0 - 32.0) * 5 / 9
+                    self.ref_lct = (94.3 - 32.0) * 5 / 9
                 else:
                     self.ref_ect = (95.0 - 32.0) * 5 / 9
+                
             elif self.eqp.part_eff_ref_std == "ahri_551/591":
                 self.ref_lwt = 7.0
                 if self.eqp.condenser_type == "water":
                     self.ref_ect = 30.0
+                    self.ref_lct = 35.0
                 else:
                     self.ref_ect = 35.0
-            if self.eqp.model == "lct_lwt":
-                self.ref_lct = eqp.get_ref_lct(False)
 
     def evaluate(self, x, y):
         """Return the output of a curve.
