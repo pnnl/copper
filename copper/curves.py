@@ -81,6 +81,8 @@ class SetsofCurves:
                         )
                     )
                 ]
+                #print("Constant value check")
+                #print(input_values[c.out_var][0], input_values[c.out_var][1], output_value)
                 if c.out_var in output_values.keys():
                     output_values[c.out_var].append(output_value)
                 else:
@@ -110,11 +112,26 @@ class SetsofCurves:
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr, N=N)
                 #print("df: ", df)
                 sorted_vals = list(map(vals.__getitem__, df.index.values))
+                #print(df)
+                #Troubleshoot here
+                # print("comparison")
+                # print(vals[4])
+                # print(sorted_vals[4])
+                A = np.zeros((len(sorted_vals), len(sorted_vals[0])))
+                B = np.zeros((len(vals), len(sorted_vals[0])))
+                for i in range(len(sorted_vals)):
+                    A[i, :] = sorted_vals[i]
+
+                for i in range(len(vals)):
+                    B[i, :] = vals[i]
+
                 y_s = [
                     list(
                         map(lambda x: np.dot(df["score"].values, x), zip(*sorted_vals))
                     )
                 ]
+                # print("y_s")
+                # print(np.unique(y_s))
 
             data = pd.DataFrame(
                 [
@@ -130,7 +147,9 @@ class SetsofCurves:
                 ]
             )
             data.columns = ["X1", "X2", "Y"]
-
+            #print(data["Y"].unique())
+            # print(sorted_vals)
+            # print(df["score"].values)
             # Create new curve
             new_curve = Curve(eqp=self.eqp, c_type="")  # curve type is set later on
 
@@ -568,17 +587,21 @@ class Curve:
             if self.eqp.part_eff_ref_std == "ahri_550/590":
                 self.ref_lwt = (44.0 - 32.0) * 5 / 9
                 if self.eqp.condenser_type == "water":
+                    #TO DO: extract from chiller class
                     self.ref_ect = (85.0 - 32.0) * 5 / 9
+                    self.ref_lct = (94.3 - 32.0) * 5 / 9
                 else:
                     self.ref_ect = (95.0 - 32.0) * 5 / 9
             elif self.eqp.part_eff_ref_std == "ahri_551/591":
                 self.ref_lwt = 7.0
                 if self.eqp.condenser_type == "water":
                     self.ref_ect = 30.0
+                    self.ref_lct = 35.0
                 else:
                     self.ref_ect = 35.0
-            if self.eqp.model == "lct_lwt":
-                self.ref_lct = eqp.get_ref_lct(False)
+
+            # if self.eqp.model == "lct_lwt":
+            #     self.ref_lct = eqp.get_ref_lct(False)
 
     def evaluate(self, x, y):
         """Return the output of a curve.
@@ -832,8 +855,15 @@ class Curve:
             elif eqp.model == "lct_lwt":
                 y_ref = self.ref_lct
         else:
-            x_ref = 1
-            y_ref = 0
+            if eqp.model == "ect_lwt":
+                x_ref = 1
+                y_ref = 0
+            elif eqp.model == "lct_lwt":
+                x_ref = self.ref_lct
+                y_ref = 1
+
+        #print("eq.model and self.out_var are: {} and {}".format(eqp.model, self.out_var))
+        #print("x_ref and y_ref are: {} and {}".format(x_ref, y_ref))
         return self.evaluate(x_ref, y_ref)
 
     def normalized(self, data, x_norm, y_norm):
