@@ -174,10 +174,6 @@ class SetsofCurves:
             # Normalize curve to reference point
             new_curve.normalized(data, ref_x, ref_y)
 
-            # Apply cap to avoid non-monotonicity
-            # if len(ranges) > 0:
-            #     new_curve.cap()
-
             agg_set_of_curves.curves.append(new_curve)
 
         return agg_set_of_curves
@@ -846,47 +842,6 @@ class Curve:
         )
 
         self.regression(data, [self.type])
-
-    def cap(self):
-        min_val = 999
-        max_val = -999
-        x_max = -999
-        y_max = -999
-
-        ranges = {
-            "eir-f-t": [(4, 10), (10.0, 40.0)],
-            "cap-f-t": [(8, 10), (10.0, 40.0)],
-            "eir-f-plr": [(0.0, 1.0)],
-        }
-
-        if len(ranges[self.out_var]) > 1:
-            x_s, y_s = ranges[self.out_var]
-        else:
-            x_s = ranges[self.out_var][0]
-            y_s = (0, 0)
-
-        for x, y in zip(
-            np.linspace(x_s[0], x_s[1], 1000), np.linspace(y_s[0], y_s[1], 1000)
-        ):
-            val = self.evaluate(x, y)
-            if val < min_val:
-                x_min = x
-                y_min = y
-                min_val = min(self.evaluate(x, y), min_val)
-            if val > max_val:
-                x_max = x
-                y_max = y
-                max_val = max(self.evaluate(x, y), max_val)
-
-        if self.out_var == "cap-f-t":
-            self.x_min = x_max
-            self.y_min = y_max
-        else:
-            self.x_min = x_min
-            self.y_min = y_min
-
-    def read_idf_curve(self, idf_curve):
-        pass
 
     def convert_coefficients_to_ip(self):
         if self.units == "si":
