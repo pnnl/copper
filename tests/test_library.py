@@ -73,7 +73,7 @@ class TestLibrary(TestCase):
             ).curves,
         )
 
-        assert round(chlr.calc_eff("part", "cop"), 2) == 4.81  # IPLV.SI
+        assert round(chlr.calc_eff("part", "cop"), 2) == 4.83  # IPLV.SI
 
         # Check calculation for the reformulated chiller EIR model
         chlr = cp.chiller(
@@ -92,4 +92,4 @@ class TestLibrary(TestCase):
             ).curves,
         )
 
-        assert round(chlr.calc_eff("part", "cop"), 2) == 4.78  # IPLV.IP
+        assert round(chlr.calc_eff("part", "cop"), 2) == 4.95  # IPLV.IP

@@ -16017,8 +16017,8 @@
                 "coeff9": 0.0,
                 "coeff10": 0.0
             },
-            "eir-f-plr-dt": {
-                "out_var": "eir-f-plr-dt",
+            "eir-f-plr": {
+                "out_var": "eir-f-plr",
                 "type": "bi_cub",
                 "ref_evap_fluid_flow": 0.01035,
                 "ref_cond_fluid_flow": 0.01924,
@@ -16213,8 +16213,8 @@
                 "coeff9": 0.0,
                 "coeff10": 0.0
             },
-            "eir-f-plr-dt": {
-                "out_var": "eir-f-plr-dt",
+            "eir-f-plr": {
+                "out_var": "eir-f-plr",
                 "type": "bi_cub",
                 "ref_evap_fluid_flow": 0.02019,
                 "ref_cond_fluid_flow": 0.02902,
@@ -24837,8 +24837,8 @@
                 "coeff9": 0.0,
                 "coeff10": 0.0
             },
-            "eir-f-plr-dt": {
-                "out_var": "eir-f-plr-dt",
+            "eir-f-plr": {
+                "out_var": "eir-f-plr",
                 "type": "bi_cub",
                 "ref_evap_fluid_flow": 0.04757,
                 "ref_cond_fluid_flow": 0.06814,

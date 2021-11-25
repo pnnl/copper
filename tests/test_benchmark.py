@@ -24,7 +24,7 @@ class TestBenchmark(TestCase):
         times = []
         nb_gens = []
         setsofcurves = []
-        iterations = 20
+        iterations = 5
 
         for _ in range(iterations):
             # Initialise time counter
