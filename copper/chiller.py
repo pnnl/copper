@@ -80,7 +80,7 @@ class chiller:
                     },
                     "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
                 }
-            else:
+            elif self.model == "lct_lwt":
                 self.plotting_range = {
                     "eir-f-t": {
                         "x1_min": lwt,
@@ -110,6 +110,8 @@ class chiller:
                         "x2_norm": 1.0,
                     },
                 }
+            else:
+                raise ValueError("Algorithm not supported.")
         elif self.condenser_type == "air":
             if self.part_eff_ref_std == "ahri_550/590":
                 lwt = (44.0 - 32.0) * 5 / 9
@@ -143,6 +145,15 @@ class chiller:
             }
 
         self.ref_lwt, self.ref_ect, self.ref_lct = lwt, ect, lct
+
+    def get_ref_values(self, out_var):
+        if "x2_norm" in list(self.plotting_range[out_var].keys()):
+            return [
+                self.plotting_range[out_var]["x1_norm"],
+                self.plotting_range[out_var]["x2_norm"],
+            ]
+        else:
+            return [self.plotting_range[out_var]["x1_norm"], 0.0]
 
     def get_cond_flow_rate(self):
 

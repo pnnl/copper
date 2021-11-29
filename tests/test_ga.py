@@ -84,7 +84,7 @@ class TestAlgorithm(TestCase):
             sim_engine="energyplus",
         )
 
-        tol = 0.005
+        tol = 0.01
 
         set_of_curves = chlr.generate_set_of_curves(
             vars=["eir-f-plr"], method="best_match", tol=tol
@@ -127,7 +127,7 @@ class TestAlgorithm(TestCase):
         tol = 0.01
 
         set_of_curves = chlr.generate_set_of_curves(
-            vars=["eir-f-plr"], method="best_match", tol=tol
+            vars=["eir-f-t", "eir-f-plr"], method="best_match", tol=tol
         )
 
         full_eff = chlr.calc_eff(eff_type="full")
@@ -164,10 +164,10 @@ class TestAlgorithm(TestCase):
             sim_engine="energyplus",
         )
 
-        tol = 0.005
+        tol = 0.01
 
         set_of_curves = chlr.generate_set_of_curves(
-            vars=["eir-f-plr"], method="best_match", tol=tol
+            vars=["eir-f-t", "eir-f-plr"], method="best_match", tol=tol
         )
 
         full_eff = chlr.calc_eff(eff_type="full")

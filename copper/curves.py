@@ -816,15 +816,7 @@ class Curve:
 
         :param eqp: Equipment
         """
-        if "-t" in self.out_var:
-            x_ref = self.ref_lwt
-            if eqp.model == "ect_lwt":
-                y_ref = self.ref_ect
-            elif eqp.model == "lct_lwt":
-                y_ref = self.ref_lct
-        else:
-            x_ref = 1
-            y_ref = 0
+        x_ref, y_ref = eqp.get_ref_values(self.out_var)
         return self.evaluate(x_ref, y_ref)
 
     def normalized(self, data, x_norm, y_norm):
