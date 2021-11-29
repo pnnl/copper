@@ -131,15 +131,15 @@ class GA:
                 gen += 1
                 if debug:
                     if self.target_alt > 0:
-                        part_rating_alt = self.equipment.calc_eff(
+                        part_rating_alt = round(self.equipment.calc_eff(
                             eff_type="part", alt=True
-                        )
+                        ),4)
                     else:
                         part_rating_alt = "n/a"
                     if self.full_eff_alt > 0:
-                        full_rating_alt = self.equipment.calc_eff(
+                        full_rating_alt = round(self.equipment.calc_eff(
                             eff_type="full", alt=True
-                        )
+                        ),4)
                     else:
                         full_rating_alt = "n/a"
 
@@ -413,7 +413,6 @@ class GA:
         curve_normal_score_weight = 1.0
         rsme_weight = 0.5
 
-        # full_eff_score_alt = full_eff_score
         if self.equipment.full_eff_alt > 0:
             full_eff_score_alt = abs(
                 self.equipment.calc_eff(eff_type="full", alt=True)
@@ -421,7 +420,6 @@ class GA:
             )
         else:
             full_eff_score_alt = 0.0
-        # part_eff_score_alt = part_eff_score
         if self.target_alt > 0:
             part_eff_score_alt = abs(
                 self.equipment.calc_eff(eff_type="part", alt=True) - self.target_alt
