@@ -2,6 +2,7 @@ from unittest import TestCase
 
 import copper as cp
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class TestCurves(TestCase):
