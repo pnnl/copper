@@ -80,6 +80,8 @@ class TestAlgorithm(TestCase):
             round(chlr.calc_eff(eff_type="part", alt=True), 2),
         )
 
+        print(res)
+
         self.assertTrue(res == "Efficiency: 1.18 kW/ton, IPLV: 0.88 kW/ton, Alt-Efficiency: 1.18 kW/ton, Alt-IPLV: 0.87.")
 
     def test_double_targets_lct(self):
@@ -103,7 +105,7 @@ class TestAlgorithm(TestCase):
             sim_engine="energyplus"
         )
 
-        set_of_curves = chlr.generate_set_of_curves(vars=["eir-f-plr"], method="best_match", tol=0.005)
+        set_of_curves = chlr.generate_set_of_curves(vars=["eir-f-plr"], method="best_match", tol=0.01)
 
         res = "Efficiency: {} kW/ton, IPLV: {} kW/ton, Alt-Efficiency: {} kW/ton, Alt-IPLV: {}.".format(
             round(chlr.calc_eff(eff_type="full"), 2),
