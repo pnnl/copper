@@ -131,15 +131,15 @@ class GA:
                 gen += 1
                 if debug:
                     if self.target_alt > 0:
-                        part_rating_alt = round(self.equipment.calc_eff(
-                            eff_type="part", alt=True
-                        ),4)
+                        part_rating_alt = round(
+                            self.equipment.calc_eff(eff_type="part", alt=True), 4
+                        )
                     else:
                         part_rating_alt = "n/a"
                     if self.full_eff_alt > 0:
-                        full_rating_alt = round(self.equipment.calc_eff(
-                            eff_type="full", alt=True
-                        ),4)
+                        full_rating_alt = round(
+                            self.equipment.calc_eff(eff_type="full", alt=True), 4
+                        )
                     else:
                         full_rating_alt = "n/a"
 
