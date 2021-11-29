@@ -49,7 +49,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            nosetests -v --with-coverage --cover-package=neo
+            nosetests
           no_output_timeout: 10h
 
       - store_artifacts:
