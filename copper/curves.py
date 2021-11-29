@@ -73,6 +73,16 @@ class SetsofCurves:
         # Calculate values of dependent variables using the user-specified ranges
         for set_of_curves in self.sets_of_curves:
             for c in set_of_curves.curves:
+                if not "normalization" in ranges[c.out_var].keys():
+                    raise ValueError(
+                        "Normalization point not provided, the curve cannot be created."
+                    )
+                norm = ranges[c.out_var]["normalization"]
+                if isinstance(norm, float):
+                    ref_x = norm
+                    ref_y = 0
+                else:
+                    ref_x, ref_y = norm
                 output_value = [
                     c.evaluate(x, y) * c.evaluate(ref_x, ref_y) / c.evaluate(c.ref_x, c.ref_y)
                     for x, y in list(
