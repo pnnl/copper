@@ -74,7 +74,7 @@ class SetsofCurves:
         for set_of_curves in self.sets_of_curves:
             for c in set_of_curves.curves:
                 output_value = [
-                    c.evaluate(x, y)
+                    c.evaluate(x, y) * c.evaluate(ref_x, ref_y) / c.evaluate(c.ref_x, c.ref_y)
                     for x, y in list(
                         itertools.product(
                             input_values[c.out_var][0], input_values[c.out_var][1]
