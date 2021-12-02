@@ -191,6 +191,7 @@ class TestChiller(TestCase):
         cop = cp.Units(value=chlr.full_eff, unit=chlr.full_eff_unit)
         cop = cop.conversion(new_unit="cop")
 
+        # Check that the correct condenser flow is calculated
         self.assertTrue(round(m, 3) == 0.015, f"Calculated condenser flow {m} m3/s")
 
         # Determine the specific heat capacity of water [kJ/kg.K]
@@ -207,13 +208,15 @@ class TestChiller(TestCase):
         )
 
         # Determine the density of water [kg/m3]
-        rho = CP.PropsSI("D", "P", 101325, "T", 0.5 * (chlr.ref_ect + chlr.ref_lct) + 273.15, "Water")
+        rho = CP.PropsSI(
+            "D", "P", 101325, "T", 0.5 * (chlr.ref_ect + chlr.ref_lct) + 273.15, "Water"
+        )
 
         args = [
             chlr.ref_lwt,
-            curves[1], # cap-f-t
-            curves[0], # eir-f-t
-            curves[2], # eir-f-plr
+            curves[1],  # cap-f-t
+            curves[0],  # eir-f-t
+            curves[2],  # eir-f-plr
             1,
             -999,
             cop,
@@ -224,4 +227,11 @@ class TestChiller(TestCase):
 
         lct = chlr.get_lct(chlr.ref_ect, args)
 
-        self.assertTrue(round(lct, 2) == round(chlr.ref_lct,2), f"Calculated LCT: {lct}. It must be the same as the reference LCT which is {round(chlr.ref_lct, 2)}")
+        # Check that the correct LCT is calculated
+        self.assertTrue(
+            round(lct, 2) == round(chlr.ref_lct, 2),
+            f"Calculated LCT: {lct}. It must be the same as the reference LCT which is {round(chlr.ref_lct, 2)}",
+        )
+
+        # Check that full load efficiency is returned when a different unit is specified
+        self.assertTrue(round(chlr.calc_eff("full", unit="cop"), 2) == 5.15)

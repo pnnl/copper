@@ -196,7 +196,13 @@ class chiller:
         plr = 1.0 * cap_f_lwt_lct_rated / cap_op
 
         # Calculate compressor power [kW]
-        comp_power = ref_cap * full_eff * cap_f_lwt_lct * eir_f_t.evaluate(self.ref_lwt, self.ref_lct) * eir_f_plr.evaluate(self.ref_lct, plr)
+        comp_power = (
+            ref_cap
+            * full_eff
+            * cap_f_lwt_lct
+            * eir_f_t.evaluate(self.ref_lwt, self.ref_lct)
+            * eir_f_plr.evaluate(self.ref_lct, plr)
+        )
         cond_cap = evap_power + comp_power
 
         # Determine the specific heat capacity of water [kJ/kg.K]
@@ -439,6 +445,8 @@ class chiller:
 
                 # Stop here for full load calculations
                 if eff_type == "full" and idx == 0:
+                    if unit != "kw/ton":
+                        kwpton = Units(kwpton, "kw/ton").conversion(unit)
                     return kwpton
 
             # Coefficients from AHRI Std 551/591
