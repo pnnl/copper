@@ -167,10 +167,8 @@ class SetsofCurves:
                 ref_x, ref_y = norm
             new_curve.ref_x = ref_x
             new_curve.ref_y = ref_y
-            # TODO: update fields below when adding new equipment
+            # TODO: Move following statement to chiller class
             if self.eqp_type == "chiller":
-                new_curve.ref_evap_fluid_flow = 0
-                new_curve.ref_cond_fluid_flow = self.eqp.get_ref_cond_flow_rate()
                 if agg_set_of_curves.model == "ect_lwt":
                     self.ref_lwt = ref_y
                     self.ref_ect = ref_x
@@ -187,6 +185,15 @@ class SetsofCurves:
             new_curve.normalized(data, ref_x, ref_y)
 
             agg_set_of_curves.curves.append(new_curve)
+        
+        # Determine reference condenser flow rate
+        # TODO: Move following statement to chiller class
+        if self.eqp_type == "chiller":
+            self.eqp.set_of_curves = agg_set_of_curves.curves
+            cond_flow_rate = self.eqp.get_ref_cond_flow_rate()
+            for c in agg_set_of_curves:
+                c.ref_cond_fluid_flow = cond_flow_rate
+                c.ref_evap_fluid_flow = 0
 
         return agg_set_of_curves
 
