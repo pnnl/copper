@@ -191,7 +191,7 @@ class SetsofCurves:
         if self.eqp_type == "chiller":
             self.eqp.set_of_curves = agg_set_of_curves.curves
             cond_flow_rate = self.eqp.get_ref_cond_flow_rate()
-            for c in agg_set_of_curves:
+            for c in agg_set_of_curves.curves:
                 c.ref_cond_fluid_flow = cond_flow_rate
                 c.ref_evap_fluid_flow = 0
 
