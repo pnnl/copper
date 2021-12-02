@@ -28,6 +28,15 @@ class TestRating(TestCase):
         kW_ = cp.Units(130, "kW")
         self.assertTrue(round(kW_.conversion("ton"), 3) == 36.963)
 
+        kW_ = cp.Units(130, "kW")
+        self.assertTrue(round(kW_.conversion("W"), 3) == 130000)
+
+        W_ = cp.Units(130, "W")
+        self.assertTrue(round(W_.conversion("ton"), 3) == 0.037)
+
+        W_ = cp.Units(130, "W")
+        self.assertTrue(round(W_.conversion("kW"), 3) == 0.130)
+
         # Temperature conversion
         degC_ = cp.Units(0, "degC")
         self.assertTrue(round(degC_.conversion("degF"), 0) == 32)
