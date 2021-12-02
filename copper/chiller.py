@@ -169,6 +169,12 @@ class chiller:
         else:
             evap_power = self.ref_cap
 
+        if self.ref_cap_unit != "kw/ton":
+            ref_cap = Units(value=self.ref_cap, unit=self.ref_cap_unit)
+            ref_cap = ref_cap.conversion(new_unit="kw/ton")
+        else:
+            ref_cap = self.ref_cap
+
         # Convert reference efficiency if needed
         if self.full_eff_unit != "kw/ton":
             full_eff_unit = Units(value=self.full_eff, unit=self.full_eff_unit)
@@ -178,9 +184,19 @@ class chiller:
         else:
             full_eff = self.full_eff
 
+        # Retrieve curves
+        curves = self.get_chiller_curves()
+        cap_f_t = curves["cap_f_t"]
+        eir_f_t = curves["eir_f_t"]
+        eir_f_plr = curves["eir_f_plr"]
+
+        cap_f_lwt_lct_rated = cap_f_t.evaluate(self.ref_lwt, self.ref_lct)
+        cap_f_lwt_lct = cap_f_t.evaluate(self.ref_lwt, self.ref_lct)
+        cap_op = 1.0 * cap_f_lwt_lct
+        plr = 1.0 * cap_f_lwt_lct_rated / cap_op
+
         # Calculate compressor power [kW]
-        # Assume that the curve modifiers are all 1 at rated conditions
-        comp_power = self.ref_cap * full_eff
+        comp_power = ref_cap * full_eff * cap_f_lwt_lct * eir_f_t.evaluate(self.ref_lwt, self.ref_lct) * eir_f_plr.evaluate(self.ref_lct, plr)
         cond_cap = evap_power + comp_power
 
         # Determine the specific heat capacity of water [kJ/kg.K]

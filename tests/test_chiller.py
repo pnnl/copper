@@ -2,6 +2,7 @@ from unittest import TestCase
 
 import copper as cp
 import pickle as pkl
+import CoolProp.CoolProp as CP
 
 
 class TestChiller(TestCase):
@@ -190,21 +191,37 @@ class TestChiller(TestCase):
         cop = cp.Units(value=chlr.full_eff, unit=chlr.full_eff_unit)
         cop = cop.conversion(new_unit="cop")
 
-        self.assertTrue(round(m, 3) == 0.015)
+        self.assertTrue(round(m, 3) == 0.015, f"Calculated condenser flow {m} m3/s")
+
+        # Determine the specific heat capacity of water [kJ/kg.K]
+        c_p = (
+            CP.PropsSI(
+                "C",
+                "P",
+                101325,
+                "T",
+                0.5 * (chlr.ref_ect + chlr.ref_lct) + 273.15,
+                "Water",
+            )
+            / 1000
+        )
+
+        # Determine the density of water [kg/m3]
+        rho = CP.PropsSI("D", "P", 101325, "T", 0.5 * (chlr.ref_ect + chlr.ref_lct) + 273.15, "Water")
 
         args = [
-            6.67,
-            curves[1],
-            curves[0],
-            curves[2],
+            chlr.ref_lwt,
+            curves[1], # cap-f-t
+            curves[0], # eir-f-t
+            curves[2], # eir-f-plr
             1,
             -999,
-            1 / cop,
-            29.44,
-            m * 1000,
-            4.19,
+            cop,
+            chlr.ref_ect,
+            m * rho,
+            c_p,
         ]
 
-        lct = chlr.get_lct(29.44, args)
+        lct = chlr.get_lct(chlr.ref_ect, args)
 
-        self.assertTrue(round(lct, 3) == 39.604, f"Calculated LCT: {lct}")
+        self.assertTrue(round(lct, 2) == round(chlr.ref_lct,2), f"Calculated LCT: {lct}. It must be the same as the reference LCT which is {round(chlr.ref_lct, 2)}")
