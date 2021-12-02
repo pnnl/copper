@@ -155,23 +155,57 @@ class chiller:
         else:
             return [self.plotting_range[out_var]["x1_norm"], 0.0]
 
-    def get_cond_flow_rate(self):
+    def get_ref_cond_flow_rate(self):
 
         """
         Method to compute the reference flow-rate given ref_cap, full_eff, ref_lct and ref_lwt
         :return:
         """
-        evap_cap_ton = Units(value=self.ref_cap, unit="ton")
-        evap_power = evap_cap_ton.conversion(new_unit="kW")  # evaporator power in kW
 
-        full_eff_unit = Units(value=self.full_eff, unit=self.full_eff_unit)
-        full_eff = full_eff_unit.conversion(
-            new_unit="kw/ton"
-        )  # fulll eff needs to be in KW/ton
-        comp_power = self.ref_cap * full_eff  # note, full_eff has to e in kW per ton
+        # Convert reference capacity if needed
+        if self.ref_cap_unit != "kW":
+            evap_cap_ton = Units(value=self.ref_cap, unit=self.ref_cap_unit)
+            evap_power = evap_cap_ton.conversion(new_unit="kW")
+        else:
+            evap_power = self.ref_cap
+
+        if self.ref_cap_unit != "kw/ton":
+            ref_cap = Units(value=self.ref_cap, unit=self.ref_cap_unit)
+            ref_cap = ref_cap.conversion(new_unit="kw/ton")
+        else:
+            ref_cap = self.ref_cap
+
+        # Convert reference efficiency if needed
+        if self.full_eff_unit != "kw/ton":
+            full_eff_unit = Units(value=self.full_eff, unit=self.full_eff_unit)
+            full_eff = full_eff_unit.conversion(
+                new_unit="kw/ton"
+            )  # full eff needs to be in kW/ton
+        else:
+            full_eff = self.full_eff
+
+        # Retrieve curves
+        curves = self.get_chiller_curves()
+        cap_f_t = curves["cap_f_t"]
+        eir_f_t = curves["eir_f_t"]
+        eir_f_plr = curves["eir_f_plr"]
+
+        cap_f_lwt_lct_rated = cap_f_t.evaluate(self.ref_lwt, self.ref_lct)
+        cap_f_lwt_lct = cap_f_t.evaluate(self.ref_lwt, self.ref_lct)
+        cap_op = 1.0 * cap_f_lwt_lct
+        plr = 1.0 * cap_f_lwt_lct_rated / cap_op
+
+        # Calculate compressor power [kW]
+        comp_power = (
+            ref_cap
+            * full_eff
+            * cap_f_lwt_lct
+            * eir_f_t.evaluate(self.ref_lwt, self.ref_lct)
+            * eir_f_plr.evaluate(self.ref_lct, plr)
+        )
         cond_cap = evap_power + comp_power
 
-        # determine specific heat capacity
+        # Determine the specific heat capacity of water [kJ/kg.K]
         c_p = (
             CP.PropsSI(
                 "C",
@@ -183,10 +217,14 @@ class chiller:
             )
             / 1000
         )
+
+        # Determine density of water [kg/m3]
         rho = CP.PropsSI(
             "D", "P", 101325, "T", 0.5 * (self.ref_ect + self.ref_lct) + 273.15, "Water"
         )
-        ref_cond_flow_rate = (cond_cap) / ((self.ref_lct - self.ref_ect) * c_p * rho)
+
+        # Determine condenser flow rate at reference conditions [m3/s]
+        ref_cond_flow_rate = cond_cap / ((self.ref_lct - self.ref_ect) * c_p * rho)
 
         return ref_cond_flow_rate
 
@@ -321,7 +359,10 @@ class chiller:
 
                 elif self.model == "lct_lwt":  # Reformulated EIR chiller model
                     # Determine water properties
-                    c_p = CP.PropsSI("C", "P", 101325, "T", ect[idx] + 273.15, "Water")
+                    c_p = (
+                        CP.PropsSI("C", "P", 101325, "T", ect[idx] + 273.15, "Water")
+                        / 1000
+                    )  # kJ/kg.K
                     rho = CP.PropsSI("D", "P", 101325, "T", ect[idx] + 273.15, "Water")
 
                     # Gather arguments for determination fo leaving condenser temperature through iteration
@@ -374,6 +415,9 @@ class chiller:
                     # Efficiency calculation
                     eir = eir_ref * eir_f_lwt_lct * eir_plr_lct / plr
 
+                    if eir < 0:
+                        return 999
+
                 else:
                     return -999
 
@@ -401,6 +445,8 @@ class chiller:
 
                 # Stop here for full load calculations
                 if eff_type == "full" and idx == 0:
+                    if unit != "kw/ton":
+                        kwpton = Units(kwpton, "kw/ton").conversion(unit)
                     return kwpton
 
             # Coefficients from AHRI Std 551/591
@@ -481,8 +527,15 @@ class chiller:
         cap_f_lwt_lct = cap_f_t.evaluate(lwt, lct)
         eir_f_lwt_lct = eir_f_t.evaluate(lwt, lct)
 
-        # Operating varibles
-        cap_op = self.ref_cap * cap_f_lwt_lct
+        # Convert reference capacity to kW
+        if self.ref_cap_unit != "kW":
+            ref_cap_org = Units(value=self.ref_cap, unit=self.ref_cap_unit)
+            ref_cap = ref_cap_org.conversion(new_unit="kW")
+        else:
+            ref_cap = self.ref_cap
+
+        # Operating variables
+        cap_op = ref_cap * cap_f_lwt_lct
         if cap_f_lwt_lct_rated == -999:
             plr = load
         else:

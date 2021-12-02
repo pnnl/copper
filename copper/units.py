@@ -46,9 +46,13 @@ class Units:
         elif new_unit == "kW":
             if self.unit == "ton":
                 return self.value / (3412 / 12000)
+            if self.unit == "W":
+                return self.value / 1000
         elif new_unit == "W":
             if self.unit == "ton":
                 return self.value / (3.412 / 12000)
+            if self.unit == "kW":
+                return self.value * 1000
         elif new_unit == "degC":
             if self.unit == "degF":
                 return (self.value - 32) * 5 / 9
