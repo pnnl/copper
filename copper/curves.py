@@ -77,12 +77,36 @@ class SetsofCurves:
                     raise ValueError(
                         "Normalization point not provided, the curve cannot be created."
                     )
+
+                # TODO: move assignement to Curve() class and values ot chiller() class
+                if c.eqp.model == "lct_lwt":
+                    if c.out_var == "eir-f-t":
+                        c.ref_x = c.ref_lwt
+                        c.ref_y = c.ref_lct
+                    if c.out_var == "cap-f-t":
+                        c.ref_x = c.ref_lwt
+                        c.ref_y = c.ref_lct
+                    if c.out_var == "eir-f-plr":
+                        c.ref_x = c.ref_lct
+                        c.ref_y = 1.0  # plr = 1.0
+                elif c.eqp.model == "ect_lwt":
+                    if c.out_var == "eir-f-t":
+                        c.ref_x = c.ref_lwt
+                        c.ref_y = c.ref_ect
+                    if c.out_var == "cap-f-t":
+                        c.ref_x = c.ref_lwt
+                        c.ref_y = c.ref_ect
+                    if c.out_var == "eir-f-plr":
+                        c.ref_x = 1.0  # plr = 1.0
+                        c.ref_y = 0.0  # no dependent variable
+
                 norm = ranges[c.out_var]["normalization"]
                 if isinstance(norm, float):
                     ref_x = norm
                     ref_y = 0
                 else:
                     ref_x, ref_y = norm
+
                 output_value = [
                     c.evaluate(x, y)
                     * c.evaluate(ref_x, ref_y)
@@ -185,15 +209,16 @@ class SetsofCurves:
             new_curve.normalized(data, ref_x, ref_y)
 
             agg_set_of_curves.curves.append(new_curve)
-        
-        # Determine reference condenser flow rate
+
+        # Determine reference condenser flow rate for water cooled chiller
         # TODO: Move following statement to chiller class
         if self.eqp_type == "chiller":
             self.eqp.set_of_curves = agg_set_of_curves.curves
-            cond_flow_rate = self.eqp.get_ref_cond_flow_rate()
-            for c in agg_set_of_curves.curves:
-                c.ref_cond_fluid_flow = cond_flow_rate
-                c.ref_evap_fluid_flow = 0
+            if self.eqp.condenser_type == "lct_lwt":
+                cond_flow_rate = self.eqp.get_ref_cond_flow_rate()
+                for c in agg_set_of_curves.curves:
+                    c.ref_cond_fluid_flow = cond_flow_rate
+                    c.ref_evap_fluid_flow = 0
 
         return agg_set_of_curves
 
