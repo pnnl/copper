@@ -214,7 +214,7 @@ class SetsofCurves:
         # TODO: Move following statement to chiller class
         if self.eqp_type == "chiller":
             self.eqp.set_of_curves = agg_set_of_curves.curves
-            if self.eqp.condenser_type == "lct_lwt":
+            if self.eqp.condenser_type == "water":
                 cond_flow_rate = self.eqp.get_ref_cond_flow_rate()
                 for c in agg_set_of_curves.curves:
                     c.ref_cond_fluid_flow = cond_flow_rate
