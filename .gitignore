@@ -1,8 +1,6 @@
 *.cpython-37.pyc
 /copper/__pycache__/
 dev
-aggregate_test.py
-test-1.py
 venv
 res
 *.svg
@@ -10,14 +8,12 @@ res
 *.py
 data/
 makefile
-template.txt
 chiller_curves_updated.json
 env.sh
 pkl_0706/
-template_appendixG.txt
-template_eplus96.txt
 *.sbatch
 /chillers/
 3SF_results.csv
 check_roundoff/
 /figures
+*.txt

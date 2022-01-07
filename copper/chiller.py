@@ -18,6 +18,11 @@ class chiller:
         part_eff=0,
         part_eff_unit="",
         part_eff_ref_std="ahri_550/590",
+        part_eff_alt=0,
+        part_eff_unit_alt="",
+        part_eff_ref_std_alt="ahri_550/590",
+        full_eff_alt=0,
+        full_eff_unit_alt="",
         set_of_curves="",
         model="ect_lwt",
         sim_engine="energyplus",
@@ -31,9 +36,14 @@ class chiller:
         self.ref_cap_unit = ref_cap_unit
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
+        self.full_eff_alt = full_eff_alt
+        self.full_eff_unit_alt = full_eff_unit_alt
         self.part_eff = part_eff
         self.part_eff_unit = part_eff_unit
         self.part_eff_ref_std = part_eff_ref_std
+        self.part_eff_alt = part_eff_alt
+        self.part_eff_unit_alt = part_eff_unit_alt
+        self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.min_unloading = min_unloading
         self.model = model
         self.sim_engine = sim_engine
@@ -42,11 +52,12 @@ class chiller:
             if self.part_eff_ref_std == "ahri_550/590":
                 lwt = (44.0 - 32.0) * 5 / 9
                 ect = (85.0 - 32.0) * 5 / 9
-                lct = (94.3 - 32.0) * 5 / 9  # in accordance with standard
+                lct = (94.3 - 32.0) * 5 / 9
             elif self.part_eff_ref_std == "ahri_551/591":
                 lwt = 7.0
                 ect = 30.0
                 lct = 35.0
+
             if self.model == "ect_lwt":
                 self.plotting_range = {
                     "eir-f-t": {
@@ -69,7 +80,7 @@ class chiller:
                     },
                     "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
                 }
-            else:
+            elif self.model == "lct_lwt":
                 self.plotting_range = {
                     "eir-f-t": {
                         "x1_min": lwt,
@@ -99,15 +110,18 @@ class chiller:
                         "x2_norm": 1.0,
                     },
                 }
+            else:
+                raise ValueError("Algorithm not supported.")
         elif self.condenser_type == "air":
             if self.part_eff_ref_std == "ahri_550/590":
                 lwt = (44.0 - 32.0) * 5 / 9
                 ect = (95.0 - 32.0) * 5 / 9
-                lct = (94.3 - 32.0) * 5 / 9
+                lct = -999  # does not apply
             elif self.part_eff_ref_std == "ahri_551/591":
                 lwt = 7.0
                 ect = 35.0
-                lct = 35.0
+                lct = -999  # does not apply
+
             self.plotting_range = {
                 "eir-f-t": {
                     "x1_min": lwt,
@@ -132,24 +146,85 @@ class chiller:
 
         self.ref_lwt, self.ref_ect, self.ref_lct = lwt, ect, lct
 
-    def get_cond_flow_rate(self):
+    def get_ref_values(self, out_var):
+        if "x2_norm" in list(self.plotting_range[out_var].keys()):
+            return [
+                self.plotting_range[out_var]["x1_norm"],
+                self.plotting_range[out_var]["x2_norm"],
+            ]
+        else:
+            return [self.plotting_range[out_var]["x1_norm"], 0.0]
+
+    def get_ref_cond_flow_rate(self):
 
         """
         Method to compute the reference flow-rate given ref_cap, full_eff, ref_lct and ref_lwt
         :return:
         """
-        evap_cap_ton = Units(value=self.ref_cap, unit="ton")
-        evap_power = evap_cap_ton.conversion(new_unit="kW")   # evaporator power in KW
 
-        full_eff_unit = Units(value=self.full_eff, unit=self.full_eff_unit)
-        full_eff = full_eff_unit.conversion(new_unit="kw/ton")  # fulll eff needs to be in KW/ton
-        comp_power = self.ref_cap * full_eff  # note, full_eff has to e in kW per ton
+        # Convert reference capacity if needed
+        if self.ref_cap_unit != "kW":
+            evap_cap_ton = Units(value=self.ref_cap, unit=self.ref_cap_unit)
+            evap_power = evap_cap_ton.conversion(new_unit="kW")
+        else:
+            evap_power = self.ref_cap
+
+        if self.ref_cap_unit != "kw/ton":
+            ref_cap = Units(value=self.ref_cap, unit=self.ref_cap_unit)
+            ref_cap = ref_cap.conversion(new_unit="kw/ton")
+        else:
+            ref_cap = self.ref_cap
+
+        # Convert reference efficiency if needed
+        if self.full_eff_unit != "kw/ton":
+            full_eff_unit = Units(value=self.full_eff, unit=self.full_eff_unit)
+            full_eff = full_eff_unit.conversion(
+                new_unit="kw/ton"
+            )  # full eff needs to be in kW/ton
+        else:
+            full_eff = self.full_eff
+
+        # Retrieve curves
+        curves = self.get_chiller_curves()
+        cap_f_t = curves["cap_f_t"]
+        eir_f_t = curves["eir_f_t"]
+        eir_f_plr = curves["eir_f_plr"]
+
+        cap_f_lwt_lct_rated = cap_f_t.evaluate(self.ref_lwt, self.ref_lct)
+        cap_f_lwt_lct = cap_f_t.evaluate(self.ref_lwt, self.ref_lct)
+        cap_op = 1.0 * cap_f_lwt_lct
+        plr = 1.0 * cap_f_lwt_lct_rated / cap_op
+
+        # Calculate compressor power [kW]
+        comp_power = (
+            ref_cap
+            * full_eff
+            * cap_f_lwt_lct
+            * eir_f_t.evaluate(self.ref_lwt, self.ref_lct)
+            * eir_f_plr.evaluate(self.ref_lct, plr)
+        )
         cond_cap = evap_power + comp_power
 
-        # determine specific heat capacity
-        c_p = CP.PropsSI("C", "P", 101325, "T", 0.5 * (self.ref_ect + self.ref_lct) + 273.15, "Water") / 1000
-        rho = CP.PropsSI("D", "P", 101325, "T", 0.5 * (self.ref_ect + self.ref_lct) + 273.15, "Water")
-        ref_cond_flow_rate = (cond_cap) / ((self.ref_lct - self.ref_ect) * c_p * rho)
+        # Determine the specific heat capacity of water [kJ/kg.K]
+        c_p = (
+            CP.PropsSI(
+                "C",
+                "P",
+                101325,
+                "T",
+                0.5 * (self.ref_ect + self.ref_lct) + 273.15,
+                "Water",
+            )
+            / 1000
+        )
+
+        # Determine density of water [kg/m3]
+        rho = CP.PropsSI(
+            "D", "P", 101325, "T", 0.5 * (self.ref_ect + self.ref_lct) + 273.15, "Water"
+        )
+
+        # Determine condenser flow rate at reference conditions [m3/s]
+        ref_cond_flow_rate = cond_cap / ((self.ref_lct - self.ref_ect) * c_p * rho)
 
         return ref_cond_flow_rate
 
@@ -158,7 +233,7 @@ class chiller:
         method="typical",
         pop_size=100,
         tol=0.0025,
-        max_gen=500,
+        max_gen=300,
         vars="",
         sFac=0.5,
         retain=0.2,
@@ -203,10 +278,14 @@ class chiller:
         )
         return ga.generate_set_of_curves()
 
-    def get_eir_ref(self):
+    def get_eir_ref(self, alt):
         # Retrieve equipment efficiency and unit
-        kwpton_ref = self.full_eff
-        kwpton_ref_unit = self.full_eff_unit
+        if alt:
+            kwpton_ref = self.full_eff_alt
+            kwpton_ref_unit = self.full_eff_unit_alt
+        else:
+            kwpton_ref = self.full_eff
+            kwpton_ref_unit = self.full_eff_unit
 
         # Convert to kWpton if necessary
         if self.full_eff_unit != "kw/ton":
@@ -223,7 +302,7 @@ class chiller:
 
         return eir_ref
 
-    def calc_eff(self, eff_type, unit="kw/ton", output_report=False):
+    def calc_eff(self, eff_type, unit="kw/ton", output_report=False, alt=False):
         """Calculate chiller efficiency.
 
         :param str eff_type: chiller performance indicator, currently supported `full` (full load rating)
@@ -240,7 +319,7 @@ class chiller:
         kbtu_to_kw = 3.412141633
 
         # Get reference eir
-        eir_ref = self.get_eir_ref()
+        eir_ref = self.get_eir_ref(alt)
         load_ref = 1
 
         # Rated conditions as per AHRI Std 551/591
@@ -250,7 +329,7 @@ class chiller:
         kwpton_lst = []
 
         # Temperatures at rated conditions
-        ect, lwt = self.get_rated_temperatures()
+        ect, lwt = self.get_rated_temperatures(alt)
 
         # Retrieve curves
         curves = self.get_chiller_curves()
@@ -280,7 +359,10 @@ class chiller:
 
                 elif self.model == "lct_lwt":  # Reformulated EIR chiller model
                     # Determine water properties
-                    c_p = CP.PropsSI("C", "P", 101325, "T", ect[idx] + 273.15, "Water")
+                    c_p = (
+                        CP.PropsSI("C", "P", 101325, "T", ect[idx] + 273.15, "Water")
+                        / 1000
+                    )  # kJ/kg.K
                     rho = CP.PropsSI("D", "P", 101325, "T", ect[idx] + 273.15, "Water")
 
                     # Gather arguments for determination fo leaving condenser temperature through iteration
@@ -333,6 +415,9 @@ class chiller:
                     # Efficiency calculation
                     eir = eir_ref * eir_f_lwt_lct * eir_plr_lct / plr
 
+                    if eir < 0:
+                        return 999
+
                 else:
                     return -999
 
@@ -345,13 +430,13 @@ class chiller:
                         cap_ton = Units(self.ref_cap, self.ref_cap_unit).conversion(
                             "ton"
                         )
-                    part_report = f"""At {str(round(load * 100.0,0)).replace('.0','')}% load and AHRI rated conditions:
-                    - Entering condenser temperature: {round(ect[idx],2)},
-                    - Leaving chiller temperature: {round(lwt,2)},
-                    - Part load ratio: {round(plr,2)},
-                    - Operating capacity: {round(cap_op * cap_ton,2)} ton,
-                    - Power: {round(kwpton * cap_op * cap_ton,2)} kW,
-                    - Efficiency: {round(kwpton,3)} kW/ton
+                    part_report = f"""At {str(round(load * 100.0, 0)).replace('.0', '')}% load and AHRI rated conditions:
+                    - Entering condenser temperature: {round(ect[idx], 2)},
+                    - Leaving chiller temperature: {round(lwt, 2)},
+                    - Part load ratio: {round(plr, 2)},
+                    - Operating capacity: {round(cap_op * cap_ton, 2)} ton,
+                    - Power: {round(kwpton * cap_op * cap_ton, 2)} kW,
+                    - Efficiency: {round(kwpton, 3)} kW/ton
                     """
                     print(part_report)
 
@@ -360,6 +445,8 @@ class chiller:
 
                 # Stop here for full load calculations
                 if eff_type == "full" and idx == 0:
+                    if unit != "kw/ton":
+                        kwpton = Units(kwpton, "kw/ton").conversion(unit)
                     return kwpton
 
             # Coefficients from AHRI Std 551/591
@@ -371,7 +458,7 @@ class chiller:
             )
 
             if output_report:
-                print(f"IPLV: {round(iplv,3)} kW/ton")
+                print(f"IPLV: {round(iplv, 3)} kW/ton")
         except:
             return -999
 
@@ -382,14 +469,18 @@ class chiller:
 
         return iplv
 
-    def get_rated_temperatures(self):
-        if self.part_eff_ref_std == "ahri_551/591":  # IPLV.SI
+    def get_rated_temperatures(self, alt):
+        if alt:
+            std = self.part_eff_ref_std_alt
+        else:
+            std = self.part_eff_ref_std
+        if std == "ahri_551/591":  # IPLV.SI
             lwt = 7.0
             if self.condenser_type == "air":
                 ect = [35.0, 27.0, 19.0, 13.0]
             elif self.condenser_type == "water":
                 ect = [30.0, 24.5, 19.0, 19.0]
-        elif self.part_eff_ref_std == "ahri_550/590":  # IPLV.IP
+        elif std == "ahri_550/590":  # IPLV.IP
             lwt = 44.0
             if self.condenser_type == "air":
                 ect = [95.0, 80.0, 65.0, 55.0]
@@ -414,30 +505,6 @@ class chiller:
 
         return curves
 
-    def get_ref_lct(self):
-        curves = self.get_chiller_curves()
-        if not curves == {}:
-            cap_f_t = curves["cap_f_t"]
-            eir_f_t = curves["eir_f_t"]
-            eir_f_plr = curves["eir_f_plr"]
-            ect, lwt = self.get_rated_temperatures()
-            c_p = CP.PropsSI("C", "P", 101325, "T", ect[0] + 273.15, "Water")
-            rho = CP.PropsSI("D", "P", 101325, "T", ect[0] + 273.15, "Water")
-            eir_ref = self.get_eir_ref()
-            args = [
-                lwt,
-                cap_f_t,
-                eir_f_t,
-                eir_f_plr,
-                1.0,
-                -999,
-                1 / eir_ref,
-                ect[0],
-                self.set_of_curves[0].ref_evap_fluid_flow * rho,
-                c_p,
-            ]
-            return self.get_lct(ect[0], args)
-
     def get_lct(self, ect, args):
         result = optimize.root_scalar(
             self.cond_inlet_temp_residual,
@@ -460,8 +527,15 @@ class chiller:
         cap_f_lwt_lct = cap_f_t.evaluate(lwt, lct)
         eir_f_lwt_lct = eir_f_t.evaluate(lwt, lct)
 
-        # Operating varibles
-        cap_op = self.ref_cap * cap_f_lwt_lct
+        # Convert reference capacity to kW
+        if self.ref_cap_unit != "kW":
+            ref_cap_org = Units(value=self.ref_cap, unit=self.ref_cap_unit)
+            ref_cap = ref_cap_org.conversion(new_unit="kW")
+        else:
+            ref_cap = self.ref_cap
+
+        # Operating variables
+        cap_op = ref_cap * cap_f_lwt_lct
         if cap_f_lwt_lct_rated == -999:
             plr = load
         else:

@@ -73,8 +73,20 @@ class SetsofCurves:
         # Calculate values of dependent variables using the user-specified ranges
         for set_of_curves in self.sets_of_curves:
             for c in set_of_curves.curves:
+                if not "normalization" in ranges[c.out_var].keys():
+                    raise ValueError(
+                        "Normalization point not provided, the curve cannot be created."
+                    )
+                norm = ranges[c.out_var]["normalization"]
+                if isinstance(norm, float):
+                    ref_x = norm
+                    ref_y = 0
+                else:
+                    ref_x, ref_y = norm
                 output_value = [
                     c.evaluate(x, y)
+                    * c.evaluate(ref_x, ref_y)
+                    / c.evaluate(c.ref_x, c.ref_y)
                     for x, y in list(
                         itertools.product(
                             input_values[c.out_var][0], input_values[c.out_var][1]
@@ -155,10 +167,8 @@ class SetsofCurves:
                 ref_x, ref_y = norm
             new_curve.ref_x = ref_x
             new_curve.ref_y = ref_y
-            # TODO: update fields below when adding new equipment
+            # TODO: Move following statement to chiller class
             if self.eqp_type == "chiller":
-                new_curve.ref_evap_fluid_flow = 0
-                new_curve.ref_cond_fluid_flow = self.eqp.get_cond_flow_rate()
                 if agg_set_of_curves.model == "ect_lwt":
                     self.ref_lwt = ref_y
                     self.ref_ect = ref_x
@@ -175,6 +185,15 @@ class SetsofCurves:
             new_curve.normalized(data, ref_x, ref_y)
 
             agg_set_of_curves.curves.append(new_curve)
+        
+        # Determine reference condenser flow rate
+        # TODO: Move following statement to chiller class
+        if self.eqp_type == "chiller":
+            self.eqp.set_of_curves = agg_set_of_curves.curves
+            cond_flow_rate = self.eqp.get_ref_cond_flow_rate()
+            for c in agg_set_of_curves.curves:
+                c.ref_cond_fluid_flow = cond_flow_rate
+                c.ref_evap_fluid_flow = 0
 
         return agg_set_of_curves
 
@@ -411,7 +430,7 @@ class SetofCurves:
 
         return True
 
-    def export(self, path="./curves", fmt="idf"):
+    def export(self, path="./", fmt="idf"):
         """Export curves to simulation engine input format.
 
         :param str path: Path and file name, do not include the extension,
@@ -427,7 +446,7 @@ class SetofCurves:
             curve_type = curve.type
             self.name = self.name.replace("/", "_").replace(" ", "_")
             if fmt == "idf":
-                #if self.eqp.sim_engine == "energyplus":
+                # if self.eqp.sim_engine == "energyplus":
                 if curve_type == "quad":
                     cuvre_type = "Curve:Quadratic"
                 elif curve_type == "bi_quad":
@@ -465,15 +484,15 @@ class SetofCurves:
                 curve_export += (
                     "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
                 )
-#                else:
-#                    # TODO: implement export to DOE-2 format
-#                    raise ValueError(
-#                        "Export to the {} input format is not yet implemented.".format(
-#                            self.sim_engine
-#                        )
-#                    )
+                #                else:
+                #                    # TODO: implement export to DOE-2 format
+                #                    raise ValueError(
+                #                        "Export to the {} input format is not yet implemented.".format(
+                #                            self.sim_engine
+                #                        )
+                #                    )
                 filen = open(path + "/" + self.name + ".{}".format(fmt), "w+")
-                filen.write(curve_export)                
+                filen.write(curve_export)
             elif fmt == "csv":
                 curve_export += f"{self.name},{curve.out_var},{curve.units},{curve.type},{curve.x_min},{curve.x_max},{curve.y_min},{curve.y_max}"
                 for i in range(1, curve.nb_coeffs() + 1):
@@ -563,16 +582,16 @@ class Curve:
                 self.ref_lwt = (44.0 - 32.0) * 5 / 9
                 if self.eqp.condenser_type == "water":
                     self.ref_ect = (85.0 - 32.0) * 5 / 9
+                    self.ref_lct = (94.3 - 32.0) * 5 / 9
                 else:
                     self.ref_ect = (95.0 - 32.0) * 5 / 9
             elif self.eqp.part_eff_ref_std == "ahri_551/591":
                 self.ref_lwt = 7.0
                 if self.eqp.condenser_type == "water":
                     self.ref_ect = 30.0
+                    self.ref_lct = 35
                 else:
                     self.ref_ect = 35.0
-            if self.eqp.model == "lct_lwt":
-                self.ref_lct = eqp.get_ref_lct()
 
     def evaluate(self, x, y):
         """Return the output of a curve.
@@ -819,15 +838,7 @@ class Curve:
 
         :param eqp: Equipment
         """
-        if "-t" in self.out_var:
-            x_ref = self.ref_lwt
-            if eqp.model == "ect_lwt":
-                y_ref = self.ref_ect
-            elif eqp.model == "lct_lwt":
-                y_ref = self.ref_lct
-        else:
-            x_ref = 1
-            y_ref = 0
+        x_ref, y_ref = eqp.get_ref_values(self.out_var)
         return self.evaluate(x_ref, y_ref)
 
     def normalized(self, data, x_norm, y_norm):
@@ -845,49 +856,6 @@ class Curve:
         )
 
         self.regression(data, [self.type])
-
-
-    def cap(self):
-        min_val = 999
-        max_val = -999
-        x_max = -999
-        y_max = -999
-
-        ranges = {
-            'eir-f-t': [(4, 10), (10.0, 40.0)],
-            'cap-f-t': [(8, 10), (10.0, 40.0)],
-            'eir-f-plr': [(0.0, 1.0)]
-        }
-
-        if len(ranges[self.out_var]) > 1:
-            x_s, y_s = ranges[self.out_var]
-        else:
-            x_s = ranges[self.out_var][0]
-            y_s = (0, 0)
-
-        for x, y in zip(
-            np.linspace(x_s[0], x_s[1], 1000), np.linspace(y_s[0], y_s[1], 1000)
-        ):
-            val = self.evaluate(x, y)
-            if val < min_val:
-                x_min = x
-                y_min = y
-                min_val = min(self.evaluate(x, y), min_val)
-            if val > max_val:
-                x_max = x
-                y_max = y
-                max_val = max(self.evaluate(x, y), max_val)
-
-        if self.out_var == "cap-f-t":
-            self.x_min = x_max
-            self.y_min = y_max
-        else:
-            self.x_min = x_min
-            self.y_min = y_min
-
-
-    def read_idf_curve(self, idf_curve):
-        pass
 
     def convert_coefficients_to_ip(self):
         if self.units == "si":
@@ -911,4 +879,3 @@ class Curve:
                 self.y_min = Units(self.y_min, "degC").conversion("degF")
                 self.y_max = Units(self.y_max, "degC").conversion("degF")
                 self.units = "ip"
-

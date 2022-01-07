@@ -5,7 +5,9 @@ import copper.chiller
 
 
 class Library:
-    def __init__(self, path="./fixtures/chiller_curves.json", rating_std="", export=False):
+    def __init__(
+        self, path="./fixtures/chiller_curves.json", rating_std="", export=False
+    ):
         self.path = path
         self.rating_std = rating_std
 
@@ -29,7 +31,11 @@ class Library:
                 # using values from the library
                 obj_args = {}
                 for p in props:
-                    if not "part_eff" in p and not "set_of_curves" in p:
+                    if (
+                        not "part_eff" in p
+                        and not "set_of_curves" in p
+                        and not "alt" in p
+                    ):
                         obj_args[p] = vals[p]
 
                 # Temporarily set the part load efficiency to the
@@ -47,7 +53,9 @@ class Library:
                 ).curves
 
                 if export:
-                    self.get_set_of_curves_by_name(vals["name"]).export('./curves',fmt="idf")
+                    self.get_set_of_curves_by_name(vals["name"]).export(
+                        "./curves", fmt="idf"
+                    )
 
                 # Set rating Stds
                 if self.rating_std != "":
@@ -79,7 +87,7 @@ class Library:
         # using values from the library
         obj_args = {}
         for p in props:
-            if not "part_eff" in p and not "set_of_curves" in p:
+            if not "part_eff" in p and not "set_of_curves" in p and not "alt" in p:
                 obj_args[p] = data[p]
 
         # Temporarily set the part load efficiency to the
@@ -153,7 +161,7 @@ class Library:
                         else:
                             if p in props.keys():
                                 obj_args[p] = props[p]
-                    elif "part_eff" in p:
+                    elif "part_eff" in p or "alt" in p:
                         pass
                     else:
                         obj_args[p] = props[p]

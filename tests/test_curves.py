@@ -2,6 +2,8 @@ from unittest import TestCase
 
 import copper as cp
 import matplotlib.pyplot as plt
+import numpy as np
+import CoolProp.CoolProp as CP
 
 
 class TestCurves(TestCase):
@@ -114,3 +116,220 @@ class TestCurves(TestCase):
         assert c.y_min == 50.0
         assert c.x_max == 60.08
         assert c.y_max == 104
+
+    def test_agg(self):
+        filters = [
+            ("eqp_type", "chiller"),
+            ("sim_engine", "energyplus"),
+            ("model", "ect_lwt"),
+            ("condenser_type", "water"),
+        ]
+
+        # Run unittest with a centrifugal chiller
+        lib = cp.Library(path="./fixtures/chiller_curves.json")
+        ep_wtr_screw = lib.find_set_of_curvess_from_lib(
+            filters=filters
+            + [("source", "EnergyPlus chiller dataset"), ("compressor_type", "screw")]
+        )
+        ep_wtr_scroll = lib.find_set_of_curvess_from_lib(
+            filters=filters
+            + [("source", "EnergyPlus chiller dataset"), ("compressor_type", "scroll")]
+        )
+        centrifugal_chlr = ep_wtr_screw + ep_wtr_scroll
+
+        sets = centrifugal_chlr
+        chlr = cp.chiller(
+            ref_cap=200,
+            ref_cap_unit="ton",
+            full_eff=5.0,
+            full_eff_unit="cop",
+            compressor_type="aggregated",
+            condenser_type="water",
+            compressor_speed="aggregated",
+        )
+        water_cooled_curves = cp.SetsofCurves(sets=sets, eqp=chlr)
+        # remove sets
+        for cset in sets:
+            cset.remove_curve("eir-f-plr-dt")
+
+        ranges = {
+            "eir-f-t": {
+                "vars_range": [(4, 10), (10.0, 40.0)],
+                "normalization": (6.67, 29.44),
+            },
+            "cap-f-t": {
+                "vars_range": [(4, 10), (10.0, 40.0)],
+                "normalization": (6.67, 29.44),
+            },
+            "eir-f-plr": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
+        }
+
+        misc_attr = {
+            "model": "ect_lwt",
+            "ref_cap": 200,
+            "ref_cap_unit": "",
+            "full_eff": 5.0,
+            "full_eff_unit": "",
+            "compressor_type": "aggregated",
+            "condenser_type": "water",
+            "compressor_speed": "aggregated",
+            "sim_engine": "energyplus",
+            "min_plr": 0.1,
+            "min_unloading": 0.1,
+            "max_plr": 1,
+            "name": "Aggregated set of curves",
+            "validity": 3,
+            "source": "Aggregation",
+        }
+
+        # checking with an empty target, we expect a Value Error
+        with self.assertRaises(ValueError):
+            _, _ = water_cooled_curves.nearest_neighbor_sort()
+
+        # checking with bad target variables that are not present in library
+        with self.assertRaises(AssertionError):
+            _, _ = water_cooled_curves.nearest_neighbor_sort(
+                target_attr=misc_attr, vars=["bad_targets", "wrong_targets"]
+            )
+
+        # first look at the test with weighted average
+        df, best_idx = water_cooled_curves.nearest_neighbor_sort(target_attr=misc_attr)
+        self.assertEqual(best_idx, 8)  # the best index for this test is 8
+        self.assertEqual(np.round(df.loc[best_idx, "score"], 3), 0.068)
+
+        # look at the nearest neighbor-implementation with N nearest neighbor, N=7
+        df, best_idx = water_cooled_curves.nearest_neighbor_sort(
+            target_attr=misc_attr, N=7
+        )
+        score = df.loc[[best_idx], ["score"]]["score"].values[0]
+        self.assertEqual(best_idx, 8)  # the best index for this test is STILL 8
+        self.assertEqual(np.round(score, 3), 0.159)
+
+    def test_flow_calcs_after_agg(self):
+
+        # Load library
+        lib = cp.Library(path="./fixtures/chiller_curves.json")
+
+        # Determine aggregated curve
+        ranges = {
+            "eir-f-t": {
+                "vars_range": [(4, 10), (15.0, 50.0)],
+                "normalization": (6.67, 34.44),
+            },
+            "cap-f-t": {
+                "vars_range": [(4, 10), (15.0, 50.0)],
+                "normalization": (6.67, 34.44),
+            },
+            "eir-f-plr": {
+                "vars_range": [(15.0, 50.0), (0.0, 1.0)],
+                "normalization": (34.44, 1.0),
+            },
+        }
+
+        misc_attr = {
+            "model": "lct_lwt",
+            "ref_cap": 100,
+            "ref_cap_unit": "",
+            "full_eff": 12.0 / 0.72 / 3.412,
+            "part_eff": 12.0 / 0.56 / 3.412,
+            "ref_eff_unit": "",
+            "compressor_type": "aggregated",
+            "condenser_type": "water",
+            "compressor_speed": "constant",
+            "sim_engine": "energyplus",
+            "min_plr": 0.1,
+            "min_unloading": 0.1,
+            "max_plr": 1,
+            "name": "Aggregated set of curves",
+            "validity": 3,
+            "source": "Aggregation",
+        }
+
+        # define chiller before passing as argument
+        # Define target chiller
+        chlr = cp.chiller(
+            compressor_type="scroll, screw, recip",
+            condenser_type="water",
+            compressor_speed="constant",
+            ref_cap=150,
+            ref_cap_unit="ton",
+            full_eff=0.75,
+            full_eff_unit="kw/ton",
+            full_eff_alt=0.719,
+            full_eff_unit_alt="kw/ton",
+            part_eff=0.56,
+            part_eff_unit="kw/ton",
+            part_eff_ref_std="ahri_550/590",
+            part_eff_alt=0.559,
+            part_eff_unit_alt="kw/ton",
+            part_eff_ref_std_alt="ahri_551/591",
+            model="lct_lwt",
+            sim_engine="energyplus",
+        )
+
+        filters = [
+            ("eqp_type", "chiller"),
+            ("model", "lct_lwt"),
+            ("condenser_type", "water"),
+            ("sim_engine", "energyplus"),
+        ]
+
+        sets = lib.find_set_of_curvess_from_lib(
+            filters=filters + [("compressor_type", "centrifugal")], part_eff_flag=True
+        )
+
+        curves = cp.SetsofCurves(sets=sets, eqp=chlr)
+
+        base_curve = curves.get_aggregated_set_of_curves(
+            ranges=ranges, misc_attr=misc_attr, method="weighted-average", N=10
+        )
+
+        base_curve.eqp = chlr
+
+        # Calculate condenser flow
+        chlr.set_of_curves = base_curve.curves
+        m = chlr.get_ref_cond_flow_rate()
+
+        # Check that the correct condenser flow is calculated
+        self.assertTrue(round(m, 3) == 0.030, f"Calculated condenser flow {m} m3/s")
+
+        # Determine the specific heat capacity of water [kJ/kg.K]
+        c_p = (
+            CP.PropsSI(
+                "C",
+                "P",
+                101325,
+                "T",
+                0.5 * (chlr.ref_ect + chlr.ref_lct) + 273.15,
+                "Water",
+            )
+            / 1000
+        )
+
+        cop = cp.Units(chlr.full_eff, "kw/ton").conversion("cop")
+
+        # Determine the density of water [kg/m3]
+        rho = CP.PropsSI(
+            "D", "P", 101325, "T", 0.5 * (chlr.ref_ect + chlr.ref_lct) + 273.15, "Water"
+        )
+
+        args = [
+            chlr.ref_lwt,
+            base_curve.curves[1],  # cap-f-t
+            base_curve.curves[0],  # eir-f-t
+            base_curve.curves[2],  # eir-f-plr
+            1,
+            -999,
+            cop,
+            chlr.ref_ect,
+            m * rho,
+            c_p,
+        ]
+
+        lct = chlr.get_lct(chlr.ref_ect, args)
+
+        # Check that the correct LCT is calculated
+        self.assertTrue(
+            round(lct, 2) == round(chlr.ref_lct, 2),
+            f"Calculated LCT: {lct}. It must be the same as the reference LCT which is {round(chlr.ref_lct, 2)}",
+        )

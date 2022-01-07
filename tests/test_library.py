@@ -69,11 +69,11 @@ class TestLibrary(TestCase):
             model="lct_lwt",
             sim_engine="energyplus",
             set_of_curves=lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_McQuay_WSC_471kW/5.89COP/Vanes"
+                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
             ).curves,
         )
 
-        assert round(chlr.calc_eff("part", "cop"), 2) == 4.81  # IPLV.SI
+        assert round(chlr.calc_eff("part", "cop"), 2) == 8.22  # IPLV.SI
 
         # Check calculation for the reformulated chiller EIR model
         chlr = cp.chiller(
@@ -88,8 +88,8 @@ class TestLibrary(TestCase):
             model="lct_lwt",
             sim_engine="energyplus",
             set_of_curves=lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_McQuay_WSC_471kW/5.89COP/Vanes"
+                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
             ).curves,
         )
 
-        assert round(chlr.calc_eff("part", "cop"), 2) == 4.78  # IPLV.IP
+        assert round(chlr.calc_eff("part", "cop"), 2) == 8.19  # IPLV.IP

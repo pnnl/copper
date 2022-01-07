@@ -19,7 +19,7 @@ class GA:
         method="typical",
         pop_size=100,
         tol=0.005,
-        max_gen=500,
+        max_gen=300,
         vars="",
         sFac=0.5,
         retain=0.2,
@@ -50,16 +50,26 @@ class GA:
         """
         self.target = self.equipment.part_eff
         self.full_eff = self.equipment.full_eff
+        self.target_alt = self.equipment.part_eff_alt
+        self.full_eff_alt = self.equipment.full_eff_alt
 
         # Convert target if different than kw/ton
         if self.equipment.part_eff_unit != "kw/ton":
             target_c = Units(self.target, self.equipment.part_eff_unit)
             self.target = target_c.conversion("kw/ton")
+        if self.equipment.part_eff_unit_alt != "kw/ton":
+            target_c = Units(self.target_alt, self.equipment.part_eff_unit_alt)
+            self.target_alt = target_c.conversion("kw/ton")
 
-        # Convert target if different than kw/ton
+        # Convert full load efficiency if different than kw/ton
         if self.equipment.full_eff_unit != "kw/ton":
             full_eff_c = Units(self.equipment.full_eff, self.equipment.full_eff_unit)
             self.full_eff = full_eff_c.conversion("kw/ton")
+        if self.equipment.full_eff_unit_alt != "kw/ton":
+            full_eff_c = Units(
+                self.equipment.full_eff_alt, self.equipment.full_eff_unit_alt
+            )
+            self.full_eff_alt = full_eff_c.conversion("kw/ton")
 
         if len(self.base_curves) == 0:
             if self.equipment.type == "chiller":
@@ -101,7 +111,7 @@ class GA:
         self.run_ga(curves=self.base_curves)
         return self.equipment.set_of_curves
 
-    def run_ga(self, curves):
+    def run_ga(self, curves, debug=True):
         """Run genetic algorithm.
 
             :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
@@ -110,18 +120,51 @@ class GA:
 
         ]"""
 
+        self.pop = []
+        gen = 0
+        self.equipment.curves = curves
+
         while not self.is_target_met():
             self.pop = self.generate_population(curves)
-            gen = 0
-            self.equipment.curves = curves
             while gen <= self.max_gen and not self.is_target_met():
                 self.evolve_population(self.pop)
                 gen += 1
-                #For debugging
-                print("GEN: {}, IPLV: {}, KW/TON: {}".format(gen, round(self.equipment.calc_eff(eff_type="part"),2), round(self.equipment.calc_eff(eff_type="full"),2)))
+                if debug:
+                    if self.target_alt > 0:
+                        part_rating_alt = round(
+                            self.equipment.calc_eff(eff_type="part", alt=True), 4
+                        )
+                    else:
+                        part_rating_alt = "n/a"
+                    if self.full_eff_alt > 0:
+                        full_rating_alt = round(
+                            self.equipment.calc_eff(eff_type="full", alt=True), 4
+                        )
+                    else:
+                        full_rating_alt = "n/a"
+
+                    print(
+                        "GEN: {}, IPLV: {}, KW/TON: {} IPLV-alt: {}, KW/TON-alt: {}".format(
+                            gen,
+                            round(self.equipment.calc_eff(eff_type="part"), 4),
+                            round(self.equipment.calc_eff(eff_type="full"), 4),
+                            part_rating_alt,
+                            full_rating_alt,
+                        )
+                    )
+                max_gen = gen
+
             if not self.is_target_met():
                 print(f"Target not met after {self.max_gen}; Restarting the GA.")
+                gen = 0
 
+                print(
+                    "GEN: {}, IPLV: {}, KW/TON: {}".format(
+                        gen,
+                        round(self.equipment.calc_eff(eff_type="part"), 2),
+                        round(self.equipment.calc_eff(eff_type="full"), 2),
+                    )
+                )
 
         print("Curve coefficients calculated in {} generations.".format(gen))
         return self.pop
@@ -137,11 +180,17 @@ class GA:
             if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_eff(eff_type="part")
                 full_rating = self.equipment.calc_eff(eff_type="full")
+                if self.target_alt > 0:
+                    part_rating_alt = self.equipment.calc_eff(eff_type="part", alt=True)
+                else:
+                    part_rating_alt = 0
+                if self.full_eff_alt > 0:
+                    full_rating_alt = self.equipment.calc_eff(eff_type="full", alt=True)
+                else:
+                    full_rating_alt = 0
                 cap_rating = 0
                 if "cap-f-t" in self.vars:
-                    for (
-                        c
-                    ) in self.equipment.set_of_curves:  # list of objects  # c in curves
+                    for c in self.equipment.set_of_curves:
                         # set_of_curves
                         if "cap" in c.out_var:
                             cap_rating += abs(1 - c.get_out_reference(self.equipment))
@@ -150,29 +199,17 @@ class GA:
         else:
             raise ValueError("This type of equipment has not yet been implemented.")
 
-        # debugging
-        # print('Condition 1: ', (part_rating < self.target * (1 + self.tol)))
-        # print('Condition 2: ', (part_rating > self.target * (1 - self.tol)))
-        # print('Condition 3: ', (full_rating < self.full_eff * (1 + self.tol)))
-        # print(full_rating, self.full_eff, self.full_eff * (1 + self.tol))
-        # print('Condition 4: ', (full_rating > self.full_eff * (1 - self.tol)))
-        # print('Condition 5: ', (cap_rating < self.tol))
-        # print('Condition 6: ', (cap_rating > -self.tol))
-        # print('---Final condition-----')
-        # print((part_rating < self.target * (1 + self.tol))
-        #     and (part_rating > self.target * (1 - self.tol))
-        #     and (full_rating < self.full_eff * (1 + self.tol))
-        #     and (full_rating > self.full_eff * (1 - self.tol))
-        #     and (cap_rating < self.tol)
-        #     and (cap_rating > -self.tol))
-
         if (
-            (part_rating < self.target * (1 + self.tol))
-            and (part_rating > self.target * (1 - self.tol))
-            and (full_rating < self.full_eff * (1 + self.tol))
-            and (full_rating > self.full_eff * (1 - self.tol))
-            and (cap_rating < self.tol)
-            and (cap_rating > -self.tol)
+            (part_rating <= self.target * (1 + self.tol))
+            and (part_rating >= self.target * (1 - self.tol))
+            and (part_rating_alt <= self.target_alt * (1 + self.tol))
+            and (part_rating_alt >= self.target_alt * (1 - self.tol))
+            and (full_rating <= self.full_eff * (1 + self.tol))
+            and (full_rating >= self.full_eff * (1 - self.tol))
+            and (full_rating_alt <= self.full_eff_alt * (1 + self.tol))
+            and (full_rating_alt >= self.full_eff_alt * (1 - self.tol))
+            and (cap_rating <= self.tol)
+            and (cap_rating >= -self.tol)
             # and self.check_gradients()
         ):
             return True
@@ -365,29 +402,44 @@ class GA:
                 base_x, base_y = self.base_curves_data[c.out_var]
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
 
-        if self.equipment.type == "chiller":
-            iplv_score = abs(self.equipment.calc_eff(eff_type="part") - self.target)
-            full_eff_score = abs(
-                self.equipment.calc_eff(eff_type="full") - self.equipment.full_eff
-            )
-            iplv_weight = 1
-            eff_weight = 1
-            curve_normal_score_weight = 1
-            rsme_weight = 0.5
+        part_eff_score = abs(self.equipment.calc_eff(eff_type="part") - self.target)
+        full_eff_score = abs(
+            self.equipment.calc_eff(eff_type="full") - self.equipment.full_eff
+        )
+        part_eff_weight = 1.0
+        part_eff_weight_alt = 1.0
+        full_eff_weight = 1.0
+        full_eff_weight_alt = 1.0
+        curve_normal_score_weight = 1.0
+        rsme_weight = 0.5
 
-            fit_score = (
-                iplv_score * iplv_weight
-                + full_eff_score * eff_weight
-                + curve_normal_score * curve_normal_score_weight
-                + rsme * rsme_weight
-            ) / (
-                iplv_weight
-                + eff_weight
-                + curve_normal_score_weight * len(set_of_curves.curves)
-                + rsme_weight
+        if self.equipment.full_eff_alt > 0:
+            full_eff_score_alt = abs(
+                self.equipment.calc_eff(eff_type="full", alt=True)
+                - self.equipment.full_eff_alt
             )
         else:
-            raise ValueError("This type of equipment has not yet been implemented.")
+            full_eff_score_alt = 0.0
+        if self.target_alt > 0:
+            part_eff_score_alt = abs(
+                self.equipment.calc_eff(eff_type="part", alt=True) - self.target_alt
+            )
+        else:
+            part_eff_score_alt = 0.0
+
+        fit_score = (
+            part_eff_score * part_eff_weight
+            + part_eff_score_alt * part_eff_weight_alt
+            + full_eff_score * full_eff_weight
+            + full_eff_score_alt * full_eff_weight_alt
+            + curve_normal_score * curve_normal_score_weight
+            + rsme * rsme_weight
+        ) / (
+            part_eff_weight * 2
+            + full_eff_weight * 2
+            + curve_normal_score_weight * len(set_of_curves.curves)
+            + rsme_weight
+        )
 
         return fit_score
 
