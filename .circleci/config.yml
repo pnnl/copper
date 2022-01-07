@@ -48,6 +48,7 @@ jobs:
       - run:
           name: run tests
           command: |
+            export PYTHONUNBUFFERED=1
             . venv/bin/activate
             nosetests
           no_output_timeout: 10h

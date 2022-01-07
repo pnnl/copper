@@ -371,20 +371,8 @@ class chiller:
                 loads
             ):  # Calculate efficiency for each testing conditions
                 if self.model == "ect_lwt":  # DOE-2 chiller model
-                    # Temperature adjustments
-                    dt = ect[idx] - lwt
-                    cap_f_lwt_ect = cap_f_t.evaluate(lwt, ect[idx])
-                    eir_f_lwt_ect = eir_f_t.evaluate(lwt, ect[idx])
-                    cap_op = load_ref * cap_f_lwt_ect
-
-                    # PLR adjustments
-                    plr = load * cap_f_t.evaluate(lwt, ect[0]) / cap_op
-                    if plr <= self.min_unloading:
-                        plr = self.min_unloading
-                    eir_plr = eir_f_plr.evaluate(plr, dt)
-
                     # Efficiency calculation
-                    eir = eir_ref * eir_f_lwt_ect * eir_plr / plr
+                    eir = self.calc_eff_ect(cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect[idx], lwt, load)
 
                 elif self.model == "lct_lwt":  # Reformulated EIR chiller model
                     # Determine water properties
