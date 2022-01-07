@@ -302,7 +302,36 @@ class chiller:
 
         return eir_ref
 
-    def calc_eff(self, eff_type, unit="kw/ton", output_report=False, alt=False):
+    def calc_eff_ect(self, cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect, lwt, load):
+        """Calculate chiller efficiency using the ECT-based model for a specific LCT and load value (percentage load).
+
+        Args:
+            cap_f_t (Curve): Capacity curve modifier as a function of temperature (LWT and ECT)
+            eir_f_t (Curve): Energy Input Ratio curve modifier as a function of temperature (LWT and ECT)
+            eir_f_plr (Curve): Energy Input Ratio curve modifier as a function of part load ratio
+            eir_ref (Float): Reference EIR
+            ect (Float): Entering condenser temperature in deg. C
+            lwt (Float): Leaving water temperature in deg. C
+            load (Float): Percentage load, as defined in AHRI 550/590
+        """
+        # Temperature adjustments
+        dt = ect - lwt
+        cap_f_lwt_ect = cap_f_t.evaluate(lwt, ect)
+        eir_f_lwt_ect = eir_f_t.evaluate(lwt, ect)
+        cap_op = cap_f_lwt_ect
+
+        # PLR adjustments
+        plr = load * cap_f_t.evaluate(lwt, self.ref_ect) / cap_op
+        if plr <= self.min_unloading:
+            plr = self.min_unloading
+        eir_plr = eir_f_plr.evaluate(plr, dt)
+
+        # Efficiency calculation
+        eir = eir_ref * eir_f_lwt_ect * eir_plr / plr
+
+        return eir
+
+    def calc_rated_eff(self, eff_type, unit="kw/ton", output_report=False, alt=False):
         """Calculate chiller efficiency.
 
         :param str eff_type: chiller performance indicator, currently supported `full` (full load rating)
@@ -342,20 +371,8 @@ class chiller:
                 loads
             ):  # Calculate efficiency for each testing conditions
                 if self.model == "ect_lwt":  # DOE-2 chiller model
-                    # Temperature adjustments
-                    dt = ect[idx] - lwt
-                    cap_f_lwt_ect = cap_f_t.evaluate(lwt, ect[idx])
-                    eir_f_lwt_ect = eir_f_t.evaluate(lwt, ect[idx])
-                    cap_op = load_ref * cap_f_lwt_ect
-
-                    # PLR adjustments
-                    plr = load * cap_f_t.evaluate(lwt, ect[0]) / cap_op
-                    if plr <= self.min_unloading:
-                        plr = self.min_unloading
-                    eir_plr = eir_f_plr.evaluate(plr, dt)
-
                     # Efficiency calculation
-                    eir = eir_ref * eir_f_lwt_ect * eir_plr / plr
+                    eir = self.calc_eff_ect(cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect[idx], lwt, load)
 
                 elif self.model == "lct_lwt":  # Reformulated EIR chiller model
                     # Determine water properties

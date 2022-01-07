@@ -28,8 +28,8 @@ class TestAlgorithm(TestCase):
             vars=["eir-f-plr"], method="best_match", tol=tol
         )
 
-        full_eff = chlr.calc_eff(eff_type="full")
-        part_eff = chlr.calc_eff(eff_type="part")
+        full_eff = chlr.calc_rated_eff(eff_type="full")
+        part_eff = chlr.calc_rated_eff(eff_type="part")
 
         self.assertTrue(full_eff < full_eff_target * (1 + tol), full_eff)
         self.assertTrue(full_eff > full_eff_target * (1 - tol), full_eff)
@@ -90,10 +90,10 @@ class TestAlgorithm(TestCase):
             vars=["eir-f-plr"], method="best_match", tol=tol
         )
 
-        full_eff = chlr.calc_eff(eff_type="full")
-        part_eff = chlr.calc_eff(eff_type="part")
-        full_eff_alt = chlr.calc_eff(eff_type="full", alt=True)
-        part_eff_alt = chlr.calc_eff(eff_type="part", alt=True)
+        full_eff = chlr.calc_rated_eff(eff_type="full")
+        part_eff = chlr.calc_rated_eff(eff_type="part")
+        full_eff_alt = chlr.calc_rated_eff(eff_type="full", alt=True)
+        part_eff_alt = chlr.calc_rated_eff(eff_type="part", alt=True)
 
         self.assertTrue(full_eff < full_eff_target * (1 + tol), full_eff)
         self.assertTrue(full_eff > full_eff_target * (1 - tol), full_eff)
@@ -130,8 +130,8 @@ class TestAlgorithm(TestCase):
             vars=["eir-f-t", "eir-f-plr"], method="best_match", tol=tol
         )
 
-        full_eff = chlr.calc_eff(eff_type="full")
-        part_eff = chlr.calc_eff(eff_type="part")
+        full_eff = chlr.calc_rated_eff(eff_type="full")
+        part_eff = chlr.calc_rated_eff(eff_type="part")
 
         self.assertTrue(full_eff < full_eff_target * (1 + tol), full_eff)
         self.assertTrue(full_eff > full_eff_target * (1 - tol), full_eff)
@@ -170,10 +170,10 @@ class TestAlgorithm(TestCase):
             vars=["eir-f-t", "eir-f-plr"], method="best_match", tol=tol
         )
 
-        full_eff = chlr.calc_eff(eff_type="full")
-        part_eff = chlr.calc_eff(eff_type="part")
-        full_eff_alt = chlr.calc_eff(eff_type="full", alt=True)
-        part_eff_alt = chlr.calc_eff(eff_type="part", alt=True)
+        full_eff = chlr.calc_rated_eff(eff_type="full")
+        part_eff = chlr.calc_rated_eff(eff_type="part")
+        full_eff_alt = chlr.calc_rated_eff(eff_type="full", alt=True)
+        part_eff_alt = chlr.calc_rated_eff(eff_type="part", alt=True)
 
         self.assertTrue(full_eff < full_eff_target * (1 + tol), full_eff)
         self.assertTrue(full_eff > full_eff_target * (1 - tol), full_eff)

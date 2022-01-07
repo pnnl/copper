@@ -132,13 +132,13 @@ class GA:
                 if debug:
                     if self.target_alt > 0:
                         part_rating_alt = round(
-                            self.equipment.calc_eff(eff_type="part", alt=True), 4
+                            self.equipment.calc_rated_eff(eff_type="part", alt=True), 4
                         )
                     else:
                         part_rating_alt = "n/a"
                     if self.full_eff_alt > 0:
                         full_rating_alt = round(
-                            self.equipment.calc_eff(eff_type="full", alt=True), 4
+                            self.equipment.calc_rated_eff(eff_type="full", alt=True), 4
                         )
                     else:
                         full_rating_alt = "n/a"
@@ -146,8 +146,8 @@ class GA:
                     print(
                         "GEN: {}, IPLV: {}, KW/TON: {} IPLV-alt: {}, KW/TON-alt: {}".format(
                             gen,
-                            round(self.equipment.calc_eff(eff_type="part"), 4),
-                            round(self.equipment.calc_eff(eff_type="full"), 4),
+                            round(self.equipment.calc_rated_eff(eff_type="part"), 4),
+                            round(self.equipment.calc_rated_eff(eff_type="full"), 4),
                             part_rating_alt,
                             full_rating_alt,
                         )
@@ -161,8 +161,8 @@ class GA:
                 print(
                     "GEN: {}, IPLV: {}, KW/TON: {}".format(
                         gen,
-                        round(self.equipment.calc_eff(eff_type="part"), 2),
-                        round(self.equipment.calc_eff(eff_type="full"), 2),
+                        round(self.equipment.calc_rated_eff(eff_type="part"), 2),
+                        round(self.equipment.calc_rated_eff(eff_type="full"), 2),
                     )
                 )
 
@@ -178,14 +178,14 @@ class GA:
         """
         if self.equipment.type == "chiller":
             if self.equipment.set_of_curves != "":
-                part_rating = self.equipment.calc_eff(eff_type="part")
-                full_rating = self.equipment.calc_eff(eff_type="full")
+                part_rating = self.equipment.calc_rated_eff(eff_type="part")
+                full_rating = self.equipment.calc_rated_eff(eff_type="full")
                 if self.target_alt > 0:
-                    part_rating_alt = self.equipment.calc_eff(eff_type="part", alt=True)
+                    part_rating_alt = self.equipment.calc_rated_eff(eff_type="part", alt=True)
                 else:
                     part_rating_alt = 0
                 if self.full_eff_alt > 0:
-                    full_rating_alt = self.equipment.calc_eff(eff_type="full", alt=True)
+                    full_rating_alt = self.equipment.calc_rated_eff(eff_type="full", alt=True)
                 else:
                     full_rating_alt = 0
                 cap_rating = 0
@@ -402,9 +402,9 @@ class GA:
                 base_x, base_y = self.base_curves_data[c.out_var]
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
 
-        part_eff_score = abs(self.equipment.calc_eff(eff_type="part") - self.target)
+        part_eff_score = abs(self.equipment.calc_rated_eff(eff_type="part") - self.target)
         full_eff_score = abs(
-            self.equipment.calc_eff(eff_type="full") - self.equipment.full_eff
+            self.equipment.calc_rated_eff(eff_type="full") - self.equipment.full_eff
         )
         part_eff_weight = 1.0
         part_eff_weight_alt = 1.0
@@ -415,14 +415,14 @@ class GA:
 
         if self.equipment.full_eff_alt > 0:
             full_eff_score_alt = abs(
-                self.equipment.calc_eff(eff_type="full", alt=True)
+                self.equipment.calc_rated_eff(eff_type="full", alt=True)
                 - self.equipment.full_eff_alt
             )
         else:
             full_eff_score_alt = 0.0
         if self.target_alt > 0:
             part_eff_score_alt = abs(
-                self.equipment.calc_eff(eff_type="part", alt=True) - self.target_alt
+                self.equipment.calc_rated_eff(eff_type="part", alt=True) - self.target_alt
             )
         else:
             part_eff_score_alt = 0.0

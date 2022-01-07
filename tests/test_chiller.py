@@ -234,4 +234,38 @@ class TestChiller(TestCase):
         )
 
         # Check that full load efficiency is returned when a different unit is specified
-        self.assertTrue(round(chlr.calc_eff("full", unit="cop"), 2) == 5.15)
+        self.assertTrue(round(chlr.calc_rated_eff("full", unit="cop"), 2) == 5.15)
+
+    def test_calc_eff_ect(self):
+
+        chlr = cp.chiller(
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant",
+            ref_cap=471000,
+            ref_cap_unit="W",
+            full_eff=6,
+            full_eff_unit="cop",
+            part_eff_ref_std="ahri_550/590",
+            model="ect_lwt",
+            sim_engine="energyplus",
+            set_of_curves=self.lib.get_set_of_curves_by_name(
+                "ElectricEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
+            ).curves,
+        )
+
+        cop_1 = round(
+            1
+            / chlr.calc_eff_ect(
+                chlr.set_of_curves[2],
+                chlr.set_of_curves[0],
+                chlr.set_of_curves[1],
+                1 / 6,
+                (85.0 - 32.0) * 5 / 9,
+                (44.0 - 32.0) * 5 / 9,
+                1,
+            ),
+            2,
+        )
+        cop_2 = round(chlr.calc_rated_eff("full", "cop"), 2)
+        self.assertTrue(cop_1 == cop_2, f"{cop_1} is different than {cop_2}")
