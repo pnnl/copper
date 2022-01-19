@@ -65,7 +65,9 @@ class Library:
                 obj = eval("copper." + vals["eqp_type"])(**obj_args)
 
                 # Compute part load efficiency
-                part_eff = obj.calc_rated_eff(eff_type="part", unit=vals["full_eff_unit"])
+                part_eff = obj.calc_rated_eff(
+                    eff_type="part", unit=vals["full_eff_unit"]
+                )
 
                 # Set part load efficiency if
                 # the calculation was sucessful

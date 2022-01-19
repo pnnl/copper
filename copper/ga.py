@@ -181,11 +181,15 @@ class GA:
                 part_rating = self.equipment.calc_rated_eff(eff_type="part")
                 full_rating = self.equipment.calc_rated_eff(eff_type="full")
                 if self.target_alt > 0:
-                    part_rating_alt = self.equipment.calc_rated_eff(eff_type="part", alt=True)
+                    part_rating_alt = self.equipment.calc_rated_eff(
+                        eff_type="part", alt=True
+                    )
                 else:
                     part_rating_alt = 0
                 if self.full_eff_alt > 0:
-                    full_rating_alt = self.equipment.calc_rated_eff(eff_type="full", alt=True)
+                    full_rating_alt = self.equipment.calc_rated_eff(
+                        eff_type="full", alt=True
+                    )
                 else:
                     full_rating_alt = 0
                 cap_rating = 0
@@ -402,7 +406,9 @@ class GA:
                 base_x, base_y = self.base_curves_data[c.out_var]
                 rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
 
-        part_eff_score = abs(self.equipment.calc_rated_eff(eff_type="part") - self.target)
+        part_eff_score = abs(
+            self.equipment.calc_rated_eff(eff_type="part") - self.target
+        )
         full_eff_score = abs(
             self.equipment.calc_rated_eff(eff_type="full") - self.equipment.full_eff
         )
@@ -422,7 +428,8 @@ class GA:
             full_eff_score_alt = 0.0
         if self.target_alt > 0:
             part_eff_score_alt = abs(
-                self.equipment.calc_rated_eff(eff_type="part", alt=True) - self.target_alt
+                self.equipment.calc_rated_eff(eff_type="part", alt=True)
+                - self.target_alt
             )
         else:
             part_eff_score_alt = 0.0
