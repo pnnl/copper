@@ -303,7 +303,7 @@ class chiller:
         return eir_ref
 
     def calc_eff_ect(self, cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect, lwt, load):
-        """Calculate chiller efficiency using the ECT-based model for a specific LCT and load value (percentage load).
+        """Calculate chiller efficiency using the ECT-based model for a specific ECT and load value (percentage load).
 
         Args:
             cap_f_t (Curve): Capacity curve modifier as a function of temperature (LWT and ECT)
@@ -372,7 +372,9 @@ class chiller:
             ):  # Calculate efficiency for each testing conditions
                 if self.model == "ect_lwt":  # DOE-2 chiller model
                     # Efficiency calculation
-                    eir = self.calc_eff_ect(cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect[idx], lwt, load)
+                    eir = self.calc_eff_ect(
+                        cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect[idx], lwt, load
+                    )
 
                 elif self.model == "lct_lwt":  # Reformulated EIR chiller model
                     # Determine water properties

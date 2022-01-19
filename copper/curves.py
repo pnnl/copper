@@ -210,7 +210,7 @@ class SetsofCurves:
 
             agg_set_of_curves.curves.append(new_curve)
 
-        # Determine reference condenser flow rate for water cooled chiller
+        # Determine reference condenser flow rate
         # TODO: Move following statement to chiller class
         if self.eqp_type == "chiller":
             self.eqp.set_of_curves = agg_set_of_curves.curves
@@ -455,7 +455,7 @@ class SetofCurves:
 
         return True
 
-    def export(self, path="./", fmt="idf"):
+    def export(self, path="./", fmt="idf", name=""):
         """Export curves to simulation engine input format.
 
         :param str path: Path and file name, do not include the extension,
@@ -523,8 +523,12 @@ class SetofCurves:
                 for i in range(1, curve.nb_coeffs() + 1):
                     curve_export += ",{}".format(getattr(curve, "coeff{}".format(i)))
                 curve_export += "\n"
-                filen = open(path + "/" + self.name + ".{}".format(fmt), "a+")
+                if name == "":
+                    filen = open(path + "/" + self.name + ".{}".format(fmt), "a+")
+                else:
+                    filen = open(path + "/" + name + ".{}".format(fmt), "a+")
                 filen.write(curve_export)
+                curve_export = ""
         return True
 
     def remove_curve(self, out_var):
