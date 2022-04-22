@@ -1,57 +1,43 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
+      - image: circleci/python:3.6.2
     working_directory: ~/repo
-
     steps:
       - checkout
-
       # Download and cache dependencies
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-
       - run:
           name: install dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-
       - save_cache:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-
       - run:
           name: Create artifacts folder
           command: |
             mkdir /tmp/artifacts;
-
-      # run tests!
+      - run: 
+          name: Install Black
+          command: sudo pip install black
       - run:
-          name: run tests
+          name: Check Black formatting
+          command: black -l 88 copper tests --check
+      - run:
+          name: Run tests
           command: |
             export PYTHONUNBUFFERED=1
             . venv/bin/activate
             nosetests
           no_output_timeout: 10h
-
       - store_artifacts:
           path: /tmp/artifacts
