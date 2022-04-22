@@ -8,7 +8,7 @@ import CoolProp.CoolProp as CP
 
 class TestCurves(TestCase):
     def test_curves(self):
-        lib = cp.Library(path="./fixtures/chiller_curves.json")
+        lib = cp.Library(path="./lib/chiller_curves.json")
 
         # Curve lookup by name
         c_name = "ElectricEIRChiller_Trane_CVHE_1080kW/7.39COP/Vanes"
@@ -69,7 +69,7 @@ class TestCurves(TestCase):
     def test_curve_conversion(self):
         # Define equipment
         lib = cp.Library(
-            path="./fixtures/chiller_curves.json", rating_std="ahri_550/590"
+            path="./lib/chiller_curves.json", rating_std="ahri_550/590"
         )
         chlr = cp.chiller(
             compressor_type="centrifugal",
@@ -126,7 +126,7 @@ class TestCurves(TestCase):
         ]
 
         # Run unittest with a centrifugal chiller
-        lib = cp.Library(path="./fixtures/chiller_curves.json")
+        lib = cp.Library(path="./lib/chiller_curves.json")
         ep_wtr_screw = lib.find_set_of_curvess_from_lib(
             filters=filters
             + [("source", "EnergyPlus chiller dataset"), ("compressor_type", "screw")]
@@ -208,7 +208,7 @@ class TestCurves(TestCase):
     def test_flow_calcs_after_agg(self):
 
         # Load library
-        lib = cp.Library(path="./fixtures/chiller_curves.json")
+        lib = cp.Library(path="./lib/chiller_curves.json")
 
         # Determine aggregated curve
         ranges = {

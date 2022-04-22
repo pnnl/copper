@@ -6,7 +6,7 @@ import copper.chiller
 
 class Library:
     def __init__(
-        self, path="./fixtures/chiller_curves.json", rating_std="", export=False
+        self, path="./lib/chiller_curves.json", rating_std="", export=False
     ):
         self.path = path
         self.rating_std = rating_std

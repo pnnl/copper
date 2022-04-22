@@ -230,7 +230,7 @@ class chiller:
 
     def generate_set_of_curves(
         self,
-        method="typical",
+        method="best_match",
         pop_size=100,
         tol=0.0025,
         max_gen=300,
@@ -244,9 +244,7 @@ class chiller:
     ):
         """Generate a set of curves for a particular chiller() object.
 
-        :param str method: Method used to generate the set of curves, either `typical` or `best_match`
-
-                           - `typical` uses typical curves and modify them to reach a particular IPLV
+        :param str method: Method used to generate the set of curves:
                            - `best_match` uses curves that best match the chiller object description
         :param int pop_size: Population size used by the genetic algorithm
         :param float tol: Tolerance used by the genetic algorithm to determine if the proposed solution is acceptable
@@ -262,7 +260,7 @@ class chiller:
         :rtype: SetofCurves()
 
         """
-        ga = GA(
+        ga = generator(
             self,
             method,
             pop_size,

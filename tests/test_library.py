@@ -10,7 +10,7 @@ class TestLibrary(TestCase):
         """
 
         # Load library
-        lib = cp.Library(path="./fixtures/chiller_curves.json")
+        lib = cp.Library(path="./lib/chiller_curves.json")
         self.assertTrue(
             lib.content()["ElectricEIRChiller Trane ACRA 256.8kW/3.355COP/VSD"][
                 "part_eff"

@@ -6,7 +6,7 @@ import CoolProp.CoolProp as CP
 
 
 class TestChiller(TestCase):
-    lib = cp.Library(path="./fixtures/chiller_curves.json")
+    lib = cp.Library(path="./lib/chiller_curves.json")
 
     def test_get_reference_variable(self):
 
