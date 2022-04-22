@@ -536,9 +536,18 @@ class chiller:
 
     def cond_inlet_temp_residual(self, lct, args):
         # Get arguments
-        lwt, cap_f_t, eir_f_t, eir_f_plr, load, cap_f_lwt_lct_rated, ref_cop, ect, m_c, c_p = (
-            args
-        )
+        (
+            lwt,
+            cap_f_t,
+            eir_f_t,
+            eir_f_plr,
+            load,
+            cap_f_lwt_lct_rated,
+            ref_cop,
+            ect,
+            m_c,
+            c_p,
+        ) = args
 
         # Temperature dependent curve modifiers
         cap_f_lwt_lct = cap_f_t.evaluate(lwt, lct)
