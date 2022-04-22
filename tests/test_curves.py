@@ -68,9 +68,7 @@ class TestCurves(TestCase):
 
     def test_curve_conversion(self):
         # Define equipment
-        lib = cp.Library(
-            path="./lib/chiller_curves.json", rating_std="ahri_550/590"
-        )
+        lib = cp.Library(path="./lib/chiller_curves.json", rating_std="ahri_550/590")
         chlr = cp.chiller(
             compressor_type="centrifugal",
             condenser_type="water",
