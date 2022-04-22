@@ -5,9 +5,7 @@ import copper.chiller
 
 
 class Library:
-    def __init__(
-        self, path="./fixtures/chiller_curves.json", rating_std="", export=False
-    ):
+    def __init__(self, path="./lib/chiller_curves.json", rating_std="", export=False):
         self.path = path
         self.rating_std = rating_std
 
@@ -48,14 +46,10 @@ class Library:
                 obj = eval("copper." + vals["eqp_type"])(**obj_args)
 
                 # Retrieve curves for library item
-                obj_args["set_of_curves"] = self.get_set_of_curves_by_name(
-                    vals["name"]
-                ).curves
+                obj_args["set_of_curves"] = self.get_set_of_curves_by_name(item).curves
 
                 if export:
-                    self.get_set_of_curves_by_name(vals["name"]).export(
-                        "./curves", fmt="idf"
-                    )
+                    self.get_set_of_curves_by_name(item).export("./curves", fmt="idf")
 
                 # Set rating Stds
                 if self.rating_std != "":
@@ -117,7 +111,7 @@ class Library:
         uni_field_val = {}
         for _, eqp_f in self.data.items():
             for field, val in eqp_f.items():
-                if field != "set_of_curves" and field != "name":
+                if field != "set_of_curves":
                     # Check if field has already been added
                     if field not in uni_field_val.keys():
                         uni_field_val[field] = [val]

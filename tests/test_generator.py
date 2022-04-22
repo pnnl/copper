@@ -51,7 +51,7 @@ class TestAlgorithm(TestCase):
             compressor_speed="constant",
         )
 
-        algo = cp.GA(equipment=chlr, vars=["eir-f-plr"], method="best_match")
+        algo = cp.generator(equipment=chlr, vars=["eir-f-plr"], method="best_match")
         algo.generate_set_of_curves()
 
         grad_val = algo.check_gradients()

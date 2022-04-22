@@ -652,9 +652,9 @@ class Curve:
             out = (
                 self.coeff1
                 + self.coeff2 * x
-                + self.coeff3 * x ** 2
+                + self.coeff3 * x**2
                 + self.coeff4 * y
-                + self.coeff5 * y ** 2
+                + self.coeff5 * y**2
                 + self.coeff6 * x * y
             )
             return min(max(out, self.out_min), self.out_max)
@@ -662,25 +662,25 @@ class Curve:
             out = (
                 self.coeff1
                 + self.coeff2 * x
-                + self.coeff3 * x ** 2
+                + self.coeff3 * x**2
                 + self.coeff4 * y
-                + self.coeff5 * y ** 2
+                + self.coeff5 * y**2
                 + self.coeff6 * x * y
-                + self.coeff7 * x ** 3
-                + self.coeff8 * y ** 3
-                + self.coeff9 * y * x ** 2
-                + self.coeff10 * x * y ** 2
+                + self.coeff7 * x**3
+                + self.coeff8 * y**3
+                + self.coeff9 * y * x**2
+                + self.coeff10 * x * y**2
             )
             return min(max(out, self.out_min), self.out_max)
         if self.type == "quad":
-            out = self.coeff1 + self.coeff2 * x + self.coeff3 * x ** 2
+            out = self.coeff1 + self.coeff2 * x + self.coeff3 * x**2
             return min(max(out, self.out_min), self.out_max)
         if self.type == "cubic":
             out = (
                 self.coeff1
                 + self.coeff2 * x
-                + self.coeff3 * x ** 2
-                + self.coeff4 * x ** 3
+                + self.coeff3 * x**2
+                + self.coeff4 * x**3
             )
             return min(max(out, self.out_min), self.out_max)
 

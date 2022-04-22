@@ -12,11 +12,11 @@ from copper.library import *
 from copper.curves import *
 
 
-class GA:
+class generator:
     def __init__(
         self,
         equipment,
-        method="typical",
+        method="best_match",
         pop_size=100,
         tol=0.005,
         max_gen=300,
@@ -74,10 +74,8 @@ class GA:
         if len(self.base_curves) == 0:
             if self.equipment.type == "chiller":
                 # TODO: implement other methods
-                if self.method == "typical":
-                    lib = Library(path="./fixtures/typical_curves.json")
-                elif self.method == "best_match":
-                    lib = Library(path="./fixtures/chiller_curves.json")
+                if self.method == "best_match":
+                    lib = Library(path="./lib/chiller_curves.json")
 
                 # Define chiller properties
                 filters = [
@@ -91,11 +89,9 @@ class GA:
             else:
                 raise ValueError("This type of equipment has not yet been implemented.")
 
-            # Find typical curves from library
+            # Find generic curves from library
             # Only one equipment should be returned
-            if self.method == "typical":
-                self.base_curves = lib.find_set_of_curvess_from_lib(filters)
-            elif self.method == "best_match":
+            if self.method == "best_match":
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
 
         self.set_of_base_curves = self.base_curves[0]
@@ -107,7 +103,7 @@ class GA:
                 curve.out_var
             ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
-        # Run GA
+        # Run generator
         self.run_ga(curves=self.base_curves)
         return self.equipment.set_of_curves
 
@@ -155,7 +151,7 @@ class GA:
                 max_gen = gen
 
             if not self.is_target_met():
-                print(f"Target not met after {self.max_gen}; Restarting the GA.")
+                print(f"Target not met after {self.max_gen}; Restarting the generator.")
                 gen = 0
 
                 print(

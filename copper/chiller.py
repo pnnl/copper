@@ -1,6 +1,6 @@
 import CoolProp.CoolProp as CP
 from scipy import optimize
-from copper.ga import *
+from copper.generator import *
 from copper.units import *
 from copper.curves import *
 
@@ -230,7 +230,7 @@ class chiller:
 
     def generate_set_of_curves(
         self,
-        method="typical",
+        method="best_match",
         pop_size=100,
         tol=0.0025,
         max_gen=300,
@@ -244,9 +244,7 @@ class chiller:
     ):
         """Generate a set of curves for a particular chiller() object.
 
-        :param str method: Method used to generate the set of curves, either `typical` or `best_match`
-
-                           - `typical` uses typical curves and modify them to reach a particular IPLV
+        :param str method: Method used to generate the set of curves:
                            - `best_match` uses curves that best match the chiller object description
         :param int pop_size: Population size used by the genetic algorithm
         :param float tol: Tolerance used by the genetic algorithm to determine if the proposed solution is acceptable
@@ -262,7 +260,7 @@ class chiller:
         :rtype: SetofCurves()
 
         """
-        ga = GA(
+        ga = generator(
             self,
             method,
             pop_size,
@@ -538,9 +536,18 @@ class chiller:
 
     def cond_inlet_temp_residual(self, lct, args):
         # Get arguments
-        lwt, cap_f_t, eir_f_t, eir_f_plr, load, cap_f_lwt_lct_rated, ref_cop, ect, m_c, c_p = (
-            args
-        )
+        (
+            lwt,
+            cap_f_t,
+            eir_f_t,
+            eir_f_plr,
+            load,
+            cap_f_lwt_lct_rated,
+            ref_cop,
+            ect,
+            m_c,
+            c_p,
+        ) = args
 
         # Temperature dependent curve modifiers
         cap_f_lwt_lct = cap_f_t.evaluate(lwt, lct)

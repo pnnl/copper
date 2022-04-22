@@ -10,13 +10,8 @@ class TestLibrary(TestCase):
         """
 
         # Load library
-        lib = cp.Library(path="./fixtures/chiller_curves.json")
-        self.assertTrue(
-            lib.content()["ElectricEIRChiller Trane ACRA 256.8kW/3.355COP/VSD"][
-                "part_eff"
-            ]
-            > 0
-        )
+        lib = cp.Library(path="./lib/chiller_curves.json")
+        self.assertTrue(lib.content()["6"]["part_eff"] > 0)
 
         # Check calculation for the chiller EIR model
         chlr = cp.chiller(
@@ -30,9 +25,7 @@ class TestLibrary(TestCase):
             part_eff_ref_std="ahri_551/591",
             model="ect_lwt",
             sim_engine="energyplus",
-            set_of_curves=lib.get_set_of_curves_by_name(
-                "ElectricEIRChiller_McQuay_WSC_471kW/5.89COP/Vanes"
-            ).curves,
+            set_of_curves=lib.get_set_of_curves_by_name("6").curves,
         )
 
         assert round(chlr.calc_rated_eff("part", "cop"), 2) == 5.44  # IPLV.SI
@@ -49,9 +42,7 @@ class TestLibrary(TestCase):
             part_eff_ref_std="ahri_550/590",
             model="ect_lwt",
             sim_engine="energyplus",
-            set_of_curves=lib.get_set_of_curves_by_name(
-                "ElectricEIRChiller_McQuay_WSC_471kW/5.89COP/Vanes"
-            ).curves,
+            set_of_curves=lib.get_set_of_curves_by_name("6").curves,
         )
 
         assert round(chlr.calc_rated_eff("part", "cop"), 2) == 5.47  # IPLV.IP
@@ -68,9 +59,7 @@ class TestLibrary(TestCase):
             part_eff_ref_std="ahri_551/591",
             model="lct_lwt",
             sim_engine="energyplus",
-            set_of_curves=lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
-            ).curves,
+            set_of_curves=lib.get_set_of_curves_by_name("337").curves,
         )
 
         assert round(chlr.calc_rated_eff("part", "cop"), 2) == 8.22  # IPLV.SI
@@ -87,9 +76,7 @@ class TestLibrary(TestCase):
             part_eff_ref_std="ahri_550/590",
             model="lct_lwt",
             sim_engine="energyplus",
-            set_of_curves=lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
-            ).curves,
+            set_of_curves=lib.get_set_of_curves_by_name("337").curves,
         )
 
         assert round(chlr.calc_rated_eff("part", "cop"), 2) == 8.19  # IPLV.IP
