@@ -21,9 +21,7 @@ class TestChiller(TestCase):
             part_eff_ref_std="ahri_550/590",
             model="lct_lwt",
             sim_engine="energyplus",
-            set_of_curves=self.lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
-            ).curves,
+            set_of_curves=self.lib.get_set_of_curves_by_name("337").curves,
         )
 
         self.assertTrue(
@@ -47,9 +45,7 @@ class TestChiller(TestCase):
             part_eff_ref_std="ahri_551/591",
             model="lct_lwt",
             sim_engine="energyplus",
-            set_of_curves=self.lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
-            ).curves,
+            set_of_curves=self.lib.get_set_of_curves_by_name("337").curves,
         )
 
         self.assertTrue(
@@ -73,9 +69,7 @@ class TestChiller(TestCase):
             part_eff_ref_std="ahri_550/590",
             model="ect_lwt",
             sim_engine="energyplus",
-            set_of_curves=self.lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
-            ).curves,
+            set_of_curves=self.lib.get_set_of_curves_by_name("337").curves,
         )
 
         self.assertTrue(
@@ -99,9 +93,7 @@ class TestChiller(TestCase):
             part_eff_ref_std="ahri_551/591",
             model="ect_lwt",
             sim_engine="energyplus",
-            set_of_curves=self.lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
-            ).curves,
+            set_of_curves=self.lib.get_set_of_curves_by_name("337").curves,
         )
 
         self.assertTrue(
@@ -125,9 +117,7 @@ class TestChiller(TestCase):
             part_eff_ref_std="ahri_550/590",
             model="ect_lwt",
             sim_engine="energyplus",
-            set_of_curves=self.lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
-            ).curves,
+            set_of_curves=self.lib.get_set_of_curves_by_name("337").curves,
         )
 
         self.assertTrue(
@@ -151,9 +141,7 @@ class TestChiller(TestCase):
             part_eff_ref_std="ahri_551/591",
             model="ect_lwt",
             sim_engine="energyplus",
-            set_of_curves=self.lib.get_set_of_curves_by_name(
-                "ReformEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
-            ).curves,
+            set_of_curves=self.lib.get_set_of_curves_by_name("337").curves,
         )
 
         self.assertTrue(
@@ -249,9 +237,7 @@ class TestChiller(TestCase):
             part_eff_ref_std="ahri_550/590",
             model="ect_lwt",
             sim_engine="energyplus",
-            set_of_curves=self.lib.get_set_of_curves_by_name(
-                "ElectricEIRChiller_Carrier_19XR_869kW/5.57COP/VSD"
-            ).curves,
+            set_of_curves=self.lib.get_set_of_curves_by_name("14").curves,
         )
 
         cop_1 = round(

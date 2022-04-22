@@ -1,7 +1,7 @@
 {
      "0": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": null,
        "ref_cap_unit": "ton",
@@ -97,7 +97,7 @@
      },
      "1": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": null,
        "ref_cap_unit": "ton",
@@ -193,7 +193,7 @@
      },
      "2": {
        "eqp_type": "chiller",
-       "source": 3,
+       "source": "3",
        "model": "ect_lwt",
        "ref_cap": null,
        "ref_cap_unit": "ton",
@@ -289,7 +289,7 @@
      },
      "3": {
        "eqp_type": "chiller",
-       "source": 4,
+       "source": "4",
        "model": "ect_lwt",
        "ref_cap": null,
        "ref_cap_unit": "ton",
@@ -385,7 +385,7 @@
      },
      "4": {
        "eqp_type": "chiller",
-       "source": 4,
+       "source": "4",
        "model": "ect_lwt",
        "ref_cap": null,
        "ref_cap_unit": "ton",
@@ -481,7 +481,7 @@
      },
      "5": {
        "eqp_type": "chiller",
-       "source": 4,
+       "source": "4",
        "model": "ect_lwt",
        "ref_cap": null,
        "ref_cap_unit": "ton",
@@ -577,7 +577,7 @@
      },
      "6": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 134.0,
        "ref_cap_unit": "ton",
@@ -673,7 +673,7 @@
      },
      "7": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 160.0,
        "ref_cap_unit": "ton",
@@ -769,7 +769,7 @@
      },
      "8": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 200.0,
        "ref_cap_unit": "ton",
@@ -865,7 +865,7 @@
      },
      "9": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 206.0,
        "ref_cap_unit": "ton",
@@ -961,7 +961,7 @@
      },
      "10": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 211.0,
        "ref_cap_unit": "ton",
@@ -1057,7 +1057,7 @@
      },
      "11": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 232.0,
        "ref_cap_unit": "ton",
@@ -1153,7 +1153,7 @@
      },
      "12": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 233.0,
        "ref_cap_unit": "ton",
@@ -1249,7 +1249,7 @@
      },
      "13": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 234.0,
        "ref_cap_unit": "ton",
@@ -1345,7 +1345,7 @@
      },
      "14": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 247.0,
        "ref_cap_unit": "ton",
@@ -1441,7 +1441,7 @@
      },
      "15": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 255.0,
        "ref_cap_unit": "ton",
@@ -1537,7 +1537,7 @@
      },
      "16": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 255.0,
        "ref_cap_unit": "ton",
@@ -1633,7 +1633,7 @@
      },
      "17": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 255.0,
        "ref_cap_unit": "ton",
@@ -1729,7 +1729,7 @@
      },
      "18": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 255.0,
        "ref_cap_unit": "ton",
@@ -1825,7 +1825,7 @@
      },
      "19": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 255.0,
        "ref_cap_unit": "ton",
@@ -1921,7 +1921,7 @@
      },
      "20": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 265.0,
        "ref_cap_unit": "ton",
@@ -2017,7 +2017,7 @@
      },
      "21": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 273.0,
        "ref_cap_unit": "ton",
@@ -2113,7 +2113,7 @@
      },
      "22": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 291.0,
        "ref_cap_unit": "ton",
@@ -2209,7 +2209,7 @@
      },
      "23": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 293.0,
        "ref_cap_unit": "ton",
@@ -2305,7 +2305,7 @@
      },
      "24": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 298.0,
        "ref_cap_unit": "ton",
@@ -2401,7 +2401,7 @@
      },
      "25": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 300.0,
        "ref_cap_unit": "ton",
@@ -2497,7 +2497,7 @@
      },
      "26": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 306.0,
        "ref_cap_unit": "ton",
@@ -2593,7 +2593,7 @@
      },
      "27": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 307.0,
        "ref_cap_unit": "ton",
@@ -2689,7 +2689,7 @@
      },
      "28": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 310.0,
        "ref_cap_unit": "ton",
@@ -2785,7 +2785,7 @@
      },
      "29": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 314.0,
        "ref_cap_unit": "ton",
@@ -2881,7 +2881,7 @@
      },
      "30": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 320.0,
        "ref_cap_unit": "ton",
@@ -2977,7 +2977,7 @@
      },
      "31": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 320.0,
        "ref_cap_unit": "ton",
@@ -3073,7 +3073,7 @@
      },
      "32": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 321.0,
        "ref_cap_unit": "ton",
@@ -3169,7 +3169,7 @@
      },
      "33": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 325.0,
        "ref_cap_unit": "ton",
@@ -3265,7 +3265,7 @@
      },
      "34": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 329.0,
        "ref_cap_unit": "ton",
@@ -3361,7 +3361,7 @@
      },
      "35": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 340.0,
        "ref_cap_unit": "ton",
@@ -3457,7 +3457,7 @@
      },
      "36": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 345.0,
        "ref_cap_unit": "ton",
@@ -3553,7 +3553,7 @@
      },
      "37": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 350.0,
        "ref_cap_unit": "ton",
@@ -3649,7 +3649,7 @@
      },
      "38": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 351.0,
        "ref_cap_unit": "ton",
@@ -3745,7 +3745,7 @@
      },
      "39": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 358.0,
        "ref_cap_unit": "ton",
@@ -3841,7 +3841,7 @@
      },
      "40": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 358.0,
        "ref_cap_unit": "ton",
@@ -3937,7 +3937,7 @@
      },
      "41": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 360.0,
        "ref_cap_unit": "ton",
@@ -4033,7 +4033,7 @@
      },
      "42": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 365.0,
        "ref_cap_unit": "ton",
@@ -4129,7 +4129,7 @@
      },
      "43": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 368.0,
        "ref_cap_unit": "ton",
@@ -4225,7 +4225,7 @@
      },
      "44": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 378.0,
        "ref_cap_unit": "ton",
@@ -4321,7 +4321,7 @@
      },
      "45": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 384.0,
        "ref_cap_unit": "ton",
@@ -4417,7 +4417,7 @@
      },
      "46": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 389.0,
        "ref_cap_unit": "ton",
@@ -4513,7 +4513,7 @@
      },
      "47": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 390.0,
        "ref_cap_unit": "ton",
@@ -4609,7 +4609,7 @@
      },
      "48": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 397.0,
        "ref_cap_unit": "ton",
@@ -4705,7 +4705,7 @@
      },
      "49": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 399.0,
        "ref_cap_unit": "ton",
@@ -4801,7 +4801,7 @@
      },
      "50": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 399.0,
        "ref_cap_unit": "ton",
@@ -4897,7 +4897,7 @@
      },
      "51": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 400.0,
        "ref_cap_unit": "ton",
@@ -4993,7 +4993,7 @@
      },
      "52": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 400.0,
        "ref_cap_unit": "ton",
@@ -5089,7 +5089,7 @@
      },
      "53": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 400.0,
        "ref_cap_unit": "ton",
@@ -5185,7 +5185,7 @@
      },
      "54": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 401.0,
        "ref_cap_unit": "ton",
@@ -5281,7 +5281,7 @@
      },
      "55": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 410.0,
        "ref_cap_unit": "ton",
@@ -5377,7 +5377,7 @@
      },
      "56": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 415.0,
        "ref_cap_unit": "ton",
@@ -5473,7 +5473,7 @@
      },
      "57": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 422.0,
        "ref_cap_unit": "ton",
@@ -5569,7 +5569,7 @@
      },
      "58": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 425.0,
        "ref_cap_unit": "ton",
@@ -5665,7 +5665,7 @@
      },
      "59": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 432.0,
        "ref_cap_unit": "ton",
@@ -5761,7 +5761,7 @@
      },
      "60": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 443.0,
        "ref_cap_unit": "ton",
@@ -5857,7 +5857,7 @@
      },
      "61": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 451.0,
        "ref_cap_unit": "ton",
@@ -5953,7 +5953,7 @@
      },
      "62": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 465.0,
        "ref_cap_unit": "ton",
@@ -6049,7 +6049,7 @@
      },
      "63": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 465.0,
        "ref_cap_unit": "ton",
@@ -6145,7 +6145,7 @@
      },
      "64": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 471.0,
        "ref_cap_unit": "ton",
@@ -6241,7 +6241,7 @@
      },
      "65": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 473.0,
        "ref_cap_unit": "ton",
@@ -6337,7 +6337,7 @@
      },
      "66": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 476.0,
        "ref_cap_unit": "ton",
@@ -6433,7 +6433,7 @@
      },
      "67": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 478.0,
        "ref_cap_unit": "ton",
@@ -6529,7 +6529,7 @@
      },
      "68": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 490.0,
        "ref_cap_unit": "ton",
@@ -6625,7 +6625,7 @@
      },
      "69": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 491.0,
        "ref_cap_unit": "ton",
@@ -6721,7 +6721,7 @@
      },
      "70": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 498.0,
        "ref_cap_unit": "ton",
@@ -6817,7 +6817,7 @@
      },
      "71": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -6913,7 +6913,7 @@
      },
      "72": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -7009,7 +7009,7 @@
      },
      "73": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -7105,7 +7105,7 @@
      },
      "74": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -7201,7 +7201,7 @@
      },
      "75": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -7297,7 +7297,7 @@
      },
      "76": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -7393,7 +7393,7 @@
      },
      "77": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -7489,7 +7489,7 @@
      },
      "78": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -7585,7 +7585,7 @@
      },
      "79": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -7681,7 +7681,7 @@
      },
      "80": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 505.0,
        "ref_cap_unit": "ton",
@@ -7777,7 +7777,7 @@
      },
      "81": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 506.0,
        "ref_cap_unit": "ton",
@@ -7873,7 +7873,7 @@
      },
      "82": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 506.0,
        "ref_cap_unit": "ton",
@@ -7969,7 +7969,7 @@
      },
      "83": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 510.0,
        "ref_cap_unit": "ton",
@@ -8065,7 +8065,7 @@
      },
      "84": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 510.0,
        "ref_cap_unit": "ton",
@@ -8161,7 +8161,7 @@
      },
      "85": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 511.0,
        "ref_cap_unit": "ton",
@@ -8257,7 +8257,7 @@
      },
      "86": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 512.0,
        "ref_cap_unit": "ton",
@@ -8353,7 +8353,7 @@
      },
      "87": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 531.0,
        "ref_cap_unit": "ton",
@@ -8449,7 +8449,7 @@
      },
      "88": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 532.0,
        "ref_cap_unit": "ton",
@@ -8545,7 +8545,7 @@
      },
      "89": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 535.0,
        "ref_cap_unit": "ton",
@@ -8641,7 +8641,7 @@
      },
      "90": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 535.0,
        "ref_cap_unit": "ton",
@@ -8737,7 +8737,7 @@
      },
      "91": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 539.0,
        "ref_cap_unit": "ton",
@@ -8833,7 +8833,7 @@
      },
      "92": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 550.0,
        "ref_cap_unit": "ton",
@@ -8929,7 +8929,7 @@
      },
      "93": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 550.0,
        "ref_cap_unit": "ton",
@@ -9025,7 +9025,7 @@
      },
      "94": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 561.0,
        "ref_cap_unit": "ton",
@@ -9121,7 +9121,7 @@
      },
      "95": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 568.0,
        "ref_cap_unit": "ton",
@@ -9217,7 +9217,7 @@
      },
      "96": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 581.0,
        "ref_cap_unit": "ton",
@@ -9313,7 +9313,7 @@
      },
      "97": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 581.0,
        "ref_cap_unit": "ton",
@@ -9409,7 +9409,7 @@
      },
      "98": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 585.0,
        "ref_cap_unit": "ton",
@@ -9505,7 +9505,7 @@
      },
      "99": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 600.0,
        "ref_cap_unit": "ton",
@@ -9601,7 +9601,7 @@
      },
      "100": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 604.0,
        "ref_cap_unit": "ton",
@@ -9697,7 +9697,7 @@
      },
      "101": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 614.0,
        "ref_cap_unit": "ton",
@@ -9793,7 +9793,7 @@
      },
      "102": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 621.0,
        "ref_cap_unit": "ton",
@@ -9889,7 +9889,7 @@
      },
      "103": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 626.0,
        "ref_cap_unit": "ton",
@@ -9985,7 +9985,7 @@
      },
      "104": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 635.0,
        "ref_cap_unit": "ton",
@@ -10081,7 +10081,7 @@
      },
      "105": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 635.0,
        "ref_cap_unit": "ton",
@@ -10177,7 +10177,7 @@
      },
      "106": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 636.0,
        "ref_cap_unit": "ton",
@@ -10273,7 +10273,7 @@
      },
      "107": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 647.0,
        "ref_cap_unit": "ton",
@@ -10369,7 +10369,7 @@
      },
      "108": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 654.0,
        "ref_cap_unit": "ton",
@@ -10465,7 +10465,7 @@
      },
      "109": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 659.0,
        "ref_cap_unit": "ton",
@@ -10561,7 +10561,7 @@
      },
      "110": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 680.0,
        "ref_cap_unit": "ton",
@@ -10657,7 +10657,7 @@
      },
      "111": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 680.0,
        "ref_cap_unit": "ton",
@@ -10753,7 +10753,7 @@
      },
      "112": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 686.0,
        "ref_cap_unit": "ton",
@@ -10849,7 +10849,7 @@
      },
      "113": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 700.0,
        "ref_cap_unit": "ton",
@@ -10945,7 +10945,7 @@
      },
      "114": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 730.0,
        "ref_cap_unit": "ton",
@@ -11041,7 +11041,7 @@
      },
      "115": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 788.0,
        "ref_cap_unit": "ton",
@@ -11137,7 +11137,7 @@
      },
      "116": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 796.0,
        "ref_cap_unit": "ton",
@@ -11233,7 +11233,7 @@
      },
      "117": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 891.0,
        "ref_cap_unit": "ton",
@@ -11329,7 +11329,7 @@
      },
      "118": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 900.0,
        "ref_cap_unit": "ton",
@@ -11425,7 +11425,7 @@
      },
      "119": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1143.0,
        "ref_cap_unit": "ton",
@@ -11521,7 +11521,7 @@
      },
      "120": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1250.0,
        "ref_cap_unit": "ton",
@@ -11617,7 +11617,7 @@
      },
      "121": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1273.0,
        "ref_cap_unit": "ton",
@@ -11713,7 +11713,7 @@
      },
      "122": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1284.0,
        "ref_cap_unit": "ton",
@@ -11809,7 +11809,7 @@
      },
      "123": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1290.0,
        "ref_cap_unit": "ton",
@@ -11905,7 +11905,7 @@
      },
      "124": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1311.0,
        "ref_cap_unit": "ton",
@@ -12001,7 +12001,7 @@
      },
      "125": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1327.0,
        "ref_cap_unit": "ton",
@@ -12097,7 +12097,7 @@
      },
      "126": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1330.0,
        "ref_cap_unit": "ton",
@@ -12193,7 +12193,7 @@
      },
      "127": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1412.0,
        "ref_cap_unit": "ton",
@@ -12289,7 +12289,7 @@
      },
      "128": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1413.0,
        "ref_cap_unit": "ton",
@@ -12385,7 +12385,7 @@
      },
      "129": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1413.0,
        "ref_cap_unit": "ton",
@@ -12481,7 +12481,7 @@
      },
      "130": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1421.0,
        "ref_cap_unit": "ton",
@@ -12577,7 +12577,7 @@
      },
      "131": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1464.0,
        "ref_cap_unit": "ton",
@@ -12673,7 +12673,7 @@
      },
      "132": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1470.0,
        "ref_cap_unit": "ton",
@@ -12769,7 +12769,7 @@
      },
      "133": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1481.0,
        "ref_cap_unit": "ton",
@@ -12865,7 +12865,7 @@
      },
      "134": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1554.0,
        "ref_cap_unit": "ton",
@@ -12961,7 +12961,7 @@
      },
      "135": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1578.0,
        "ref_cap_unit": "ton",
@@ -13057,7 +13057,7 @@
      },
      "136": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1607.0,
        "ref_cap_unit": "ton",
@@ -13153,7 +13153,7 @@
      },
      "137": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 49.0,
        "ref_cap_unit": "ton",
@@ -13249,7 +13249,7 @@
      },
      "138": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 109.0,
        "ref_cap_unit": "ton",
@@ -13345,7 +13345,7 @@
      },
      "139": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 151.0,
        "ref_cap_unit": "ton",
@@ -13441,7 +13441,7 @@
      },
      "140": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 153.0,
        "ref_cap_unit": "ton",
@@ -13537,7 +13537,7 @@
      },
      "141": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 154.0,
        "ref_cap_unit": "ton",
@@ -13633,7 +13633,7 @@
      },
      "142": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 191.0,
        "ref_cap_unit": "ton",
@@ -13729,7 +13729,7 @@
      },
      "143": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 195.0,
        "ref_cap_unit": "ton",
@@ -13825,7 +13825,7 @@
      },
      "144": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 201.0,
        "ref_cap_unit": "ton",
@@ -13921,7 +13921,7 @@
      },
      "145": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 215.0,
        "ref_cap_unit": "ton",
@@ -14017,7 +14017,7 @@
      },
      "146": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 222.0,
        "ref_cap_unit": "ton",
@@ -14113,7 +14113,7 @@
      },
      "147": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 236.0,
        "ref_cap_unit": "ton",
@@ -14209,7 +14209,7 @@
      },
      "148": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 245.0,
        "ref_cap_unit": "ton",
@@ -14305,7 +14305,7 @@
      },
      "149": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 245.0,
        "ref_cap_unit": "ton",
@@ -14401,7 +14401,7 @@
      },
      "150": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 246.0,
        "ref_cap_unit": "ton",
@@ -14497,7 +14497,7 @@
      },
      "151": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 250.0,
        "ref_cap_unit": "ton",
@@ -14593,7 +14593,7 @@
      },
      "152": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 287.0,
        "ref_cap_unit": "ton",
@@ -14689,7 +14689,7 @@
      },
      "153": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 299.0,
        "ref_cap_unit": "ton",
@@ -14785,7 +14785,7 @@
      },
      "154": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 302.0,
        "ref_cap_unit": "ton",
@@ -14881,7 +14881,7 @@
      },
      "155": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 303.0,
        "ref_cap_unit": "ton",
@@ -14977,7 +14977,7 @@
      },
      "156": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 311.0,
        "ref_cap_unit": "ton",
@@ -15073,7 +15073,7 @@
      },
      "157": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 315.0,
        "ref_cap_unit": "ton",
@@ -15169,7 +15169,7 @@
      },
      "158": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 333.0,
        "ref_cap_unit": "ton",
@@ -15265,7 +15265,7 @@
      },
      "159": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 340.0,
        "ref_cap_unit": "ton",
@@ -15361,7 +15361,7 @@
      },
      "160": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 442.0,
        "ref_cap_unit": "ton",
@@ -15457,7 +15457,7 @@
      },
      "161": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -15553,7 +15553,7 @@
      },
      "162": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 59.0,
        "ref_cap_unit": "ton",
@@ -15649,7 +15649,7 @@
      },
      "163": {
        "eqp_type": "chiller",
-       "source": 5,
+       "source": "5",
        "model": "ect_lwt",
        "ref_cap": 172.9,
        "ref_cap_unit": "ton",
@@ -15745,7 +15745,7 @@
      },
      "164": {
        "eqp_type": "chiller",
-       "source": 4,
+       "source": "4",
        "model": "ect_lwt",
        "ref_cap": null,
        "ref_cap_unit": null,
@@ -15841,7 +15841,7 @@
      },
      "165": {
        "eqp_type": "chiller",
-       "source": 4,
+       "source": "4",
        "model": "ect_lwt",
        "ref_cap": null,
        "ref_cap_unit": null,
@@ -15937,7 +15937,7 @@
      },
      "166": {
        "eqp_type": "chiller",
-       "source": 4,
+       "source": "4",
        "model": "ect_lwt",
        "ref_cap": null,
        "ref_cap_unit": null,
@@ -16033,7 +16033,7 @@
      },
      "167": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 176.3,
        "ref_cap_unit": "ton",
@@ -16129,7 +16129,7 @@
      },
      "168": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 245.0,
        "ref_cap_unit": "ton",
@@ -16225,7 +16225,7 @@
      },
      "169": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 163.5,
        "ref_cap_unit": "ton",
@@ -16321,7 +16321,7 @@
      },
      "170": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 227.6,
        "ref_cap_unit": "ton",
@@ -16417,7 +16417,7 @@
      },
      "171": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 241.2,
        "ref_cap_unit": "ton",
@@ -16513,7 +16513,7 @@
      },
      "172": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 199.9,
        "ref_cap_unit": "ton",
@@ -16609,7 +16609,7 @@
      },
      "173": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 207.1,
        "ref_cap_unit": "ton",
@@ -16705,7 +16705,7 @@
      },
      "174": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 167.9,
        "ref_cap_unit": "ton",
@@ -16801,7 +16801,7 @@
      },
      "175": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 172.3,
        "ref_cap_unit": "ton",
@@ -16897,7 +16897,7 @@
      },
      "176": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 140.0,
        "ref_cap_unit": "ton",
@@ -16993,7 +16993,7 @@
      },
      "177": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 89.69,
        "ref_cap_unit": "ton",
@@ -17115,7 +17115,7 @@
      },
      "178": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 143.5,
        "ref_cap_unit": "ton",
@@ -17211,7 +17211,7 @@
      },
      "179": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 335.8,
        "ref_cap_unit": "ton",
@@ -17307,7 +17307,7 @@
      },
      "180": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 107.8,
        "ref_cap_unit": "ton",
@@ -17403,7 +17403,7 @@
      },
      "181": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 158.8,
        "ref_cap_unit": "ton",
@@ -17499,7 +17499,7 @@
      },
      "182": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 207.3,
        "ref_cap_unit": "ton",
@@ -17595,7 +17595,7 @@
      },
      "183": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 271.5,
        "ref_cap_unit": "ton",
@@ -17691,7 +17691,7 @@
      },
      "184": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 212.52,
        "ref_cap_unit": "ton",
@@ -17787,7 +17787,7 @@
      },
      "185": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 134.1,
        "ref_cap_unit": "ton",
@@ -17883,7 +17883,7 @@
      },
      "186": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 172.53,
        "ref_cap_unit": "ton",
@@ -17979,7 +17979,7 @@
      },
      "187": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 183.9,
        "ref_cap_unit": "ton",
@@ -18075,7 +18075,7 @@
      },
      "188": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 19.61,
        "ref_cap_unit": "ton",
@@ -18171,7 +18171,7 @@
      },
      "189": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 68.39,
        "ref_cap_unit": "ton",
@@ -18267,7 +18267,7 @@
      },
      "190": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 44.76,
        "ref_cap_unit": "ton",
@@ -18363,7 +18363,7 @@
      },
      "191": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 90.42,
        "ref_cap_unit": "ton",
@@ -18485,7 +18485,7 @@
      },
      "192": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 83.8,
        "ref_cap_unit": "ton",
@@ -18607,7 +18607,7 @@
      },
      "193": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 84.19,
        "ref_cap_unit": "ton",
@@ -18729,7 +18729,7 @@
      },
      "194": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 298.7,
        "ref_cap_unit": "ton",
@@ -18825,7 +18825,7 @@
      },
      "195": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 145.6,
        "ref_cap_unit": "ton",
@@ -18921,7 +18921,7 @@
      },
      "196": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 34.5,
        "ref_cap_unit": "ton",
@@ -19017,7 +19017,7 @@
      },
      "197": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 47.1,
        "ref_cap_unit": "ton",
@@ -19113,7 +19113,7 @@
      },
      "198": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 54.2,
        "ref_cap_unit": "ton",
@@ -19209,7 +19209,7 @@
      },
      "199": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 54.5,
        "ref_cap_unit": "ton",
@@ -19305,7 +19305,7 @@
      },
      "200": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 65.8,
        "ref_cap_unit": "ton",
@@ -19401,7 +19401,7 @@
      },
      "201": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 68.9,
        "ref_cap_unit": "ton",
@@ -19497,7 +19497,7 @@
      },
      "202": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 71.0,
        "ref_cap_unit": "ton",
@@ -19593,7 +19593,7 @@
      },
      "203": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 78.1,
        "ref_cap_unit": "ton",
@@ -19689,7 +19689,7 @@
      },
      "204": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 78.1,
        "ref_cap_unit": "ton",
@@ -19785,7 +19785,7 @@
      },
      "205": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 78.1,
        "ref_cap_unit": "ton",
@@ -19881,7 +19881,7 @@
      },
      "206": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 87.7,
        "ref_cap_unit": "ton",
@@ -19977,7 +19977,7 @@
      },
      "207": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 87.7,
        "ref_cap_unit": "ton",
@@ -20073,7 +20073,7 @@
      },
      "208": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 88.2,
        "ref_cap_unit": "ton",
@@ -20169,7 +20169,7 @@
      },
      "209": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 88.8,
        "ref_cap_unit": "ton",
@@ -20265,7 +20265,7 @@
      },
      "210": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 90.0,
        "ref_cap_unit": "ton",
@@ -20361,7 +20361,7 @@
      },
      "211": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 95.7,
        "ref_cap_unit": "ton",
@@ -20457,7 +20457,7 @@
      },
      "212": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 96.0,
        "ref_cap_unit": "ton",
@@ -20553,7 +20553,7 @@
      },
      "213": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 97.3,
        "ref_cap_unit": "ton",
@@ -20649,7 +20649,7 @@
      },
      "214": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 98.2,
        "ref_cap_unit": "ton",
@@ -20745,7 +20745,7 @@
      },
      "215": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 99.2,
        "ref_cap_unit": "ton",
@@ -20841,7 +20841,7 @@
      },
      "216": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 100.6,
        "ref_cap_unit": "ton",
@@ -20937,7 +20937,7 @@
      },
      "217": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 106.1,
        "ref_cap_unit": "ton",
@@ -21033,7 +21033,7 @@
      },
      "218": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 106.6,
        "ref_cap_unit": "ton",
@@ -21129,7 +21129,7 @@
      },
      "219": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 110.7,
        "ref_cap_unit": "ton",
@@ -21225,7 +21225,7 @@
      },
      "220": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 111.1,
        "ref_cap_unit": "ton",
@@ -21321,7 +21321,7 @@
      },
      "221": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 116.4,
        "ref_cap_unit": "ton",
@@ -21417,7 +21417,7 @@
      },
      "222": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 117.1,
        "ref_cap_unit": "ton",
@@ -21513,7 +21513,7 @@
      },
      "223": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 120.6,
        "ref_cap_unit": "ton",
@@ -21609,7 +21609,7 @@
      },
      "224": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 122.7,
        "ref_cap_unit": "ton",
@@ -21705,7 +21705,7 @@
      },
      "225": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 130.8,
        "ref_cap_unit": "ton",
@@ -21801,7 +21801,7 @@
      },
      "226": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 133.2,
        "ref_cap_unit": "ton",
@@ -21897,7 +21897,7 @@
      },
      "227": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 133.3,
        "ref_cap_unit": "ton",
@@ -21993,7 +21993,7 @@
      },
      "228": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 114.0,
        "ref_cap_unit": "ton",
@@ -22089,7 +22089,7 @@
      },
      "229": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 134.9,
        "ref_cap_unit": "ton",
@@ -22185,7 +22185,7 @@
      },
      "230": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 138.6,
        "ref_cap_unit": "ton",
@@ -22281,7 +22281,7 @@
      },
      "231": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 139.0,
        "ref_cap_unit": "ton",
@@ -22377,7 +22377,7 @@
      },
      "232": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 141.1,
        "ref_cap_unit": "ton",
@@ -22473,7 +22473,7 @@
      },
      "233": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 142.1,
        "ref_cap_unit": "ton",
@@ -22569,7 +22569,7 @@
      },
      "234": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 149.8,
        "ref_cap_unit": "ton",
@@ -22665,7 +22665,7 @@
      },
      "235": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 150.3,
        "ref_cap_unit": "ton",
@@ -22761,7 +22761,7 @@
      },
      "236": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 160.7,
        "ref_cap_unit": "ton",
@@ -22857,7 +22857,7 @@
      },
      "237": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 161.3,
        "ref_cap_unit": "ton",
@@ -22953,7 +22953,7 @@
      },
      "238": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 162.5,
        "ref_cap_unit": "ton",
@@ -23049,7 +23049,7 @@
      },
      "239": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 162.5,
        "ref_cap_unit": "ton",
@@ -23145,7 +23145,7 @@
      },
      "240": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 163.5,
        "ref_cap_unit": "ton",
@@ -23241,7 +23241,7 @@
      },
      "241": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 169.2,
        "ref_cap_unit": "ton",
@@ -23337,7 +23337,7 @@
      },
      "242": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 172.3,
        "ref_cap_unit": "ton",
@@ -23433,7 +23433,7 @@
      },
      "243": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 181.5,
        "ref_cap_unit": "ton",
@@ -23529,7 +23529,7 @@
      },
      "244": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 187.7,
        "ref_cap_unit": "ton",
@@ -23625,7 +23625,7 @@
      },
      "245": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 190.0,
        "ref_cap_unit": "ton",
@@ -23721,7 +23721,7 @@
      },
      "246": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 197.3,
        "ref_cap_unit": "ton",
@@ -23817,7 +23817,7 @@
      },
      "247": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 197.6,
        "ref_cap_unit": "ton",
@@ -23913,7 +23913,7 @@
      },
      "248": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 199.0,
        "ref_cap_unit": "ton",
@@ -24009,7 +24009,7 @@
      },
      "249": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 204.3,
        "ref_cap_unit": "ton",
@@ -24105,7 +24105,7 @@
      },
      "250": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 225.4,
        "ref_cap_unit": "ton",
@@ -24201,7 +24201,7 @@
      },
      "251": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 232.5,
        "ref_cap_unit": "ton",
@@ -24297,7 +24297,7 @@
      },
      "252": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 233.2,
        "ref_cap_unit": "ton",
@@ -24393,7 +24393,7 @@
      },
      "253": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 257.1,
        "ref_cap_unit": "ton",
@@ -24489,7 +24489,7 @@
      },
      "254": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 265.5,
        "ref_cap_unit": "ton",
@@ -24585,7 +24585,7 @@
      },
      "255": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 266.6,
        "ref_cap_unit": "ton",
@@ -24681,7 +24681,7 @@
      },
      "256": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 285.2,
        "ref_cap_unit": "ton",
@@ -24777,7 +24777,7 @@
      },
      "257": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 297.8,
        "ref_cap_unit": "ton",
@@ -24873,7 +24873,7 @@
      },
      "258": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 300.0,
        "ref_cap_unit": "ton",
@@ -24969,7 +24969,7 @@
      },
      "259": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 303.8,
        "ref_cap_unit": "ton",
@@ -25065,7 +25065,7 @@
      },
      "260": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 313.7,
        "ref_cap_unit": "ton",
@@ -25161,7 +25161,7 @@
      },
      "261": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 330.1,
        "ref_cap_unit": "ton",
@@ -25257,7 +25257,7 @@
      },
      "262": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 336.5,
        "ref_cap_unit": "ton",
@@ -25353,7 +25353,7 @@
      },
      "263": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 337.6,
        "ref_cap_unit": "ton",
@@ -25449,7 +25449,7 @@
      },
      "264": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 351.0,
        "ref_cap_unit": "ton",
@@ -25545,7 +25545,7 @@
      },
      "265": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 359.9,
        "ref_cap_unit": "ton",
@@ -25641,7 +25641,7 @@
      },
      "266": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 367.2,
        "ref_cap_unit": "ton",
@@ -25737,7 +25737,7 @@
      },
      "267": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 371.0,
        "ref_cap_unit": "ton",
@@ -25833,7 +25833,7 @@
      },
      "268": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 373.1,
        "ref_cap_unit": "ton",
@@ -25929,7 +25929,7 @@
      },
      "269": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 389.0,
        "ref_cap_unit": "ton",
@@ -26025,7 +26025,7 @@
      },
      "270": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 411.8,
        "ref_cap_unit": "ton",
@@ -26121,7 +26121,7 @@
      },
      "271": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 416.4,
        "ref_cap_unit": "ton",
@@ -26217,7 +26217,7 @@
      },
      "272": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 433.6,
        "ref_cap_unit": "ton",
@@ -26313,7 +26313,7 @@
      },
      "273": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 447.7,
        "ref_cap_unit": "ton",
@@ -26409,7 +26409,7 @@
      },
      "274": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 455.8,
        "ref_cap_unit": "ton",
@@ -26505,7 +26505,7 @@
      },
      "275": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 466.7,
        "ref_cap_unit": "ton",
@@ -26601,7 +26601,7 @@
      },
      "276": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 479.0,
        "ref_cap_unit": "ton",
@@ -26697,7 +26697,7 @@
      },
      "277": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 507.8,
        "ref_cap_unit": "ton",
@@ -26793,7 +26793,7 @@
      },
      "278": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 535.1,
        "ref_cap_unit": "ton",
@@ -26889,7 +26889,7 @@
      },
      "279": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 538.0,
        "ref_cap_unit": "ton",
@@ -26985,7 +26985,7 @@
      },
      "280": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 539.1,
        "ref_cap_unit": "ton",
@@ -27081,7 +27081,7 @@
      },
      "281": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 585.5,
        "ref_cap_unit": "ton",
@@ -27177,7 +27177,7 @@
      },
      "282": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 601.9,
        "ref_cap_unit": "ton",
@@ -27273,7 +27273,7 @@
      },
      "283": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 605.6,
        "ref_cap_unit": "ton",
@@ -27369,7 +27369,7 @@
      },
      "284": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 633.4,
        "ref_cap_unit": "ton",
@@ -27465,7 +27465,7 @@
      },
      "285": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 662.9,
        "ref_cap_unit": "ton",
@@ -27561,7 +27561,7 @@
      },
      "286": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 681.7,
        "ref_cap_unit": "ton",
@@ -27657,7 +27657,7 @@
      },
      "287": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 710.0,
        "ref_cap_unit": "ton",
@@ -27753,7 +27753,7 @@
      },
      "288": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 743.7,
        "ref_cap_unit": "ton",
@@ -27849,7 +27849,7 @@
      },
      "289": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 753.3,
        "ref_cap_unit": "ton",
@@ -27945,7 +27945,7 @@
      },
      "290": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 801.6,
        "ref_cap_unit": "ton",
@@ -28041,7 +28041,7 @@
      },
      "291": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 836.2,
        "ref_cap_unit": "ton",
@@ -28137,7 +28137,7 @@
      },
      "292": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 881.7,
        "ref_cap_unit": "ton",
@@ -28233,7 +28233,7 @@
      },
      "293": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 915.0,
        "ref_cap_unit": "ton",
@@ -28329,7 +28329,7 @@
      },
      "294": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 943.4,
        "ref_cap_unit": "ton",
@@ -28425,7 +28425,7 @@
      },
      "295": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 993.8,
        "ref_cap_unit": "ton",
@@ -28521,7 +28521,7 @@
      },
      "296": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1010.2,
        "ref_cap_unit": "ton",
@@ -28617,7 +28617,7 @@
      },
      "297": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1076.1,
        "ref_cap_unit": "ton",
@@ -28713,7 +28713,7 @@
      },
      "298": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1077.4,
        "ref_cap_unit": "ton",
@@ -28809,7 +28809,7 @@
      },
      "299": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1123.6,
        "ref_cap_unit": "ton",
@@ -28905,7 +28905,7 @@
      },
      "300": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1138.7,
        "ref_cap_unit": "ton",
@@ -29001,7 +29001,7 @@
      },
      "301": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1170.7,
        "ref_cap_unit": "ton",
@@ -29097,7 +29097,7 @@
      },
      "302": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1248.4,
        "ref_cap_unit": "ton",
@@ -29193,7 +29193,7 @@
      },
      "303": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1325.8,
        "ref_cap_unit": "ton",
@@ -29289,7 +29289,7 @@
      },
      "304": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1348.0,
        "ref_cap_unit": "ton",
@@ -29385,7 +29385,7 @@
      },
      "305": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1499.5,
        "ref_cap_unit": "ton",
@@ -29481,7 +29481,7 @@
      },
      "306": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "ect_lwt",
        "ref_cap": 1609.4,
        "ref_cap_unit": "ton",
@@ -29577,7 +29577,7 @@
      },
      "307": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 163.5,
        "ref_cap_unit": "ton",
@@ -29699,7 +29699,7 @@
      },
      "308": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 199.8,
        "ref_cap_unit": "ton",
@@ -29795,7 +29795,7 @@
      },
      "309": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 206.3,
        "ref_cap_unit": "ton",
@@ -29891,7 +29891,7 @@
      },
      "310": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 240.1,
        "ref_cap_unit": "ton",
@@ -29987,7 +29987,7 @@
      },
      "311": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 181.9,
        "ref_cap_unit": "ton",
@@ -30083,7 +30083,7 @@
      },
      "312": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 310.0,
        "ref_cap_unit": "ton",
@@ -30179,7 +30179,7 @@
      },
      "313": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 258.7,
        "ref_cap_unit": "ton",
@@ -30301,7 +30301,7 @@
      },
      "314": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 202.9,
        "ref_cap_unit": "ton",
@@ -30423,7 +30423,7 @@
      },
      "315": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 69.63,
        "ref_cap_unit": "ton",
@@ -30519,7 +30519,7 @@
      },
      "316": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 62.12,
        "ref_cap_unit": "ton",
@@ -30615,7 +30615,7 @@
      },
      "317": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 49.54,
        "ref_cap_unit": "ton",
@@ -30711,7 +30711,7 @@
      },
      "318": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 43.46,
        "ref_cap_unit": "ton",
@@ -30807,7 +30807,7 @@
      },
      "319": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 31.48,
        "ref_cap_unit": "ton",
@@ -30903,7 +30903,7 @@
      },
      "320": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 21.7,
        "ref_cap_unit": "ton",
@@ -30999,7 +30999,7 @@
      },
      "321": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 209.3,
        "ref_cap_unit": "ton",
@@ -31121,7 +31121,7 @@
      },
      "322": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 145.0,
        "ref_cap_unit": "ton",
@@ -31217,7 +31217,7 @@
      },
      "323": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 49.47,
        "ref_cap_unit": "ton",
@@ -31339,7 +31339,7 @@
      },
      "324": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 69.63,
        "ref_cap_unit": "ton",
@@ -31461,7 +31461,7 @@
      },
      "325": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 62.12,
        "ref_cap_unit": "ton",
@@ -31583,7 +31583,7 @@
      },
      "326": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 43.46,
        "ref_cap_unit": "ton",
@@ -31705,7 +31705,7 @@
      },
      "327": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 80.63,
        "ref_cap_unit": "ton",
@@ -31801,7 +31801,7 @@
      },
      "328": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 31.48,
        "ref_cap_unit": "ton",
@@ -31923,7 +31923,7 @@
      },
      "329": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 21.7,
        "ref_cap_unit": "ton",
@@ -32045,7 +32045,7 @@
      },
      "330": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 77.78,
        "ref_cap_unit": "ton",
@@ -32141,7 +32141,7 @@
      },
      "331": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 102.5,
        "ref_cap_unit": "ton",
@@ -32237,7 +32237,7 @@
      },
      "332": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 108.5,
        "ref_cap_unit": "ton",
@@ -32333,7 +32333,7 @@
      },
      "333": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 127.6,
        "ref_cap_unit": "ton",
@@ -32429,7 +32429,7 @@
      },
      "334": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 133.3,
        "ref_cap_unit": "ton",
@@ -32525,7 +32525,7 @@
      },
      "335": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 145.4,
        "ref_cap_unit": "ton",
@@ -32621,7 +32621,7 @@
      },
      "336": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "ect_lwt",
        "ref_cap": 164.6,
        "ref_cap_unit": "ton",
@@ -32717,7 +32717,7 @@
      },
      "337": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 247.0,
        "ref_cap_unit": "ton",
@@ -32813,7 +32813,7 @@
      },
      "338": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 291.0,
        "ref_cap_unit": "ton",
@@ -32909,7 +32909,7 @@
      },
      "339": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 300.0,
        "ref_cap_unit": "ton",
@@ -33005,7 +33005,7 @@
      },
      "340": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 320.0,
        "ref_cap_unit": "ton",
@@ -33101,7 +33101,7 @@
      },
      "341": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 351.0,
        "ref_cap_unit": "ton",
@@ -33197,7 +33197,7 @@
      },
      "342": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 378.0,
        "ref_cap_unit": "ton",
@@ -33293,7 +33293,7 @@
      },
      "343": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 451.0,
        "ref_cap_unit": "ton",
@@ -33389,7 +33389,7 @@
      },
      "344": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 465.0,
        "ref_cap_unit": "ton",
@@ -33485,7 +33485,7 @@
      },
      "345": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 500.0,
        "ref_cap_unit": "ton",
@@ -33581,7 +33581,7 @@
      },
      "346": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 1607.0,
        "ref_cap_unit": "ton",
@@ -33677,7 +33677,7 @@
      },
      "347": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 302.0,
        "ref_cap_unit": "ton",
@@ -33773,7 +33773,7 @@
      },
      "348": {
        "eqp_type": "chiller",
-       "source": 2,
+       "source": "2",
        "model": "lct_lwt",
        "ref_cap": 59.0,
        "ref_cap_unit": "ton",
@@ -33869,7 +33869,7 @@
      },
      "349": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 43.46,
        "ref_cap_unit": "ton",
@@ -33965,7 +33965,7 @@
      },
      "350": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 145.4,
        "ref_cap_unit": "ton",
@@ -34061,7 +34061,7 @@
      },
      "351": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 127.6,
        "ref_cap_unit": "ton",
@@ -34157,7 +34157,7 @@
      },
      "352": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 240.1,
        "ref_cap_unit": "ton",
@@ -34253,7 +34253,7 @@
      },
      "353": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 77.78,
        "ref_cap_unit": "ton",
@@ -34349,7 +34349,7 @@
      },
      "354": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 69.63,
        "ref_cap_unit": "ton",
@@ -34445,7 +34445,7 @@
      },
      "355": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 164.6,
        "ref_cap_unit": "ton",
@@ -34541,7 +34541,7 @@
      },
      "356": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 80.63,
        "ref_cap_unit": "ton",
@@ -34637,7 +34637,7 @@
      },
      "357": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 206.3,
        "ref_cap_unit": "ton",
@@ -34733,7 +34733,7 @@
      },
      "358": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 62.12,
        "ref_cap_unit": "ton",
@@ -34829,7 +34829,7 @@
      },
      "359": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 145.0,
        "ref_cap_unit": "ton",
@@ -34925,7 +34925,7 @@
      },
      "360": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 133.3,
        "ref_cap_unit": "ton",
@@ -35021,7 +35021,7 @@
      },
      "361": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 108.5,
        "ref_cap_unit": "ton",
@@ -35117,7 +35117,7 @@
      },
      "362": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 31.48,
        "ref_cap_unit": "ton",
@@ -35213,7 +35213,7 @@
      },
      "363": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 181.9,
        "ref_cap_unit": "ton",
@@ -35309,7 +35309,7 @@
      },
      "364": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 310.0,
        "ref_cap_unit": "ton",
@@ -35405,7 +35405,7 @@
      },
      "365": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 21.7,
        "ref_cap_unit": "ton",
@@ -35501,7 +35501,7 @@
      },
      "366": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 199.8,
        "ref_cap_unit": "ton",
@@ -35597,7 +35597,7 @@
      },
      "367": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 49.54,
        "ref_cap_unit": "ton",
@@ -35693,7 +35693,7 @@
      },
      "368": {
        "eqp_type": "chiller",
-       "source": 1,
+       "source": "1",
        "model": "lct_lwt",
        "ref_cap": 102.5,
        "ref_cap_unit": "ton",

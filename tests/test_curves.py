@@ -11,7 +11,7 @@ class TestCurves(TestCase):
         lib = cp.Library(path="./lib/chiller_curves.json")
 
         # Curve lookup by name
-        c_name = "ElectricEIRChiller_Trane_CVHE_1080kW/7.39COP/Vanes"
+        c_name = "27"
         self.assertTrue(len([lib.get_set_of_curves_by_name(c_name)]))
         with self.assertRaises(ValueError):
             lib.get_set_of_curves_by_name(c_name + "s")
@@ -28,7 +28,7 @@ class TestCurves(TestCase):
             ("sim_engine", "energyplus"),
             ("model", "ect_lwt"),
             ("condenser_type", "air"),
-            ("source", "EnergyPlus chiller dataset"),
+            ("source", "2"),
         ]
 
         set_of_curvess = lib.find_set_of_curvess_from_lib(filters=filters)
@@ -80,9 +80,7 @@ class TestCurves(TestCase):
             part_eff_ref_std="ahri_551/591",
             model="ect_lwt",
             sim_engine="energyplus",
-            set_of_curves=lib.get_set_of_curves_by_name(
-                "ElectricEIRChiller_McQuay_WSC_471kW/5.89COP/Vanes"
-            ).curves,
+            set_of_curves=lib.get_set_of_curves_by_name("6").curves,
         )
 
         # Define curve
@@ -126,12 +124,10 @@ class TestCurves(TestCase):
         # Run unittest with a centrifugal chiller
         lib = cp.Library(path="./lib/chiller_curves.json")
         ep_wtr_screw = lib.find_set_of_curvess_from_lib(
-            filters=filters
-            + [("source", "EnergyPlus chiller dataset"), ("compressor_type", "screw")]
+            filters=filters + [("source", "2"), ("compressor_type", "screw")]
         )
         ep_wtr_scroll = lib.find_set_of_curvess_from_lib(
-            filters=filters
-            + [("source", "EnergyPlus chiller dataset"), ("compressor_type", "scroll")]
+            filters=filters + [("source", "2"), ("compressor_type", "scroll")]
         )
         centrifugal_chlr = ep_wtr_screw + ep_wtr_scroll
 
