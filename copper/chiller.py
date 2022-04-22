@@ -1,6 +1,6 @@
 import CoolProp.CoolProp as CP
 from scipy import optimize
-from copper.ga import *
+from copper.generator import *
 from copper.units import *
 from copper.curves import *
 
