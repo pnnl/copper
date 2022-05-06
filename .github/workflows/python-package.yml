@@ -1,0 +1,42 @@
+name: Python package
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.6.15"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: actions/cache@v2
+      id: cache-venv
+      with:
+        path: ./.venv/
+        key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-venv-
+    - run: python -m venv ./.venv && . ./.venv/bin/activate && 
+           pip install -r requirements.txt
+      if: steps.cache-venv.outputs.cache-hit != 'true'
+    - name: Install Black
+      run: |
+        sudo pip install black
+    - name: Run Black
+      run: |
+        black -l 88 copper tests --check
+    - name: Test with Nose
+      run: |
+        export PYTHONUNBUFFERED=1
+        . ./.venv/bin/activate
+        nosetests
