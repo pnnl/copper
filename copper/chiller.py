@@ -3,7 +3,7 @@ from scipy import optimize
 from copper.generator import *
 from copper.units import *
 from copper.curves import *
-
+from copper.library import *
 
 class chiller:
     def __init__(
@@ -146,6 +146,8 @@ class chiller:
 
         self.ref_lwt, self.ref_ect, self.ref_lct = lwt, ect, lct
 
+    #new method: gets library and filters specific to
+
     def get_ref_values(self, out_var):
         if "x2_norm" in list(self.plotting_range[out_var].keys()):
             return [
@@ -260,6 +262,7 @@ class chiller:
         :rtype: SetofCurves()
 
         """
+
         ga = generator(
             self,
             method,
@@ -586,3 +589,46 @@ class chiller:
         ect = lct - q_c / (m_c * c_p)
 
         return (ect_org - ect) / ect_org
+
+    def get_lib_and_filters(self, lib_path="./lib/chiller_curves.json"):
+        lib = Library(path=lib_path)
+        filters = [
+            ("eqp_type", self.equipment.type),
+            ("compressor_type", self.equipment.compressor_type),
+            ("condenser_type", self.equipment.condenser_type),
+            ("compressor_speed", self.equipment.compressor_speed),
+            ("sim_engine", self.equipment.sim_engine),
+            ("model", self.equipment.model),
+        ]
+
+        self.lib = lib
+        self.filters = filters
+
+        return lib, filters
+
+
+    def get_ranges(self, comp_model="ect"):
+
+        norm_val = {
+            "ect": self.ref_ect,
+            "lct": self.ref_lct
+        }[comp_model]
+        
+        ranges = {
+            'eir-f-t': {
+                'vars_range': [(4, 10), (10.0, 40.0)],
+                'normalization': (self.lwt, norm_val)
+            },
+            'cap-f-t': {
+                'vars_range': [(4, 10), (10.0, 40.0)],
+                'normalization': (min_val, norm_val)
+            },
+            'eir-f-plr': {
+                'vars_range': [(0.0, 1.0)],
+                'normalization': (1.0)
+            }
+        }
+
+        return ranges
+
+

@@ -72,20 +72,24 @@ class generator:
             self.full_eff_alt = full_eff_c.conversion("kw/ton")
 
         if len(self.base_curves) == 0:
-            if self.equipment.type == "chiller":
-                # TODO: implement other methods
-                if self.method == "best_match":
-                    lib = Library(path="./lib/chiller_curves.json")
-
-                # Define chiller properties
-                filters = [
-                    ("eqp_type", self.equipment.type),
-                    ("compressor_type", self.equipment.compressor_type),
-                    ("condenser_type", self.equipment.condenser_type),
-                    ("compressor_speed", self.equipment.compressor_speed),
-                    ("sim_engine", self.equipment.sim_engine),
-                    ("model", self.equipment.model),
-                ]
+            try:
+                lib, filters = get_lib_and_filters(lib_path="./lib/chiller_curves.json")
+            except:
+                print("This type of equipment has not yet been implemented.")
+            # if self.equipment.type == "chiller":
+            #     # TODO: implement other methods
+            #     if self.method == "best_match":
+            #         lib = Library(path="./lib/chiller_curves.json")
+            #
+            #     # Define chiller properties
+            #     filters = [
+            #         ("eqp_type", self.equipment.type),
+            #         ("compressor_type", self.equipment.compressor_type),
+            #         ("condenser_type", self.equipment.condenser_type),
+            #         ("compressor_speed", self.equipment.compressor_speed),
+            #         ("sim_engine", self.equipment.sim_engine),
+            #         ("model", self.equipment.model),
+            #     ]
             else:
                 raise ValueError("This type of equipment has not yet been implemented.")
 
@@ -93,6 +97,9 @@ class generator:
             # Only one equipment should be returned
             if self.method == "best_match":
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
+            # elif self.method == "nn-wt-avg":
+            #     self.base_curves = curves.get_aggregated_set_of_curves(ranges=ranges, misc_attr=misc_attr,
+            #                                                      method="NN-weighted-average", N=10)
 
         self.set_of_base_curves = self.base_curves[0]
         self.set_of_base_curves.eqp = self.equipment
