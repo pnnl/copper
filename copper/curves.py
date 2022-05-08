@@ -136,7 +136,14 @@ class SetsofCurves:
                 y_s = [list(map(lambda x: statistics.median(x), zip(*vals)))]
             elif method == "weighted-average":
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr)
-                y_s = [list(map(lambda x: np.dot(df["score"].values, x), zip(*vals)))]
+                sorted_vals = list(
+                    map(vals.__getitem__, df.index.values)
+                )  # adding this incase of NaN in dfs
+                y_s = [
+                    list(
+                        map(lambda x: np.dot(df["score"].values, x), zip(*sorted_vals))
+                    )
+                ]
             elif method == "NN-weighted-average":
                 # first make sure that the user has specified to pick N values
                 try:
@@ -271,7 +278,6 @@ class SetsofCurves:
                     df[var] = target_attr[var]
             else:
                 df = df.dropna()
-
             assert len(df) > 0
 
             if N is not None:
@@ -652,9 +658,9 @@ class Curve:
             out = (
                 self.coeff1
                 + self.coeff2 * x
-                + self.coeff3 * x**2
+                + self.coeff3 * x ** 2
                 + self.coeff4 * y
-                + self.coeff5 * y**2
+                + self.coeff5 * y ** 2
                 + self.coeff6 * x * y
             )
             return min(max(out, self.out_min), self.out_max)
@@ -662,25 +668,25 @@ class Curve:
             out = (
                 self.coeff1
                 + self.coeff2 * x
-                + self.coeff3 * x**2
+                + self.coeff3 * x ** 2
                 + self.coeff4 * y
-                + self.coeff5 * y**2
+                + self.coeff5 * y ** 2
                 + self.coeff6 * x * y
-                + self.coeff7 * x**3
-                + self.coeff8 * y**3
-                + self.coeff9 * y * x**2
-                + self.coeff10 * x * y**2
+                + self.coeff7 * x ** 3
+                + self.coeff8 * y ** 3
+                + self.coeff9 * y * x ** 2
+                + self.coeff10 * x * y ** 2
             )
             return min(max(out, self.out_min), self.out_max)
         if self.type == "quad":
-            out = self.coeff1 + self.coeff2 * x + self.coeff3 * x**2
+            out = self.coeff1 + self.coeff2 * x + self.coeff3 * x ** 2
             return min(max(out, self.out_min), self.out_max)
         if self.type == "cubic":
             out = (
                 self.coeff1
                 + self.coeff2 * x
-                + self.coeff3 * x**2
-                + self.coeff4 * x**3
+                + self.coeff3 * x ** 2
+                + self.coeff4 * x ** 3
             )
             return min(max(out, self.out_min), self.out_max)
 

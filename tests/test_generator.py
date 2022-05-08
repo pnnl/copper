@@ -183,3 +183,56 @@ class TestAlgorithm(TestCase):
         self.assertTrue(full_eff_alt > full_eff_target_alt * (1 - tol), full_eff_alt)
         self.assertTrue(part_eff_alt < part_eff_target_alt * (1 + tol), part_eff_alt)
         self.assertTrue(part_eff_alt > part_eff_target_alt * (1 - tol), part_eff_alt)
+
+    def test_generator_nn(self):
+        # define parameters for chiller class
+        primary_std = "ahri_550/590"
+        secondary_std = "ahri_551/591"
+        out_var = ["eir-f-plr"]
+
+        # specify target efficiencies
+        full_eff_target = 0.634
+        full_eff_target_alt = 0.634
+        part_eff_target = 0.596
+        part_eff_target_alt = 0.596
+
+        chlr = cp.chiller(
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant, variable",
+            ref_cap=225,
+            ref_cap_unit="ton",
+            full_eff=full_eff_target,
+            full_eff_unit="kw/ton",
+            full_eff_alt=full_eff_target_alt,
+            full_eff_unit_alt="kw/ton",
+            part_eff=part_eff_target,
+            part_eff_unit="kw/ton",
+            part_eff_ref_std=primary_std,
+            part_eff_alt=part_eff_target_alt,
+            part_eff_unit_alt="",
+            part_eff_ref_std_alt=secondary_std,
+            model="ect_lwt",
+            sim_engine="energyplus",
+        )
+
+        tol = 0.005
+        method = "nn-wt-avg"
+
+        chlr_curves_set = chlr.generate_set_of_curves(
+            vars=out_var, tol=tol, method=method
+        )
+
+        full_eff = chlr.calc_rated_eff(eff_type="full")
+        part_eff = chlr.calc_rated_eff(eff_type="part")
+        full_eff_alt = chlr.calc_rated_eff(eff_type="full", alt=True)
+        part_eff_alt = chlr.calc_rated_eff(eff_type="part", alt=True)
+
+        self.assertTrue(full_eff < full_eff_target * (1 + tol), full_eff)
+        self.assertTrue(full_eff > full_eff_target * (1 - tol), full_eff)
+        self.assertTrue(part_eff < part_eff_target * (1 + tol), part_eff)
+        self.assertTrue(part_eff > part_eff_target * (1 - tol), part_eff)
+        self.assertTrue(full_eff_alt < full_eff_target_alt * (1 + tol), full_eff_alt)
+        self.assertTrue(full_eff_alt > full_eff_target_alt * (1 - tol), full_eff_alt)
+        self.assertTrue(part_eff_alt < part_eff_target_alt * (1 + tol), part_eff_alt)
+        self.assertTrue(part_eff_alt > part_eff_target_alt * (1 - tol), part_eff_alt)

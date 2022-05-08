@@ -5,6 +5,7 @@ from copper.units import *
 from copper.curves import *
 from copper.library import *
 
+
 class chiller:
     def __init__(
         self,
@@ -27,6 +28,7 @@ class chiller:
         model="ect_lwt",
         sim_engine="energyplus",
         min_unloading=0.1,
+        min_plr=None,
     ):
         self.type = "chiller"
         self.compressor_type = compressor_type
@@ -45,6 +47,7 @@ class chiller:
         self.part_eff_unit_alt = part_eff_unit_alt
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.min_unloading = min_unloading
+        self.min_plr = min_unloading if min_plr is None else min_plr
         self.model = model
         self.sim_engine = sim_engine
         self.set_of_curves = set_of_curves
@@ -146,7 +149,7 @@ class chiller:
 
         self.ref_lwt, self.ref_ect, self.ref_lct = lwt, ect, lct
 
-    #new method: gets library and filters specific to
+    # new method: gets library and filters specific to
 
     def get_ref_values(self, out_var):
         if "x2_norm" in list(self.plotting_range[out_var].keys()):
@@ -591,44 +594,145 @@ class chiller:
         return (ect_org - ect) / ect_org
 
     def get_lib_and_filters(self, lib_path="./lib/chiller_curves.json"):
+        """
+        method to get lib object and gilters
+        :param lib_path: (str) - full path of json library
+        :return lib: (obj) - library object
+        :return filters: (list) - list of tuples containing the filters specific to Chiller object
+        """
         lib = Library(path=lib_path)
         filters = [
-            ("eqp_type", self.equipment.type),
-            ("compressor_type", self.equipment.compressor_type),
-            ("condenser_type", self.equipment.condenser_type),
-            ("compressor_speed", self.equipment.compressor_speed),
-            ("sim_engine", self.equipment.sim_engine),
-            ("model", self.equipment.model),
+            ("eqp_type", "chiller"),
+            ("compressor_type", self.compressor_type),
+            ("condenser_type", self.condenser_type),
+            ("sim_engine", self.sim_engine),
+            ("model", self.model),
         ]
-
-        self.lib = lib
-        self.filters = filters
 
         return lib, filters
 
+    def get_ranges(self):
+        """
+        method to get ranges specific to the chiller object
+        :return ranges: (dict) - ranges for normalization
+        """
+        norm_val = {"ect_lwt": self.ref_ect, "lct_lwt": self.ref_lct}[self.model]
 
-    def get_ranges(self, comp_model="ect"):
-
-        norm_val = {
-            "ect": self.ref_ect,
-            "lct": self.ref_lct
-        }[comp_model]
-        
         ranges = {
-            'eir-f-t': {
-                'vars_range': [(4, 10), (10.0, 40.0)],
-                'normalization': (self.lwt, norm_val)
+            "eir-f-t": {
+                "vars_range": [(4, 10), (10.0, 40.0)],
+                "normalization": (self.ref_lwt, norm_val),
             },
-            'cap-f-t': {
-                'vars_range': [(4, 10), (10.0, 40.0)],
-                'normalization': (min_val, norm_val)
+            "cap-f-t": {
+                "vars_range": [(4, 10), (10.0, 40.0)],
+                "normalization": (self.ref_lwt, norm_val),
             },
-            'eir-f-plr': {
-                'vars_range': [(0.0, 1.0)],
-                'normalization': (1.0)
-            }
+            "eir-f-plr": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
         }
 
         return ranges
 
+    def get_curves_from_lib(self, lib, filters):
+        """
+        method to get the sort from the library based on chiller filters
+        :param lib: (obj) - Library Object
+        :param filters: (list) - list of tuples containing the relevant filter keys and values
+        :return sets: (list of objects) - list of SetofCurves object corresponding to seed curves
+        """
+        # Selecting the relevant filters based on compressor type
+        if self.compressor_type == "positive_displacement":
+            tr_wtr_screw = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "screw")], part_eff_flag=True
+            )
+            tr_wtr_scroll = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "scroll")], part_eff_flag=True
+            )
+            tr_wtr_rec = find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "reciprocating")],
+                part_eff_flag=True,
+            )
+            sets = tr_wtr_screw + tr_wtr_scroll + tr_wtr_rec
+        elif self.compressor_type == "centrifugal":
+            ep_wtr_cent = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "centrifugal")],
+                part_eff_flag=True,
+            )
+            sets = ep_wtr_cent
+        elif self.compressor_type == "any":
+            tr_wtr_screw = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "screw")], part_eff_flag=True
+            )
+            tr_wtr_scroll = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "scroll")], part_eff_flag=True
+            )
+            tr_wtr_rec = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "reciprocating")],
+                part_eff_flag=True,
+            )
+            ep_wtr_cent = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "centrifugal")],
+                part_eff_flag=True,
+            )
+            sets = tr_wtr_screw + tr_wtr_scroll + tr_wtr_rec + ep_wtr_cent
+        elif self.compressor_type in ["scroll", "screw", "reciprocating"]:
+            ep_wtr = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", self.compressor_type)],
+                part_eff_flag=True,
+            )
+            sets = ep_wtr
+        else:
+            sets = None
 
+        assert sets is not None
+
+        # removing eir-f-plr-dt from SetofCurves obejct
+        for cset in sets:
+            cset.remove_curve("eir-f-plr-dt")
+
+        return sets
+
+    def get_seed_curves(self, lib=None, filters=None, csets=None):
+        """
+        method to generate seed curves specific to a chiller. also sets relevant attributes (misc_attr, ranges)
+        :param lib: (obj) - Library Object
+        :fitlers: (list) - list of tuples containing the filter keys and values
+        :csets (list) - list of Set of Curves object corresponding to selected chillers from libraru
+        """
+        if lib is None or filters is None or csets is None:
+            lib, filters = self.get_lib_and_filters()
+            csets = self.get_curves_from_lib(lib=lib, filters=filters)
+
+        assert self.compressor_type in [
+            "centrifugal",
+            "any",
+            "positive_displacement",
+            "scroll",
+            "screw",
+        ]
+
+        FullEffUnit = Units(self.full_eff, self.full_eff_unit)
+        full_eff_cop = FullEffUnit.conversion("cop")
+        PartEffUnit = Units(self.part_eff, self.part_eff_unit)
+        part_eff_cop = PartEffUnit.conversion("cop")
+
+        self.misc_attr = {
+            "model": self.model,
+            "ref_cap": self.ref_cap,
+            "ref_cap_unit": "",
+            "full_eff": full_eff_cop,
+            "part_eff": part_eff_cop,
+            "ref_eff_unit": "",
+            "compressor_type": self.compressor_type,
+            "condenser_type": self.condenser_type,
+            "compressor_speed": self.compressor_speed,
+            "sim_engine": self.sim_engine,
+            "min_plr": self.min_plr,
+            "min_unloading": self.min_unloading,
+            "max_plr": 1,
+            "name": "Aggregated set of curves",
+            "source": "Copper",
+        }
+
+        self.ranges = self.get_ranges()
+        curves = SetsofCurves(sets=csets, eqp=self)
+        return curves
