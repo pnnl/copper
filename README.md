@@ -1,13 +1,14 @@
 # Copper
-Copper is a performance curve generator for building energy simulations. It uses a genetic algorithm to modify exisiting performance curves to match specific performance indicators at both full and part load.
+Copper is a performance curve generator for building energy simulations. It uses a genetic algorithm to modify existing performance curves to match specific performance indicators at both full and part load.
 
-Unit test status: [![CircleCI](https://circleci.com/gh/lymereJ/copper/tree/master.svg?style=svg&circle-token=2d4c8e2ca7654f95f203d37182a8d2cd4680bbe7)](https://circleci.com/gh/lymereJ/copper/tree/master)
+![Tests](https://github.com/lymereJ/copper/actions/workflows/tests.yml/badge.svg)
 
 # Equipment and Simulation Software Supported
 | Equipment Type | Equipment Subtype | Simulation Software | Algorithm |
 | ------------- | ------------- | ------------- | ------------- |
 | Chiller | Air-cooled | [EnergyPlus](https://github.com/NREL/EnergyPlus) | Entering condenser and leaving chiller temperature |
 | Chiller | Water-cooled | [EnergyPlus](https://github.com/NREL/EnergyPlus) | Entering condenser and leaving chiller temperature |
+| Chiller | Water-cooled | [EnergyPlus](https://github.com/NREL/EnergyPlus) | Leaving condenser and leaving chiller temperature |
 | Chiller | Air-cooled | [DOE-2](http://www.doe2.com/) | Entering condenser and leaving chiller temperature |
 | Chiller | Water-cooled | [DOE-2](http://www.doe2.com/) | Entering condenser and leaving chiller temperature | 
 
