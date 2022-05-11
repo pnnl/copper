@@ -328,6 +328,45 @@ class generator:
                         pass
         return new_curves
 
+    def calc_fit(self, pop):
+        # Determine and normalized part load efficiency fitness
+        part_load_fitnesses = [
+            self.determine_part_load_fitness(curves) for curves in pop
+        ]
+        part_load_fitnesses = [
+            score / max(part_load_fitnesses) for score in part_load_fitnesses
+        ]
+
+        # Determine and normalized full load efficiency fitness
+        full_load_fitnesses = [
+            self.determine_full_load_fitness(curves) for curves in pop
+        ]
+        full_load_fitnesses = [
+            score / max(full_load_fitnesses) for score in full_load_fitnesses
+        ]
+
+        # Determine and normalized "normalization" fitness
+        if len(self.vars) > 1:
+            normalization_fitnesses = [
+                self.determine_normalization_fitness(curves) for curves in pop
+            ]
+            if max(normalization_fitnesses) > 0:
+                normalization_fitnesses = [
+                    score / max(normalization_fitnesses)
+                    for score in normalization_fitnesses
+                ]
+        else:
+            normalization_fitnesses = [0.0 for curves in pop]
+
+        # Sum fitness scores
+        overall_fitnesses = [
+            sum(x)
+            for x in zip(
+                *[part_load_fitnesses, full_load_fitnesses, normalization_fitnesses]
+            )
+        ]
+        return overall_fitnesses
+
     def fitness_scale_grading(self, pop, scaling=True):
         """Calculate fitness, scale, and grade for a population.
 
@@ -337,11 +376,11 @@ class generator:
         :rtype: list()
 
         """
-        # Intial fitness calcs
-        fitnesses = [self.determine_fitness(curves) for curves in pop]
+        # Determine fitness
+        overall_fitnesses = self.calc_fit(pop)
 
         # Scaling
-        pop_scaled = self.scale_fitnesses(fitnesses, pop, scaling)
+        pop_scaled = self.scale_fitnesses(overall_fitnesses, pop, scaling)
 
         # Grading
         pop_graded = self.grade_population(pop_scaled)
@@ -376,75 +415,40 @@ class generator:
         self.perform_crossover(parents)
         self.identify_best_performer()
 
-    def determine_fitness(self, set_of_curves):
-        """Compute fitness score of an individual.
-
-        :param SetofCurves() set_of_curves: Set of curves
-        :return: Fitness score
-        :rtype: float
-
-        """
+    def determine_part_load_fitness(self, set_of_curves):
         # Temporary assign curve to equipment
         self.equipment.set_of_curves = set_of_curves.curves
-
-        # Compute normalization score
-        # and RSME with base curve
-        # TODO: Try PCM
-        # TODO: Try Frechet distance
-        # TODO: Area between two curves
-        # TODO: Dynamic Time Warping distance
-        curve_normal_score = 0
-        rsme = 0
-        for c in set_of_curves.curves:
-            if c.out_var in self.vars:
-                curve_normal_score += abs(1 - c.get_out_reference(self.equipment))
-                x, y = set_of_curves.get_data_for_plotting(c, False)
-                base_x, base_y = self.base_curves_data[c.out_var]
-                rsme += np.sqrt(((np.array(y) - np.array(base_y)) ** 2).mean())
-
         part_eff_score = abs(
             self.equipment.calc_rated_eff(eff_type="part") - self.target
         )
-        full_eff_score = abs(
-            self.equipment.calc_rated_eff(eff_type="full") - self.equipment.full_eff
-        )
-        part_eff_weight = 1.0
-        part_eff_weight_alt = 1.0
-        full_eff_weight = 1.0
-        full_eff_weight_alt = 1.0
-        curve_normal_score_weight = 1.0
-        rsme_weight = 0.5
-
-        if self.equipment.full_eff_alt > 0:
-            full_eff_score_alt = abs(
-                self.equipment.calc_rated_eff(eff_type="full", alt=True)
-                - self.equipment.full_eff_alt
-            )
-        else:
-            full_eff_score_alt = 0.0
         if self.target_alt > 0:
-            part_eff_score_alt = abs(
+            part_eff_score += abs(
                 self.equipment.calc_rated_eff(eff_type="part", alt=True)
                 - self.target_alt
             )
-        else:
-            part_eff_score_alt = 0.0
+        return part_eff_score
 
-        fit_score = (
-            part_eff_score * part_eff_weight
-            + part_eff_score_alt * part_eff_weight_alt
-            + full_eff_score * full_eff_weight
-            + full_eff_score_alt * full_eff_weight_alt
-            + curve_normal_score * curve_normal_score_weight
-            + rsme * rsme_weight
-        ) / (
-            part_eff_weight * 2
-            + full_eff_weight * 2
-            + curve_normal_score_weight * len(set_of_curves.curves)
-            + rsme_weight
+    def determine_full_load_fitness(self, set_of_curves):
+        # Temporary assign curve to equipment
+        self.equipment.set_of_curves = set_of_curves.curves
+        full_eff_score = abs(
+            self.equipment.calc_rated_eff(eff_type="full") - self.equipment.full_eff
         )
+        if self.equipment.full_eff_alt > 0:
+            full_eff_score += abs(
+                self.equipment.calc_rated_eff(eff_type="full", alt=True)
+                - self.equipment.full_eff_alt
+            )
+        return full_eff_score
 
-        return fit_score
+    def determine_normalization_fitness(self, set_of_curves):
+        # Temporary assign curve to equipment
+        self.equipment.set_of_curves = set_of_curves.curves
+        curve_normal_score = 0
+        for c in set_of_curves.curves:
+            if c.out_var in self.vars:
+                curve_normal_score += abs(1 - c.get_out_reference(self.equipment))
+        return curve_normal_score
 
     def scale_fitnesses(self, fitnesses, pop, scaling=True):
         """Scale the fitness scores to prevent best performers from dragging the whole population to a local extremum.
@@ -484,8 +488,8 @@ class generator:
             b = 0
 
         pop_scaled = [
-            (a * self.determine_fitness(set_of_curves) + b, set_of_curves)
-            for set_of_curves in pop
+            (a * score + b, set_of_curves)
+            for score, set_of_curves in zip(*[fitnesses, pop])
         ]
         return pop_scaled
 
