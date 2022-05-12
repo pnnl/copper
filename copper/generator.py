@@ -27,6 +27,7 @@ class generator:
         mutate=0.95,
         bounds=(6, 10),
         base_curves=[],
+        random_seed=None,
     ):
         self.equipment = equipment
         self.method = method
@@ -40,6 +41,8 @@ class generator:
         self.mutate = mutate
         self.bounds = bounds
         self.base_curves = base_curves
+        if isinstance(random_seed, int):
+            random.seed(random_seed)
 
     def generate_set_of_curves(self):
         """Generate set of curves using genetic algorithm.
