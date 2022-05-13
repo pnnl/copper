@@ -242,6 +242,10 @@ class chiller:
         bounds=(6, 10),
         base_curves=[],
         random_seed=None,
+        verbose=False,
+        export_path="",
+        export_format="json",
+        export_name="",
     ):
         """Generate a set of curves for a particular chiller() object.
 
@@ -277,7 +281,18 @@ class chiller:
             base_curves,
             random_seed,
         )
-        return ga.generate_set_of_curves()
+        set_of_curves = ga.generate_set_of_curves(verbose=verbose)
+
+        if len(export_path):
+            set_of_curves_obj = SetofCurves()
+            set_of_curves_obj.curves = set_of_curves
+            set_of_curves_obj.eqp = self
+            set_of_curves_obj.export(
+                path=export_path, fmt=export_format, name=export_name
+            )
+            return True
+        else:
+            return set_of_curves
 
     def get_eir_ref(self, alt):
         # Retrieve equipment efficiency and unit
