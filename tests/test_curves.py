@@ -4,11 +4,15 @@ import copper as cp
 import matplotlib.pyplot as plt
 import numpy as np
 import CoolProp.CoolProp as CP
+import os
+
+location = os.path.dirname(os.path.realpath(__file__))
+chiller_lib = os.path.join(location, "../copper/lib", "chiller_curves.json")
 
 
 class TestCurves(TestCase):
     def test_curves(self):
-        lib = cp.Library(path="./lib/chiller_curves.json")
+        lib = cp.Library(path=chiller_lib)
 
         # Curve lookup by name
         c_name = "27"
@@ -68,7 +72,7 @@ class TestCurves(TestCase):
 
     def test_curve_conversion(self):
         # Define equipment
-        lib = cp.Library(path="./lib/chiller_curves.json", rating_std="ahri_550/590")
+        lib = cp.Library(path=chiller_lib, rating_std="ahri_550/590")
         chlr = cp.chiller(
             compressor_type="centrifugal",
             condenser_type="water",
@@ -122,7 +126,7 @@ class TestCurves(TestCase):
         ]
 
         # Run unittest with a centrifugal chiller
-        lib = cp.Library(path="./lib/chiller_curves.json")
+        lib = cp.Library(path=chiller_lib)
         ep_wtr_screw = lib.find_set_of_curvess_from_lib(
             filters=filters + [("source", "2"), ("compressor_type", "screw")]
         )
@@ -202,7 +206,7 @@ class TestCurves(TestCase):
     def test_flow_calcs_after_agg(self):
 
         # Load library
-        lib = cp.Library(path="./lib/chiller_curves.json")
+        lib = cp.Library(path=chiller_lib)
 
         # Determine aggregated curve
         ranges = {

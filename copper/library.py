@@ -3,9 +3,12 @@ from copper.units import *
 from copper.curves import *
 import copper.chiller
 
+location = os.path.dirname(os.path.realpath(__file__))
+chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
+
 
 class Library:
-    def __init__(self, path="./lib/chiller_curves.json", rating_std="", export=False):
+    def __init__(self, path=chiller_lib, rating_std="", export=False):
         self.path = path
         self.rating_std = rating_std
 
@@ -23,7 +26,8 @@ class Library:
                 props = inspect.getfullargspec(
                     eval("copper." + vals["eqp_type"]).__init__
                 )[0]
-                props.remove("self")
+                if "self" in props:
+                    props.remove("self")
 
                 # Set the equipment properties
                 # using values from the library

@@ -11,6 +11,9 @@ import copy, random
 from copper.library import *
 from copper.curves import *
 
+location = os.path.dirname(os.path.realpath(__file__))
+chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
+
 
 class generator:
     def __init__(
@@ -44,7 +47,7 @@ class generator:
         if isinstance(random_seed, int):
             random.seed(random_seed)
 
-    def generate_set_of_curves(self):
+    def generate_set_of_curves(self, verbose=False):
         """Generate set of curves using genetic algorithm.
 
         :return: Set of curves
@@ -78,7 +81,7 @@ class generator:
             if self.equipment.type == "chiller":
                 # TODO: implement other methods
                 if self.method == "best_match":
-                    lib = Library(path="./lib/chiller_curves.json")
+                    lib = Library(path=chiller_lib)
 
                 # Define chiller properties
                 filters = [
@@ -107,10 +110,10 @@ class generator:
             ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
         # Run generator
-        self.run_ga(curves=self.base_curves)
+        self.run_ga(curves=self.base_curves, verbose=verbose)
         return self.equipment.set_of_curves
 
-    def run_ga(self, curves, debug=True):
+    def run_ga(self, curves, verbose=False):
         """Run genetic algorithm.
 
             :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
@@ -128,7 +131,7 @@ class generator:
             while gen <= self.max_gen and not self.is_target_met():
                 self.evolve_population(self.pop)
                 gen += 1
-                if debug:
+                if verbose:
                     if self.target_alt > 0:
                         part_rating_alt = round(
                             self.equipment.calc_rated_eff(eff_type="part", alt=True), 4
@@ -165,7 +168,7 @@ class generator:
                     )
                 )
 
-        print("Curve coefficients calculated in {} generations.".format(gen))
+        print("Target met after {} generations.".format(gen))
         return self.pop
 
     def is_target_met(self):
