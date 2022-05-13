@@ -603,8 +603,8 @@ class chiller:
         lib = Library(path=lib_path)
         filters = [
             ("eqp_type", "chiller"),
-            ("compressor_type", self.compressor_type),
             ("condenser_type", self.condenser_type),
+            ("compressor_speed", self.compressor_speed),
             ("sim_engine", self.sim_engine),
             ("model", self.model),
         ]
@@ -640,6 +640,7 @@ class chiller:
         :return sets: (list of objects) - list of SetofCurves object corresponding to seed curves
         """
         # Selecting the relevant filters based on compressor type
+        print(filters)
         if self.compressor_type == "positive_displacement":
             tr_wtr_screw = lib.find_set_of_curvess_from_lib(
                 filters=filters + [("compressor_type", "screw")], part_eff_flag=True
@@ -684,8 +685,8 @@ class chiller:
             sets = None
 
         assert sets is not None
+        print(f"sets: {sets}")
 
-        # removing eir-f-plr-dt from SetofCurves obejct
         for cset in sets:
             cset.remove_curve("eir-f-plr-dt")
 

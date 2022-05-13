@@ -27,6 +27,7 @@ class generator:
         mutate=0.95,
         bounds=(6, 10),
         base_curves=[],
+        num_nearest_neighbors=10
     ):
         self.equipment = equipment
         self.method = method
@@ -40,6 +41,7 @@ class generator:
         self.mutate = mutate
         self.bounds = bounds
         self.base_curves = base_curves
+        self.num_nearest_neighbors = num_nearest_neighbors
 
     def generate_set_of_curves(self):
         """Generate set of curves using genetic algorithm.
@@ -78,18 +80,18 @@ class generator:
             else:
                 seed_curves = self.equipment.get_seed_curves()  # get seed curves
                 ranges, misc_attr = self.equipment.ranges, self.equipment.misc_attr
-                if self.method == "nn-wt-avg":
+                if self.method == "nearest_neighbor":
                     self.base_curve = seed_curves.get_aggregated_set_of_curves(
                         ranges=ranges,
                         misc_attr=misc_attr,
                         method="NN-weighted-average",
-                        N=10,
+                        N=self.num_nearest_neighbors,
                     )
                     self.base_curves = [self.base_curve]
                     self.df, _ = seed_curves.nearest_neighbor_sort(
-                        target_attr=misc_attr, N=10
+                        target_attr=misc_attr, N=self.num_nearest_neighbors
                     )
-                elif self.method == "wt-avg":
+                elif self.method == "weighted_average":
                     self.base_curve = seed_curves.get_aggregated_set_of_curves(
                         ranges=ranges, misc_attr=misc_attr, method="weighted-average"
                     )

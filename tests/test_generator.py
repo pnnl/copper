@@ -217,7 +217,7 @@ class TestAlgorithm(TestCase):
         )
 
         tol = 0.005
-        method = "nn-wt-avg"
+        method = "nearest_neighbor"
 
         chlr_curves_set = chlr.generate_set_of_curves(
             vars=out_var, tol=tol, method=method
