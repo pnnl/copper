@@ -661,6 +661,13 @@ class chiller:
         :param filters: (list) - list of tuples containing the relevant filter keys and values
         :return sets: (list of objects) - list of SetofCurves object corresponding to seed curves
         """
+
+        # add a block for constant + variable compressor speed
+        if self.compressor_speed in ["constant", "variable"]:
+            filters = filters + [("compressor_speed", self.compressor_speed)]
+        elif self.compressor_speed == "any":
+            filters = filters
+
         # Selecting the relevant filters based on compressor type
         if self.compressor_type == "positive_displacement":
             tr_wtr_screw = lib.find_set_of_curvess_from_lib(
@@ -696,6 +703,14 @@ class chiller:
                 part_eff_flag=True,
             )
             sets = tr_wtr_screw + tr_wtr_scroll + tr_wtr_rec + ep_wtr_cent
+        elif self.compressor_type == "scroll/screw":
+            tr_wtr_screw = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "screw")], part_eff_flag=True
+            )
+            tr_wtr_scroll = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "scroll")], part_eff_flag=True
+            )
+            sets = tr_wtr_screw + tr_wtr_scroll
         elif self.compressor_type in ["scroll", "screw", "reciprocating"]:
             ep_wtr = lib.find_set_of_curvess_from_lib(
                 filters=filters + [("compressor_type", self.compressor_type)],
@@ -704,30 +719,6 @@ class chiller:
             sets = ep_wtr
         else:
             sets = None
-
-        # add a block for constant + variable compressor speed
-        if self.compressor_type == "any":
-            const_sets = lib.find_set_of_curvess_from_lib(
-                filters=filters + [("compressor_speed", "constant")],
-                part_eff_flag=True,
-            )
-            var_sets = lib.find_set_of_curvess_from_lib(
-                filters=filters + [("compressor_speed", "variable")],
-                part_eff_flag=True,
-            )
-            sets += const_sets + var_sets
-        elif self.compressor_type == "constant":
-            const_sets = lib.find_set_of_curvess_from_lib(
-                filters=filters + [("compressor_speed", "constant")],
-                part_eff_flag=True,
-            )
-            sets += const_sets
-        elif self.compressor_type == "variable":
-            var_sets = lib.find_set_of_curvess_from_lib(
-                filters=filters + [("compressor_speed", "variable")],
-                part_eff_flag=True,
-            )
-            sets += var_sets
 
         assert sets is not None
 
@@ -741,10 +732,6 @@ class chiller:
         :csets (list) - list of Set of Curves object corresponding to selected chillers from libraru
         """
 
-        if lib is None or filters is None or csets is None:
-            lib, filters = self.get_lib_and_filters()
-            csets = self.get_curves_from_lib(lib=lib, filters=filters)
-
         assert self.compressor_type in [
             "centrifugal",
             "any",
@@ -752,9 +739,13 @@ class chiller:
             "reciprocating",
             "scroll",
             "screw",
+            "scroll/screw",
         ]
-
         assert self.compressor_speed in ["constant", "variable", "any"]
+
+        if lib is None or filters is None or csets is None:
+            lib, filters = self.get_lib_and_filters()
+            csets = self.get_curves_from_lib(lib=lib, filters=filters)
 
         FullEffUnit = Units(self.full_eff, self.full_eff_unit)
         full_eff_cop = FullEffUnit.conversion("cop")
