@@ -3,10 +3,14 @@ from unittest import TestCase
 import copper as cp
 import pickle as pkl
 import CoolProp.CoolProp as CP
+import os
+
+location = os.path.dirname(os.path.realpath(__file__))
+chiller_lib = os.path.join(location, "../copper/lib", "chiller_curves.json")
 
 
 class TestChiller(TestCase):
-    lib = cp.Library(path="./lib/chiller_curves.json")
+    lib = cp.Library(path=chiller_lib)
 
     def test_get_reference_variable(self):
 

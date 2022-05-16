@@ -36,6 +36,37 @@ class TestAlgorithm(TestCase):
         self.assertTrue(part_eff < part_eff_target * (1 + tol), part_eff)
         self.assertTrue(part_eff > part_eff_target * (1 - tol), part_eff)
 
+    def test_random_init(self):
+
+        full_eff_target = 0.650
+        part_eff_target = 0.480
+
+        chlr = cp.chiller(
+            ref_cap=300,
+            ref_cap_unit="ton",
+            full_eff=full_eff_target,
+            full_eff_unit="kw/ton",
+            part_eff=part_eff_target,
+            part_eff_unit="kw/ton",
+            sim_engine="energyplus",
+            model="ect_lwt",
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant",
+        )
+
+        ga_1 = cp.generator(chr, random_seed=1)
+        ga_1_vals = [ga_1.get_random() for i in range(5)]
+
+        ga_2 = cp.generator(chr, random_seed=1)
+        ga_2_vals = [ga_2.get_random() for i in range(5)]
+
+        ga_3 = cp.generator(chr)
+        ga_3_vals = [ga_3.get_random() for i in range(5)]
+
+        self.assertTrue(ga_1_vals == ga_2_vals)
+        self.assertTrue(ga_1_vals != ga_3_vals)
+
     def test_gradients(self):
         chlr = cp.chiller(
             ref_cap=300,

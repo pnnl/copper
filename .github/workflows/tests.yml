@@ -1,4 +1,4 @@
-name: Python package
+name: Tests
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
     - name: Run Black
       run: |
         black -l 88 copper tests --check
-    - name: Test with Nose
+    - name: Tests with Nose
       run: |
         export PYTHONUNBUFFERED=1
         . ./.venv/bin/activate

@@ -1,4 +1,4 @@
-import warnings
+import warnings, json, os
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -472,24 +472,27 @@ class SetofCurves:
         :rtype: boolean
 
         """
-        curve_export = ""
+        if fmt == "json":
+            curve_export = {}
+            curve_export[name] = []
+        else:
+            curve_export = ""
         for curve in self.curves:
             curve_type = curve.type
             self.name = self.name.replace("/", "_").replace(" ", "_")
             if fmt == "idf":
-                # if self.eqp.sim_engine == "energyplus":
                 if curve_type == "quad":
-                    cuvre_type = "Curve:Quadratic"
+                    curve_type = "Curve:Quadratic"
                 elif curve_type == "bi_quad":
-                    cuvre_type = "Curve:Biquadratic"
+                    curve_type = "Curve:Biquadratic"
                 elif curve_type == "bi_cub":
-                    cuvre_type = "Curve:Bicubic"
+                    curve_type = "Curve:Bicubic"
                 elif curve_type == "cubic":
-                    cuvre_type = "Curve:Cubic"
+                    curve_type = "Curve:Cubic"
                 curve_export += (
-                    "\n{},\n".format(cuvre_type)
+                    "\n{},\n".format(curve_type)
                     if len(curve_export)
-                    else "{},\n".format(cuvre_type)
+                    else "{},\n".format(curve_type)
                 )
                 curve_export += "   {}_{},\n".format(self.name, curve.out_var)
                 for i in range(1, curve.nb_coeffs() + 1):
@@ -515,13 +518,6 @@ class SetofCurves:
                 curve_export += (
                     "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
                 )
-                #                else:
-                #                    # TODO: implement export to DOE-2 format
-                #                    raise ValueError(
-                #                        "Export to the {} input format is not yet implemented.".format(
-                #                            self.sim_engine
-                #                        )
-                #                    )
                 filen = open(path + "/" + self.name + ".{}".format(fmt), "w+")
                 filen.write(curve_export)
             elif fmt == "csv":
@@ -535,6 +531,14 @@ class SetofCurves:
                     filen = open(path + "/" + name + ".{}".format(fmt), "a+")
                 filen.write(curve_export)
                 curve_export = ""
+            elif fmt == "json":
+                c = curve.__dict__
+                c.pop("eqp")
+                curve_export[name].append(c)
+        if fmt == "json":
+            with open(os.path.join(path, f"{name}.json"), "w", encoding="utf-8") as f:
+                json.dump(curve_export, f, indent=4)
+
         return True
 
     def remove_curve(self, out_var):
