@@ -8,6 +8,7 @@ from copper.library import *
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
 
+
 class chiller:
     def __init__(
         self,
@@ -253,7 +254,7 @@ class chiller:
         export_path="",
         export_format="json",
         export_name="",
-        num_nearest_neighbors=10
+        num_nearest_neighbors=10,
     ):
         """Generate a set of curves for a particular chiller() object.
 
@@ -289,7 +290,7 @@ class chiller:
             bounds,
             base_curves,
             random_seed,
-            num_nearest_neighbors
+            num_nearest_neighbors,
         )
         set_of_curves = ga.generate_set_of_curves(verbose=verbose)
 
@@ -626,7 +627,6 @@ class chiller:
         filters = [
             ("eqp_type", "chiller"),
             ("condenser_type", self.condenser_type),
-            ("compressor_speed", self.compressor_speed),
             ("sim_engine", self.sim_engine),
             ("model", self.model),
         ]
@@ -669,7 +669,7 @@ class chiller:
             tr_wtr_scroll = lib.find_set_of_curvess_from_lib(
                 filters=filters + [("compressor_type", "scroll")], part_eff_flag=True
             )
-            tr_wtr_rec = find_set_of_curvess_from_lib(
+            tr_wtr_rec = lib.find_set_of_curvess_from_lib(
                 filters=filters + [("compressor_type", "reciprocating")],
                 part_eff_flag=True,
             )
@@ -705,6 +705,30 @@ class chiller:
         else:
             sets = None
 
+        # add a block for constant + variable compressor speed
+        if self.compressor_type == "any":
+            const_sets = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_speed", "constant")],
+                part_eff_flag=True,
+            )
+            var_sets = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_speed", "variable")],
+                part_eff_flag=True,
+            )
+            sets += const_sets + var_sets
+        elif self.compressor_type == "constant":
+            const_sets = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_speed", "constant")],
+                part_eff_flag=True,
+            )
+            sets += const_sets
+        elif self.compressor_type == "variable":
+            var_sets = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_speed", "variable")],
+                part_eff_flag=True,
+            )
+            sets += var_sets
+
         assert sets is not None
 
         return sets
@@ -716,6 +740,7 @@ class chiller:
         :fitlers: (list) - list of tuples containing the filter keys and values
         :csets (list) - list of Set of Curves object corresponding to selected chillers from libraru
         """
+
         if lib is None or filters is None or csets is None:
             lib, filters = self.get_lib_and_filters()
             csets = self.get_curves_from_lib(lib=lib, filters=filters)
@@ -724,10 +749,12 @@ class chiller:
             "centrifugal",
             "any",
             "positive_displacement",
-            "reciporating"
+            "reciprocating",
             "scroll",
             "screw",
         ]
+
+        assert self.compressor_speed in ["constant", "variable", "any"]
 
         FullEffUnit = Units(self.full_eff, self.full_eff_unit)
         full_eff_cop = FullEffUnit.conversion("cop")

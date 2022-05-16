@@ -51,7 +51,6 @@ class generator:
         if isinstance(random_seed, int):
             random.seed(random_seed)
 
-
     def generate_set_of_curves(self, verbose=False):
         """Generate set of curves using genetic algorithm.
 
