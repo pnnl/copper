@@ -230,7 +230,7 @@ class TestAlgorithm(TestCase):
         chlr = cp.chiller(
             compressor_type="centrifugal",
             condenser_type="water",
-            compressor_speed="constant, variable",
+            compressor_speed="any",
             ref_cap=225,
             ref_cap_unit="ton",
             full_eff=full_eff_target,
