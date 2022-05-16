@@ -30,8 +30,8 @@ class generator:
         mutate=0.95,
         bounds=(6, 10),
         base_curves=[],
+        random_seed=None,
         num_nearest_neighbors=10,
-        random_seed=None
     ):
         self.equipment = equipment
         self.method = method

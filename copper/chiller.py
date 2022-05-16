@@ -253,6 +253,7 @@ class chiller:
         export_path="",
         export_format="json",
         export_name="",
+        num_nearest_neighbors=10
     ):
         """Generate a set of curves for a particular chiller() object.
 
@@ -288,6 +289,7 @@ class chiller:
             bounds,
             base_curves,
             random_seed,
+            num_nearest_neighbors
         )
         set_of_curves = ga.generate_set_of_curves(verbose=verbose)
 
@@ -660,7 +662,6 @@ class chiller:
         :return sets: (list of objects) - list of SetofCurves object corresponding to seed curves
         """
         # Selecting the relevant filters based on compressor type
-        print(filters)
         if self.compressor_type == "positive_displacement":
             tr_wtr_screw = lib.find_set_of_curvess_from_lib(
                 filters=filters + [("compressor_type", "screw")], part_eff_flag=True
