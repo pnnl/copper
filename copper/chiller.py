@@ -681,12 +681,6 @@ class chiller:
                 part_eff_flag=True,
             )
             sets = tr_wtr_screw + tr_wtr_scroll + tr_wtr_rec
-        elif self.compressor_type == "centrifugal":
-            ep_wtr_cent = lib.find_set_of_curvess_from_lib(
-                filters=filters + [("compressor_type", "centrifugal")],
-                part_eff_flag=True,
-            )
-            sets = ep_wtr_cent
         elif self.compressor_type == "any":
             tr_wtr_screw = lib.find_set_of_curvess_from_lib(
                 filters=filters + [("compressor_type", "screw")], part_eff_flag=True
@@ -717,6 +711,12 @@ class chiller:
                 part_eff_flag=True,
             )
             sets = ep_wtr
+        elif self.compressor_type == "centrifugal":
+            ep_wtr_cent = lib.find_set_of_curvess_from_lib(
+                filters=filters + [("compressor_type", "centrifugal")],
+                part_eff_flag=True,
+            )
+            sets = ep_wtr_cent
         else:
             sets = None
 
