@@ -2,6 +2,7 @@ from unittest import TestCase
 
 import copper as cp
 import pickle as pkl
+import numpy as np
 import CoolProp.CoolProp as CP
 import os
 
