@@ -136,7 +136,14 @@ class SetsofCurves:
                 y_s = [list(map(lambda x: statistics.median(x), zip(*vals)))]
             elif method == "weighted-average":
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr)
-                y_s = [list(map(lambda x: np.dot(df["score"].values, x), zip(*vals)))]
+                sorted_vals = list(
+                    map(vals.__getitem__, df.index.values)
+                )  # adding this incase of NaN in dfs
+                y_s = [
+                    list(
+                        map(lambda x: np.dot(df["score"].values, x), zip(*sorted_vals))
+                    )
+                ]
             elif method == "NN-weighted-average":
                 # first make sure that the user has specified to pick N values
                 try:
@@ -271,7 +278,6 @@ class SetsofCurves:
                     df[var] = target_attr[var]
             else:
                 df = df.dropna()
-
             assert len(df) > 0
 
             if N is not None:

@@ -2,6 +2,7 @@ from unittest import TestCase
 
 import copper as cp
 import pickle as pkl
+import numpy as np
 import CoolProp.CoolProp as CP
 import os
 
@@ -259,3 +260,44 @@ class TestChiller(TestCase):
         )
         cop_2 = round(chlr.calc_rated_eff("full", "cop"), 2)
         self.assertTrue(cop_1 == cop_2, f"{cop_1} is different than {cop_2}")
+
+    def test_curves_fromm_lib(self):
+
+        full_eff_target = 0.55
+        part_eff_target = 0.38
+
+        TestChlr = cp.chiller(
+            ref_cap=400,
+            ref_cap_unit="ton",
+            full_eff=full_eff_target,
+            full_eff_unit="kw/ton",
+            part_eff=part_eff_target,
+            part_eff_unit="kw/ton",
+            sim_engine="energyplus",
+            model="ect_lwt",
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant",
+        )
+
+        lib, filters = TestChlr.get_lib_and_filters()
+        csets = TestChlr.get_curves_from_lib(lib=lib, filters=filters)
+
+        list_of_seed_bools = []
+
+        for cs in csets:
+            cond_type = cs.eqp.condenser_type
+            comp_type = cs.eqp.compressor_type
+            comp_speed = cs.eqp.compressor_speed
+
+            if (
+                cond_type == "water"
+                and comp_type == "centrifugal"
+                and comp_speed == "constant"
+            ):
+                list_of_seed_bools.append(True)
+            else:
+                list_of_seed_bools.append(False)
+
+        seed_curve_check = np.asarray(list_of_seed_bools)
+        self.assertTrue(np.all(seed_curve_check) == True)
