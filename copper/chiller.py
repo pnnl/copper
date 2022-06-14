@@ -1,3 +1,9 @@
+"""
+chiller.py
+====================================
+This is the chiller module of Copper. The module handles all calculations and data manipulation related to chillers.
+"""
+
 import CoolProp.CoolProp as CP
 from scipy import optimize
 from copper.generator import *
