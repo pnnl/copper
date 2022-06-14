@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Code Documentation &#8212; Copper 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Additional Examples" href="Additional Examples.html" />
@@ -38,283 +36,258 @@
 <div class="section" id="generator-py">
 <h2>generator.py<a class="headerlink" href="#generator-py" title="Permalink to this headline">¶</a></h2>
 <p>This is the generator module of Copper. The generator uses a genetic algorithm to find set of performance curves that matches the user-specified equipment definitions.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="copper.generator.generator">
-<em class="property">class </em><code class="descclassname">copper.generator.</code><code class="descname">generator</code><span class="sig-paren">(</span><em>equipment</em>, <em>method='best_match'</em>, <em>pop_size=100</em>, <em>tol=0.005</em>, <em>max_gen=300</em>, <em>vars=''</em>, <em>sFac=0.5</em>, <em>retain=0.2</em>, <em>random_select=0.1</em>, <em>mutate=0.95</em>, <em>bounds=(6</em>, <em>10)</em>, <em>base_curves=[]</em>, <em>random_seed=None</em>, <em>num_nearest_neighbors=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">copper.generator.</code><code class="sig-name descname">generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'best_match'</span></em>, <em class="sig-param"><span class="n">pop_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.005</span></em>, <em class="sig-param"><span class="n">max_gen</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">vars</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">sFac</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">retain</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">random_select</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">mutate</span><span class="o">=</span><span class="default_value">0.95</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">6, 10</span></em>, <em class="sig-param"><span class="n">base_curves</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">random_seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_nearest_neighbors</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.calc_fit">
-<code class="descname">calc_fit</code><span class="sig-paren">(</span><em>pop</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.calc_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.calc_fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calc_fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pop</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.calc_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.calc_fit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.check_gradients">
-<code class="descname">check_gradients</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.check_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.check_gradients" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">check_gradients</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.check_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.check_gradients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the objective of the gradient of the three curves are monotonic and have the sign we expect.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Verification result</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Verification result</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.compute_grad">
-<code class="descname">compute_grad</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>sign_val</em>, <em>threshold=1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.compute_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.compute_grad" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_grad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">sign_val</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">1e-05</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.compute_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.compute_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check, for a single curve, if the gradient has the sign we expect. called by check_gradients.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Verification result</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Verification result</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.determine_full_load_fitness">
-<code class="descname">determine_full_load_fitness</code><span class="sig-paren">(</span><em>set_of_curves</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.determine_full_load_fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.determine_full_load_fitness" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">determine_full_load_fitness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">set_of_curves</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.determine_full_load_fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.determine_full_load_fitness" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.determine_normalization_fitness">
-<code class="descname">determine_normalization_fitness</code><span class="sig-paren">(</span><em>set_of_curves</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.determine_normalization_fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.determine_normalization_fitness" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">determine_normalization_fitness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">set_of_curves</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.determine_normalization_fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.determine_normalization_fitness" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.determine_part_load_fitness">
-<code class="descname">determine_part_load_fitness</code><span class="sig-paren">(</span><em>set_of_curves</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.determine_part_load_fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.determine_part_load_fitness" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">determine_part_load_fitness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">set_of_curves</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.determine_part_load_fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.determine_part_load_fitness" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.evolve_population">
-<code class="descname">evolve_population</code><span class="sig-paren">(</span><em>pop</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.evolve_population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.evolve_population" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">evolve_population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pop</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.evolve_population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.evolve_population" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evolve population to create a new generation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – Population of individual, i.e. list of curves</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – Population of individual, i.e. list of curves</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.fitness_scale_grading">
-<code class="descname">fitness_scale_grading</code><span class="sig-paren">(</span><em>pop</em>, <em>scaling=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.fitness_scale_grading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.fitness_scale_grading" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fitness_scale_grading</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pop</span></em>, <em class="sig-param"><span class="n">scaling</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.fitness_scale_grading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.fitness_scale_grading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate fitness, scale, and grade for a population.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – Population of individual, i.e. list of curves</li>
-<li><strong>scaling</strong> (<em>boolean</em>) – Linearly scale fitness scores</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – Population of individual, i.e. list of curves</p></li>
+<li><p><strong>scaling</strong> (<em>boolean</em>) – Linearly scale fitness scores</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List sets of curves graded by fitness scores</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>()</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List sets of curves graded by fitness scores</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.generate_population">
-<code class="descname">generate_population</code><span class="sig-paren">(</span><em>curves</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.generate_population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.generate_population" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">generate_population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curves</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.generate_population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.generate_population" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate population of sets of curves.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>curves</strong> (<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves"><em>SetofCurves</em></a><em>(</em><em>)</em>) – Initial set of curves to be modified by the algorithm</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Verification result</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>curves</strong> (<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves"><em>SetofCurves</em></a><em>(</em><em>)</em>) – Initial set of curves to be modified by the algorithm</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Verification result</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.generate_set_of_curves">
-<code class="descname">generate_set_of_curves</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.generate_set_of_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.generate_set_of_curves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">generate_set_of_curves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.generate_set_of_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.generate_set_of_curves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate set of curves using genetic algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verbose</strong> (<em>string</em>) – Output results at each generation.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Set of curves</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> (<em>string</em>) – Output results at each generation.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set of curves</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.get_random">
-<code class="descname">get_random</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.get_random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.get_random" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_random</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.get_random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.get_random" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate random number between two bounds.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Randomly generated value</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Randomly generated value</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.grade_population">
-<code class="descname">grade_population</code><span class="sig-paren">(</span><em>pop_scaled</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.grade_population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.grade_population" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">grade_population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pop_scaled</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.grade_population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.grade_population" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grade population.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pop_scaled</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em><em>)</em>) – List of tuples representing the fitness of a set of curves and the set of curves</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of set of curves graded from the best to the worst</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>(<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>())</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pop_scaled</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em><em>)</em>) – List of tuples representing the fitness of a set of curves and the set of curves</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of set of curves graded from the best to the worst</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>(<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>())</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.identify_best_performer">
-<code class="descname">identify_best_performer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.identify_best_performer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.identify_best_performer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">identify_best_performer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.identify_best_performer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.identify_best_performer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign the best individual to the equipment.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.individual">
-<code class="descname">individual</code><span class="sig-paren">(</span><em>curves</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.individual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.individual" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">individual</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curves</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.individual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.individual" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create new individual.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>curves</strong> (<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves"><em>SetofCurves</em></a><em>(</em><em>)</em>) – Initial set of curves to be modified by the algorithm</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">New set of curves randomly modified</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>curves</strong> (<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves"><em>SetofCurves</em></a><em>(</em><em>)</em>) – Initial set of curves to be modified by the algorithm</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>New set of curves randomly modified</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.is_target_met">
-<code class="descname">is_target_met</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.is_target_met"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.is_target_met" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_target_met</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.is_target_met"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.is_target_met" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the objective of the optimization through the algorithm have been met.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Verification result</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Verification result</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.perform_crossover">
-<code class="descname">perform_crossover</code><span class="sig-paren">(</span><em>parents</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.perform_crossover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.perform_crossover" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">perform_crossover</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parents</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.perform_crossover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.perform_crossover" title="Permalink to this definition">¶</a></dt>
 <dd><p>Crossover best individuals.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parents</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of best performing individuals of the generation</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parents</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of best performing individuals of the generation</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.perform_mutation">
-<code class="descname">perform_mutation</code><span class="sig-paren">(</span><em>individual</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.perform_mutation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.perform_mutation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">perform_mutation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">individual</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.perform_mutation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.perform_mutation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mutate individual.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>individual</strong> (<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves"><em>SetofCurves</em></a><em>(</em><em>)</em>) – Set of curves</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Modified indivudal</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>individual</strong> (<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves"><em>SetofCurves</em></a><em>(</em><em>)</em>) – Set of curves</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Modified indivudal</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.run_ga">
-<code class="descname">run_ga</code><span class="sig-paren">(</span><em>curves</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.run_ga"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.run_ga" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run_ga</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curves</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.run_ga"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.run_ga" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run genetic algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>curves</strong> (<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves"><em>SetofCurves</em></a><em>(</em><em>)</em>) – Initial set of curves to be modified by the algorithm</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Final population of sets of curves</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>()</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>curves</strong> (<a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves"><em>SetofCurves</em></a><em>(</em><em>)</em>) – Initial set of curves to be modified by the algorithm</p></li>
+<li><p><strong>verbose</strong> (<em>string</em>) – Output results at each generation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Final population of sets of curves</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.generator.generator.scale_fitnesses">
-<code class="descname">scale_fitnesses</code><span class="sig-paren">(</span><em>fitnesses</em>, <em>pop</em>, <em>scaling=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.scale_fitnesses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.scale_fitnesses" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">scale_fitnesses</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fitnesses</span></em>, <em class="sig-param"><span class="n">pop</span></em>, <em class="sig-param"><span class="n">scaling</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/generator.html#generator.scale_fitnesses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.generator.generator.scale_fitnesses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scale the fitness scores to prevent best performers from dragging the whole population to a local extremum.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>fitnesses</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of fitness for each set of curves</li>
-<li><strong>pop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of sets of curves</li>
-<li><strong>scaling</strong> (<em>boolean</em>) – Specifies whether of not to linearly scale the fitnesses</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fitnesses</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of fitness for each set of curves</p></li>
+<li><p><strong>pop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of sets of curves</p></li>
+<li><p><strong>scaling</strong> (<em>boolean</em>) – Specifies whether of not to linearly scale the fitnesses</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of tuples representing the fitness of a set of curves and the set of curves</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>())</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of tuples representing the fitness of a set of curves and the set of curves</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>())</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -323,339 +296,282 @@
 <span class="target" id="module-copper.curves"></span><div class="section" id="curves-py">
 <h2>curves.py<a class="headerlink" href="#curves-py" title="Permalink to this headline">¶</a></h2>
 <p>This is the curves module of Copper. It handles all operations and manipulation related to curves, set of curves, and sets of curves.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="copper.curves.Curve">
-<em class="property">class </em><code class="descclassname">copper.curves.</code><code class="descname">Curve</code><span class="sig-paren">(</span><em>eqp</em>, <em>c_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">copper.curves.</code><code class="sig-name descname">Curve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eqp</span></em>, <em class="sig-param"><span class="n">c_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.Curve.compute_grad">
-<code class="descname">compute_grad</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>sign_val</em>, <em>threshold=1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.compute_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.compute_grad" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compute_grad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">sign_val</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">1e-05</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.compute_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.compute_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check, for a single curve, if the gradient has the sign we expect. called by check_gradients.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Verification result</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Verification result</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.Curve.convert_coefficients_to_ip">
-<code class="descname">convert_coefficients_to_ip</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.convert_coefficients_to_ip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.convert_coefficients_to_ip" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">convert_coefficients_to_ip</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.convert_coefficients_to_ip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.convert_coefficients_to_ip" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.Curve.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the output of a curve.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – First curve independent variable</li>
-<li><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Second curve independent variable</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – First curve independent variable</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Second curve independent variable</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Curve output</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Curve output</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.Curve.get_out_reference">
-<code class="descname">get_out_reference</code><span class="sig-paren">(</span><em>eqp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.get_out_reference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.get_out_reference" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_out_reference</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eqp</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.get_out_reference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.get_out_reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the reference output of a curve.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>eqp</strong> – Equipment</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>eqp</strong> – Equipment</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.Curve.nb_coeffs">
-<code class="descname">nb_coeffs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.nb_coeffs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.nb_coeffs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">nb_coeffs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.nb_coeffs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.nb_coeffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find number of curve coefficients.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Number of curve coefficients</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Number of curve coefficients</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.Curve.normalized">
-<code class="descname">normalized</code><span class="sig-paren">(</span><em>data</em>, <em>x_norm</em>, <em>y_norm</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.normalized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.normalized" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">normalized</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">x_norm</span></em>, <em class="sig-param"><span class="n">y_norm</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.normalized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.normalized" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize curve around the reference data points.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>x_norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – First independent variable normalization points.</li>
-<li><strong>y_norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Second independent variable normalization points.</li>
-<li><strong>data</strong> (<em>DataFrame</em><em>(</em><em>)</em>) – DataFrame() object with the following columns: “X1”,”X1^2”,”X2”,”X2^2”,”X1*X2”, “Y”.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – First independent variable normalization points.</p></li>
+<li><p><strong>y_norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Second independent variable normalization points.</p></li>
+<li><p><strong>data</strong> (<em>DataFrame</em><em>(</em><em>)</em>) – DataFrame() object with the following columns: “X1”,”X1^2”,”X2”,”X2^2”,”X1*X2”, “Y”.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.Curve.regression">
-<code class="descname">regression</code><span class="sig-paren">(</span><em>data</em>, <em>curve_types</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.regression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.regression" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">regression</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">curve_types</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#Curve.regression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.Curve.regression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find curve coefficient by running a multivariate linear regression.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> (<em>DataFrame</em><em>(</em><em>)</em>) – DataFrame() object with the following columns: “X1”,”X1^2”,”X2”,”X2^2”,”X1*X2”, “Y”</li>
-<li><strong>curve_types</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of curves types</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataFrame</em><em>(</em><em>)</em>) – DataFrame() object with the following columns: “X1”,”X1^2”,”X2”,”X2^2”,”X1*X2”, “Y”</p></li>
+<li><p><strong>curve_types</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of curves types</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="copper.curves.SetofCurves">
-<em class="property">class </em><code class="descclassname">copper.curves.</code><code class="descname">SetofCurves</code><a class="reference internal" href="_modules/copper/curves.html#SetofCurves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">copper.curves.</code><code class="sig-name descname">SetofCurves</code><a class="reference internal" href="_modules/copper/curves.html#SetofCurves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetofCurves.export">
-<code class="descname">export</code><span class="sig-paren">(</span><em>path='./'</em>, <em>fmt='idf'</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.export" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">export</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'./'</span></em>, <em class="sig-param"><span class="n">fmt</span><span class="o">=</span><span class="default_value">'idf'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.export" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export curves to simulation engine input format.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path and file name, do not include the extension,
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Path and file name, do not include the extension,
 it will be added based on the simulation engine
-of the SetofCurves() object.</li>
-<li><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Input format type, currently not used. TODO: json, idf, inp.</li>
+of the SetofCurves() object.</p></li>
+<li><p><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Input format type, currently not used. TODO: json, idf, inp.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Success</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Success</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetofCurves.get_data_for_plotting">
-<code class="descname">get_data_for_plotting</code><span class="sig-paren">(</span><em>curve</em>, <em>norm</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.get_data_for_plotting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.get_data_for_plotting" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_data_for_plotting</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curve</span></em>, <em class="sig-param"><span class="n">norm</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.get_data_for_plotting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.get_data_for_plotting" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetofCurves.list_to_dict">
-<code class="descname">list_to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.list_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.list_to_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">list_to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.list_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.list_to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert curves from the set from a list to a dictionary, the key being the output variable type.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dictionary of curves</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary of curves</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetofCurves.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><em>out_var=[]</em>, <em>axes=[]</em>, <em>norm=True</em>, <em>color='Black'</em>, <em>alpha=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">out_var</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">axes</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">norm</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">'Black'</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.3</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot set of curves.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>out_var</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of the output variables to plot, e.g. <cite>eir-f-t</cite>, <cite>eir-f-plr</cite>, <cite>cap-f-t</cite>.
-Refer to JSON files structure for other output variables</li>
-<li><strong>axes</strong> (<em>matplotlib.pyplot.axes</em>) – Matplotlib pyplot axes</li>
-<li><strong>norm</strong> (<em>boolean</em>) – Normalize plot to reference values</li>
-<li><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Set of curves color</li>
-<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Transparency of the curves (0-1).</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_var</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of the output variables to plot, e.g. <cite>eir-f-t</cite>, <cite>eir-f-plr</cite>, <cite>cap-f-t</cite>.
+Refer to JSON files structure for other output variables</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.pyplot.axes</em>) – Matplotlib pyplot axes</p></li>
+<li><p><strong>norm</strong> (<em>boolean</em>) – Normalize plot to reference values</p></li>
+<li><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Set of curves color</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Transparency of the curves (0-1).</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Plotting success</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Plotting success</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetofCurves.remove_curve">
-<code class="descname">remove_curve</code><span class="sig-paren">(</span><em>out_var</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.remove_curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.remove_curve" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">remove_curve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">out_var</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetofCurves.remove_curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetofCurves.remove_curve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove curve for a particular output variables from the set</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>out_var</strong> (<em>string</em>) – Name of the output variable to remove from the set.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>out_var</strong> (<em>string</em>) – Name of the output variable to remove from the set.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="copper.curves.SetsofCurves">
-<em class="property">class </em><code class="descclassname">copper.curves.</code><code class="descname">SetsofCurves</code><span class="sig-paren">(</span><em>eqp</em>, <em>sets</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">copper.curves.</code><code class="sig-name descname">SetsofCurves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eqp</span></em>, <em class="sig-param"><span class="n">sets</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetsofCurves.check_vars_in_dictionary">
-<code class="descname">check_vars_in_dictionary</code><span class="sig-paren">(</span><em>vars</em>, <em>target_attr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.check_vars_in_dictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.check_vars_in_dictionary" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">check_vars_in_dictionary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vars</span></em>, <em class="sig-param"><span class="n">target_attr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.check_vars_in_dictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.check_vars_in_dictionary" title="Permalink to this definition">¶</a></dt>
 <dd><p>method to check that the vars specified by the user exists in target_attr
 :param vars: list -&gt; vars to calculate weights with, as specified by the user
 :param target_attr: list -&gt; target attributes
 :return not_in_dict: list -&gt; list of vars not in target_attr</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetsofCurves.get_aggregated_set_of_curves">
-<code class="descname">get_aggregated_set_of_curves</code><span class="sig-paren">(</span><em>method='weighted-average'</em>, <em>N=None</em>, <em>ranges={}</em>, <em>misc_attr={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.get_aggregated_set_of_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.get_aggregated_set_of_curves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_aggregated_set_of_curves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'weighted-average'</span></em>, <em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ranges</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">misc_attr</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.get_aggregated_set_of_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.get_aggregated_set_of_curves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine sets of curves based on aggregation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>method</strong> (<em>string</em>) – Type of aggregation, currently supported: ‘average’ and ‘median.</li>
-<li><strong>ranges</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – Dictionary that defines the ranges of values for each independent variable used to calculate aggregated dependent variable values.</li>
-<li><strong>misc_attr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – Dictionary that provides values for the aggregated set of curves.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>string</em>) – Type of aggregation, currently supported: ‘average’ and ‘median.</p></li>
+<li><p><strong>ranges</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – Dictionary that defines the ranges of values for each independent variable used to calculate aggregated dependent variable values.</p></li>
+<li><p><strong>misc_attr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a>) – Dictionary that provides values for the aggregated set of curves.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Aggregated set of curves.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Aggregated set of curves.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetsofCurves.l2_norm">
-<code class="descname">l2_norm</code><span class="sig-paren">(</span><em>df, target_attr, weights, vars=['full_eff', 'ref_cap']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.l2_norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.l2_norm" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> – df -&gt; dataframe containing the attributes of different equipments for a givne equipment type</li>
-<li><strong>target_attr</strong> – dict -&gt; contains the target attribute we want to find the closest match</li>
-<li><strong>weights</strong> – list/np.array -&gt; 1D list of weights. must have the same dimensions as vars</li>
-<li><strong>vars</strong> – list -&gt; list of str containing variable names we want to compute l2 norm with</li>
+<code class="sig-name descname">l2_norm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">target_attr</span></em>, <em class="sig-param"><span class="n">weights</span></em>, <em class="sig-param"><span class="n">vars</span><span class="o">=</span><span class="default_value">['full_eff', 'ref_cap']</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.l2_norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.l2_norm" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – df -&gt; dataframe containing the attributes of different equipments for a givne equipment type</p></li>
+<li><p><strong>target_attr</strong> – dict -&gt; contains the target attribute we want to find the closest match</p></li>
+<li><p><strong>weights</strong> – list/np.array -&gt; 1D list of weights. must have the same dimensions as vars</p></li>
+<li><p><strong>vars</strong> – list -&gt; list of str containing variable names we want to compute l2 norm with</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return Y:</th><td class="field-body"><p class="first last">np.array -&gt; l2 scores for all equiplemts/curves. same dimension as the size of df</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Return Y</dt>
+<dd class="field-even"><p>np.array -&gt; l2 scores for all equiplemts/curves. same dimension as the size of df</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetsofCurves.nearest_neighbor_sort">
-<code class="descname">nearest_neighbor_sort</code><span class="sig-paren">(</span><em>target_attr=None, vars=['ref_cap', 'full_eff'], N=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.nearest_neighbor_sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.nearest_neighbor_sort" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>target_attr</strong> – dict -&gt; target attributes we want to match</li>
-<li><strong>vars</strong> – list of str -&gt; the variables we want to use to compute our l2 score. note COP will be added</li>
-<li><strong>N</strong> – int -&gt; indicates the number of nearest neighbors to consider. N=None for weighted-average</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Return best_idx:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">int -&gt; index of set_of_curve that should be the closest fit</p>
-</td>
-</tr>
-</tbody>
-</table>
+<code class="sig-name descname">nearest_neighbor_sort</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_attr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vars</span><span class="o">=</span><span class="default_value">['ref_cap', 'full_eff']</span></em>, <em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.nearest_neighbor_sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.nearest_neighbor_sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs the weighted average and the nearest neighbor approach.
+:param target_attr: dict -&gt; target attributes we want to match
+:param vars: list of str -&gt; the variables we want to use to compute our l2 score. note COP will be added
+:param N: int -&gt; indicates the number of nearest neighbors to consider. N=None for weighted-average
+:param df: pd.DataFrame -&gt; dataframe with selected chiller names and the associated weightings
+:return best_idx: int -&gt; index of set_of_curve that should be the closest fit</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetsofCurves.normalize_vars">
-<code class="descname">normalize_vars</code><span class="sig-paren">(</span><em>df, target_attr=None, vars=['ref_cap', 'full_eff'], epsilon=1e-05, weights=None, N=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.normalize_vars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.normalize_vars" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> – df -&gt; input dataframe containing the variable inputs</li>
-<li><strong>target_attr</strong> – dict -&gt; reference targets with respect to which l2 score needs to computed</li>
-<li><strong>vars</strong> – list -&gt; list of str for variables we want to normalize</li>
+<code class="sig-name descname">normalize_vars</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">target_attr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vars</span><span class="o">=</span><span class="default_value">['ref_cap', 'full_eff']</span></em>, <em class="sig-param"><span class="n">epsilon</span><span class="o">=</span><span class="default_value">1e-05</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">N</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.normalize_vars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.normalize_vars" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – df -&gt; input dataframe containing the variable inputs</p></li>
+<li><p><strong>target_attr</strong> – dict -&gt; reference targets with respect to which l2 score needs to computed</p></li>
+<li><p><strong>vars</strong> – list -&gt; list of str for variables we want to normalize</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Param:</th><td class="field-body"><p class="first">weights: list -&gt; weights associated with each variable in vars</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Param:</th><td class="field-body"><p class="first">N: Number of nearest neighbors. should be none unless method = “NN-weighted-average”</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">df: df with added columns with normalized variables</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Return target_attr:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first">dict -&gt; added normalized values of var in vars</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Return best_curve_index:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">int -&gt; corresponding to the best curve</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Param</dt>
+<dd class="field-even"><p>weights: list -&gt; weights associated with each variable in vars</p>
+</dd>
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>N: Number of nearest neighbors. should be none unless method = “NN-weighted-average”</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>df: df with added columns with normalized variables</p>
+</dd>
+<dt class="field-odd">Return target_attr</dt>
+<dd class="field-odd"><p>dict -&gt; added normalized values of var in vars</p>
+</dd>
+<dt class="field-even">Return best_curve_index</dt>
+<dd class="field-even"><p>int -&gt; corresponding to the best curve</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.curves.SetsofCurves.softmax">
-<code class="descname">softmax</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.softmax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.softmax" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">softmax</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/curves.html#SetsofCurves.softmax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.curves.SetsofCurves.softmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>softmax function
 :param x: float -&gt; convert distances to scores/weights using softmax function</p>
 </dd></dl>
@@ -666,167 +582,150 @@ Refer to JSON files structure for other output variables</li>
 <span class="target" id="module-copper.library"></span><div class="section" id="library-py">
 <h2>library.py<a class="headerlink" href="#library-py" title="Permalink to this headline">¶</a></h2>
 <p>This is the library module of Copper. It contains functions used to parse the JSON library files used by Copper.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="copper.library.Library">
-<em class="property">class </em><code class="descclassname">copper.library.</code><code class="descname">Library</code><span class="sig-paren">(</span><em>path='C:\Users\lero023\OneDrive - PNNL\Documents\Projects\Copper\copper\lib\chiller_curves.json'</em>, <em>rating_std=''</em>, <em>export=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">copper.library.</code><code class="sig-name descname">Library</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'/qfs/people/rahm312/CODES/develop/copper/copper/lib/chiller_curves.json'</span></em>, <em class="sig-param"><span class="n">rating_std</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">export</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="method">
+<dl class="py method">
 <dt id="copper.library.Library.content">
-<code class="descname">content</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.content"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.content" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">content</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.content"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.content" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.library.Library.find_base_curves">
-<code class="descname">find_base_curves</code><span class="sig-paren">(</span><em>filters</em>, <em>eqp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.find_base_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.find_base_curves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">find_base_curves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filters</span></em>, <em class="sig-param"><span class="n">eqp</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.find_base_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.find_base_curves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find an existing equipment curve that best matches the equipment.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em><em>)</em>) – Filter represented by tuples (field, val)</li>
-<li><strong>eqp</strong> – Equipment object(e.g. chiller())</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em><em>)</em>) – Filter represented by tuples (field, val)</p></li>
+<li><p><strong>eqp</strong> – Equipment object(e.g. chiller())</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Set of curves object</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set of curves object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.library.Library.find_equipment">
-<code class="descname">find_equipment</code><span class="sig-paren">(</span><em>filters=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.find_equipment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.find_equipment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">find_equipment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filters</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.find_equipment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.find_equipment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find equipment matching specified filter in the curve library.</p>
 <p>Special filter characters:</p>
 <ul class="simple">
-<li>~! means “all except…”</li>
-<li>! means “do not include…”</li>
-<li>~ means “include…”</li>
+<li><p>~! means “all except…”</p></li>
+<li><p>! means “do not include…”</p></li>
+<li><p>~ means “include…”</p></li>
 </ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em><em>)</em>) – Filter represented by tuples (field, val)</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dictionary of field for each equipment matching specified filter</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>,<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[]]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em><em>)</em>) – Filter represented by tuples (field, val)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dictionary of field for each equipment matching specified filter</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>,<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[]]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.library.Library.find_set_of_curvess_from_lib">
-<code class="descname">find_set_of_curvess_from_lib</code><span class="sig-paren">(</span><em>filters=[]</em>, <em>part_eff_flag=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.find_set_of_curvess_from_lib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.find_set_of_curvess_from_lib" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">find_set_of_curvess_from_lib</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filters</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">part_eff_flag</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.find_set_of_curvess_from_lib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.find_set_of_curvess_from_lib" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve sets of curves from a library matching specific filters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em><em>)</em>) – Filter represented by tuples (field, val)</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">All set of curves object matching the filters</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>()</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em><em>)</em>) – Filter represented by tuples (field, val)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>All set of curves object matching the filters</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)">list</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.library.Library.get_best_match">
-<code class="descname">get_best_match</code><span class="sig-paren">(</span><em>eqp</em>, <em>matches</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.get_best_match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.get_best_match" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_best_match</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eqp</span></em>, <em class="sig-param"><span class="n">matches</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.get_best_match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.get_best_match" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the set of curves matching the equipment characteristics the best.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>eqp</strong> – Equipment object(e.g. chiller())</li>
-<li><strong>matches</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><em>]</em><em>]</em>) – All potential matches</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eqp</strong> – Equipment object(e.g. chiller())</p></li>
+<li><p><strong>matches</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>[</em><em>]</em><em>]</em>) – All potential matches</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Name of the set of curves that best matches the equipment characteristics</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Name of the set of curves that best matches the equipment characteristics</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.library.Library.get_curve">
-<code class="descname">get_curve</code><span class="sig-paren">(</span><em>c</em>, <em>c_name</em>, <em>eqp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.get_curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.get_curve" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_curve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">c_name</span></em>, <em class="sig-param"><span class="n">eqp</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.get_curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.get_curve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve individual attribute of a curve object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>c</strong> (<a class="reference internal" href="#copper.curves.Curve" title="copper.curves.Curve"><em>Curve</em></a><em>(</em><em>)</em>) – Curve object</li>
-<li><strong>c_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name of the curve object</li>
-<li><strong>eqp_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Type of equipment associated with the curve</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c</strong> (<a class="reference internal" href="#copper.curves.Curve" title="copper.curves.Curve"><em>Curve</em></a><em>(</em><em>)</em>) – Curve object</p></li>
+<li><p><strong>c_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Name of the curve object</p></li>
+<li><p><strong>eqp_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Type of equipment associated with the curve</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Curve object</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#copper.curves.Curve" title="copper.curves.Curve">Curve</a>()</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Curve object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#copper.curves.Curve" title="copper.curves.Curve">Curve</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.library.Library.get_set_of_curves_by_name">
-<code class="descname">get_set_of_curves_by_name</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.get_set_of_curves_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.get_set_of_curves_by_name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_set_of_curves_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.get_set_of_curves_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.get_set_of_curves_by_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve set of curves from the library by name.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Curve name</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Set of curves object</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Curve name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set of curves object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.library.Library.get_unique_eqp_fields">
-<code class="descname">get_unique_eqp_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.get_unique_eqp_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.get_unique_eqp_fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_unique_eqp_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.get_unique_eqp_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.get_unique_eqp_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all unique values for each field of a particular equipment.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dictionary showing all unique values for each equipment field.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>, ]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary showing all unique values for each equipment field.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>, ]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.library.Library.load_obj">
-<code class="descname">load_obj</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.load_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.load_obj" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_obj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/library.html#Library.load_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.library.Library.load_obj" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -835,26 +734,25 @@ Refer to JSON files structure for other output variables</li>
 <span class="target" id="module-copper.units"></span><div class="section" id="units-py">
 <h2>units.py<a class="headerlink" href="#units-py" title="Permalink to this headline">¶</a></h2>
 <p>This is the unit conversion module of Copper. It handles simple unit conversions to avoid creating additional dependencies.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="copper.units.Units">
-<em class="property">class </em><code class="descclassname">copper.units.</code><code class="descname">Units</code><span class="sig-paren">(</span><em>value</em>, <em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/units.html#Units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.units.Units" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">copper.units.</code><code class="sig-name descname">Units</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">unit</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/units.html#Units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.units.Units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="method">
+<dl class="py method">
 <dt id="copper.units.Units.conversion">
-<code class="descname">conversion</code><span class="sig-paren">(</span><em>new_unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/units.html#Units.conversion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.units.Units.conversion" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">conversion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_unit</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/units.html#Units.conversion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.units.Units.conversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert efficiency rating.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Unit after conversion</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Converted value</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Unit after conversion</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Converted value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -863,151 +761,143 @@ Refer to JSON files structure for other output variables</li>
 <span class="target" id="module-copper.chiller"></span><div class="section" id="chiller-py">
 <h2>chiller.py<a class="headerlink" href="#chiller-py" title="Permalink to this headline">¶</a></h2>
 <p>This is the chiller module of Copper. The module handles all calculations and data manipulation related to chillers.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="copper.chiller.chiller">
-<em class="property">class </em><code class="descclassname">copper.chiller.</code><code class="descname">chiller</code><span class="sig-paren">(</span><em>ref_cap</em>, <em>ref_cap_unit</em>, <em>full_eff</em>, <em>full_eff_unit</em>, <em>compressor_type</em>, <em>condenser_type</em>, <em>compressor_speed</em>, <em>part_eff=0</em>, <em>part_eff_unit=''</em>, <em>part_eff_ref_std='ahri_550/590'</em>, <em>part_eff_alt=0</em>, <em>part_eff_unit_alt=''</em>, <em>part_eff_ref_std_alt='ahri_550/590'</em>, <em>full_eff_alt=0</em>, <em>full_eff_unit_alt=''</em>, <em>set_of_curves=''</em>, <em>model='ect_lwt'</em>, <em>sim_engine='energyplus'</em>, <em>min_unloading=0.1</em>, <em>min_plr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">copper.chiller.</code><code class="sig-name descname">chiller</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ref_cap</span></em>, <em class="sig-param"><span class="n">ref_cap_unit</span></em>, <em class="sig-param"><span class="n">full_eff</span></em>, <em class="sig-param"><span class="n">full_eff_unit</span></em>, <em class="sig-param"><span class="n">compressor_type</span></em>, <em class="sig-param"><span class="n">condenser_type</span></em>, <em class="sig-param"><span class="n">compressor_speed</span></em>, <em class="sig-param"><span class="n">part_eff</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">part_eff_unit</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">part_eff_ref_std</span><span class="o">=</span><span class="default_value">'ahri_550/590'</span></em>, <em class="sig-param"><span class="n">part_eff_alt</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">part_eff_unit_alt</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">part_eff_ref_std_alt</span><span class="o">=</span><span class="default_value">'ahri_550/590'</span></em>, <em class="sig-param"><span class="n">full_eff_alt</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">full_eff_unit_alt</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">set_of_curves</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">'ect_lwt'</span></em>, <em class="sig-param"><span class="n">sim_engine</span><span class="o">=</span><span class="default_value">'energyplus'</span></em>, <em class="sig-param"><span class="n">min_unloading</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">min_plr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.calc_eff_ect">
-<code class="descname">calc_eff_ect</code><span class="sig-paren">(</span><em>cap_f_t</em>, <em>eir_f_t</em>, <em>eir_f_plr</em>, <em>eir_ref</em>, <em>ect</em>, <em>lwt</em>, <em>load</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.calc_eff_ect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.calc_eff_ect" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calc_eff_ect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cap_f_t</span></em>, <em class="sig-param"><span class="n">eir_f_t</span></em>, <em class="sig-param"><span class="n">eir_f_plr</span></em>, <em class="sig-param"><span class="n">eir_ref</span></em>, <em class="sig-param"><span class="n">ect</span></em>, <em class="sig-param"><span class="n">lwt</span></em>, <em class="sig-param"><span class="n">load</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.calc_eff_ect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.calc_eff_ect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate chiller efficiency using the ECT-based model for a specific ECT and load value (percentage load).</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>cap_f_t (Curve): Capacity curve modifier as a function of temperature (LWT and ECT)
+<dl class="simple">
+<dt>Args:</dt><dd><p>cap_f_t (Curve): Capacity curve modifier as a function of temperature (LWT and ECT)
 eir_f_t (Curve): Energy Input Ratio curve modifier as a function of temperature (LWT and ECT)
 eir_f_plr (Curve): Energy Input Ratio curve modifier as a function of part load ratio
 eir_ref (Float): Reference EIR
 ect (Float): Entering condenser temperature in deg. C
 lwt (Float): Leaving water temperature in deg. C
-load (Float): Percentage load, as defined in AHRI 550/590</dd>
+load (Float): Percentage load, as defined in AHRI 550/590</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.calc_rated_eff">
-<code class="descname">calc_rated_eff</code><span class="sig-paren">(</span><em>eff_type</em>, <em>unit='kw/ton'</em>, <em>output_report=False</em>, <em>alt=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.calc_rated_eff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.calc_rated_eff" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calc_rated_eff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eff_type</span></em>, <em class="sig-param"><span class="n">unit</span><span class="o">=</span><span class="default_value">'kw/ton'</span></em>, <em class="sig-param"><span class="n">output_report</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">alt</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.calc_rated_eff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.calc_rated_eff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate chiller efficiency.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>eff_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – chiller performance indicator, currently supported <cite>full</cite> (full load rating)
-and <cite>part</cite> (part load rating)</li>
-<li><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Unit of the efficiency indicator</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eff_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – chiller performance indicator, currently supported <cite>full</cite> (full load rating)
+and <cite>part</cite> (part load rating)</p></li>
+<li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Unit of the efficiency indicator</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">chiller performance indicator</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>chiller performance indicator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.cond_inlet_temp_residual">
-<code class="descname">cond_inlet_temp_residual</code><span class="sig-paren">(</span><em>lct</em>, <em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.cond_inlet_temp_residual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.cond_inlet_temp_residual" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cond_inlet_temp_residual</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lct</span></em>, <em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.cond_inlet_temp_residual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.cond_inlet_temp_residual" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.generate_set_of_curves">
-<code class="descname">generate_set_of_curves</code><span class="sig-paren">(</span><em>method='best_match'</em>, <em>pop_size=100</em>, <em>tol=0.0025</em>, <em>max_gen=300</em>, <em>vars=''</em>, <em>sFac=0.5</em>, <em>retain=0.2</em>, <em>random_select=0.1</em>, <em>mutate=0.95</em>, <em>bounds=(6</em>, <em>10)</em>, <em>base_curves=[]</em>, <em>random_seed=None</em>, <em>verbose=False</em>, <em>export_path=''</em>, <em>export_format='json'</em>, <em>export_name=''</em>, <em>num_nearest_neighbors=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.generate_set_of_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.generate_set_of_curves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">generate_set_of_curves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'best_match'</span></em>, <em class="sig-param"><span class="n">pop_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.0025</span></em>, <em class="sig-param"><span class="n">max_gen</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">vars</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">sFac</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">retain</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">random_select</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">mutate</span><span class="o">=</span><span class="default_value">0.95</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">6, 10</span></em>, <em class="sig-param"><span class="n">base_curves</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">random_seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">export_path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">export_format</span><span class="o">=</span><span class="default_value">'json'</span></em>, <em class="sig-param"><span class="n">export_name</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">num_nearest_neighbors</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.generate_set_of_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.generate_set_of_curves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a set of curves for a particular chiller() object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Method used to generate the set of curves:
-- <cite>best_match</cite> uses curves that best match the chiller object description</li>
-<li><strong>pop_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Population size used by the genetic algorithm</li>
-<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Tolerance used by the genetic algorithm to determine if the proposed solution is acceptable
-The lower, the more stringent</li>
-<li><strong>max_gen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Maximum number of generation</li>
-<li><strong>vars</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of variable to run the alorithm on</li>
-<li><strong>sFac</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Linear fitness normalization factor, the higher the more aggressive the normalization will be</li>
-<li><strong>retain</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Probability of retaining an individual in the next generation</li>
-<li><strong>random_select</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Probability of randomly selecting an individual to be part of the next generation</li>
-<li><strong>mutate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Probability of an individual to be mutated in the next generation</li>
-<li><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em>) – Random modification bounds (TODO: add more details)</li>
-<li><strong>random_seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Integer that is used to inialize the random number generator, this should be used when identical results are needed from one run to another</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Method used to generate the set of curves:
+- <cite>best_match</cite> uses curves that best match the chiller object description</p></li>
+<li><p><strong>pop_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Population size used by the genetic algorithm</p></li>
+<li><p><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Tolerance used by the genetic algorithm to determine if the proposed solution is acceptable
+The lower, the more stringent</p></li>
+<li><p><strong>max_gen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Maximum number of generation</p></li>
+<li><p><strong>vars</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em>(</em><em>)</em>) – List of variable to run the alorithm on</p></li>
+<li><p><strong>sFac</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Linear fitness normalization factor, the higher the more aggressive the normalization will be</p></li>
+<li><p><strong>retain</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Probability of retaining an individual in the next generation</p></li>
+<li><p><strong>random_select</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Probability of randomly selecting an individual to be part of the next generation</p></li>
+<li><p><strong>mutate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Probability of an individual to be mutated in the next generation</p></li>
+<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><em>tuple</em></a><em>(</em><em>)</em>) – Random modification bounds (TODO: add more details)</p></li>
+<li><p><strong>random_seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Integer that is used to inialize the random number generator, this should be used when identical results are needed from one run to another</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Set of curves object generated by the genetic algorithm that matches the chiller() definition</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Set of curves object generated by the genetic algorithm that matches the chiller() definition</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#copper.curves.SetofCurves" title="copper.curves.SetofCurves">SetofCurves</a>()</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_chiller_curves">
-<code class="descname">get_chiller_curves</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_chiller_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_chiller_curves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_chiller_curves</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_chiller_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_chiller_curves" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_curves_from_lib">
-<code class="descname">get_curves_from_lib</code><span class="sig-paren">(</span><em>lib</em>, <em>filters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_curves_from_lib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_curves_from_lib" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_curves_from_lib</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lib</span></em>, <em class="sig-param"><span class="n">filters</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_curves_from_lib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_curves_from_lib" title="Permalink to this definition">¶</a></dt>
 <dd><p>method to get the sort from the library based on chiller filters
 :param lib: (obj) - Library Object
 :param filters: (list) - list of tuples containing the relevant filter keys and values
 :return sets: (list of objects) - list of SetofCurves object corresponding to seed curves</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_eir_ref">
-<code class="descname">get_eir_ref</code><span class="sig-paren">(</span><em>alt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_eir_ref"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_eir_ref" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_eir_ref</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alt</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_eir_ref"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_eir_ref" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_lct">
-<code class="descname">get_lct</code><span class="sig-paren">(</span><em>ect</em>, <em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_lct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_lct" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_lct</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ect</span></em>, <em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_lct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_lct" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_lib_and_filters">
-<code class="descname">get_lib_and_filters</code><span class="sig-paren">(</span><em>lib_path='C:\\Users\\lero023\\OneDrive - PNNL\\Documents\\Projects\\Copper\\copper\\lib\\chiller_curves.json'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_lib_and_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_lib_and_filters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_lib_and_filters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lib_path</span><span class="o">=</span><span class="default_value">'/qfs/people/rahm312/CODES/develop/copper/copper/lib/chiller_curves.json'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_lib_and_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_lib_and_filters" title="Permalink to this definition">¶</a></dt>
 <dd><p>method to get lib object and gilters
 :param lib_path: (str) - full path of json library
 :return lib: (obj) - library object
 :return filters: (list) - list of tuples containing the filters specific to Chiller object</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_ranges">
-<code class="descname">get_ranges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_ranges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_ranges" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_ranges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_ranges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_ranges" title="Permalink to this definition">¶</a></dt>
 <dd><p>method to get ranges specific to the chiller object
 :return ranges: (dict) - ranges for normalization</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_rated_temperatures">
-<code class="descname">get_rated_temperatures</code><span class="sig-paren">(</span><em>alt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_rated_temperatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_rated_temperatures" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_rated_temperatures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alt</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_rated_temperatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_rated_temperatures" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_ref_cond_flow_rate">
-<code class="descname">get_ref_cond_flow_rate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_ref_cond_flow_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_ref_cond_flow_rate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_ref_cond_flow_rate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_ref_cond_flow_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_ref_cond_flow_rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to compute the reference flow-rate given ref_cap, full_eff, ref_lct and ref_lwt
 :return:</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_ref_values">
-<code class="descname">get_ref_values</code><span class="sig-paren">(</span><em>out_var</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_ref_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_ref_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_ref_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">out_var</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_ref_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_ref_values" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="copper.chiller.chiller.get_seed_curves">
-<code class="descname">get_seed_curves</code><span class="sig-paren">(</span><em>lib=None</em>, <em>filters=None</em>, <em>csets=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_seed_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_seed_curves" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_seed_curves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lib</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">csets</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/chiller.html#chiller.get_seed_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.chiller.chiller.get_seed_curves" title="Permalink to this definition">¶</a></dt>
 <dd><p>method to generate seed curves specific to a chiller. also sets relevant attributes (misc_attr, ranges)
 :param lib: (obj) - Library Object
 :fitlers: (list) - list of tuples containing the filter keys and values
@@ -1020,9 +910,9 @@ The lower, the more stringent</li>
 <span class="target" id="module-copper.helpers"></span><div class="section" id="helpers-py">
 <h2>helpers.py<a class="headerlink" href="#helpers-py" title="Permalink to this headline">¶</a></h2>
 <p>This file contains sundries which are not specifically used when using Copper but can be useful for its development.</p>
-<dl class="function">
+<dl class="py function">
 <dt id="copper.helpers.curve_csv_to_json">
-<code class="descclassname">copper.helpers.</code><code class="descname">curve_csv_to_json</code><span class="sig-paren">(</span><em>csv_path</em>, <em>equip_type='chiller'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/helpers.html#curve_csv_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.helpers.curve_csv_to_json" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">copper.helpers.</code><code class="sig-name descname">curve_csv_to_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">csv_path</span></em>, <em class="sig-param"><span class="n">equip_type</span><span class="o">=</span><span class="default_value">'chiller'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/copper/helpers.html#curve_csv_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#copper.helpers.curve_csv_to_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert sets of curves defined in a CSV file using a predefined format to a JSON file</p>
 </dd></dl>
 
@@ -1070,17 +960,23 @@ The lower, the more stringent</li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -1089,8 +985,8 @@ The lower, the more stringent</li>
       &copy;2020, Jeremy Lerond.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/Code Documentation.rst.txt"

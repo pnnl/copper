@@ -240,9 +240,11 @@ class SetsofCurves:
     ):
 
         """
+        This method performs the weighted average and the nearest neighbor approach.
         :param target_attr: dict -> target attributes we want to match
         :param vars: list of str -> the variables we want to use to compute our l2 score. note COP will be added
         :param N: int -> indicates the number of nearest neighbors to consider. N=None for weighted-average
+        :param df: pd.DataFrame -> dataframe with selected chiller names and the associated weightings
         :return best_idx: int -> index of set_of_curve that should be the closest fit
         """
 

@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>copper.curves &#8212; Copper 0.0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -48,11 +46,11 @@
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
 <span class="kn">import</span> <span class="nn">statistics</span><span class="o">,</span> <span class="nn">itertools</span>
 
-<span class="kn">from</span> <span class="nn">copper.units</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copper.units</span> <span class="kn">import</span> <span class="o">*</span>
 
 
 <div class="viewcode-block" id="SetsofCurves"><a class="viewcode-back" href="../../Code Documentation.html#copper.curves.SetsofCurves">[docs]</a><span class="k">class</span> <span class="nc">SetsofCurves</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eqp</span><span class="p">,</span> <span class="n">sets</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eqp</span><span class="p">,</span> <span class="n">sets</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eqp</span> <span class="o">=</span> <span class="n">eqp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eqp_type</span> <span class="o">=</span> <span class="n">eqp</span><span class="o">.</span><span class="n">type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sets_of_curves</span> <span class="o">=</span> <span class="n">sets</span>
@@ -275,9 +273,11 @@
     <span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method performs the weighted average and the nearest neighbor approach.</span>
 <span class="sd">        :param target_attr: dict -&gt; target attributes we want to match</span>
 <span class="sd">        :param vars: list of str -&gt; the variables we want to use to compute our l2 score. note COP will be added</span>
 <span class="sd">        :param N: int -&gt; indicates the number of nearest neighbors to consider. N=None for weighted-average</span>
+<span class="sd">        :param df: pd.DataFrame -&gt; dataframe with selected chiller names and the associated weightings</span>
 <span class="sd">        :return best_idx: int -&gt; index of set_of_curve that should be the closest fit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -433,7 +433,7 @@
 
 
 <div class="viewcode-block" id="SetofCurves"><a class="viewcode-back" href="../../Code Documentation.html#copper.curves.SetofCurves">[docs]</a><span class="k">class</span> <span class="nc">SetofCurves</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curves</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eqp</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -562,7 +562,7 @@
                 <span class="n">filen</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">),</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span>
                 <span class="n">filen</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">curve_export</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
-                <span class="n">curve_export</span> <span class="o">+=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.name}</span><span class="s2">,</span><span class="si">{curve.out_var}</span><span class="s2">,</span><span class="si">{curve.units}</span><span class="s2">,</span><span class="si">{curve.type}</span><span class="s2">,</span><span class="si">{curve.x_min}</span><span class="s2">,</span><span class="si">{curve.x_max}</span><span class="s2">,</span><span class="si">{curve.y_min}</span><span class="s2">,</span><span class="si">{curve.y_max}</span><span class="s2">&quot;</span>
+                <span class="n">curve_export</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">curve</span><span class="o">.</span><span class="n">out_var</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">curve</span><span class="o">.</span><span class="n">units</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">curve</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">curve</span><span class="o">.</span><span class="n">x_min</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">curve</span><span class="o">.</span><span class="n">x_max</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">curve</span><span class="o">.</span><span class="n">y_min</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">curve</span><span class="o">.</span><span class="n">y_max</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">nb_coeffs</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                     <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;,</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="s2">&quot;coeff</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
                 <span class="n">curve_export</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -577,7 +577,7 @@
                 <span class="n">c</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;eqp&quot;</span><span class="p">)</span>
                 <span class="n">curve_export</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2">.json&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">curve_export</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">True</span></div>
@@ -611,7 +611,7 @@
 
 
 <div class="viewcode-block" id="Curve"><a class="viewcode-back" href="../../Code Documentation.html#copper.curves.Curve">[docs]</a><span class="k">class</span> <span class="nc">Curve</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eqp</span><span class="p">,</span> <span class="n">c_type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eqp</span><span class="p">,</span> <span class="n">c_type</span><span class="p">):</span>
         <span class="c1"># General charactersitics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eqp</span> <span class="o">=</span> <span class="n">eqp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_var</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -994,17 +994,23 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -1013,8 +1019,8 @@
       &copy;2020, Jeremy Lerond.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
