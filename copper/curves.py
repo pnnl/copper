@@ -1,3 +1,9 @@
+"""
+curves.py
+====================================
+This is the curves module of Copper. It handles all operations and manipulation related to curves, set of curves, and sets of curves.
+"""
+
 import warnings, json, os
 
 warnings.simplefilter(action="ignore", category=FutureWarning)

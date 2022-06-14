@@ -1,3 +1,9 @@
+"""
+library.py
+====================================
+This is the library module of Copper. It contains functions used to parse the JSON library files used by Copper.
+"""
+
 import json, inspect
 from copper.units import *
 from copper.curves import *

@@ -1,0 +1,879 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>copper.chiller &#8212; Copper 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for copper.chiller</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">chiller.py</span>
+<span class="sd">====================================</span>
+<span class="sd">This is the chiller module of Copper. The module handles all calculations and data manipulation related to chillers.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">CoolProp.CoolProp</span> <span class="k">as</span> <span class="nn">CP</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">optimize</span>
+<span class="kn">from</span> <span class="nn">copper.generator</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copper.units</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copper.curves</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copper.library</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="n">location</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">chiller_lib</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;lib&quot;</span><span class="p">,</span> <span class="s2">&quot;chiller_curves.json&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="chiller"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller">[docs]</a><span class="k">class</span> <span class="nc">chiller</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ref_cap</span><span class="p">,</span>
+        <span class="n">ref_cap_unit</span><span class="p">,</span>
+        <span class="n">full_eff</span><span class="p">,</span>
+        <span class="n">full_eff_unit</span><span class="p">,</span>
+        <span class="n">compressor_type</span><span class="p">,</span>
+        <span class="n">condenser_type</span><span class="p">,</span>
+        <span class="n">compressor_speed</span><span class="p">,</span>
+        <span class="n">part_eff</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">part_eff_unit</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">part_eff_ref_std</span><span class="o">=</span><span class="s2">&quot;ahri_550/590&quot;</span><span class="p">,</span>
+        <span class="n">part_eff_alt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">part_eff_unit_alt</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">part_eff_ref_std_alt</span><span class="o">=</span><span class="s2">&quot;ahri_550/590&quot;</span><span class="p">,</span>
+        <span class="n">full_eff_alt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">full_eff_unit_alt</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">set_of_curves</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;ect_lwt&quot;</span><span class="p">,</span>
+        <span class="n">sim_engine</span><span class="o">=</span><span class="s2">&quot;energyplus&quot;</span><span class="p">,</span>
+        <span class="n">min_unloading</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">min_plr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;chiller&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compressor_type</span> <span class="o">=</span> <span class="n">compressor_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condenser_type</span> <span class="o">=</span> <span class="n">condenser_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compressor_speed</span> <span class="o">=</span> <span class="n">compressor_speed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span> <span class="o">=</span> <span class="n">ref_cap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap_unit</span> <span class="o">=</span> <span class="n">ref_cap_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span> <span class="o">=</span> <span class="n">full_eff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit</span> <span class="o">=</span> <span class="n">full_eff_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span> <span class="o">=</span> <span class="n">full_eff_alt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit_alt</span> <span class="o">=</span> <span class="n">full_eff_unit_alt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_eff</span> <span class="o">=</span> <span class="n">part_eff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_unit</span> <span class="o">=</span> <span class="n">part_eff_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_ref_std</span> <span class="o">=</span> <span class="n">part_eff_ref_std</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_alt</span> <span class="o">=</span> <span class="n">part_eff_alt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_unit_alt</span> <span class="o">=</span> <span class="n">part_eff_unit_alt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_ref_std_alt</span> <span class="o">=</span> <span class="n">part_eff_ref_std_alt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_unloading</span> <span class="o">=</span> <span class="n">min_unloading</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_plr</span> <span class="o">=</span> <span class="n">min_unloading</span> <span class="k">if</span> <span class="n">min_plr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">min_plr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_engine</span> <span class="o">=</span> <span class="n">sim_engine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">set_of_curves</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condenser_type</span> <span class="o">==</span> <span class="s2">&quot;water&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_ref_std</span> <span class="o">==</span> <span class="s2">&quot;ahri_550/590&quot;</span><span class="p">:</span>
+                <span class="n">lwt</span> <span class="o">=</span> <span class="p">(</span><span class="mf">44.0</span> <span class="o">-</span> <span class="mf">32.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">9</span>
+                <span class="n">ect</span> <span class="o">=</span> <span class="p">(</span><span class="mf">85.0</span> <span class="o">-</span> <span class="mf">32.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">9</span>
+                <span class="n">lct</span> <span class="o">=</span> <span class="p">(</span><span class="mf">94.3</span> <span class="o">-</span> <span class="mf">32.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">9</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_ref_std</span> <span class="o">==</span> <span class="s2">&quot;ahri_551/591&quot;</span><span class="p">:</span>
+                <span class="n">lwt</span> <span class="o">=</span> <span class="mf">7.0</span>
+                <span class="n">ect</span> <span class="o">=</span> <span class="mf">30.0</span>
+                <span class="n">lct</span> <span class="o">=</span> <span class="mf">35.0</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;ect_lwt&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;eir-f-t&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;x1_min&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_max&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_norm&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;nbval&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_min&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_max&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_norm&quot;</span><span class="p">:</span> <span class="n">ect</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="s2">&quot;cap-f-t&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;x1_min&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_max&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_norm&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;nbval&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_min&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_max&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_norm&quot;</span><span class="p">:</span> <span class="n">ect</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="s2">&quot;eir-f-plr&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x1_min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;x1_max&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;x1_norm&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nbval&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span>
+                <span class="p">}</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;lct_lwt&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;eir-f-t&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;x1_min&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_max&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_norm&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;nbval&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_min&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_max&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_norm&quot;</span><span class="p">:</span> <span class="n">lct</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="s2">&quot;cap-f-t&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;x1_min&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_max&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_norm&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                        <span class="s2">&quot;nbval&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_min&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_max&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_norm&quot;</span><span class="p">:</span> <span class="n">lct</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="s2">&quot;eir-f-plr&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;x1_min&quot;</span><span class="p">:</span> <span class="n">lct</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_max&quot;</span><span class="p">:</span> <span class="n">lct</span><span class="p">,</span>
+                        <span class="s2">&quot;x1_norm&quot;</span><span class="p">:</span> <span class="n">lct</span><span class="p">,</span>
+                        <span class="s2">&quot;nbval&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_min&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_max&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                        <span class="s2">&quot;x2_norm&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Algorithm not supported.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">condenser_type</span> <span class="o">==</span> <span class="s2">&quot;air&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_ref_std</span> <span class="o">==</span> <span class="s2">&quot;ahri_550/590&quot;</span><span class="p">:</span>
+                <span class="n">lwt</span> <span class="o">=</span> <span class="p">(</span><span class="mf">44.0</span> <span class="o">-</span> <span class="mf">32.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">9</span>
+                <span class="n">ect</span> <span class="o">=</span> <span class="p">(</span><span class="mf">95.0</span> <span class="o">-</span> <span class="mf">32.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">9</span>
+                <span class="n">lct</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span>  <span class="c1"># does not apply</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_ref_std</span> <span class="o">==</span> <span class="s2">&quot;ahri_551/591&quot;</span><span class="p">:</span>
+                <span class="n">lwt</span> <span class="o">=</span> <span class="mf">7.0</span>
+                <span class="n">ect</span> <span class="o">=</span> <span class="mf">35.0</span>
+                <span class="n">lct</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span>  <span class="c1"># does not apply</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;eir-f-t&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;x1_min&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                    <span class="s2">&quot;x1_max&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                    <span class="s2">&quot;x1_norm&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                    <span class="s2">&quot;nbval&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                    <span class="s2">&quot;x2_min&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                    <span class="s2">&quot;x2_max&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                    <span class="s2">&quot;x2_norm&quot;</span><span class="p">:</span> <span class="n">ect</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;cap-f-t&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;x1_min&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                    <span class="s2">&quot;x1_max&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                    <span class="s2">&quot;x1_norm&quot;</span><span class="p">:</span> <span class="n">lwt</span><span class="p">,</span>
+                    <span class="s2">&quot;nbval&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                    <span class="s2">&quot;x2_min&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                    <span class="s2">&quot;x2_max&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+                    <span class="s2">&quot;x2_norm&quot;</span><span class="p">:</span> <span class="n">ect</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;eir-f-plr&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x1_min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;x1_max&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;x1_norm&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nbval&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span>
+            <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ref_lwt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_ect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_lct</span> <span class="o">=</span> <span class="n">lwt</span><span class="p">,</span> <span class="n">ect</span><span class="p">,</span> <span class="n">lct</span>
+
+    <span class="c1"># new method: gets library and filters specific to</span>
+
+<div class="viewcode-block" id="chiller.get_ref_values"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_ref_values">[docs]</a>    <span class="k">def</span> <span class="nf">get_ref_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_var</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;x2_norm&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span><span class="p">[</span><span class="n">out_var</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span><span class="p">[</span><span class="n">out_var</span><span class="p">][</span><span class="s2">&quot;x1_norm&quot;</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span><span class="p">[</span><span class="n">out_var</span><span class="p">][</span><span class="s2">&quot;x2_norm&quot;</span><span class="p">],</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span><span class="p">[</span><span class="n">out_var</span><span class="p">][</span><span class="s2">&quot;x1_norm&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="chiller.get_ref_cond_flow_rate"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_ref_cond_flow_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_ref_cond_flow_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to compute the reference flow-rate given ref_cap, full_eff, ref_lct and ref_lwt</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Convert reference capacity if needed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap_unit</span> <span class="o">!=</span> <span class="s2">&quot;kW&quot;</span><span class="p">:</span>
+            <span class="n">evap_cap_ton</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_cap_unit</span><span class="p">)</span>
+            <span class="n">evap_power</span> <span class="o">=</span> <span class="n">evap_cap_ton</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="n">new_unit</span><span class="o">=</span><span class="s2">&quot;kW&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">evap_power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap_unit</span> <span class="o">!=</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">:</span>
+            <span class="n">ref_cap</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_cap_unit</span><span class="p">)</span>
+            <span class="n">ref_cap</span> <span class="o">=</span> <span class="n">ref_cap</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="n">new_unit</span><span class="o">=</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ref_cap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span>
+
+        <span class="c1"># Convert reference efficiency if needed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit</span> <span class="o">!=</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">:</span>
+            <span class="n">full_eff_unit</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit</span><span class="p">)</span>
+            <span class="n">full_eff</span> <span class="o">=</span> <span class="n">full_eff_unit</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span>
+                <span class="n">new_unit</span><span class="o">=</span><span class="s2">&quot;kw/ton&quot;</span>
+            <span class="p">)</span>  <span class="c1"># full eff needs to be in kW/ton</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">full_eff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span>
+
+        <span class="c1"># Retrieve curves</span>
+        <span class="n">curves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_chiller_curves</span><span class="p">()</span>
+        <span class="n">cap_f_t</span> <span class="o">=</span> <span class="n">curves</span><span class="p">[</span><span class="s2">&quot;cap_f_t&quot;</span><span class="p">]</span>
+        <span class="n">eir_f_t</span> <span class="o">=</span> <span class="n">curves</span><span class="p">[</span><span class="s2">&quot;eir_f_t&quot;</span><span class="p">]</span>
+        <span class="n">eir_f_plr</span> <span class="o">=</span> <span class="n">curves</span><span class="p">[</span><span class="s2">&quot;eir_f_plr&quot;</span><span class="p">]</span>
+
+        <span class="n">cap_f_lwt_lct_rated</span> <span class="o">=</span> <span class="n">cap_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_lwt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_lct</span><span class="p">)</span>
+        <span class="n">cap_f_lwt_lct</span> <span class="o">=</span> <span class="n">cap_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_lwt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_lct</span><span class="p">)</span>
+        <span class="n">cap_op</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">cap_f_lwt_lct</span>
+        <span class="n">plr</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">cap_f_lwt_lct_rated</span> <span class="o">/</span> <span class="n">cap_op</span>
+
+        <span class="c1"># Calculate compressor power [kW]</span>
+        <span class="n">comp_power</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">ref_cap</span>
+            <span class="o">*</span> <span class="n">full_eff</span>
+            <span class="o">*</span> <span class="n">cap_f_lwt_lct</span>
+            <span class="o">*</span> <span class="n">eir_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_lwt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_lct</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">eir_f_plr</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_lct</span><span class="p">,</span> <span class="n">plr</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">cond_cap</span> <span class="o">=</span> <span class="n">evap_power</span> <span class="o">+</span> <span class="n">comp_power</span>
+
+        <span class="c1"># Determine the specific heat capacity of water [kJ/kg.K]</span>
+        <span class="n">c_p</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">CP</span><span class="o">.</span><span class="n">PropsSI</span><span class="p">(</span>
+                <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;P&quot;</span><span class="p">,</span>
+                <span class="mi">101325</span><span class="p">,</span>
+                <span class="s2">&quot;T&quot;</span><span class="p">,</span>
+                <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_ect</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_lct</span><span class="p">)</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span>
+                <span class="s2">&quot;Water&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">/</span> <span class="mi">1000</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Determine density of water [kg/m3]</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">CP</span><span class="o">.</span><span class="n">PropsSI</span><span class="p">(</span>
+            <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="mi">101325</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_ect</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_lct</span><span class="p">)</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="s2">&quot;Water&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Determine condenser flow rate at reference conditions [m3/s]</span>
+        <span class="n">ref_cond_flow_rate</span> <span class="o">=</span> <span class="n">cond_cap</span> <span class="o">/</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_lct</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_ect</span><span class="p">)</span> <span class="o">*</span> <span class="n">c_p</span> <span class="o">*</span> <span class="n">rho</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ref_cond_flow_rate</span></div>
+
+<div class="viewcode-block" id="chiller.generate_set_of_curves"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.generate_set_of_curves">[docs]</a>    <span class="k">def</span> <span class="nf">generate_set_of_curves</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;best_match&quot;</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">tol</span><span class="o">=</span><span class="mf">0.0025</span><span class="p">,</span>
+        <span class="n">max_gen</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+        <span class="nb">vars</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">sFac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">retain</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">random_select</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">mutate</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">base_curves</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">random_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">export_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">export_format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span>
+        <span class="n">export_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">num_nearest_neighbors</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate a set of curves for a particular chiller() object.</span>
+
+<span class="sd">        :param str method: Method used to generate the set of curves:</span>
+<span class="sd">                           - `best_match` uses curves that best match the chiller object description</span>
+<span class="sd">        :param int pop_size: Population size used by the genetic algorithm</span>
+<span class="sd">        :param float tol: Tolerance used by the genetic algorithm to determine if the proposed solution is acceptable</span>
+<span class="sd">                          The lower, the more stringent</span>
+<span class="sd">        :param int max_gen: Maximum number of generation</span>
+<span class="sd">        :param list() vars: List of variable to run the alorithm on</span>
+<span class="sd">        :param float sFac: Linear fitness normalization factor, the higher the more aggressive the normalization will be</span>
+<span class="sd">        :param float retain: Probability of retaining an individual in the next generation</span>
+<span class="sd">        :param float random_select: Probability of randomly selecting an individual to be part of the next generation</span>
+<span class="sd">        :param float mutate: Probability of an individual to be mutated in the next generation</span>
+<span class="sd">        :param tuple() bounds: Random modification bounds (TODO: add more details)</span>
+<span class="sd">        :param int random_seed: Integer that is used to inialize the random number generator, this should be used when identical results are needed from one run to another</span>
+<span class="sd">        :return: Set of curves object generated by the genetic algorithm that matches the chiller() definition</span>
+<span class="sd">        :rtype: SetofCurves()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ga</span> <span class="o">=</span> <span class="n">generator</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">method</span><span class="p">,</span>
+            <span class="n">pop_size</span><span class="p">,</span>
+            <span class="n">tol</span><span class="p">,</span>
+            <span class="n">max_gen</span><span class="p">,</span>
+            <span class="nb">vars</span><span class="p">,</span>
+            <span class="n">sFac</span><span class="p">,</span>
+            <span class="n">retain</span><span class="p">,</span>
+            <span class="n">random_select</span><span class="p">,</span>
+            <span class="n">mutate</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="p">,</span>
+            <span class="n">base_curves</span><span class="p">,</span>
+            <span class="n">random_seed</span><span class="p">,</span>
+            <span class="n">num_nearest_neighbors</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">ga</span><span class="o">.</span><span class="n">generate_set_of_curves</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">export_path</span><span class="p">):</span>
+            <span class="n">set_of_curves_obj</span> <span class="o">=</span> <span class="n">SetofCurves</span><span class="p">()</span>
+            <span class="n">set_of_curves_obj</span><span class="o">.</span><span class="n">curves</span> <span class="o">=</span> <span class="n">set_of_curves</span>
+            <span class="n">set_of_curves_obj</span><span class="o">.</span><span class="n">eqp</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">set_of_curves_obj</span><span class="o">.</span><span class="n">export</span><span class="p">(</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">export_path</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">export_format</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">export_name</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">set_of_curves</span></div>
+
+<div class="viewcode-block" id="chiller.get_eir_ref"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_eir_ref">[docs]</a>    <span class="k">def</span> <span class="nf">get_eir_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alt</span><span class="p">):</span>
+        <span class="c1"># Retrieve equipment efficiency and unit</span>
+        <span class="k">if</span> <span class="n">alt</span><span class="p">:</span>
+            <span class="n">kwpton_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span>
+            <span class="n">kwpton_ref_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit_alt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kwpton_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span>
+            <span class="n">kwpton_ref_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit</span>
+
+        <span class="c1"># Convert to kWpton if necessary</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit</span> <span class="o">!=</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">:</span>
+            <span class="n">kwpton_ref_unit</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">kwpton_ref</span><span class="p">,</span> <span class="n">kwpton_ref_unit</span><span class="p">)</span>
+            <span class="n">kwpton_ref</span> <span class="o">=</span> <span class="n">kwpton_ref_unit</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Conversion factors</span>
+        <span class="c1"># TODO: remove these and use the unit class</span>
+        <span class="n">ton_to_kbtu</span> <span class="o">=</span> <span class="mi">12</span>
+        <span class="n">kbtu_to_kw</span> <span class="o">=</span> <span class="mf">3.412141633</span>
+
+        <span class="c1"># Full load conditions</span>
+        <span class="n">eir_ref</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">ton_to_kbtu</span> <span class="o">/</span> <span class="n">kwpton_ref</span> <span class="o">/</span> <span class="n">kbtu_to_kw</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">eir_ref</span></div>
+
+<div class="viewcode-block" id="chiller.calc_eff_ect"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.calc_eff_ect">[docs]</a>    <span class="k">def</span> <span class="nf">calc_eff_ect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cap_f_t</span><span class="p">,</span> <span class="n">eir_f_t</span><span class="p">,</span> <span class="n">eir_f_plr</span><span class="p">,</span> <span class="n">eir_ref</span><span class="p">,</span> <span class="n">ect</span><span class="p">,</span> <span class="n">lwt</span><span class="p">,</span> <span class="n">load</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate chiller efficiency using the ECT-based model for a specific ECT and load value (percentage load).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cap_f_t (Curve): Capacity curve modifier as a function of temperature (LWT and ECT)</span>
+<span class="sd">            eir_f_t (Curve): Energy Input Ratio curve modifier as a function of temperature (LWT and ECT)</span>
+<span class="sd">            eir_f_plr (Curve): Energy Input Ratio curve modifier as a function of part load ratio</span>
+<span class="sd">            eir_ref (Float): Reference EIR</span>
+<span class="sd">            ect (Float): Entering condenser temperature in deg. C</span>
+<span class="sd">            lwt (Float): Leaving water temperature in deg. C</span>
+<span class="sd">            load (Float): Percentage load, as defined in AHRI 550/590</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Temperature adjustments</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">ect</span> <span class="o">-</span> <span class="n">lwt</span>
+        <span class="n">cap_f_lwt_ect</span> <span class="o">=</span> <span class="n">cap_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lwt</span><span class="p">,</span> <span class="n">ect</span><span class="p">)</span>
+        <span class="n">eir_f_lwt_ect</span> <span class="o">=</span> <span class="n">eir_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lwt</span><span class="p">,</span> <span class="n">ect</span><span class="p">)</span>
+        <span class="n">cap_op</span> <span class="o">=</span> <span class="n">cap_f_lwt_ect</span>
+
+        <span class="c1"># PLR adjustments</span>
+        <span class="n">plr</span> <span class="o">=</span> <span class="n">load</span> <span class="o">*</span> <span class="n">cap_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lwt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_ect</span><span class="p">)</span> <span class="o">/</span> <span class="n">cap_op</span>
+        <span class="k">if</span> <span class="n">plr</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_unloading</span><span class="p">:</span>
+            <span class="n">plr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_unloading</span>
+        <span class="n">eir_plr</span> <span class="o">=</span> <span class="n">eir_f_plr</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">plr</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+
+        <span class="c1"># Efficiency calculation</span>
+        <span class="n">eir</span> <span class="o">=</span> <span class="n">eir_ref</span> <span class="o">*</span> <span class="n">eir_f_lwt_ect</span> <span class="o">*</span> <span class="n">eir_plr</span> <span class="o">/</span> <span class="n">plr</span>
+
+        <span class="k">return</span> <span class="n">eir</span></div>
+
+<div class="viewcode-block" id="chiller.calc_rated_eff"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.calc_rated_eff">[docs]</a>    <span class="k">def</span> <span class="nf">calc_rated_eff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eff_type</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">,</span> <span class="n">output_report</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate chiller efficiency.</span>
+
+<span class="sd">        :param str eff_type: chiller performance indicator, currently supported `full` (full load rating)</span>
+<span class="sd">                             and `part` (part load rating)</span>
+<span class="sd">        :param str unit: Unit of the efficiency indicator</span>
+<span class="sd">        :return: chiller performance indicator</span>
+<span class="sd">        :rtype: float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Conversion factors</span>
+        <span class="c1"># TODO: remove these and use the unit class</span>
+        <span class="n">ton_to_kbtu</span> <span class="o">=</span> <span class="mi">12</span>
+        <span class="n">kbtu_to_kw</span> <span class="o">=</span> <span class="mf">3.412141633</span>
+
+        <span class="c1"># Get reference eir</span>
+        <span class="n">eir_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_eir_ref</span><span class="p">(</span><span class="n">alt</span><span class="p">)</span>
+        <span class="n">load_ref</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># Rated conditions as per AHRI Std 551/591</span>
+        <span class="n">loads</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span>
+
+        <span class="c1"># List of equipment efficiency for each load</span>
+        <span class="n">kwpton_lst</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Temperatures at rated conditions</span>
+        <span class="n">ect</span><span class="p">,</span> <span class="n">lwt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rated_temperatures</span><span class="p">(</span><span class="n">alt</span><span class="p">)</span>
+
+        <span class="c1"># Retrieve curves</span>
+        <span class="n">curves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_chiller_curves</span><span class="p">()</span>
+        <span class="n">cap_f_t</span> <span class="o">=</span> <span class="n">curves</span><span class="p">[</span><span class="s2">&quot;cap_f_t&quot;</span><span class="p">]</span>
+        <span class="n">eir_f_t</span> <span class="o">=</span> <span class="n">curves</span><span class="p">[</span><span class="s2">&quot;eir_f_t&quot;</span><span class="p">]</span>
+        <span class="n">eir_f_plr</span> <span class="o">=</span> <span class="n">curves</span><span class="p">[</span><span class="s2">&quot;eir_f_plr&quot;</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">load</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                <span class="n">loads</span>
+            <span class="p">):</span>  <span class="c1"># Calculate efficiency for each testing conditions</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;ect_lwt&quot;</span><span class="p">:</span>  <span class="c1"># DOE-2 chiller model</span>
+                    <span class="c1"># Efficiency calculation</span>
+                    <span class="n">eir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_eff_ect</span><span class="p">(</span>
+                        <span class="n">cap_f_t</span><span class="p">,</span> <span class="n">eir_f_t</span><span class="p">,</span> <span class="n">eir_f_plr</span><span class="p">,</span> <span class="n">eir_ref</span><span class="p">,</span> <span class="n">ect</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">lwt</span><span class="p">,</span> <span class="n">load</span>
+                    <span class="p">)</span>
+
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;lct_lwt&quot;</span><span class="p">:</span>  <span class="c1"># Reformulated EIR chiller model</span>
+                    <span class="c1"># Determine water properties</span>
+                    <span class="n">c_p</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">CP</span><span class="o">.</span><span class="n">PropsSI</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="mi">101325</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">ect</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="s2">&quot;Water&quot;</span><span class="p">)</span>
+                        <span class="o">/</span> <span class="mi">1000</span>
+                    <span class="p">)</span>  <span class="c1"># kJ/kg.K</span>
+                    <span class="n">rho</span> <span class="o">=</span> <span class="n">CP</span><span class="o">.</span><span class="n">PropsSI</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="mi">101325</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">ect</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="s2">&quot;Water&quot;</span><span class="p">)</span>
+
+                    <span class="c1"># Gather arguments for determination fo leaving condenser temperature through iteration</span>
+                    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Full load rated conditions</span>
+                        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+                            <span class="n">lwt</span><span class="p">,</span>
+                            <span class="n">cap_f_t</span><span class="p">,</span>
+                            <span class="n">eir_f_t</span><span class="p">,</span>
+                            <span class="n">eir_f_plr</span><span class="p">,</span>
+                            <span class="n">load</span><span class="p">,</span>
+                            <span class="o">-</span><span class="mi">999</span><span class="p">,</span>
+                            <span class="mi">1</span> <span class="o">/</span> <span class="n">eir_ref</span><span class="p">,</span>
+                            <span class="n">ect</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">set_of_curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ref_cond_fluid_flow</span> <span class="o">*</span> <span class="n">rho</span><span class="p">,</span>
+                            <span class="n">c_p</span><span class="p">,</span>
+                        <span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+                            <span class="n">lwt</span><span class="p">,</span>
+                            <span class="n">cap_f_t</span><span class="p">,</span>
+                            <span class="n">eir_f_t</span><span class="p">,</span>
+                            <span class="n">eir_f_plr</span><span class="p">,</span>
+                            <span class="n">load</span><span class="p">,</span>
+                            <span class="n">cap_f_lwt_lct_rated</span><span class="p">,</span>
+                            <span class="mi">1</span> <span class="o">/</span> <span class="n">eir_ref</span><span class="p">,</span>
+                            <span class="n">ect</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">set_of_curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ref_cond_fluid_flow</span> <span class="o">*</span> <span class="n">rho</span><span class="p">,</span>
+                            <span class="n">c_p</span><span class="p">,</span>
+                        <span class="p">]</span>
+
+                    <span class="c1"># Determine leaving condenser temperature</span>
+                    <span class="n">lct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_lct</span><span class="p">(</span><span class="n">ect</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">args</span><span class="p">)</span>
+
+                    <span class="c1"># Determine rated capacity curve modifier</span>
+                    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">cap_f_lwt_lct_rated</span> <span class="o">=</span> <span class="n">cap_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lwt</span><span class="p">,</span> <span class="n">lct</span><span class="p">)</span>
+
+                    <span class="c1"># Temperature adjustments</span>
+                    <span class="n">dt</span> <span class="o">=</span> <span class="n">ect</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">lwt</span>
+                    <span class="n">cap_f_lwt_lct</span> <span class="o">=</span> <span class="n">cap_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lwt</span><span class="p">,</span> <span class="n">lct</span><span class="p">)</span>
+                    <span class="n">eir_f_lwt_lct</span> <span class="o">=</span> <span class="n">eir_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lwt</span><span class="p">,</span> <span class="n">lct</span><span class="p">)</span>
+                    <span class="n">cap_op</span> <span class="o">=</span> <span class="n">load_ref</span> <span class="o">*</span> <span class="n">cap_f_lwt_lct</span>
+
+                    <span class="c1"># PLR adjustments</span>
+                    <span class="n">plr</span> <span class="o">=</span> <span class="n">load</span> <span class="o">*</span> <span class="n">cap_f_lwt_lct_rated</span> <span class="o">/</span> <span class="n">cap_op</span>
+                    <span class="k">if</span> <span class="n">plr</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_unloading</span><span class="p">:</span>
+                        <span class="n">plr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_unloading</span>
+                    <span class="n">eir_plr_lct</span> <span class="o">=</span> <span class="n">eir_f_plr</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lct</span><span class="p">,</span> <span class="n">plr</span><span class="p">)</span>
+
+                    <span class="c1"># Efficiency calculation</span>
+                    <span class="n">eir</span> <span class="o">=</span> <span class="n">eir_ref</span> <span class="o">*</span> <span class="n">eir_f_lwt_lct</span> <span class="o">*</span> <span class="n">eir_plr_lct</span> <span class="o">/</span> <span class="n">plr</span>
+
+                    <span class="k">if</span> <span class="n">eir</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="mi">999</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="o">-</span><span class="mi">999</span>
+
+                <span class="c1"># Convert efficiency to kW/ton</span>
+                <span class="n">kwpton</span> <span class="o">=</span> <span class="n">eir</span> <span class="o">/</span> <span class="n">kbtu_to_kw</span> <span class="o">*</span> <span class="n">ton_to_kbtu</span>
+
+                <span class="k">if</span> <span class="n">output_report</span><span class="p">:</span>
+                    <span class="n">cap_ton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap_unit</span> <span class="o">!=</span> <span class="s2">&quot;ton&quot;</span><span class="p">:</span>
+                        <span class="n">cap_ton</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap_unit</span><span class="p">)</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span>
+                            <span class="s2">&quot;ton&quot;</span>
+                        <span class="p">)</span>
+                    <span class="n">part_report</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;&quot;&quot;At {str(round(load * 100.0, 0)).replace(&#39;.0&#39;, &#39;&#39;)}</span><span class="si">% lo</span><span class="s2">ad and AHRI rated conditions:</span>
+<span class="s2">                    - Entering condenser temperature: {round(ect[idx], 2)},</span>
+<span class="s2">                    - Leaving chiller temperature: {round(lwt, 2)},</span>
+<span class="s2">                    - Part load ratio: {round(plr, 2)},</span>
+<span class="s2">                    - Operating capacity: {round(cap_op * cap_ton, 2)} ton,</span>
+<span class="s2">                    - Power: {round(kwpton * cap_op * cap_ton, 2)} kW,</span>
+<span class="s2">                    - Efficiency: {round(kwpton, 3)} kW/ton</span>
+<span class="s2">                    &quot;&quot;&quot;</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">part_report</span><span class="p">)</span>
+
+                <span class="c1"># Store efficiency for IPLV calculation</span>
+                <span class="n">kwpton_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eir</span> <span class="o">/</span> <span class="n">kbtu_to_kw</span> <span class="o">*</span> <span class="n">ton_to_kbtu</span><span class="p">)</span>
+
+                <span class="c1"># Stop here for full load calculations</span>
+                <span class="k">if</span> <span class="n">eff_type</span> <span class="o">==</span> <span class="s2">&quot;full&quot;</span> <span class="ow">and</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">unit</span> <span class="o">!=</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">:</span>
+                        <span class="n">kwpton</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">kwpton</span><span class="p">,</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">kwpton</span>
+
+            <span class="c1"># Coefficients from AHRI Std 551/591</span>
+            <span class="n">iplv</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="p">(</span><span class="mf">0.01</span> <span class="o">/</span> <span class="n">kwpton_lst</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="o">+</span> <span class="p">(</span><span class="mf">0.42</span> <span class="o">/</span> <span class="n">kwpton_lst</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="o">+</span> <span class="p">(</span><span class="mf">0.45</span> <span class="o">/</span> <span class="n">kwpton_lst</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="o">+</span> <span class="p">(</span><span class="mf">0.12</span> <span class="o">/</span> <span class="n">kwpton_lst</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">output_report</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;IPLV: {round(iplv, 3)} kW/ton&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">999</span>
+
+        <span class="c1"># Convert IPLV to desired unit</span>
+        <span class="k">if</span> <span class="n">unit</span> <span class="o">!=</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">:</span>
+            <span class="n">iplv_org</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">iplv</span><span class="p">,</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">)</span>
+            <span class="n">iplv</span> <span class="o">=</span> <span class="n">iplv_org</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">iplv</span></div>
+
+<div class="viewcode-block" id="chiller.get_rated_temperatures"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_rated_temperatures">[docs]</a>    <span class="k">def</span> <span class="nf">get_rated_temperatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alt</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">alt</span><span class="p">:</span>
+            <span class="n">std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_ref_std_alt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_ref_std</span>
+        <span class="k">if</span> <span class="n">std</span> <span class="o">==</span> <span class="s2">&quot;ahri_551/591&quot;</span><span class="p">:</span>  <span class="c1"># IPLV.SI</span>
+            <span class="n">lwt</span> <span class="o">=</span> <span class="mf">7.0</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condenser_type</span> <span class="o">==</span> <span class="s2">&quot;air&quot;</span><span class="p">:</span>
+                <span class="n">ect</span> <span class="o">=</span> <span class="p">[</span><span class="mf">35.0</span><span class="p">,</span> <span class="mf">27.0</span><span class="p">,</span> <span class="mf">19.0</span><span class="p">,</span> <span class="mf">13.0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">condenser_type</span> <span class="o">==</span> <span class="s2">&quot;water&quot;</span><span class="p">:</span>
+                <span class="n">ect</span> <span class="o">=</span> <span class="p">[</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">24.5</span><span class="p">,</span> <span class="mf">19.0</span><span class="p">,</span> <span class="mf">19.0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">std</span> <span class="o">==</span> <span class="s2">&quot;ahri_550/590&quot;</span><span class="p">:</span>  <span class="c1"># IPLV.IP</span>
+            <span class="n">lwt</span> <span class="o">=</span> <span class="mf">44.0</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condenser_type</span> <span class="o">==</span> <span class="s2">&quot;air&quot;</span><span class="p">:</span>
+                <span class="n">ect</span> <span class="o">=</span> <span class="p">[</span><span class="mf">95.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">,</span> <span class="mf">65.0</span><span class="p">,</span> <span class="mf">55.0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">condenser_type</span> <span class="o">==</span> <span class="s2">&quot;water&quot;</span><span class="p">:</span>
+                <span class="n">ect</span> <span class="o">=</span> <span class="p">[</span><span class="mf">85.0</span><span class="p">,</span> <span class="mf">75.0</span><span class="p">,</span> <span class="mf">65.0</span><span class="p">,</span> <span class="mf">65.0</span><span class="p">]</span>
+            <span class="c1"># Convert to SI</span>
+            <span class="n">lwt</span> <span class="o">=</span> <span class="p">(</span><span class="n">lwt</span> <span class="o">-</span> <span class="mf">32.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">9</span>
+            <span class="n">ect</span> <span class="o">=</span> <span class="p">[(</span><span class="n">t</span> <span class="o">-</span> <span class="mf">32.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">9</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ect</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Reference standard provided isn&#39;t implemented.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ect</span><span class="p">,</span> <span class="n">lwt</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="chiller.get_chiller_curves"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_chiller_curves">[docs]</a>    <span class="k">def</span> <span class="nf">get_chiller_curves</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">curves</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">curve</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_of_curves</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">curve</span><span class="o">.</span><span class="n">out_var</span> <span class="o">==</span> <span class="s2">&quot;cap-f-t&quot;</span><span class="p">:</span>
+                <span class="n">curves</span><span class="p">[</span><span class="s2">&quot;cap_f_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">curve</span>
+            <span class="k">elif</span> <span class="n">curve</span><span class="o">.</span><span class="n">out_var</span> <span class="o">==</span> <span class="s2">&quot;eir-f-t&quot;</span><span class="p">:</span>
+                <span class="n">curves</span><span class="p">[</span><span class="s2">&quot;eir_f_t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">curve</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">curves</span><span class="p">[</span><span class="s2">&quot;eir_f_plr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">curve</span>
+
+        <span class="k">return</span> <span class="n">curves</span></div>
+
+<div class="viewcode-block" id="chiller.get_lct"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_lct">[docs]</a>    <span class="k">def</span> <span class="nf">get_lct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ect</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">root_scalar</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cond_inlet_temp_residual</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;secant&quot;</span><span class="p">,</span>
+            <span class="n">x0</span><span class="o">=</span><span class="n">ect</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">x1</span><span class="o">=</span><span class="n">ect</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">rtol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">lct</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">root</span>
+        <span class="k">return</span> <span class="n">lct</span></div>
+
+<div class="viewcode-block" id="chiller.cond_inlet_temp_residual"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.cond_inlet_temp_residual">[docs]</a>    <span class="k">def</span> <span class="nf">cond_inlet_temp_residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lct</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="c1"># Get arguments</span>
+        <span class="p">(</span>
+            <span class="n">lwt</span><span class="p">,</span>
+            <span class="n">cap_f_t</span><span class="p">,</span>
+            <span class="n">eir_f_t</span><span class="p">,</span>
+            <span class="n">eir_f_plr</span><span class="p">,</span>
+            <span class="n">load</span><span class="p">,</span>
+            <span class="n">cap_f_lwt_lct_rated</span><span class="p">,</span>
+            <span class="n">ref_cop</span><span class="p">,</span>
+            <span class="n">ect</span><span class="p">,</span>
+            <span class="n">m_c</span><span class="p">,</span>
+            <span class="n">c_p</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">args</span>
+
+        <span class="c1"># Temperature dependent curve modifiers</span>
+        <span class="n">cap_f_lwt_lct</span> <span class="o">=</span> <span class="n">cap_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lwt</span><span class="p">,</span> <span class="n">lct</span><span class="p">)</span>
+        <span class="n">eir_f_lwt_lct</span> <span class="o">=</span> <span class="n">eir_f_t</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lwt</span><span class="p">,</span> <span class="n">lct</span><span class="p">)</span>
+
+        <span class="c1"># Convert reference capacity to kW</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap_unit</span> <span class="o">!=</span> <span class="s2">&quot;kW&quot;</span><span class="p">:</span>
+            <span class="n">ref_cap_org</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_cap_unit</span><span class="p">)</span>
+            <span class="n">ref_cap</span> <span class="o">=</span> <span class="n">ref_cap_org</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="n">new_unit</span><span class="o">=</span><span class="s2">&quot;kW&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ref_cap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span>
+
+        <span class="c1"># Operating variables</span>
+        <span class="n">cap_op</span> <span class="o">=</span> <span class="n">ref_cap</span> <span class="o">*</span> <span class="n">cap_f_lwt_lct</span>
+        <span class="k">if</span> <span class="n">cap_f_lwt_lct_rated</span> <span class="o">==</span> <span class="o">-</span><span class="mi">999</span><span class="p">:</span>
+            <span class="n">plr</span> <span class="o">=</span> <span class="n">load</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plr</span> <span class="o">=</span> <span class="n">load</span> <span class="o">*</span> <span class="n">cap_f_lwt_lct_rated</span> <span class="o">/</span> <span class="n">cap_f_lwt_lct</span>
+
+        <span class="c1"># PLR and temperature curve modifier</span>
+        <span class="n">eir_f_plr_lct</span> <span class="o">=</span> <span class="n">eir_f_plr</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lct</span><span class="p">,</span> <span class="n">plr</span><span class="p">)</span>
+
+        <span class="c1"># Evaporator operating capacity</span>
+        <span class="n">q_e</span> <span class="o">=</span> <span class="n">cap_op</span> <span class="o">*</span> <span class="n">plr</span>
+
+        <span class="c1"># Chiller power</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">cap_op</span> <span class="o">/</span> <span class="n">ref_cop</span><span class="p">)</span> <span class="o">*</span> <span class="n">eir_f_lwt_lct</span> <span class="o">*</span> <span class="n">eir_f_plr_lct</span>
+
+        <span class="c1"># Condenser heat transfer</span>
+        <span class="n">q_c</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="n">q_e</span>
+
+        <span class="c1"># Store original ECT</span>
+        <span class="n">ect_org</span> <span class="o">=</span> <span class="n">ect</span>
+
+        <span class="c1"># Recalculate ECT</span>
+        <span class="n">ect</span> <span class="o">=</span> <span class="n">lct</span> <span class="o">-</span> <span class="n">q_c</span> <span class="o">/</span> <span class="p">(</span><span class="n">m_c</span> <span class="o">*</span> <span class="n">c_p</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">ect_org</span> <span class="o">-</span> <span class="n">ect</span><span class="p">)</span> <span class="o">/</span> <span class="n">ect_org</span></div>
+
+<div class="viewcode-block" id="chiller.get_lib_and_filters"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_lib_and_filters">[docs]</a>    <span class="k">def</span> <span class="nf">get_lib_and_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib_path</span><span class="o">=</span><span class="n">chiller_lib</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        method to get lib object and gilters</span>
+<span class="sd">        :param lib_path: (str) - full path of json library</span>
+<span class="sd">        :return lib: (obj) - library object</span>
+<span class="sd">        :return filters: (list) - list of tuples containing the filters specific to Chiller object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">lib_path</span><span class="p">)</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;eqp_type&quot;</span><span class="p">,</span> <span class="s2">&quot;chiller&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;condenser_type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">condenser_type</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;sim_engine&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_engine</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">lib</span><span class="p">,</span> <span class="n">filters</span></div>
+
+<div class="viewcode-block" id="chiller.get_ranges"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_ranges">[docs]</a>    <span class="k">def</span> <span class="nf">get_ranges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        method to get ranges specific to the chiller object</span>
+<span class="sd">        :return ranges: (dict) - ranges for normalization</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">norm_val</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ect_lwt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_ect</span><span class="p">,</span> <span class="s2">&quot;lct_lwt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_lct</span><span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">]</span>
+
+        <span class="n">ranges</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;eir-f-t&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;vars_range&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">)],</span>
+                <span class="s2">&quot;normalization&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_lwt</span><span class="p">,</span> <span class="n">norm_val</span><span class="p">),</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;cap-f-t&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;vars_range&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">)],</span>
+                <span class="s2">&quot;normalization&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ref_lwt</span><span class="p">,</span> <span class="n">norm_val</span><span class="p">),</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;eir-f-plr&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;vars_range&quot;</span><span class="p">:</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)],</span> <span class="s2">&quot;normalization&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">)},</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">ranges</span></div>
+
+<div class="viewcode-block" id="chiller.get_curves_from_lib"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_curves_from_lib">[docs]</a>    <span class="k">def</span> <span class="nf">get_curves_from_lib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">,</span> <span class="n">filters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        method to get the sort from the library based on chiller filters</span>
+<span class="sd">        :param lib: (obj) - Library Object</span>
+<span class="sd">        :param filters: (list) - list of tuples containing the relevant filter keys and values</span>
+<span class="sd">        :return sets: (list of objects) - list of SetofCurves object corresponding to seed curves</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># add a block for constant + variable compressor speed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_speed</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;variable&quot;</span><span class="p">]:</span>
+            <span class="n">filters</span> <span class="o">=</span> <span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_speed&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_speed</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_speed</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="n">filters</span> <span class="o">=</span> <span class="n">filters</span>
+
+        <span class="c1"># Selecting the relevant filters based on compressor type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_type</span> <span class="o">==</span> <span class="s2">&quot;positive_displacement&quot;</span><span class="p">:</span>
+            <span class="n">tr_wtr_screw</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;screw&quot;</span><span class="p">)],</span> <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">tr_wtr_scroll</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;scroll&quot;</span><span class="p">)],</span> <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">tr_wtr_rec</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;reciprocating&quot;</span><span class="p">)],</span>
+                <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">sets</span> <span class="o">=</span> <span class="n">tr_wtr_screw</span> <span class="o">+</span> <span class="n">tr_wtr_scroll</span> <span class="o">+</span> <span class="n">tr_wtr_rec</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_type</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span><span class="p">:</span>
+            <span class="n">tr_wtr_screw</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;screw&quot;</span><span class="p">)],</span> <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">tr_wtr_scroll</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;scroll&quot;</span><span class="p">)],</span> <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">tr_wtr_rec</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;reciprocating&quot;</span><span class="p">)],</span>
+                <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ep_wtr_cent</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;centrifugal&quot;</span><span class="p">)],</span>
+                <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">sets</span> <span class="o">=</span> <span class="n">tr_wtr_screw</span> <span class="o">+</span> <span class="n">tr_wtr_scroll</span> <span class="o">+</span> <span class="n">tr_wtr_rec</span> <span class="o">+</span> <span class="n">ep_wtr_cent</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_type</span> <span class="o">==</span> <span class="s2">&quot;scroll/screw&quot;</span><span class="p">:</span>
+            <span class="n">tr_wtr_screw</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;screw&quot;</span><span class="p">)],</span> <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">tr_wtr_scroll</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="s2">&quot;scroll&quot;</span><span class="p">)],</span> <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">sets</span> <span class="o">=</span> <span class="n">tr_wtr_screw</span> <span class="o">+</span> <span class="n">tr_wtr_scroll</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_type</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;scroll&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;screw&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;reciprocating&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;centrifugal&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="n">ep_wtr</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">find_set_of_curvess_from_lib</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">filters</span> <span class="o">+</span> <span class="p">[(</span><span class="s2">&quot;compressor_type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_type</span><span class="p">)],</span>
+                <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">sets</span> <span class="o">=</span> <span class="n">ep_wtr</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sets</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">assert</span> <span class="n">sets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">sets</span></div>
+
+<div class="viewcode-block" id="chiller.get_seed_curves"><a class="viewcode-back" href="../../Code Documentation.html#copper.chiller.chiller.get_seed_curves">[docs]</a>    <span class="k">def</span> <span class="nf">get_seed_curves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">csets</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        method to generate seed curves specific to a chiller. also sets relevant attributes (misc_attr, ranges)</span>
+<span class="sd">        :param lib: (obj) - Library Object</span>
+<span class="sd">        :fitlers: (list) - list of tuples containing the filter keys and values</span>
+<span class="sd">        :csets (list) - list of Set of Curves object corresponding to selected chillers from libraru</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_type</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;centrifugal&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;any&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;positive_displacement&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;reciprocating&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;scroll&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;screw&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;scroll/screw&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_speed</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;variable&quot;</span><span class="p">,</span> <span class="s2">&quot;any&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">lib</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">filters</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">csets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">lib</span><span class="p">,</span> <span class="n">filters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_lib_and_filters</span><span class="p">()</span>
+            <span class="n">csets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_curves_from_lib</span><span class="p">(</span><span class="n">lib</span><span class="o">=</span><span class="n">lib</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">)</span>
+
+        <span class="n">FullEffUnit</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit</span><span class="p">)</span>
+        <span class="n">full_eff_cop</span> <span class="o">=</span> <span class="n">FullEffUnit</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="s2">&quot;cop&quot;</span><span class="p">)</span>
+        <span class="n">PartEffUnit</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">part_eff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_eff_unit</span><span class="p">)</span>
+        <span class="n">part_eff_cop</span> <span class="o">=</span> <span class="n">PartEffUnit</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="s2">&quot;cop&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">misc_attr</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="s2">&quot;ref_cap&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_cap</span><span class="p">,</span>
+            <span class="s2">&quot;ref_cap_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;full_eff&quot;</span><span class="p">:</span> <span class="n">full_eff_cop</span><span class="p">,</span>
+            <span class="s2">&quot;part_eff&quot;</span><span class="p">:</span> <span class="n">part_eff_cop</span><span class="p">,</span>
+            <span class="s2">&quot;ref_eff_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;compressor_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_type</span><span class="p">,</span>
+            <span class="s2">&quot;condenser_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">condenser_type</span><span class="p">,</span>
+            <span class="s2">&quot;compressor_speed&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">compressor_speed</span><span class="p">,</span>
+            <span class="s2">&quot;sim_engine&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_engine</span><span class="p">,</span>
+            <span class="s2">&quot;min_plr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_plr</span><span class="p">,</span>
+            <span class="s2">&quot;min_unloading&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_unloading</span><span class="p">,</span>
+            <span class="s2">&quot;max_plr&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Aggregated set of curves&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;Copper&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ranges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ranges</span><span class="p">()</span>
+        <span class="n">curves</span> <span class="o">=</span> <span class="n">SetsofCurves</span><span class="p">(</span><span class="n">sets</span><span class="o">=</span><span class="n">csets</span><span class="p">,</span> <span class="n">eqp</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">curves</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Copper</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Quickstart Guide.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Additional Examples.html">Additional Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Code Documentation.html">Code Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Jeremy Lerond.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

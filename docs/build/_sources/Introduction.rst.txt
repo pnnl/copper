@@ -1,10 +1,15 @@
 Introduction
 =============
-`Copper` is a performance curve generator for building energy simulations. It uses a genetic algorithm to modify exisiting performance curves to match specific performance indicators at both full and part load.
+`Copper` is a performance curve generator for building energy simulation. It uses a genetic algorithm to modify existing, or an aggregate of existing performance curves to match specific full and part load energy performance metric values.
 
 What can `Copper` do?
 ----------------------
-* Generate performance curves sets based on `typical` sets
-* Modify existing performance curves from exisiting equipment
+* Generate sets of curves
 * Plot curves
-* Export them to the `EnergyPlus` and `DOE-2` input formats
+* Export curves
+
+What HVAC equipment does `Copper` handle?
+-----------------------------------------
+* Chillers
+* Packaged direct expansion (*coming soon...*)
+

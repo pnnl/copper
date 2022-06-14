@@ -3,38 +3,33 @@ import copper as cp
 
 
 class TestAlgorithm(TestCase):
-    def test_tutorial(self):
-
-        full_eff_target = 0.650
-        part_eff_target = 0.480
+    def test_quickstart_guide(self):
 
         chlr = cp.chiller(
             ref_cap=300,
             ref_cap_unit="ton",
-            full_eff=full_eff_target,
+            full_eff=0.610,
             full_eff_unit="kw/ton",
-            part_eff=part_eff_target,
+            part_eff=0.520,
             part_eff_unit="kw/ton",
             sim_engine="energyplus",
             model="ect_lwt",
-            compressor_type="centrifugal",
+            compressor_type="screw",
             condenser_type="water",
             compressor_speed="constant",
         )
 
-        tol = 0.005
-
         set_of_curves = chlr.generate_set_of_curves(
-            vars=["eir-f-plr"], method="best_match", tol=tol
+            vars=["eir-f-plr"], method="nearest_neighbor", tol=0.005
         )
 
         full_eff = chlr.calc_rated_eff(eff_type="full")
         part_eff = chlr.calc_rated_eff(eff_type="part")
 
-        self.assertTrue(full_eff < full_eff_target * (1 + tol), full_eff)
-        self.assertTrue(full_eff > full_eff_target * (1 - tol), full_eff)
-        self.assertTrue(part_eff < part_eff_target * (1 + tol), part_eff)
-        self.assertTrue(part_eff > part_eff_target * (1 - tol), part_eff)
+        self.assertTrue(full_eff < 0.61 * (1 + 0.005), full_eff)
+        self.assertTrue(full_eff > 0.61 * (1 - 0.005), full_eff)
+        self.assertTrue(part_eff < 0.52 * (1 + 0.005), part_eff)
+        self.assertTrue(part_eff > 0.52 * (1 - 0.005), part_eff)
 
     def test_random_init(self):
 

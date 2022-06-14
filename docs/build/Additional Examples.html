@@ -1,0 +1,172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Additional Examples &#8212; Copper 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code Documentation" href="Code Documentation.html" />
+    <link rel="prev" title="Quickstart Guide" href="Quickstart Guide.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="additional-examples">
+<h1>Additional Examples<a class="headerlink" href="#additional-examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="lct-based-chiller-performance-curves">
+<h2>LCT-based Chiller Performance Curves<a class="headerlink" href="#lct-based-chiller-performance-curves" title="Permalink to this headline">¶</a></h2>
+<p>Most building energy modeling software use an entering condenser temperature (ECT) model. Some software such as <a class="reference external" href="https://energyplus.net/">EnergyPlus</a> have capabilities to simulate chillers using a model using a leaving condenser temperature (LCT) model. <cite>Copper</cite> can be used to generate performance curves for such a model. The following example generate a set of performance curves for the LCT model for a 100 ton water cooled scroll chiller.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">chlr</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">chiller</span><span class="p">(</span>
+    <span class="n">compressor_type</span><span class="o">=</span><span class="s2">&quot;scroll&quot;</span><span class="p">,</span>
+    <span class="n">condenser_type</span><span class="o">=</span><span class="s2">&quot;water&quot;</span><span class="p">,</span>
+    <span class="n">compressor_speed</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span>
+    <span class="n">ref_cap</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">ref_cap_unit</span><span class="o">=</span><span class="s2">&quot;ton&quot;</span><span class="p">,</span>
+    <span class="n">full_eff</span><span class="o">=</span><span class="n">full_eff_target</span><span class="p">,</span>
+    <span class="n">full_eff_unit</span><span class="o">=</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">,</span>
+    <span class="n">part_eff</span><span class="o">=</span><span class="n">part_eff_target</span><span class="p">,</span>
+    <span class="n">part_eff_unit</span><span class="o">=</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">,</span>
+    <span class="n">part_eff_ref_std</span><span class="o">=</span><span class="s2">&quot;ahri_550/590&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;lct_lwt&quot;</span><span class="p">,</span>
+    <span class="n">sim_engine</span><span class="o">=</span><span class="s2">&quot;energyplus&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">tol</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+<span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">chlr</span><span class="o">.</span><span class="n">generate_set_of_curves</span><span class="p">(</span>
+    <span class="nb">vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eir-f-t&quot;</span><span class="p">,</span> <span class="s2">&quot;eir-f-plr&quot;</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;best_match&quot;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="targeting-two-different-rating-standards">
+<h2>Targeting Two Different Rating Standards<a class="headerlink" href="#targeting-two-different-rating-standards" title="Permalink to this headline">¶</a></h2>
+<p>The rating conditions in AHRI Standard 550/590 and 551/591 are different. <cite>Copper</cite> support the IPLV and performance curve generation for both standards. It is possible to also generate curves for two sets of targeted efficiencies, one for AHRI 550/590, and the other one for 551/591. The following example demonstrate that.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">full_eff_target</span> <span class="o">=</span> <span class="mf">1.188</span>
+<span class="n">full_eff_target_alt</span> <span class="o">=</span> <span class="mf">1.178</span>
+<span class="n">part_eff_target</span> <span class="o">=</span> <span class="mf">0.876</span>
+<span class="n">part_eff_target_alt</span> <span class="o">=</span> <span class="mf">0.869</span>
+
+<span class="n">chlr</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">chiller</span><span class="p">(</span>
+    <span class="n">compressor_type</span><span class="o">=</span><span class="s2">&quot;scroll&quot;</span><span class="p">,</span>
+    <span class="n">condenser_type</span><span class="o">=</span><span class="s2">&quot;water&quot;</span><span class="p">,</span>
+    <span class="n">compressor_speed</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span>
+    <span class="n">ref_cap</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">ref_cap_unit</span><span class="o">=</span><span class="s2">&quot;ton&quot;</span><span class="p">,</span>
+    <span class="n">full_eff</span><span class="o">=</span><span class="n">full_eff_target</span><span class="p">,</span>
+    <span class="n">full_eff_unit</span><span class="o">=</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">,</span>
+    <span class="n">full_eff_alt</span><span class="o">=</span><span class="n">full_eff_target_alt</span><span class="p">,</span>
+    <span class="n">full_eff_unit_alt</span><span class="o">=</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">,</span>
+    <span class="n">part_eff</span><span class="o">=</span><span class="n">part_eff_target</span><span class="p">,</span>
+    <span class="n">part_eff_unit</span><span class="o">=</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">,</span>
+    <span class="n">part_eff_ref_std</span><span class="o">=</span><span class="s2">&quot;ahri_550/590&quot;</span><span class="p">,</span>
+    <span class="n">part_eff_alt</span><span class="o">=</span><span class="n">part_eff_target_alt</span><span class="p">,</span>
+    <span class="n">part_eff_unit_alt</span><span class="o">=</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">,</span>
+    <span class="n">part_eff_ref_std_alt</span><span class="o">=</span><span class="s2">&quot;ahri_551/591&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;ect_lwt&quot;</span><span class="p">,</span>
+    <span class="n">sim_engine</span><span class="o">=</span><span class="s2">&quot;energyplus&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">tol</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+<span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">chlr</span><span class="o">.</span><span class="n">generate_set_of_curves</span><span class="p">(</span>
+    <span class="nb">vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eir-f-plr&quot;</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;best_match&quot;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Copper</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Quickstart Guide.html">Quickstart Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Additional Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#lct-based-chiller-performance-curves">LCT-based Chiller Performance Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#targeting-two-different-rating-standards">Targeting Two Different Rating Standards</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Code Documentation.html">Code Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Quickstart Guide.html" title="previous chapter">Quickstart Guide</a></li>
+      <li>Next: <a href="Code Documentation.html" title="next chapter">Code Documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Jeremy Lerond.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/Additional Examples.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
