@@ -61,8 +61,8 @@ class TestAlgorithm(TestCase):
             vars=["eir-f-plr"], method="nearest_neighbor", tol=tol
         )
 
-        full_eff = chlr.calc_rated_eff(eff_type="full", unit=self.full_eff_unit)
-        part_eff = chlr.calc_rated_eff(eff_type="part", unit=self.part_eff_unit)
+        full_eff = chlr.calc_rated_eff(eff_type="full", unit=chlr.full_eff_unit)
+        part_eff = chlr.calc_rated_eff(eff_type="part", unit=chlr.part_eff_unit)
 
         self.assertTrue(full_eff < full_eff_target * (1 + tol), full_eff)
         self.assertTrue(full_eff > full_eff_target * (1 - tol), full_eff)
