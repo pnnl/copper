@@ -345,16 +345,16 @@ class Library:
                         eff = c_unit.conversion(eqp.full_eff_unit)
                         eff_unit = eqp.full_eff_unit
 
-                        # Compute difference
-                        c_diff = abs((eqp.ref_cap - cap) / eqp.ref_cap) + abs(
-                            (eqp.full_eff - eff) / eqp.full_eff
-                        )
+                    # Compute difference
+                    c_diff = abs((eqp.ref_cap - cap) / eqp.ref_cap) + abs(
+                        (eqp.full_eff - eff) / eqp.full_eff
+                    )
 
-                        if c_diff < diff:
-                            # Update lowest numeric difference
-                            diff = c_diff
+                    if c_diff < diff:
+                        # Update lowest numeric difference
+                        diff = c_diff
 
-                            # Update best match
-                            best_match = name
+                        # Update best match
+                        best_match = name
 
         return best_match

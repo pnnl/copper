@@ -63,24 +63,6 @@ class generator:
         self.target_alt = self.equipment.part_eff_alt
         self.full_eff_alt = self.equipment.full_eff_alt
 
-        # Convert target if different than kw/ton
-        if self.equipment.part_eff_unit != "kw/ton":
-            target_c = Units(self.target, self.equipment.part_eff_unit)
-            self.target = target_c.conversion("kw/ton")
-        if self.equipment.part_eff_unit_alt != "kw/ton":
-            target_c = Units(self.target_alt, self.equipment.part_eff_unit_alt)
-            self.target_alt = target_c.conversion("kw/ton")
-
-        # Convert full load efficiency if different than kw/ton
-        if self.equipment.full_eff_unit != "kw/ton":
-            full_eff_c = Units(self.equipment.full_eff, self.equipment.full_eff_unit)
-            self.full_eff = full_eff_c.conversion("kw/ton")
-        if self.equipment.full_eff_unit_alt != "kw/ton":
-            full_eff_c = Units(
-                self.equipment.full_eff_alt, self.equipment.full_eff_unit_alt
-            )
-            self.full_eff_alt = full_eff_c.conversion("kw/ton")
-
         if len(self.base_curves) == 0:
             if self.method == "best_match":
                 lib, filters = self.equipment.get_lib_and_filters()
@@ -145,22 +127,43 @@ class generator:
                 if verbose:
                     if self.target_alt > 0:
                         part_rating_alt = round(
-                            self.equipment.calc_rated_eff(eff_type="part", alt=True), 4
+                            self.equipment.calc_rated_eff(
+                                eff_type="part",
+                                unit=self.equipment.part_eff_unit_alt,
+                                alt=True,
+                            ),
+                            4,
                         )
                     else:
                         part_rating_alt = "n/a"
                     if self.full_eff_alt > 0:
                         full_rating_alt = round(
-                            self.equipment.calc_rated_eff(eff_type="full", alt=True), 4
+                            self.equipment.calc_rated_eff(
+                                eff_type="full",
+                                unit=self.equipment.full_eff_unit_alt,
+                                alt=True,
+                            ),
+                            4,
                         )
                     else:
                         full_rating_alt = "n/a"
-
                     print(
-                        "GEN: {}, IPLV: {}, KW/TON: {} IPLV-alt: {}, KW/TON-alt: {}".format(
+                        "GEN: {}, IPLV: {}, {}: {} IPLV-alt: {}, {}-alt: {}".format(
                             gen,
-                            round(self.equipment.calc_rated_eff(eff_type="part"), 4),
-                            round(self.equipment.calc_rated_eff(eff_type="full"), 4),
+                            round(
+                                self.equipment.calc_rated_eff(
+                                    eff_type="part", unit=self.equipment.part_eff_unit
+                                ),
+                                4,
+                            ),
+                            self.equipment.part_eff_unit.upper(),
+                            round(
+                                self.equipment.calc_rated_eff(
+                                    eff_type="full", unit=self.equipment.full_eff_unit
+                                ),
+                                4,
+                            ),
+                            self.equipment.part_eff_unit.upper(),
                             part_rating_alt,
                             full_rating_alt,
                         )
@@ -174,8 +177,18 @@ class generator:
                 print(
                     "GEN: {}, IPLV: {}, KW/TON: {}".format(
                         gen,
-                        round(self.equipment.calc_rated_eff(eff_type="part"), 2),
-                        round(self.equipment.calc_rated_eff(eff_type="full"), 2),
+                        round(
+                            self.equipment.calc_rated_eff(
+                                eff_type="part", unit=self.equipment.part_eff_unit
+                            ),
+                            2,
+                        ),
+                        round(
+                            self.equipment.calc_rated_eff(
+                                eff_type="full", unit=self.equipment.full_eff_unit
+                            ),
+                            2,
+                        ),
                     )
                 )
 
@@ -191,17 +204,21 @@ class generator:
         """
         if self.equipment.type == "chiller":
             if self.equipment.set_of_curves != "":
-                part_rating = self.equipment.calc_rated_eff(eff_type="part")
-                full_rating = self.equipment.calc_rated_eff(eff_type="full")
+                part_rating = self.equipment.calc_rated_eff(
+                    eff_type="part", unit=self.equipment.part_eff_unit
+                )
+                full_rating = self.equipment.calc_rated_eff(
+                    eff_type="full", unit=self.equipment.full_eff_unit
+                )
                 if self.target_alt > 0:
                     part_rating_alt = self.equipment.calc_rated_eff(
-                        eff_type="part", alt=True
+                        eff_type="part", unit=self.equipment.part_eff_unit_alt, alt=True
                     )
                 else:
                     part_rating_alt = 0
                 if self.full_eff_alt > 0:
                     full_rating_alt = self.equipment.calc_rated_eff(
-                        eff_type="full", alt=True
+                        eff_type="full", unit=self.equipment.full_eff_unit_alt, alt=True
                     )
                 else:
                     full_rating_alt = 0
@@ -436,11 +453,16 @@ class generator:
         # Temporary assign curve to equipment
         self.equipment.set_of_curves = set_of_curves.curves
         part_eff_score = abs(
-            self.equipment.calc_rated_eff(eff_type="part") - self.target
+            self.equipment.calc_rated_eff(
+                eff_type="part", unit=self.equipment.part_eff_unit
+            )
+            - self.target
         )
         if self.target_alt > 0:
             part_eff_score += abs(
-                self.equipment.calc_rated_eff(eff_type="part", alt=True)
+                self.equipment.calc_rated_eff(
+                    eff_type="part", unit=self.equipment.part_eff_unit_alt, alt=True
+                )
                 - self.target_alt
             )
         return part_eff_score
@@ -449,11 +471,16 @@ class generator:
         # Temporary assign curve to equipment
         self.equipment.set_of_curves = set_of_curves.curves
         full_eff_score = abs(
-            self.equipment.calc_rated_eff(eff_type="full") - self.equipment.full_eff
+            self.equipment.calc_rated_eff(
+                eff_type="full", unit=self.equipment.full_eff_unit
+            )
+            - self.equipment.full_eff
         )
         if self.equipment.full_eff_alt > 0:
             full_eff_score += abs(
-                self.equipment.calc_rated_eff(eff_type="full", alt=True)
+                self.equipment.calc_rated_eff(
+                    eff_type="full", unit=self.equipment.full_eff_unit_alt, alt=True
+                )
                 - self.equipment.full_eff_alt
             )
         return full_eff_score
