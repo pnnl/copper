@@ -36,6 +36,39 @@ class TestAlgorithm(TestCase):
         self.assertTrue(part_eff < part_eff_target * (1 + tol), part_eff)
         self.assertTrue(part_eff > part_eff_target * (1 - tol), part_eff)
 
+    def test_tutorial_si(self):
+
+        full_eff_target = 5.2
+        part_eff_target = 7.4
+
+        chlr = cp.chiller(
+            ref_cap=1250,
+            ref_cap_unit="kW",
+            full_eff=full_eff_target,
+            full_eff_unit="cop",
+            part_eff=part_eff_target,
+            part_eff_unit="cop",
+            sim_engine="energyplus",
+            model="ect_lwt",
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant",
+        )
+
+        tol = 0.005
+
+        set_of_curves = chlr.generate_set_of_curves(
+            vars=["eir-f-plr"], method="nearest_neighbor", tol=tol
+        )
+
+        full_eff = chlr.calc_rated_eff(eff_type="full", unit=chlr.full_eff_unit)
+        part_eff = chlr.calc_rated_eff(eff_type="part", unit=chlr.part_eff_unit)
+
+        self.assertTrue(full_eff < full_eff_target * (1 + tol), full_eff)
+        self.assertTrue(full_eff > full_eff_target * (1 - tol), full_eff)
+        self.assertTrue(part_eff < part_eff_target * (1 + tol), part_eff)
+        self.assertTrue(part_eff > part_eff_target * (1 - tol), part_eff)
+
     def test_random_init(self):
 
         full_eff_target = 0.650
@@ -115,7 +148,7 @@ class TestAlgorithm(TestCase):
             sim_engine="energyplus",
         )
 
-        tol = 0.01
+        tol = 0.03
 
         set_of_curves = chlr.generate_set_of_curves(
             vars=["eir-f-plr"], method="best_match", tol=tol
@@ -155,7 +188,7 @@ class TestAlgorithm(TestCase):
             sim_engine="energyplus",
         )
 
-        tol = 0.01
+        tol = 0.03
 
         set_of_curves = chlr.generate_set_of_curves(
             vars=["eir-f-t", "eir-f-plr"], method="best_match", tol=tol
@@ -195,7 +228,7 @@ class TestAlgorithm(TestCase):
             sim_engine="energyplus",
         )
 
-        tol = 0.01
+        tol = 0.03
 
         set_of_curves = chlr.generate_set_of_curves(
             vars=["eir-f-t", "eir-f-plr"], method="best_match", tol=tol
@@ -241,13 +274,13 @@ class TestAlgorithm(TestCase):
             part_eff_unit="kw/ton",
             part_eff_ref_std=primary_std,
             part_eff_alt=part_eff_target_alt,
-            part_eff_unit_alt="",
+            part_eff_unit_alt="kw/ton",
             part_eff_ref_std_alt=secondary_std,
             model="ect_lwt",
             sim_engine="energyplus",
         )
 
-        tol = 0.005
+        tol = 0.03
         method = "nearest_neighbor"
 
         chlr_curves_set = chlr.generate_set_of_curves(
