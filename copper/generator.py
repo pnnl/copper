@@ -32,12 +32,14 @@ class generator:
         base_curves=[],
         random_seed=None,
         num_nearest_neighbors=10,
+        max_restart=None,
     ):
         self.equipment = equipment
         self.method = method
         self.pop_size = pop_size
         self.tol = tol
         self.max_gen = max_gen
+        self.max_restart = max_restart
         self.vars = vars
         self.sFac = sFac
         self.retain = retain
@@ -103,8 +105,12 @@ class generator:
             ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
         # Run generator
-        self.run_ga(curves=self.base_curves, verbose=verbose)
-        return self.equipment.set_of_curves
+        res = self.run_ga(curves=self.base_curves, verbose=verbose)
+
+        if res is None:
+            return
+        else:
+            return self.equipment.set_of_curves
 
     def run_ga(self, curves, verbose=False):
         """Run genetic algorithm.
@@ -117,6 +123,7 @@ class generator:
 
         self.pop = []
         gen = 0
+        restart = 0
         self.equipment.curves = curves
 
         while not self.is_target_met():
@@ -171,26 +178,38 @@ class generator:
                 max_gen = gen
 
             if not self.is_target_met():
-                print(f"Target not met after {self.max_gen}; Restarting the generator.")
-                gen = 0
+                if self.max_restart is not None:
+                    if restart < self.max_restart:
+                        print(
+                            f"Target not met after {self.max_gen} generations; Restarting the generator."
+                        )
+                        gen = 0
+                        restart += 1
 
-                print(
-                    "GEN: {}, IPLV: {}, KW/TON: {}".format(
-                        gen,
-                        round(
-                            self.equipment.calc_rated_eff(
-                                eff_type="part", unit=self.equipment.part_eff_unit
-                            ),
-                            2,
-                        ),
-                        round(
-                            self.equipment.calc_rated_eff(
-                                eff_type="full", unit=self.equipment.full_eff_unit
-                            ),
-                            2,
-                        ),
-                    )
-                )
+                        print(
+                            "GEN: {}, IPLV: {}, KW/TON: {}".format(
+                                gen,
+                                round(
+                                    self.equipment.calc_rated_eff(
+                                        eff_type="part",
+                                        unit=self.equipment.part_eff_unit,
+                                    ),
+                                    2,
+                                ),
+                                round(
+                                    self.equipment.calc_rated_eff(
+                                        eff_type="full",
+                                        unit=self.equipment.full_eff_unit,
+                                    ),
+                                    2,
+                                ),
+                            )
+                        )
+                    else:
+                        print(
+                            f"Target not met after {self.max_restart} restart; No solution was found."
+                        )
+                        return
 
         print("Target met after {} generations.".format(gen))
         return self.pop

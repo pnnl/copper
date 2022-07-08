@@ -69,6 +69,37 @@ class TestAlgorithm(TestCase):
         self.assertTrue(part_eff < part_eff_target * (1 + tol), part_eff)
         self.assertTrue(part_eff > part_eff_target * (1 - tol), part_eff)
 
+    def test_max_restart(self):
+
+        full_eff_target = 5.2
+        part_eff_target = 7.4
+
+        chlr = cp.chiller(
+            ref_cap=1250,
+            ref_cap_unit="kW",
+            full_eff=full_eff_target,
+            full_eff_unit="cop",
+            part_eff=part_eff_target,
+            part_eff_unit="cop",
+            sim_engine="energyplus",
+            model="ect_lwt",
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant",
+        )
+
+        tol = 0.005
+
+        set_of_curves = chlr.generate_set_of_curves(
+            vars=["eir-f-plr"],
+            method="nearest_neighbor",
+            tol=tol,
+            max_restart=1,
+            max_gen=1,
+        )
+
+        self.assertTrue(set_of_curves is None)
+
     def test_random_init(self):
 
         full_eff_target = 0.650

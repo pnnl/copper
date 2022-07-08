@@ -255,6 +255,7 @@ class chiller:
         export_format="json",
         export_name="",
         num_nearest_neighbors=10,
+        max_restart=None,
     ):
         """Generate a set of curves for a particular chiller() object.
 
@@ -291,6 +292,7 @@ class chiller:
             base_curves,
             random_seed,
             num_nearest_neighbors,
+            max_restart,
         )
         set_of_curves = ga.generate_set_of_curves(verbose=verbose)
 
