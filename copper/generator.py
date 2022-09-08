@@ -37,12 +37,14 @@ class generator:
         base_curves=[],
         random_seed=None,
         num_nearest_neighbors=10,
+        max_restart=None,
     ):
         self.equipment = equipment
         self.method = method
         self.pop_size = pop_size
         self.tol = tol
         self.max_gen = max_gen
+        self.max_restart = max_restart
         self.vars = vars
         self.sFac = sFac
         self.retain = retain
@@ -68,24 +70,6 @@ class generator:
         self.full_eff = self.equipment.full_eff
         self.target_alt = self.equipment.part_eff_alt
         self.full_eff_alt = self.equipment.full_eff_alt
-
-        # Convert target if different than kw/ton
-        if self.equipment.part_eff_unit != "kw/ton":
-            target_c = Units(self.target, self.equipment.part_eff_unit)
-            self.target = target_c.conversion("kw/ton")
-        if self.equipment.part_eff_unit_alt != "kw/ton":
-            target_c = Units(self.target_alt, self.equipment.part_eff_unit_alt)
-            self.target_alt = target_c.conversion("kw/ton")
-
-        # Convert full load efficiency if different than kw/ton
-        if self.equipment.full_eff_unit != "kw/ton":
-            full_eff_c = Units(self.equipment.full_eff, self.equipment.full_eff_unit)
-            self.full_eff = full_eff_c.conversion("kw/ton")
-        if self.equipment.full_eff_unit_alt != "kw/ton":
-            full_eff_c = Units(
-                self.equipment.full_eff_alt, self.equipment.full_eff_unit_alt
-            )
-            self.full_eff_alt = full_eff_c.conversion("kw/ton")
 
         if len(self.base_curves) == 0:
             if self.method == "best_match":
@@ -127,8 +111,12 @@ class generator:
             ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
         # Run generator
-        self.run_ga(curves=self.base_curves, verbose=verbose)
-        return self.equipment.set_of_curves
+        res = self.run_ga(curves=self.base_curves, verbose=verbose)
+
+        if res is None:
+            return
+        else:
+            return self.equipment.set_of_curves
 
     def run_ga(self, curves, verbose=False):
         """Run genetic algorithm.
@@ -142,6 +130,7 @@ class generator:
 
         self.pop = []
         gen = 0
+        restart = 0
         self.equipment.curves = curves
 
         while not self.is_target_met():
@@ -152,22 +141,43 @@ class generator:
                 if verbose:
                     if self.target_alt > 0:
                         part_rating_alt = round(
-                            self.equipment.calc_rated_eff(eff_type="part", alt=True), 4
+                            self.equipment.calc_rated_eff(
+                                eff_type="part",
+                                unit=self.equipment.part_eff_unit_alt,
+                                alt=True,
+                            ),
+                            4,
                         )
                     else:
                         part_rating_alt = "n/a"
                     if self.full_eff_alt > 0:
                         full_rating_alt = round(
-                            self.equipment.calc_rated_eff(eff_type="full", alt=True), 4
+                            self.equipment.calc_rated_eff(
+                                eff_type="full",
+                                unit=self.equipment.full_eff_unit_alt,
+                                alt=True,
+                            ),
+                            4,
                         )
                     else:
                         full_rating_alt = "n/a"
-
                     print(
-                        "GEN: {}, IPLV: {}, KW/TON: {} IPLV-alt: {}, KW/TON-alt: {}".format(
+                        "GEN: {}, IPLV: {}, {}: {} IPLV-alt: {}, {}-alt: {}".format(
                             gen,
-                            round(self.equipment.calc_rated_eff(eff_type="part"), 4),
-                            round(self.equipment.calc_rated_eff(eff_type="full"), 4),
+                            round(
+                                self.equipment.calc_rated_eff(
+                                    eff_type="part", unit=self.equipment.part_eff_unit
+                                ),
+                                4,
+                            ),
+                            self.equipment.part_eff_unit.upper(),
+                            round(
+                                self.equipment.calc_rated_eff(
+                                    eff_type="full", unit=self.equipment.full_eff_unit
+                                ),
+                                4,
+                            ),
+                            self.equipment.part_eff_unit.upper(),
                             part_rating_alt,
                             full_rating_alt,
                         )
@@ -175,17 +185,38 @@ class generator:
                 max_gen = gen
 
             if not self.is_target_met():
-                print(f"Target not met after {self.max_gen}; Restarting the generator.")
-                gen = 0
-
-                if verbose:
-                    print(
-                        "GEN: {}, IPLV: {}, KW/TON: {}".format(
-                            gen,
-                            round(self.equipment.calc_rated_eff(eff_type="part"), 2),
-                            round(self.equipment.calc_rated_eff(eff_type="full"), 2),
+                if self.max_restart is not None:
+                    if restart < self.max_restart:
+                        print(
+                            f"Target not met after {self.max_gen} generations; Restarting the generator."
                         )
-                    )
+                        gen = 0
+                        restart += 1
+
+                        print(
+                            "GEN: {}, IPLV: {}, KW/TON: {}".format(
+                                gen,
+                                round(
+                                    self.equipment.calc_rated_eff(
+                                        eff_type="part",
+                                        unit=self.equipment.part_eff_unit,
+                                    ),
+                                    2,
+                                ),
+                                round(
+                                    self.equipment.calc_rated_eff(
+                                        eff_type="full",
+                                        unit=self.equipment.full_eff_unit,
+                                    ),
+                                    2,
+                                ),
+                            )
+                        )
+                    else:
+                        print(
+                            f"Target not met after {self.max_restart} restart; No solution was found."
+                        )
+                        return
 
         print("Target met after {} generations.".format(gen))
         return self.pop
@@ -199,17 +230,21 @@ class generator:
         """
         if self.equipment.type == "chiller":
             if self.equipment.set_of_curves != "":
-                part_rating = self.equipment.calc_rated_eff(eff_type="part")
-                full_rating = self.equipment.calc_rated_eff(eff_type="full")
+                part_rating = self.equipment.calc_rated_eff(
+                    eff_type="part", unit=self.equipment.part_eff_unit
+                )
+                full_rating = self.equipment.calc_rated_eff(
+                    eff_type="full", unit=self.equipment.full_eff_unit
+                )
                 if self.target_alt > 0:
                     part_rating_alt = self.equipment.calc_rated_eff(
-                        eff_type="part", alt=True
+                        eff_type="part", unit=self.equipment.part_eff_unit_alt, alt=True
                     )
                 else:
                     part_rating_alt = 0
                 if self.full_eff_alt > 0:
                     full_rating_alt = self.equipment.calc_rated_eff(
-                        eff_type="full", alt=True
+                        eff_type="full", unit=self.equipment.full_eff_unit_alt, alt=True
                     )
                 else:
                     full_rating_alt = 0
@@ -444,11 +479,16 @@ class generator:
         # Temporary assign curve to equipment
         self.equipment.set_of_curves = set_of_curves.curves
         part_eff_score = abs(
-            self.equipment.calc_rated_eff(eff_type="part") - self.target
+            self.equipment.calc_rated_eff(
+                eff_type="part", unit=self.equipment.part_eff_unit
+            )
+            - self.target
         )
         if self.target_alt > 0:
             part_eff_score += abs(
-                self.equipment.calc_rated_eff(eff_type="part", alt=True)
+                self.equipment.calc_rated_eff(
+                    eff_type="part", unit=self.equipment.part_eff_unit_alt, alt=True
+                )
                 - self.target_alt
             )
         return part_eff_score
@@ -457,11 +497,16 @@ class generator:
         # Temporary assign curve to equipment
         self.equipment.set_of_curves = set_of_curves.curves
         full_eff_score = abs(
-            self.equipment.calc_rated_eff(eff_type="full") - self.equipment.full_eff
+            self.equipment.calc_rated_eff(
+                eff_type="full", unit=self.equipment.full_eff_unit
+            )
+            - self.equipment.full_eff
         )
         if self.equipment.full_eff_alt > 0:
             full_eff_score += abs(
-                self.equipment.calc_rated_eff(eff_type="full", alt=True)
+                self.equipment.calc_rated_eff(
+                    eff_type="full", unit=self.equipment.full_eff_unit_alt, alt=True
+                )
                 - self.equipment.full_eff_alt
             )
         return full_eff_score
