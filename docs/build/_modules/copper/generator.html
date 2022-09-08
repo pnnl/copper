@@ -1,0 +1,726 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>copper.generator &#8212; Copper 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for copper.generator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">generator.py</span>
+<span class="sd">====================================</span>
+<span class="sd">This is the generator module of Copper. The generator uses a genetic algorithm to find set of performance curves that matches the user-specified equipment definitions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">copper.library</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copper.curves</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">location</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">chiller_lib</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;lib&quot;</span><span class="p">,</span> <span class="s2">&quot;chiller_curves.json&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="generator"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator">[docs]</a><span class="k">class</span> <span class="nc">generator</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">equipment</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;best_match&quot;</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">tol</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+        <span class="n">max_gen</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+        <span class="nb">vars</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">sFac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">retain</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">random_select</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">mutate</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">base_curves</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">random_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_nearest_neighbors</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span> <span class="o">=</span> <span class="n">equipment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span> <span class="o">=</span> <span class="n">pop_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_gen</span> <span class="o">=</span> <span class="n">max_gen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vars</span> <span class="o">=</span> <span class="nb">vars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sFac</span> <span class="o">=</span> <span class="n">sFac</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retain</span> <span class="o">=</span> <span class="n">retain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_select</span> <span class="o">=</span> <span class="n">random_select</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mutate</span> <span class="o">=</span> <span class="n">mutate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_curves</span> <span class="o">=</span> <span class="n">base_curves</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_nearest_neighbors</span> <span class="o">=</span> <span class="n">num_nearest_neighbors</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">random_seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
+
+<div class="viewcode-block" id="generator.generate_set_of_curves"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.generate_set_of_curves">[docs]</a>    <span class="k">def</span> <span class="nf">generate_set_of_curves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate set of curves using genetic algorithm.</span>
+
+<span class="sd">        :param string verbose: Output results at each generation.</span>
+<span class="sd">        :return: Set of curves</span>
+<span class="sd">        :rtype: SetofCurves()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">part_eff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_alt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">part_eff_alt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff_alt</span>
+
+        <span class="c1"># Convert target if different than kw/ton</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">part_eff_unit</span> <span class="o">!=</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">:</span>
+            <span class="n">target_c</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">part_eff_unit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target_c</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">part_eff_unit_alt</span> <span class="o">!=</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">:</span>
+            <span class="n">target_c</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_alt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">part_eff_unit_alt</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target_alt</span> <span class="o">=</span> <span class="n">target_c</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Convert full load efficiency if different than kw/ton</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff_unit</span> <span class="o">!=</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">:</span>
+            <span class="n">full_eff_c</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff_unit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span> <span class="o">=</span> <span class="n">full_eff_c</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff_unit_alt</span> <span class="o">!=</span> <span class="s2">&quot;kw/ton&quot;</span><span class="p">:</span>
+            <span class="n">full_eff_c</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff_alt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff_unit_alt</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span> <span class="o">=</span> <span class="n">full_eff_c</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="s2">&quot;kw/ton&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_curves</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;best_match&quot;</span><span class="p">:</span>
+                <span class="n">lib</span><span class="p">,</span> <span class="n">filters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">get_lib_and_filters</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">base_curves</span> <span class="o">=</span> <span class="p">[</span><span class="n">lib</span><span class="o">.</span><span class="n">find_base_curves</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seed_curves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">get_seed_curves</span><span class="p">()</span>  <span class="c1"># get seed curves</span>
+                <span class="n">ranges</span><span class="p">,</span> <span class="n">misc_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">ranges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">misc_attr</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;nearest_neighbor&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base_curve</span> <span class="o">=</span> <span class="n">seed_curves</span><span class="o">.</span><span class="n">get_aggregated_set_of_curves</span><span class="p">(</span>
+                        <span class="n">ranges</span><span class="o">=</span><span class="n">ranges</span><span class="p">,</span>
+                        <span class="n">misc_attr</span><span class="o">=</span><span class="n">misc_attr</span><span class="p">,</span>
+                        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;NN-weighted-average&quot;</span><span class="p">,</span>
+                        <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_nearest_neighbors</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base_curves</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">base_curve</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">seed_curves</span><span class="o">.</span><span class="n">nearest_neighbor_sort</span><span class="p">(</span>
+                        <span class="n">target_attr</span><span class="o">=</span><span class="n">misc_attr</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_nearest_neighbors</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;weighted_average&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base_curve</span> <span class="o">=</span> <span class="n">seed_curves</span><span class="o">.</span><span class="n">get_aggregated_set_of_curves</span><span class="p">(</span>
+                        <span class="n">ranges</span><span class="o">=</span><span class="n">ranges</span><span class="p">,</span> <span class="n">misc_attr</span><span class="o">=</span><span class="n">misc_attr</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;weighted-average&quot;</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base_curves</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">base_curve</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">seed_curves</span><span class="o">.</span><span class="n">nearest_neighbor_sort</span><span class="p">(</span>
+                        <span class="n">target_attr</span><span class="o">=</span><span class="n">misc_attr</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base_curves</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_of_base_curves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_of_base_curves</span><span class="o">.</span><span class="n">eqp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_of_base_curves</span><span class="o">.</span><span class="n">eqp</span><span class="o">.</span><span class="n">set_of_curves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_of_base_curves</span><span class="o">.</span><span class="n">curves</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_curves_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">curve</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_of_base_curves</span><span class="o">.</span><span class="n">curves</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_curves_data</span><span class="p">[</span>
+                <span class="n">curve</span><span class="o">.</span><span class="n">out_var</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_of_base_curves</span><span class="o">.</span><span class="n">get_data_for_plotting</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Run generator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_ga</span><span class="p">(</span><span class="n">curves</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base_curves</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">set_of_curves</span></div>
+
+<div class="viewcode-block" id="generator.run_ga"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.run_ga">[docs]</a>    <span class="k">def</span> <span class="nf">run_ga</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curves</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run genetic algorithm.</span>
+
+<span class="sd">        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm</span>
+<span class="sd">        :param string verbose: Output results at each generation.</span>
+<span class="sd">        :return: Final population of sets of curves</span>
+<span class="sd">        :rtype: list()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pop</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">gen</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">curves</span> <span class="o">=</span> <span class="n">curves</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_target_met</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_population</span><span class="p">(</span><span class="n">curves</span><span class="p">)</span>
+            <span class="k">while</span> <span class="n">gen</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_gen</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_target_met</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">evolve_population</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">)</span>
+                <span class="n">gen</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_alt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">part_rating_alt</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="mi">4</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">part_rating_alt</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">full_rating_alt</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="mi">4</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">full_rating_alt</span> <span class="o">=</span> <span class="s2">&quot;n/a&quot;</span>
+
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;GEN: </span><span class="si">{}</span><span class="s2">, IPLV: </span><span class="si">{}</span><span class="s2">, KW/TON: </span><span class="si">{}</span><span class="s2"> IPLV-alt: </span><span class="si">{}</span><span class="s2">, KW/TON-alt: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">gen</span><span class="p">,</span>
+                            <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">),</span> <span class="mi">4</span><span class="p">),</span>
+                            <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">),</span> <span class="mi">4</span><span class="p">),</span>
+                            <span class="n">part_rating_alt</span><span class="p">,</span>
+                            <span class="n">full_rating_alt</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="n">max_gen</span> <span class="o">=</span> <span class="n">gen</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_target_met</span><span class="p">():</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target not met after </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_gen</span><span class="si">}</span><span class="s2">; Restarting the generator.&quot;</span><span class="p">)</span>
+                <span class="n">gen</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;GEN: </span><span class="si">{}</span><span class="s2">, IPLV: </span><span class="si">{}</span><span class="s2">, KW/TON: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">gen</span><span class="p">,</span>
+                            <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+                            <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Target met after </span><span class="si">{}</span><span class="s2"> generations.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gen</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop</span></div>
+
+<div class="viewcode-block" id="generator.is_target_met"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.is_target_met">[docs]</a>    <span class="k">def</span> <span class="nf">is_target_met</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if the objective of the optimization through the algorithm have been met.</span>
+
+<span class="sd">        :return: Verification result</span>
+<span class="sd">        :rtype: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;chiller&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">set_of_curves</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">part_rating</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">)</span>
+                <span class="n">full_rating</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_alt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">part_rating_alt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span>
+                        <span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">part_rating_alt</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">full_rating_alt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span>
+                        <span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">full_rating_alt</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">cap_rating</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="s2">&quot;cap-f-t&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">set_of_curves</span><span class="p">:</span>
+                        <span class="c1"># set_of_curves</span>
+                        <span class="k">if</span> <span class="s2">&quot;cap&quot;</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">out_var</span><span class="p">:</span>
+                            <span class="n">cap_rating</span> <span class="o">+=</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="n">get_out_reference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This type of equipment has not yet been implemented.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">part_rating</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">part_rating</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">part_rating_alt</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_alt</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">part_rating_alt</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_alt</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">full_rating</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">full_rating</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">full_rating_alt</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">full_rating_alt</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">cap_rating</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">cap_rating</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
+            <span class="c1"># and self.check_gradients()</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="generator.check_gradients"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.check_gradients">[docs]</a>    <span class="k">def</span> <span class="nf">check_gradients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;Check if the objective of the gradient of the three curves are monotonic and have the sign we expect.</span>
+
+<span class="sd">        :return: Verification result</span>
+<span class="sd">        :rtype: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;chiller&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">set_of_curves</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+
+                <span class="n">grad_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">set_of_curves</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">c</span><span class="o">.</span><span class="n">out_var</span> <span class="o">==</span> <span class="s2">&quot;eir-f-t&quot;</span>
+                        <span class="ow">or</span> <span class="n">c</span><span class="o">.</span><span class="n">out_var</span> <span class="o">==</span> <span class="s2">&quot;eir-f-plr&quot;</span>
+                        <span class="ow">or</span> <span class="n">c</span><span class="o">.</span><span class="n">out_var</span> <span class="o">==</span> <span class="s2">&quot;eir-f-plr-dt&quot;</span>
+                    <span class="p">):</span>
+                        <span class="n">sign_val</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>
+                    <span class="k">elif</span> <span class="n">c</span><span class="o">.</span><span class="n">out_var</span> <span class="o">==</span> <span class="s2">&quot;cap-f-t&quot;</span><span class="p">:</span>
+                        <span class="n">sign_val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;this curve output has not been implemented&quot;</span><span class="p">)</span>
+
+                    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_of_base_curves</span><span class="o">.</span><span class="n">get_data_for_plotting</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                    <span class="n">grad_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_grad</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">sign_val</span><span class="o">=</span><span class="n">sign_val</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">grad_list</span><span class="p">)):</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="generator.compute_grad"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.compute_grad">[docs]</a>    <span class="k">def</span> <span class="nf">compute_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sign_val</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;Check, for a single curve, if the gradient has the sign we expect. called by check_gradients.</span>
+
+<span class="sd">        :return: Verification result</span>
+<span class="sd">        :rtype: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="mi">2</span>
+        <span class="p">)</span>  <span class="c1"># add a small number to get rid of very small negative values</span>
+        <span class="n">grad</span><span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">threshold</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># making sure that small gradients are set to zero to avoid</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>  <span class="c1"># all values are false</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+            <span class="n">sign</span> <span class="o">!=</span> <span class="o">-</span><span class="n">sign_val</span>
+        <span class="p">):</span>  <span class="c1"># include 0 and +1/-1 gradients. but not gradients of the opposite sign</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="generator.generate_population"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.generate_population">[docs]</a>    <span class="k">def</span> <span class="nf">generate_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curves</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate population of sets of curves.</span>
+
+<span class="sd">        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm</span>
+<span class="sd">        :return: Verification result</span>
+<span class="sd">        :rtype: boolean</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pop</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span><span class="p">):</span>
+            <span class="n">pop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">individual</span><span class="p">(</span><span class="n">curves</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">pop</span></div>
+
+<div class="viewcode-block" id="generator.get_random"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.get_random">[docs]</a>    <span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate random number between two bounds.</span>
+
+<span class="sd">        :return: Randomly generated value</span>
+<span class="sd">        :rtype: float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="o">-</span><span class="mi">99999</span><span class="p">,</span> <span class="mi">99999</span><span class="p">)</span>
+                <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span></div>
+
+<div class="viewcode-block" id="generator.individual"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.individual">[docs]</a>    <span class="k">def</span> <span class="nf">individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curves</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create new individual.</span>
+
+<span class="sd">        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm</span>
+<span class="sd">        :return: New set of curves randomly modified</span>
+<span class="sd">        :rtype: SetofCurves</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_curves</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">curve</span> <span class="ow">in</span> <span class="n">new_curves</span><span class="o">.</span><span class="n">curves</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">curve</span><span class="o">.</span><span class="n">out_var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="c1"># TODO: screening criteria</span>
+                        <span class="nb">setattr</span><span class="p">(</span>
+                            <span class="n">curve</span><span class="p">,</span>
+                            <span class="s2">&quot;coeff</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                            <span class="nb">getattr</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="s2">&quot;coeff</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random</span><span class="p">(),</span>
+                        <span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">new_curves</span></div>
+
+<div class="viewcode-block" id="generator.calc_fit"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.calc_fit">[docs]</a>    <span class="k">def</span> <span class="nf">calc_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop</span><span class="p">):</span>
+        <span class="c1"># Determine and normalized part load efficiency fitness</span>
+        <span class="n">part_load_fitnesses</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">determine_part_load_fitness</span><span class="p">(</span><span class="n">curves</span><span class="p">)</span> <span class="k">for</span> <span class="n">curves</span> <span class="ow">in</span> <span class="n">pop</span>
+        <span class="p">]</span>
+        <span class="n">part_load_fitnesses</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">score</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">part_load_fitnesses</span><span class="p">)</span> <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">part_load_fitnesses</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Determine and normalized full load efficiency fitness</span>
+        <span class="n">full_load_fitnesses</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">determine_full_load_fitness</span><span class="p">(</span><span class="n">curves</span><span class="p">)</span> <span class="k">for</span> <span class="n">curves</span> <span class="ow">in</span> <span class="n">pop</span>
+        <span class="p">]</span>
+        <span class="n">full_load_fitnesses</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">score</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">full_load_fitnesses</span><span class="p">)</span> <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">full_load_fitnesses</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Determine and normalized &quot;normalization&quot; fitness</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">normalization_fitnesses</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">determine_normalization_fitness</span><span class="p">(</span><span class="n">curves</span><span class="p">)</span> <span class="k">for</span> <span class="n">curves</span> <span class="ow">in</span> <span class="n">pop</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">normalization_fitnesses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">normalization_fitnesses</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">score</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">normalization_fitnesses</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">normalization_fitnesses</span>
+                <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">normalization_fitnesses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span> <span class="k">for</span> <span class="n">curves</span> <span class="ow">in</span> <span class="n">pop</span><span class="p">]</span>
+
+        <span class="c1"># Sum fitness scores</span>
+        <span class="n">overall_fitnesses</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="o">*</span><span class="p">[</span><span class="n">part_load_fitnesses</span><span class="p">,</span> <span class="n">full_load_fitnesses</span><span class="p">,</span> <span class="n">normalization_fitnesses</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">overall_fitnesses</span></div>
+
+<div class="viewcode-block" id="generator.fitness_scale_grading"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.fitness_scale_grading">[docs]</a>    <span class="k">def</span> <span class="nf">fitness_scale_grading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate fitness, scale, and grade for a population.</span>
+
+<span class="sd">        :param list() pop: Population of individual, i.e. list of curves</span>
+<span class="sd">        :param boolean scaling: Linearly scale fitness scores</span>
+<span class="sd">        :return: List sets of curves graded by fitness scores</span>
+<span class="sd">        :rtype: list()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Determine fitness</span>
+        <span class="n">overall_fitnesses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_fit</span><span class="p">(</span><span class="n">pop</span><span class="p">)</span>
+
+        <span class="c1"># Scaling</span>
+        <span class="n">pop_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_fitnesses</span><span class="p">(</span><span class="n">overall_fitnesses</span><span class="p">,</span> <span class="n">pop</span><span class="p">,</span> <span class="n">scaling</span><span class="p">)</span>
+
+        <span class="c1"># Grading</span>
+        <span class="n">pop_graded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grade_population</span><span class="p">(</span><span class="n">pop_scaled</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pop_graded</span></div>
+
+<div class="viewcode-block" id="generator.evolve_population"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.evolve_population">[docs]</a>    <span class="k">def</span> <span class="nf">evolve_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evolve population to create a new generation.</span>
+
+<span class="sd">        :param list() pop: Population of individual, i.e. list of curves</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Fitness, Scaling, Grading</span>
+        <span class="n">pop_graded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitness_scale_grading</span><span class="p">(</span><span class="n">pop</span><span class="p">)</span>
+
+        <span class="c1"># Retain best performers as parents</span>
+        <span class="n">retain_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pop_graded</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">retain</span><span class="p">)</span>
+        <span class="n">parents</span> <span class="o">=</span> <span class="n">pop_graded</span><span class="p">[:</span><span class="n">retain_length</span><span class="p">]</span>
+
+        <span class="c1"># Randomly add other individuals to</span>
+        <span class="c1"># promote genetic diversity</span>
+        <span class="k">for</span> <span class="n">individual</span> <span class="ow">in</span> <span class="n">pop_graded</span><span class="p">[</span><span class="n">retain_length</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_select</span> <span class="o">&gt;</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">():</span>
+                <span class="n">parents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span>
+
+        <span class="c1"># Mutate some individuals</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">individual</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutate</span> <span class="o">&gt;</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">():</span>
+                <span class="n">parents</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perform_mutation</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span>
+
+        <span class="c1"># Crossover parents to create children</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perform_crossover</span><span class="p">(</span><span class="n">parents</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identify_best_performer</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="generator.determine_part_load_fitness"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.determine_part_load_fitness">[docs]</a>    <span class="k">def</span> <span class="nf">determine_part_load_fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_of_curves</span><span class="p">):</span>
+        <span class="c1"># Temporary assign curve to equipment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">set_of_curves</span><span class="o">.</span><span class="n">curves</span>
+        <span class="n">part_eff_score</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_alt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">part_eff_score</span> <span class="o">+=</span> <span class="nb">abs</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_alt</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">part_eff_score</span></div>
+
+<div class="viewcode-block" id="generator.determine_full_load_fitness"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.determine_full_load_fitness">[docs]</a>    <span class="k">def</span> <span class="nf">determine_full_load_fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_of_curves</span><span class="p">):</span>
+        <span class="c1"># Temporary assign curve to equipment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">set_of_curves</span><span class="o">.</span><span class="n">curves</span>
+        <span class="n">full_eff_score</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff_alt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">full_eff_score</span> <span class="o">+=</span> <span class="nb">abs</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">full_eff_alt</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">full_eff_score</span></div>
+
+<div class="viewcode-block" id="generator.determine_normalization_fitness"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.determine_normalization_fitness">[docs]</a>    <span class="k">def</span> <span class="nf">determine_normalization_fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_of_curves</span><span class="p">):</span>
+        <span class="c1"># Temporary assign curve to equipment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">set_of_curves</span><span class="o">.</span><span class="n">curves</span>
+        <span class="n">curve_normal_score</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">set_of_curves</span><span class="o">.</span><span class="n">curves</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">out_var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">:</span>
+                <span class="n">curve_normal_score</span> <span class="o">+=</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="n">get_out_reference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">curve_normal_score</span></div>
+
+<div class="viewcode-block" id="generator.scale_fitnesses"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.scale_fitnesses">[docs]</a>    <span class="k">def</span> <span class="nf">scale_fitnesses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitnesses</span><span class="p">,</span> <span class="n">pop</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scale the fitness scores to prevent best performers from dragging the whole population to a local extremum.</span>
+
+<span class="sd">        :param list() fitnesses: List of fitness for each set of curves</span>
+<span class="sd">        :param list() pop: List of sets of curves</span>
+<span class="sd">        :param boolean scaling: Specifies whether of not to linearly scale the fitnesses</span>
+<span class="sd">        :return: List of tuples representing the fitness of a set of curves and the set of curves</span>
+<span class="sd">        :rtype: list(tuple())</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># linear scaling: a + b * f</span>
+        <span class="c1"># Based on &quot;Scaling in Genetic Algorithms&quot;, Sushil J. Louis</span>
+        <span class="c1"># https://www.cse.unr.edu/~sushil/class/gas/notes/scaling/index.html</span>
+        <span class="k">if</span> <span class="n">scaling</span><span class="p">:</span>
+            <span class="n">max_f</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">fitnesses</span><span class="p">)</span>
+            <span class="n">min_f</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">fitnesses</span><span class="p">)</span>
+            <span class="n">avg_f</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fitnesses</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">fitnesses</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">min_f</span> <span class="o">&gt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sFac</span> <span class="o">*</span> <span class="n">avg_f</span> <span class="o">-</span> <span class="n">max_f</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sFac</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">):</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">max_f</span> <span class="o">-</span> <span class="n">avg_f</span>
+                <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sFac</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">avg_f</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="n">avg_f</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_f</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sFac</span> <span class="o">*</span> <span class="n">avg_f</span><span class="p">))</span> <span class="o">/</span> <span class="n">d</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">avg_f</span> <span class="o">-</span> <span class="n">min_f</span>
+                <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">avg_f</span> <span class="o">/</span> <span class="n">d</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="n">min_f</span> <span class="o">*</span> <span class="n">avg_f</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">pop_scaled</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">score</span> <span class="o">+</span> <span class="n">b</span><span class="p">,</span> <span class="n">set_of_curves</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">set_of_curves</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">fitnesses</span><span class="p">,</span> <span class="n">pop</span><span class="p">])</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">pop_scaled</span></div>
+
+<div class="viewcode-block" id="generator.grade_population"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.grade_population">[docs]</a>    <span class="k">def</span> <span class="nf">grade_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pop_scaled</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Grade population.</span>
+
+<span class="sd">        :param list(tuple()) pop_scaled: List of tuples representing the fitness of a set of curves and the set of curves</span>
+<span class="sd">        :return: List of set of curves graded from the best to the worst</span>
+<span class="sd">        :rtype: list(SetofCurves())</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pop_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pop_scaled</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">pop_graded</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pop_sorted</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">pop_graded</span></div>
+
+<div class="viewcode-block" id="generator.perform_mutation"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.perform_mutation">[docs]</a>    <span class="k">def</span> <span class="nf">perform_mutation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">individual</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Mutate individual.</span>
+
+<span class="sd">        :param SetofCurves() individual: Set of curves</span>
+<span class="sd">        :return: Modified indivudal</span>
+<span class="sd">        :rtype: SetofCurves()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_individual</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">curve</span> <span class="ow">in</span> <span class="n">new_individual</span><span class="o">.</span><span class="n">curves</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">curve</span><span class="o">.</span><span class="n">out_var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">nb_coeffs</span><span class="p">())</span>
+                <span class="nb">setattr</span><span class="p">(</span>
+                    <span class="n">curve</span><span class="p">,</span>
+                    <span class="s2">&quot;coeff</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="s2">&quot;coeff</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random</span><span class="p">(),</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_individual</span></div>
+
+<div class="viewcode-block" id="generator.perform_crossover"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.perform_crossover">[docs]</a>    <span class="k">def</span> <span class="nf">perform_crossover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parents</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Crossover best individuals.</span>
+
+<span class="sd">        :param list() parents: List of best performing individuals of the generation</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parents_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parents</span><span class="p">)</span>
+        <span class="n">desired_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">)</span> <span class="o">-</span> <span class="n">parents_length</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">children</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">desired_length</span><span class="p">:</span>
+            <span class="n">male</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">parents_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">female</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">parents_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Can&#39;t crossover with the same element</span>
+            <span class="k">if</span> <span class="n">male</span> <span class="o">!=</span> <span class="n">female</span><span class="p">:</span>
+                <span class="n">male</span> <span class="o">=</span> <span class="n">parents</span><span class="p">[</span><span class="n">male</span><span class="p">]</span>
+                <span class="n">female</span> <span class="o">=</span> <span class="n">parents</span><span class="p">[</span><span class="n">female</span><span class="p">]</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="n">SetofCurves</span><span class="p">()</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">eqp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span>
+                <span class="n">curves</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># male and female curves are structured the same way</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">male</span><span class="o">.</span><span class="n">curves</span><span class="p">):</span>
+                    <span class="c1"># Copy as male</span>
+                    <span class="n">n_child_curves</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">out_var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vars</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;quad&quot;</span><span class="p">:</span>
+                            <span class="n">positions</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>  <span class="c1"># cst  # x^?</span>
+                        <span class="k">elif</span> <span class="n">c</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;cubic&quot;</span><span class="p">:</span>
+                            <span class="n">positions</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>  <span class="c1"># cst  # x^?</span>
+                        <span class="k">elif</span> <span class="n">c</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;bi_quad&quot;</span><span class="p">:</span>
+                            <span class="n">positions</span> <span class="o">=</span> <span class="p">[</span>
+                                <span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># cst</span>
+                                <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>  <span class="c1"># x^?</span>
+                                <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>  <span class="c1"># y^?</span>
+                                <span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                            <span class="p">]</span>  <span class="c1"># x*y</span>
+                        <span class="k">elif</span> <span class="n">c</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;bi_cub&quot;</span><span class="p">:</span>
+                            <span class="n">positions</span> <span class="o">=</span> <span class="p">[</span>
+                                <span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># cst</span>
+                                <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>  <span class="c1"># x^?</span>
+                                <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>  <span class="c1"># y^?</span>
+                                <span class="p">[</span><span class="mi">6</span><span class="p">],</span>  <span class="c1"># x*y</span>
+                                <span class="p">[</span><span class="mi">9</span><span class="p">],</span>  <span class="c1"># x^2*y</span>
+                                <span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+                            <span class="p">]</span>  <span class="c1"># x*y^2</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Type of curve not yet implemented.&quot;</span><span class="p">)</span>
+                        <span class="n">couple</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;male&quot;</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">female</span><span class="p">)]</span>
+                        <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">:</span>
+                            <span class="c1"># Alternate between male and female</span>
+                            <span class="n">cnt</span> <span class="o">=</span> <span class="p">(</span><span class="n">cnt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
+                            <span class="k">if</span> <span class="n">couple</span><span class="p">[</span><span class="n">cnt</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;male&quot;</span><span class="p">:</span>
+                                <span class="c1"># sub_position</span>
+                                <span class="k">for</span> <span class="n">s_p</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                                    <span class="nb">setattr</span><span class="p">(</span>
+                                        <span class="n">n_child_curves</span><span class="p">,</span>
+                                        <span class="s2">&quot;coeff</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s_p</span><span class="p">),</span>
+                                        <span class="nb">getattr</span><span class="p">(</span><span class="n">n_child_curves</span><span class="p">,</span> <span class="s2">&quot;coeff</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s_p</span><span class="p">)),</span>
+                                    <span class="p">)</span>
+                    <span class="n">curves</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_child_curves</span><span class="p">)</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">curves</span> <span class="o">=</span> <span class="n">curves</span>
+                <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="n">parents</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">children</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pop</span> <span class="o">=</span> <span class="n">parents</span></div>
+
+<div class="viewcode-block" id="generator.identify_best_performer"><a class="viewcode-back" href="../../Code Documentation.html#copper.generator.generator.identify_best_performer">[docs]</a>    <span class="k">def</span> <span class="nf">identify_best_performer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assign the best individual to the equipment.&quot;&quot;&quot;</span>
+        <span class="c1"># Re-compute fitness, scaling and grading</span>
+        <span class="n">pop_graded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitness_scale_grading</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Assign the equipment with the best fitness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">pop_graded</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curves</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Copper</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Quickstart Guide.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Additional Examples.html">Additional Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Code Documentation.html">Code Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Jeremy Lerond.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

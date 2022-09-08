@@ -1,3 +1,9 @@
+"""
+helpers.py
+====================================
+This file contains sundries which are not specifically used when using Copper but can be useful for its development.
+"""
+
 import json, sys
 
 

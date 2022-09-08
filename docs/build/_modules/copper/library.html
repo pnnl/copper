@@ -1,0 +1,469 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>copper.library &#8212; Copper 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for copper.library</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">library.py</span>
+<span class="sd">====================================</span>
+<span class="sd">This is the library module of Copper. It contains functions used to parse the JSON library files used by Copper.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">copper.units</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copper.curves</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">copper.chiller</span>
+
+<span class="n">location</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">chiller_lib</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;lib&quot;</span><span class="p">,</span> <span class="s2">&quot;chiller_curves.json&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Library"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library">[docs]</a><span class="k">class</span> <span class="nc">Library</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">chiller_lib</span><span class="p">,</span> <span class="n">rating_std</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">export</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating_std</span> <span class="o">=</span> <span class="n">rating_std</span>
+
+        <span class="c1"># Load library</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+        <span class="c1"># Calculate part load efficiency for each item in the library</span>
+        <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">vals</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="c1"># Cannot calculate the part load efficiency</span>
+            <span class="c1"># if full load efficiency is not specified</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;full_eff&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;condenser_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;hr_scroll&quot;</span><span class="p">:</span>
+
+                <span class="c1"># Get equipment properties</span>
+                <span class="n">props</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span>
+                    <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;copper.&quot;</span> <span class="o">+</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;eqp_type&quot;</span><span class="p">])</span><span class="o">.</span><span class="fm">__init__</span>
+                <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s2">&quot;self&quot;</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+                    <span class="n">props</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;self&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Set the equipment properties</span>
+                <span class="c1"># using values from the library</span>
+                <span class="n">obj_args</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="ow">not</span> <span class="s2">&quot;part_eff&quot;</span> <span class="ow">in</span> <span class="n">p</span>
+                        <span class="ow">and</span> <span class="ow">not</span> <span class="s2">&quot;set_of_curves&quot;</span> <span class="ow">in</span> <span class="n">p</span>
+                        <span class="ow">and</span> <span class="ow">not</span> <span class="s2">&quot;alt&quot;</span> <span class="ow">in</span> <span class="n">p</span>
+                    <span class="p">):</span>
+                        <span class="n">obj_args</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+                <span class="c1"># Temporarily set the part load efficiency to the</span>
+                <span class="c1"># full load efficiency, units are assumed to be</span>
+                <span class="c1"># the same</span>
+                <span class="n">obj_args</span><span class="p">[</span><span class="s2">&quot;part_eff_unit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;full_eff_unit&quot;</span><span class="p">]</span>
+                <span class="n">obj_args</span><span class="p">[</span><span class="s2">&quot;part_eff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;full_eff&quot;</span><span class="p">]</span>
+
+                <span class="c1"># Create instance of the equipment</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;copper.&quot;</span> <span class="o">+</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;eqp_type&quot;</span><span class="p">])(</span><span class="o">**</span><span class="n">obj_args</span><span class="p">)</span>
+
+                <span class="c1"># Retrieve curves for library item</span>
+                <span class="n">obj_args</span><span class="p">[</span><span class="s2">&quot;set_of_curves&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_set_of_curves_by_name</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">curves</span>
+
+                <span class="k">if</span> <span class="n">export</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_set_of_curves_by_name</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s2">&quot;./curves&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;idf&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Set rating Stds</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_std</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="n">obj_args</span><span class="p">[</span><span class="s2">&quot;part_eff_ref_std&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_std</span>
+
+                <span class="c1"># Update instance of the equipment</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;copper.&quot;</span> <span class="o">+</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;eqp_type&quot;</span><span class="p">])(</span><span class="o">**</span><span class="n">obj_args</span><span class="p">)</span>
+
+                <span class="c1"># Compute part load efficiency</span>
+                <span class="n">part_eff</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span>
+                    <span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">vals</span><span class="p">[</span><span class="s2">&quot;full_eff_unit&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Set part load efficiency if</span>
+                <span class="c1"># the calculation was sucessful</span>
+                <span class="k">if</span> <span class="n">part_eff</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">999</span><span class="p">:</span>
+                    <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;part_eff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">part_eff</span>
+                    <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;part_eff_unit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;full_eff_unit&quot;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;part_eff&quot;</span> <span class="ow">in</span> <span class="n">vals</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="k">del</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;part_eff&quot;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="s2">&quot;part_eff_unit&quot;</span> <span class="ow">in</span> <span class="n">vals</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="k">del</span> <span class="n">vals</span><span class="p">[</span><span class="s2">&quot;part_eff_unit&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Library.load_obj"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library.load_obj">[docs]</a>    <span class="k">def</span> <span class="nf">load_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="c1"># Get equipment properties</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;copper.&quot;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;eqp_type&quot;</span><span class="p">])</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">props</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;self&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set the equipment properties</span>
+        <span class="c1"># using values from the library</span>
+        <span class="n">obj_args</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="s2">&quot;part_eff&quot;</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s2">&quot;set_of_curves&quot;</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s2">&quot;alt&quot;</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                <span class="n">obj_args</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+        <span class="c1"># Temporarily set the part load efficiency to the</span>
+        <span class="c1"># full load efficiency, units are assumed to be</span>
+        <span class="c1"># the same</span>
+        <span class="n">obj_args</span><span class="p">[</span><span class="s2">&quot;part_eff_unit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;full_eff_unit&quot;</span><span class="p">]</span>
+        <span class="n">obj_args</span><span class="p">[</span><span class="s2">&quot;part_eff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;full_eff&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Create instance of the equipment</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;copper.&quot;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;eqp_type&quot;</span><span class="p">])(</span><span class="o">**</span><span class="n">obj_args</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+<div class="viewcode-block" id="Library.content"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library.content">[docs]</a>    <span class="k">def</span> <span class="nf">content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+
+<div class="viewcode-block" id="Library.get_unique_eqp_fields"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library.get_unique_eqp_fields">[docs]</a>    <span class="k">def</span> <span class="nf">get_unique_eqp_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get all unique values for each field of a particular equipment.</span>
+
+<span class="sd">        :return: Dictionary showing all unique values for each equipment field.</span>
+<span class="sd">        :rtype: dict[str, ]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Store all value for each field</span>
+        <span class="n">uni_field_val</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">eqp_f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">eqp_f</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="o">!=</span> <span class="s2">&quot;set_of_curves&quot;</span><span class="p">:</span>
+                    <span class="c1"># Check if field has already been added</span>
+                    <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">uni_field_val</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">uni_field_val</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">uni_field_val</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="c1"># Retain only unique values</span>
+        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">uni_field_val</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">uni_field_val</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">uni_field_val</span></div>
+
+<div class="viewcode-block" id="Library.find_set_of_curvess_from_lib"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library.find_set_of_curvess_from_lib">[docs]</a>    <span class="k">def</span> <span class="nf">find_set_of_curvess_from_lib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="p">[],</span> <span class="n">part_eff_flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve sets of curves from a library matching specific filters.</span>
+
+<span class="sd">        :param list(tuple()) filters: Filter represented by tuples (field, val)</span>
+<span class="sd">        :return: All set of curves object matching the filters</span>
+<span class="sd">        :rtype: list()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Find name of equiment that match specified filter</span>
+        <span class="n">eqp_match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_equipment</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+
+        <span class="c1"># List of sets of curves that match specified filters</span>
+        <span class="n">set_of_curvess</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Retrieve identified equipment&#39;s sets of curves from the library</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">props</span> <span class="ow">in</span> <span class="n">eqp_match</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">c_set</span> <span class="o">=</span> <span class="n">SetofCurves</span><span class="p">()</span>
+
+            <span class="c1"># Get equipment properties</span>
+            <span class="n">eqp_props</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span>
+                <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;copper.&quot;</span> <span class="o">+</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;eqp_type&quot;</span><span class="p">])</span><span class="o">.</span><span class="fm">__init__</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">eqp_props</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;self&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Set the equipment properties</span>
+            <span class="c1"># using values from the library</span>
+            <span class="n">obj_args</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">eqp_props</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="s2">&quot;set_of_curves&quot;</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">part_eff_flag</span> <span class="ow">and</span> <span class="s2">&quot;part_eff&quot;</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="s2">&quot;part_eff_ref_std&quot;</span><span class="p">:</span>
+                            <span class="n">obj_args</span><span class="p">[</span><span class="s2">&quot;part_eff_ref_std&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ahri_550/590&quot;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">props</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                <span class="n">obj_args</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                    <span class="k">elif</span> <span class="s2">&quot;part_eff&quot;</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">or</span> <span class="s2">&quot;alt&quot;</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">obj_args</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+            <span class="c1"># Create instance of the equipment</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;copper.&quot;</span> <span class="o">+</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;eqp_type&quot;</span><span class="p">])(</span><span class="o">**</span><span class="n">obj_args</span><span class="p">)</span>
+            <span class="n">c_set</span><span class="o">.</span><span class="n">eqp</span> <span class="o">=</span> <span class="n">obj</span>
+
+            <span class="c1"># Retrive all attributes of the sets of curves object</span>
+            <span class="k">for</span> <span class="n">c_att</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">c_set</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">):</span>
+                <span class="c1"># Set the attribute of new Curve object</span>
+                <span class="c1"># if attrubute are identified in database entry</span>
+                <span class="k">if</span> <span class="n">c_att</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="n">c_set</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">c_att</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">c_att</span><span class="p">]</span>
+
+            <span class="n">c_lst</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Create new SetofCurves and Curve objects for all the</span>
+            <span class="c1"># sets of curves identified as matching the filters</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;set_of_curves&quot;</span><span class="p">]:</span>
+                <span class="n">c_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_curve</span><span class="p">(</span>
+                        <span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">eqp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">load_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">c_set</span><span class="o">.</span><span class="n">curves</span> <span class="o">=</span> <span class="n">c_lst</span>
+            <span class="n">set_of_curvess</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_set</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">set_of_curvess</span></div>
+
+<div class="viewcode-block" id="Library.find_equipment"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library.find_equipment">[docs]</a>    <span class="k">def</span> <span class="nf">find_equipment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;Find equipment matching specified filter in the curve library.</span>
+
+<span class="sd">        Special filter characters:</span>
+
+<span class="sd">        - ~! means &quot;all except...&quot;</span>
+<span class="sd">        - ! means &quot;do not include...&quot;</span>
+<span class="sd">        - ~ means &quot;include...&quot;</span>
+
+<span class="sd">        :param list(tuple()) filters: Filter represented by tuples (field, val)</span>
+<span class="sd">        :return: Dictionary of field for each equipment matching specified filter</span>
+<span class="sd">        :rtype: dict[str,dict[]]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">eqp_match_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">eqp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">assertions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+                <span class="c1"># ~! = all but...</span>
+                <span class="k">if</span> <span class="s2">&quot;~!&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                    <span class="n">assertions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;~!&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">eqp</span><span class="p">][</span><span class="n">prop</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="p">)</span>
+                <span class="c1"># ! = does not include</span>
+                <span class="k">elif</span> <span class="s2">&quot;!&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                    <span class="n">assertions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">eqp</span><span class="p">][</span><span class="n">prop</span><span class="p">]</span> <span class="o">!=</span> <span class="n">val</span><span class="p">)</span>
+                <span class="c1"># ~ = includes</span>
+                <span class="k">elif</span> <span class="s2">&quot;~&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                    <span class="n">assertions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">eqp</span><span class="p">][</span><span class="n">prop</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">assertions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">eqp</span><span class="p">][</span><span class="n">prop</span><span class="p">]</span> <span class="o">==</span> <span class="n">val</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">assertions</span><span class="p">):</span>
+                <span class="n">eqp_match_dict</span><span class="p">[</span><span class="n">eqp</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">eqp</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">eqp_match_dict</span></div>
+
+<div class="viewcode-block" id="Library.get_set_of_curves_by_name"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library.get_set_of_curves_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_set_of_curves_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve set of curves from the library by name.</span>
+
+<span class="sd">        :param str name: Curve name</span>
+<span class="sd">        :return: Set of curves object</span>
+<span class="sd">        :rtype: SetofCurves()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Initialize set of curves object</span>
+        <span class="n">c_set</span> <span class="o">=</span> <span class="n">SetofCurves</span><span class="p">()</span>
+        <span class="n">c_set</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="c1"># List of curves</span>
+        <span class="n">c_lst</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Define curve objects</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;set_of_curves&quot;</span><span class="p">]:</span>
+                <span class="n">c_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_curve</span><span class="p">(</span>
+                        <span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">eqp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">load_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="c1"># Add curves to set of curves object</span>
+            <span class="n">c_set</span><span class="o">.</span><span class="n">curves</span> <span class="o">=</span> <span class="n">c_lst</span>
+            <span class="k">return</span> <span class="n">c_set</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot find curve in library.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Library.get_curve"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library.get_curve">[docs]</a>    <span class="k">def</span> <span class="nf">get_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">c_name</span><span class="p">,</span> <span class="n">eqp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve individual attribute of a curve object.</span>
+
+<span class="sd">        :param Curve() c: Curve object</span>
+<span class="sd">        :param str c_name: Name of the curve object</span>
+<span class="sd">        :param str eqp_type: Type of equipment associated with the curve</span>
+<span class="sd">        :return: Curve object</span>
+<span class="sd">        :rtype: Curve()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Curve properties</span>
+        <span class="n">c_prop</span> <span class="o">=</span> <span class="n">c_name</span><span class="p">[</span><span class="s2">&quot;set_of_curves&quot;</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+        <span class="c1"># Initialize curve object</span>
+        <span class="n">c_obj</span> <span class="o">=</span> <span class="n">Curve</span><span class="p">(</span><span class="n">eqp</span><span class="p">,</span> <span class="n">c_prop</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+        <span class="n">c_obj</span><span class="o">.</span><span class="n">out_var</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="c1"># Retrive all attributes of the curve object</span>
+        <span class="k">for</span> <span class="n">c_att</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Curve</span><span class="p">(</span><span class="n">eqp</span><span class="p">,</span> <span class="n">c_prop</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">):</span>
+            <span class="c1"># Set the attribute of new Curve object</span>
+            <span class="c1"># if attrubute are identified in database entry</span>
+            <span class="k">if</span> <span class="n">c_att</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">c_prop</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">c_obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">c_att</span><span class="p">]</span> <span class="o">=</span> <span class="n">c_prop</span><span class="p">[</span><span class="n">c_att</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">c_obj</span></div>
+
+<div class="viewcode-block" id="Library.find_base_curves"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library.find_base_curves">[docs]</a>    <span class="k">def</span> <span class="nf">find_base_curves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="p">,</span> <span class="n">eqp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find an existing equipment curve that best matches the equipment.</span>
+
+<span class="sd">        :param list(tuple()) filters: Filter represented by tuples (field, val)</span>
+<span class="sd">        :param eqp: Equipment object(e.g. chiller())</span>
+<span class="sd">        :return: Set of curves object</span>
+<span class="sd">        :rtype: SetofCurves()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Find equipment match in the library</span>
+        <span class="n">eqp_match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_equipment</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eqp_match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># If multiple equipment match the specified properties,</span>
+            <span class="c1"># return the one that has numeric attributes that best</span>
+            <span class="c1"># match the proposed case</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eqp_match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_set_of_curves_by_name</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_best_match</span><span class="p">(</span><span class="n">eqp</span><span class="p">,</span> <span class="n">eqp_match</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_set_of_curves_by_name</span><span class="p">(</span><span class="n">eqp_match</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Could not find a set of curves that matches the specified properties.&quot;</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Library.get_best_match"><a class="viewcode-back" href="../../Code Documentation.html#copper.library.Library.get_best_match">[docs]</a>    <span class="k">def</span> <span class="nf">get_best_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eqp</span><span class="p">,</span> <span class="n">matches</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find the set of curves matching the equipment characteristics the best.</span>
+
+<span class="sd">        :param eqp: Equipment object(e.g. chiller())</span>
+<span class="sd">        :param dict[str,dict[]] matches: All potential matches</span>
+<span class="sd">        :return: Name of the set of curves that best matches the equipment characteristics</span>
+<span class="sd">        :rtype: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Initialize numeric attribute difference</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Iterate over matches and calculate the</span>
+        <span class="c1"># difference in numeric fields</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">matches</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Retrieve full load/reference numeric attribute</span>
+            <span class="k">if</span> <span class="n">eqp</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;chiller&quot;</span><span class="p">:</span>
+                <span class="n">cap</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="s2">&quot;ref_cap&quot;</span><span class="p">]</span>
+                <span class="n">cap_unit</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="s2">&quot;ref_cap_unit&quot;</span><span class="p">]</span>
+                <span class="n">eff</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="s2">&quot;full_eff&quot;</span><span class="p">]</span>
+                <span class="n">eff_unit</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;full_eff_unit&quot;</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">cap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Capacity conversion</span>
+                    <span class="k">if</span> <span class="n">cap_unit</span> <span class="o">!=</span> <span class="n">eqp</span><span class="o">.</span><span class="n">ref_cap_unit</span><span class="p">:</span>
+                        <span class="n">c_unit</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">cap</span><span class="p">,</span> <span class="n">cap_unit</span><span class="p">)</span>
+                        <span class="n">cap</span> <span class="o">=</span> <span class="n">c_unit</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="n">eqp</span><span class="o">.</span><span class="n">ref_cap_unit</span><span class="p">)</span>
+                        <span class="n">cap_unit</span> <span class="o">=</span> <span class="n">eqp</span><span class="o">.</span><span class="n">ref_cap_unit</span>
+
+                    <span class="c1"># Efficiency conversion</span>
+                    <span class="k">if</span> <span class="n">eff_unit</span> <span class="o">!=</span> <span class="n">eqp</span><span class="o">.</span><span class="n">full_eff_unit</span><span class="p">:</span>
+                        <span class="n">c_unit</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">eff</span><span class="p">,</span> <span class="n">eff_unit</span><span class="p">)</span>
+                        <span class="n">eff</span> <span class="o">=</span> <span class="n">c_unit</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="n">eqp</span><span class="o">.</span><span class="n">full_eff_unit</span><span class="p">)</span>
+                        <span class="n">eff_unit</span> <span class="o">=</span> <span class="n">eqp</span><span class="o">.</span><span class="n">full_eff_unit</span>
+
+                        <span class="c1"># Compute difference</span>
+                        <span class="n">c_diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">eqp</span><span class="o">.</span><span class="n">ref_cap</span> <span class="o">-</span> <span class="n">cap</span><span class="p">)</span> <span class="o">/</span> <span class="n">eqp</span><span class="o">.</span><span class="n">ref_cap</span><span class="p">)</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">eqp</span><span class="o">.</span><span class="n">full_eff</span> <span class="o">-</span> <span class="n">eff</span><span class="p">)</span> <span class="o">/</span> <span class="n">eqp</span><span class="o">.</span><span class="n">full_eff</span>
+                        <span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">c_diff</span> <span class="o">&lt;</span> <span class="n">diff</span><span class="p">:</span>
+                            <span class="c1"># Update lowest numeric difference</span>
+                            <span class="n">diff</span> <span class="o">=</span> <span class="n">c_diff</span>
+
+                            <span class="c1"># Update best match</span>
+                            <span class="n">best_match</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="k">return</span> <span class="n">best_match</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Copper</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Quickstart Guide.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Additional Examples.html">Additional Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Code Documentation.html">Code Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Jeremy Lerond.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

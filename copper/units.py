@@ -1,3 +1,10 @@
+"""
+units.py
+====================================
+This is the unit conversion module of Copper. It handles simple unit conversions to avoid creating additional dependencies.
+"""
+
+
 class Units:
     def __init__(self, value, unit):
         self.value = value

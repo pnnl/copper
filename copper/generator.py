@@ -1,7 +1,12 @@
+"""
+generator.py
+====================================
+This is the generator module of Copper. The generator uses a genetic algorithm to find set of performance curves that matches the user-specified equipment definitions.
+"""
+
 import warnings
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
-
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
@@ -56,6 +61,7 @@ class generator:
     def generate_set_of_curves(self, verbose=False):
         """Generate set of curves using genetic algorithm.
 
+        :param string verbose: Output results at each generation.
         :return: Set of curves
         :rtype: SetofCurves()
 
@@ -116,6 +122,7 @@ class generator:
         """Run genetic algorithm.
 
         :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
+        :param string verbose: Output results at each generation.
         :return: Final population of sets of curves
         :rtype: list()
 

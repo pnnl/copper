@@ -1,3 +1,9 @@
+"""
+cli.py
+====================================
+This the command line interface module of Copper. It faciliate the integration of Copper into different workflow by being about to run some of Copper's functionality through command line.
+"""
+
 import click, json, inspect
 import copper.chiller as chiller
 

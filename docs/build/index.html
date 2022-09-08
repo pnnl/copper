@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Welcome to Copper! &#8212; Copper 0.0.1 documentation</title>
+    <meta charset="utf-8" />
+    <title>Documentation for Copper &#8212; Copper 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Introduction" href="Introduction.html" />
@@ -33,20 +31,32 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-copper">
-<h1>Welcome to Copper!<a class="headerlink" href="#welcome-to-copper" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="documentation-for-copper">
+<h1>Documentation for <cite>Copper</cite><a class="headerlink" href="#documentation-for-copper" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Introduction.html#what-can-copper-do">What can <cite>Copper</cite> do?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Introduction.html#what-hvac-equipment-does-copper-handle">What HVAC equipment does <cite>Copper</cite> handle?</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Tutorial.html">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Tutorial.html#chiller">Chiller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Quickstart Guide.html">Quickstart Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Quickstart Guide.html#using-copper-as-a-package">Using <cite>Copper</cite> as a package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Quickstart Guide.html#using-copper-s-command-line-interface">Using <cite>Copper</cite>’s command line interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Additional Examples.html">Additional Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Additional Examples.html#lct-based-chiller-performance-curves">LCT-based Chiller Performance Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Additional Examples.html#targeting-two-different-rating-standards">Targeting Two Different Rating Standards</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Code Documentation.html">Code Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Code Documentation.html#copper-py">copper.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code Documentation.html#generator-py">generator.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code Documentation.html#curves-py">curves.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code Documentation.html#library-py">library.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code Documentation.html#units-py">units.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code Documentation.html#chiller-py">chiller.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code Documentation.html#helpers-py">helpers.py</a></li>
 </ul>
 </li>
 </ul>
@@ -72,7 +82,8 @@
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Quickstart Guide.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Additional Examples.html">Additional Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Code Documentation.html">Code Documentation</a></li>
 </ul>
 
@@ -85,17 +96,23 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -104,8 +121,8 @@
       &copy;2020, Jeremy Lerond.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/index.rst.txt"

@@ -1,10 +1,11 @@
-Welcome to Copper!
+Documentation for `Copper`
 ==================================
 
 .. toctree::
    :maxdepth: 2
 
    Introduction
-   Tutorial
+   Quickstart Guide
+   Additional Examples
    Code Documentation
 
