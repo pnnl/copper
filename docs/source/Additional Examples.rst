@@ -4,7 +4,7 @@ Additional Examples
 LCT-based Chiller Performance Curves
 -------------------------------------
 
-Most building energy modeling software use an entering condenser temperature (ECT) model. Some software such as `EnergyPlus`_ have capabilities to simulate chillers using a model using a leaving condenser temperature (LCT) model. `Copper` can be used to generate performance curves for such a model. The following example generate a set of performance curves for the LCT model for a 100 ton water cooled scroll chiller.
+Most building energy modeling software use an entering condenser temperature (ECT) model. Some software such as `EnergyPlus`_ have capabilities to simulate chillers using a model using a leaving condenser temperature (LCT) model. **Copper** can be used to generate performance curves for such a model. The following example generate a set of performance curves for the LCT model for a 100 ton water cooled scroll chiller.
 
 .. sourcecode:: python
 
@@ -32,7 +32,7 @@ Most building energy modeling software use an entering condenser temperature (EC
 Targeting Two Different Rating Standards
 -----------------------------------------
 
-The rating conditions in AHRI Standard 550/590 and 551/591 are different. `Copper` support the IPLV and performance curve generation for both standards. It is possible to also generate curves for two sets of targeted efficiencies, one for AHRI 550/590, and the other one for 551/591. The following example demonstrate that.
+The rating conditions in AHRI Standard 550/590 and 551/591 are different. **Copper** support the IPLV and performance curve generation for both standards. It is possible to also generate curves for two sets of targeted efficiencies, one for AHRI 550/590, and the other one for 551/591. The following example demonstrate that.
 
 .. sourcecode:: python
 

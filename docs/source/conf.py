@@ -19,11 +19,11 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'Copper'
-copyright = '2020, Jeremy Lerond'
+copyright = '2020, Pacific Northwest National Laboratory'
 author = 'Jeremy Lerond'
 
 # The short X.Y version
-version = ''
+version = '0.0'
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
 
