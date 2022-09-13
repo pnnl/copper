@@ -1,10 +1,12 @@
 # Copper
 Copper is a building energy simulation performance curve generator for heating, ventilation and air-conditioning equipment. It uses a genetic algorithm to modify existing or a set of aggregated existing performance curves to match specific design characteristics including full and part load energy performance metric values.
 
+Copper generates performance curves that can be used in most common building energy software such as [EnergyPlus](https://energyplus.net/) or [DOE-2](https://doe2.com/).
+
 ![Tests](https://github.com/lymereJ/copper/actions/workflows/tests.yml/badge.svg)
 
 # Purpose
-Results from building energy simulations largely depend on how HVAC equipment are modeled. As they rarely operate at their full load and rated performance it is important that reasonable data is used to model HVAC equipment's part load performance. Copper was created to allow building energy modelers, engineers, and researchers to generate simulation-ready performance curves of HVAC equipment that not only capture their typical behavior at part load but are also generated to match a set of design characteristics such as full load and part load efficiencies.
+Results from building energy simulations largely depend on how HVAC equipment are modeled. As they rarely operate at their full load and rated performance it is important that reasonable data is used to model an HVAC equipment's part load performance. Copper was created to allow building energy modelers, engineers, and researchers to generate simulation-ready performance curves of HVAC equipment that not only capture their typical behavior at part load but are also generated to match a set of design characteristics such as full load and part load efficiencies.
 
 While chillers, which are rated at both full load and part load through an integrated part load value (IPLV), are currently the main application of Copper, other HVAC equipment will be handled in the near future.
 

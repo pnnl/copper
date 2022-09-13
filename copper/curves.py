@@ -28,10 +28,10 @@ class SetsofCurves:
         """
         Determine sets of curves based on aggregation.
 
-        :param string method: Type of aggregation, currently supported: 'average' and 'median.
+        :param str method: Type of aggregation, currently supported: 'average' and 'median.
         :param dict ranges: Dictionary that defines the ranges of values for each independent variable used to calculate aggregated dependent variable values.
         :param dict misc_attr: Dictionary that provides values for the aggregated set of curves.
-        :return: Aggregated set of curves.
+        :return: Aggregated set of curves
         :rtype: SetofCurves()
         """
         # Check that all curves are/have:
@@ -240,12 +240,15 @@ class SetsofCurves:
     ):
 
         """
-        This method performs the weighted average and the nearest neighbor approach.
-        :param target_attr: dict -> target attributes we want to match
-        :param vars: list of str -> the variables we want to use to compute our l2 score. note COP will be added
-        :param N: int -> indicates the number of nearest neighbors to consider. N=None for weighted-average
-        :param df: pd.DataFrame -> dataframe with selected chiller names and the associated weightings
-        :return best_idx: int -> index of set_of_curve that should be the closest fit
+        This function performs the weighted average and the nearest neighbor approach.
+
+        :param dict target_attr: Target attributes we want to match
+        :param list vars: The variables we want to use to compute our l2 score. note COP will be added
+        :param int N: Indicates the number of nearest neighbors to consider. N=None for weighted-average
+        :param pandas.DataFrame df: Pandas dataframe with selected chiller names and the associated weightings
+        :return: Index of set_of_curve that should be the closest fit
+        :rtype: int
+
         """
 
         if target_attr is None:
@@ -453,11 +456,11 @@ class SetofCurves:
         :param list() out_var: List of the output variables to plot, e.g. `eir-f-t`, `eir-f-plr`, `cap-f-t`.
                                Refer to JSON files structure for other output variables
         :param matplotlib.pyplot.axes axes: Matplotlib pyplot axes
-        :param boolean norm: Normalize plot to reference values
+        :param bool norm: Normalize plot to reference values
         :param str color: Set of curves color
         :param float alpha: Transparency of the curves (0-1).
         :return: Plotting success
-        :rtype: boolean
+        :rtype: bool
 
         """
         for i, var in enumerate(out_var):
@@ -477,7 +480,7 @@ class SetofCurves:
                          of the SetofCurves() object.
         :param str fmt: Input format type, currently not used. TODO: json, idf, inp.
         :return: Success
-        :rtype: boolean
+        :rtype: bool
 
         """
         if fmt == "json":
@@ -553,7 +556,7 @@ class SetofCurves:
         """
         Remove curve for a particular output variables from the set
 
-        :param string out_var: Name of the output variable to remove from the set.
+        :param str out_var: Name of the output variable to remove from the set.
 
         """
         curves_to_del = []
@@ -719,7 +722,7 @@ class Curve:
         """Check, for a single curve, if the gradient has the sign we expect. called by check_gradients.
 
         :return: Verification result
-        :rtype: boolean
+        :rtype: bool
 
         """
         grad = np.around(

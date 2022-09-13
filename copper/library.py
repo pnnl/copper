@@ -1,7 +1,7 @@
 """
 library.py
 ====================================
-This is the library module of Copper. It contains functions used to parse the JSON library files used by Copper.
+This is the library module of Copper. It contains functions used to parse the JSON library files.
 """
 
 import json, inspect
@@ -85,6 +85,11 @@ class Library:
                         del vals["part_eff_unit"]
 
     def load_obj(self, data):
+        """Load the data for an equipment in the libary
+
+        :param dict data: Equipment data in a dict format
+        :return: Instance of the equipment in Copper (e.g. a chiller())
+        """
         # Get equipment properties
         props = inspect.getfullargspec(eval("copper." + data["eqp_type"]).__init__)[0]
         props.remove("self")
@@ -108,6 +113,11 @@ class Library:
         return obj
 
     def content(self):
+        """Content of a library in a dict format
+
+        :return: Dict of the data contained in a library
+        :rtype: dict()
+        """
         return self.data
 
     def get_unique_eqp_fields(self):

@@ -1,7 +1,7 @@
 Quickstart Guide
 =================
 
-This quickstart guide shows examples on how **Copper** can be used to generate sets of performance curves by either being imported as packaged or using its command line interface.
+This quickstart guide shows examples of how **Copper** can be used to generate simulation-ready sets of performance curves by either being imported as packaged or using its command line interface.
 
 Using **Copper** as a package
 ------------------------------

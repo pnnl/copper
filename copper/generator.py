@@ -1,7 +1,7 @@
 """
 generator.py
 ====================================
-This is the generator module of Copper. The generator uses a genetic algorithm to find set of performance curves that matches the user-specified equipment definitions.
+This is the generator module of Copper. The generator uses a genetic algorithm to find a set of performance curves that matches the user-specified equipment definitions.
 """
 
 import warnings
@@ -61,9 +61,9 @@ class generator:
     def generate_set_of_curves(self, verbose=False):
         """Generate set of curves using genetic algorithm.
 
-        :param string verbose: Output results at each generation.
+        :param str verbose: Output results at each generation.
         :return: Set of curves
-        :rtype: SetofCurves()
+        :rtype: SetofCurves
 
         """
         self.target = self.equipment.part_eff
@@ -121,10 +121,10 @@ class generator:
     def run_ga(self, curves, verbose=False):
         """Run genetic algorithm.
 
-        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
-        :param string verbose: Output results at each generation.
+        :param copper.curves.SetofCurves curves: Initial set of curves to be modified by the algorithm
+        :param str verbose: Output results at each generation.
         :return: Final population of sets of curves
-        :rtype: list()
+        :rtype: list
 
         """
 
@@ -225,7 +225,7 @@ class generator:
         """Check if the objective of the optimization through the algorithm have been met.
 
         :return: Verification result
-        :rtype: boolean
+        :rtype: bool
 
         """
         if self.equipment.type == "chiller":
@@ -277,11 +277,10 @@ class generator:
             return False
 
     def check_gradients(self):
-
         """Check if the objective of the gradient of the three curves are monotonic and have the sign we expect.
 
         :return: Verification result
-        :rtype: boolean
+        :rtype: bool
 
         """
         if self.equipment.type == "chiller":
@@ -313,11 +312,10 @@ class generator:
             return False
 
     def compute_grad(self, x, y, sign_val, threshold=1e-5):
-
         """Check, for a single curve, if the gradient has the sign we expect. called by check_gradients.
 
         :return: Verification result
-        :rtype: boolean
+        :rtype: bool
 
         """
         grad = np.around(
@@ -340,9 +338,9 @@ class generator:
     def generate_population(self, curves):
         """Generate population of sets of curves.
 
-        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
+        :param copper.curves.SetofCurves curves: Initial set of curves to be modified by the algorithm
         :return: Verification result
-        :rtype: boolean
+        :rtype: bool
 
         """
         pop = []
@@ -368,7 +366,7 @@ class generator:
     def individual(self, curves):
         """Create new individual.
 
-        :param SetofCurves() curves: Initial set of curves to be modified by the algorithm
+        :param copper.curves.SetofCurves curves: Initial set of curves to be modified by the algorithm
         :return: New set of curves randomly modified
         :rtype: SetofCurves
 
@@ -389,6 +387,13 @@ class generator:
         return new_curves
 
     def calc_fit(self, pop):
+        """Calculate fitness of each individual in a population.
+
+        :param list pop: Population
+        :return: Fitness score of each individual
+        :rtype: list
+
+        """
         # Determine and normalized part load efficiency fitness
         part_load_fitnesses = [
             self.determine_part_load_fitness(curves) for curves in pop
@@ -430,10 +435,10 @@ class generator:
     def fitness_scale_grading(self, pop, scaling=True):
         """Calculate fitness, scale, and grade for a population.
 
-        :param list() pop: Population of individual, i.e. list of curves
-        :param boolean scaling: Linearly scale fitness scores
+        :param list pop: Population of individual, i.e. list of curves
+        :param bool scaling: Linearly scale fitness scores
         :return: List sets of curves graded by fitness scores
-        :rtype: list()
+        :rtype: list
 
         """
         # Determine fitness
@@ -450,7 +455,7 @@ class generator:
     def evolve_population(self, pop):
         """Evolve population to create a new generation.
 
-        :param list() pop: Population of individual, i.e. list of curves
+        :param list pop: Population of individual, i.e. list of curves
 
         """
         # Fitness, Scaling, Grading
@@ -476,6 +481,13 @@ class generator:
         self.identify_best_performer()
 
     def determine_part_load_fitness(self, set_of_curves):
+        """Determine the part load fitness of a set of curves
+
+        :param copper.curves.SetofCurves set_of_curves: Set of curves
+        :return: Fitness score
+        :rtype: float
+
+        """
         # Temporary assign curve to equipment
         self.equipment.set_of_curves = set_of_curves.curves
         part_eff_score = abs(
@@ -494,6 +506,13 @@ class generator:
         return part_eff_score
 
     def determine_full_load_fitness(self, set_of_curves):
+        """Determine the full load fitness of a set of curves
+
+        :param copper.curves.SetofCurves set_of_curves: Set of curves
+        :return: Fitness score
+        :rtype: float
+
+        """
         # Temporary assign curve to equipment
         self.equipment.set_of_curves = set_of_curves.curves
         full_eff_score = abs(
@@ -512,6 +531,13 @@ class generator:
         return full_eff_score
 
     def determine_normalization_fitness(self, set_of_curves):
+        """Determine the normalization fitness of a set of curves (e.g. are they normalized at rated/reference conditions?)
+
+        :param copper.curves.SetofCurves set_of_curves: Set of curves
+        :return: Fitness score
+        :rtype: float
+
+        """
         # Temporary assign curve to equipment
         self.equipment.set_of_curves = set_of_curves.curves
         curve_normal_score = 0
@@ -523,11 +549,11 @@ class generator:
     def scale_fitnesses(self, fitnesses, pop, scaling=True):
         """Scale the fitness scores to prevent best performers from dragging the whole population to a local extremum.
 
-        :param list() fitnesses: List of fitness for each set of curves
-        :param list() pop: List of sets of curves
-        :param boolean scaling: Specifies whether of not to linearly scale the fitnesses
+        :param list fitnesses: List of fitness for each set of curves
+        :param list pop: List of sets of curves
+        :param bool scaling: Specifies whether of not to linearly scale the fitnesses
         :return: List of tuples representing the fitness of a set of curves and the set of curves
-        :rtype: list(tuple())
+        :rtype: list(tuple)
 
         """
         # linear scaling: a + b * f
@@ -566,9 +592,9 @@ class generator:
     def grade_population(self, pop_scaled):
         """Grade population.
 
-        :param list(tuple()) pop_scaled: List of tuples representing the fitness of a set of curves and the set of curves
+        :param list(tuple) pop_scaled: List of tuples representing the fitness of a set of curves and the set of curves
         :return: List of set of curves graded from the best to the worst
-        :rtype: list(SetofCurves())
+        :rtype: list(SetofCurves)
 
         """
         pop_sorted = sorted(pop_scaled, key=lambda tup: tup[0])
@@ -578,9 +604,9 @@ class generator:
     def perform_mutation(self, individual):
         """Mutate individual.
 
-        :param SetofCurves() individual: Set of curves
+        :param copper.curves.SetofCurves individual: Set of curves
         :return: Modified indivudal
-        :rtype: SetofCurves()
+        :rtype: SetofCurves
 
         """
         new_individual = copy.deepcopy(individual)
@@ -597,7 +623,7 @@ class generator:
     def perform_crossover(self, parents):
         """Crossover best individuals.
 
-        :param list() parents: List of best performing individuals of the generation
+        :param list parents: List of best performing individuals of the generation
 
         """
         parents_length = len(parents)

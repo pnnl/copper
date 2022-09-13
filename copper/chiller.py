@@ -170,9 +170,9 @@ class chiller:
             return [self.plotting_range[out_var]["x1_norm"], 0.0]
 
     def get_ref_cond_flow_rate(self):
-
         """
-        Method to compute the reference flow-rate given ref_cap, full_eff, ref_lct and ref_lwt
+        Function to compute the reference flow-rate given ref_cap, full_eff, ref_lct and ref_lwt
+
         :return:
         """
 
@@ -626,10 +626,12 @@ class chiller:
 
     def get_lib_and_filters(self, lib_path=chiller_lib):
         """
-        method to get lib object and gilters
-        :param lib_path: (str) - full path of json library
-        :return lib: (obj) - library object
-        :return filters: (list) - list of tuples containing the filters specific to Chiller object
+        Function  to get lib object and gilters
+
+        :param lib_path: (str) Full path of json library
+        :return lib: (obj) Library object
+        :return filters: (list) List of tuples containing the filters specific to Chiller object
+
         """
         lib = Library(path=lib_path)
         filters = [
@@ -643,8 +645,11 @@ class chiller:
 
     def get_ranges(self):
         """
-        method to get ranges specific to the chiller object
-        :return ranges: (dict) - ranges for normalization
+        Function to get ranges specific to the chiller object
+
+        :return: Ranges for normalization
+        :rtype: dict()
+
         """
         norm_val = {"ect_lwt": self.ref_ect, "lct_lwt": self.ref_lct}[self.model]
 
