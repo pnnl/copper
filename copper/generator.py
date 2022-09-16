@@ -1,7 +1,8 @@
 """
 generator.py
 ====================================
-This is the generator module of Copper. The generator uses a genetic algorithm to find a set of performance curves that matches the user-specified equipment definitions.
+The generator module of Copper deals with generating performance curves.
+It currently uses a genetic algorithm to find sets of curves that match user equipment definitions.
 """
 
 import warnings

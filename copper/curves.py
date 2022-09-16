@@ -1,7 +1,7 @@
 """
 curves.py
 ====================================
-This is the curves module of Copper. It handles all operations and manipulation related to curves, set of curves, and sets of curves.
+The curves module of Copper handles all operations and manipulation related to curves, set of curves, and sets of curves.
 """
 
 import warnings, json, os
@@ -28,7 +28,8 @@ class SetsofCurves:
         """
         Determine sets of curves based on aggregation.
 
-        :param str method: Type of aggregation, currently supported: 'average' and 'median.
+        :param str method: Type of aggregation, currently supported: 'average', 'median', 'weighted-average', and 'NN-weighted-average' as in nearest neighbor weighted average.
+        :param int N: Number of neighbor used to the aggregation, only used when the method is 'NN-weighted-average'.
         :param dict ranges: Dictionary that defines the ranges of values for each independent variable used to calculate aggregated dependent variable values.
         :param dict misc_attr: Dictionary that provides values for the aggregated set of curves.
         :return: Aggregated set of curves

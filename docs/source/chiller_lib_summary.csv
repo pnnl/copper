@@ -1,0 +1,25 @@
+Model,Compressor type,Condenser type,Compressor speed,Curve sets
+ECT,centrifugal,air,constant,1
+ECT,centrifugal,water,constant,95
+ECT,centrifugal,water,variable,38
+ECT,reciprocating,air,constant,1
+ECT,reciprocating,water,constant,3
+ECT,reciprocating,water,variable,1
+ECT,screw,air,constant,9
+ECT,screw,air,variable,11
+ECT,screw,water,constant,38
+ECT,screw,water,variable,4
+ECT,scroll,air,constant,12
+ECT,scroll,water,constant,7
+lct_lwt,centrifugal,air,constant,1
+lct_lwt,centrifugal,water,constant,95
+lct_lwt,centrifugal,water,variable,38
+lct_lwt,reciprocating,air,constant,1
+lct_lwt,reciprocating,water,constant,3
+lct_lwt,reciprocating,water,variable,1
+lct_lwt,screw,air,constant,9
+lct_lwt,screw,air,variable,11
+lct_lwt,screw,water,constant,38
+lct_lwt,screw,water,variable,4
+lct_lwt,scroll,air,constant,12
+lct_lwt,scroll,water,constant,7

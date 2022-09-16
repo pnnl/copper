@@ -4,7 +4,7 @@ Results from building energy simulations largely depend on how HVAC equipment ar
 
 What can **Copper** do?
 ------------------------
-* Generate sets of curves
+* Generate curves
 * Plot curves
 * Export curves
 
