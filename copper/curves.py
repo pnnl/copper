@@ -25,8 +25,7 @@ class SetsofCurves:
     def get_aggregated_set_of_curves(
         self, method="weighted-average", N=None, ranges={}, misc_attr={}
     ):
-        """
-        Determine sets of curves based on aggregation.
+        """Determine sets of curves based on aggregation.
 
         :param str method: Type of aggregation, currently supported: 'average', 'median', 'weighted-average', and 'NN-weighted-average' as in nearest neighbor weighted average.
         :param int N: Number of neighbor used to the aggregation, only used when the method is 'NN-weighted-average'.
@@ -34,6 +33,7 @@ class SetsofCurves:
         :param dict misc_attr: Dictionary that provides values for the aggregated set of curves.
         :return: Aggregated set of curves
         :rtype: SetofCurves()
+
         """
         # Check that all curves are/have:
         # - the same output variables
@@ -240,8 +240,7 @@ class SetsofCurves:
         self, target_attr=None, vars=["ref_cap", "full_eff"], N=None
     ):
 
-        """
-        This function performs the weighted average and the nearest neighbor approach.
+        """This function performs the weighted average and the nearest neighbor approach.
 
         :param dict target_attr: Target attributes we want to match
         :param list vars: The variables we want to use to compute our l2 score. note COP will be added
@@ -313,15 +312,16 @@ class SetsofCurves:
         N=None,
     ):
 
-        """
-        :param df: df -> input dataframe containing the variable inputs
-        :param target_attr: dict -> reference targets with respect to which l2 score needs to computed
-        :param vars: list -> list of str for variables we want to normalize
-        :param: weights: list -> weights associated with each variable in vars
-        :param: N: Number of nearest neighbors. should be none unless method = "NN-weighted-average"
-        :return: df: df with added columns with normalized variables
-        :return target_attr: dict -> added normalized values of var in vars
-        :return best_curve_index: int -> corresponding to the best curve
+        """Normalize curve outputs.
+
+        :param pandas.DataFrame df: Input dataframe containing the variable inputs
+        :param dict target_attr: Reference targets with respect to which l2 score needs to computed
+        :param list vars: List of strings for variables we want to normalize
+        :param list weights: Weights associated with each variable in vars
+        :param int N: Number of nearest neighbors. It should be none unless method is 'NN-weighted-average'
+        :return: Dataframe with added columns with normalized variables, dict with added normalized values of var in vars, index of the best curve
+        :rtype: list
+
         """
 
         if weights is None:
@@ -366,12 +366,15 @@ class SetsofCurves:
 
     def l2_norm(self, df, target_attr, weights, vars=["full_eff", "ref_cap"]):
 
-        """
-        :param df: df -> dataframe containing the attributes of different equipments for a givne equipment type
-        :param target_attr: dict -> contains the target attribute we want to find the closest match
-        :param weights: list/np.array -> 1D list of weights. must have the same dimensions as vars
-        :param vars: list -> list of str containing variable names we want to compute l2 norm with
-        :return Y: np.array -> l2 scores for all equiplemts/curves. same dimension as the size of df
+        """Perform L2 normalization.
+
+        :param pandas.DataFrame df: Dataframe containing the attributes of different equipments for a given equipment type
+        :param dict target_attr: Target equipment attribute
+        :param list weights: List of weights, must have the same dimensions as vars
+        :param list vars: List of string containing variable names to compute the L2 normalization
+        :return: L2 scores (same size as df)
+        :rtype: numpy.array
+
         """
 
         norm_vars = [var + "_norm" for var in vars]
@@ -382,18 +385,23 @@ class SetsofCurves:
         return Y
 
     def softmax(self, x):
-        """
-        softmax function
-        :param x: float -> convert distances to scores/weights using softmax function
+        """Softmax function.
+
+        :param float x: Convert distances to scores/weights using the softmax function
+        :return: Result of the softmax function
+        :rtype: float
+
         """
         return np.exp(x) / np.sum(np.exp(x), axis=0)
 
     def check_vars_in_dictionary(self, vars, target_attr):
-        """
-        method to check that the vars specified by the user exists in target_attr
-        :param vars: list -> vars to calculate weights with, as specified by the user
-        :param target_attr: list -> target attributes
-        :return not_in_dict: list -> list of vars not in target_attr
+        """Function to check that the vars specified by the user exists in 'target_attr'.
+
+        :param list vars: Variable to calculate weights with, as specified by the user
+        :param list target_attr: Target attributes
+        :return: List of variables not in 'target_attr'
+        :rtype: list
+
         """
         not_in_dict = []
         for var in vars:
@@ -410,6 +418,14 @@ class SetofCurves:
         self.eqp = ""
 
     def get_data_for_plotting(self, curve, norm):
+        """Retrieve equipment specific data for plotting set of curves.
+
+        :param Curve curve: Copper curve object
+        :param bool norm: Normalize data used for plotting the curves
+        :return: Data to be used for plotting the curves
+        :rtype: list
+
+        """
         var = curve.out_var
         nb_vals = self.eqp.plotting_range[var]["nbval"]
         x1_min = self.eqp.plotting_range[var]["x1_min"]
@@ -452,9 +468,9 @@ class SetofCurves:
         return [x, y]
 
     def plot(self, out_var=[], axes=[], norm=True, color="Black", alpha=0.3):
-        """Plot set of curves.
+        """Plot a set of curves.
 
-        :param list() out_var: List of the output variables to plot, e.g. `eir-f-t`, `eir-f-plr`, `cap-f-t`.
+        :param list out_var: List of the output variables to plot, e.g. `eir-f-t`, `eir-f-plr`, `cap-f-t`.
                                Refer to JSON files structure for other output variables
         :param matplotlib.pyplot.axes axes: Matplotlib pyplot axes
         :param bool norm: Normalize plot to reference values
@@ -554,10 +570,9 @@ class SetofCurves:
         return True
 
     def remove_curve(self, out_var):
-        """
-        Remove curve for a particular output variables from the set
+        """Remove curve for a particular output variable from the set.
 
-        :param str out_var: Name of the output variable to remove from the set.
+        :param str out_var: Name of the output variable to remove from the set
 
         """
         curves_to_del = []
@@ -569,10 +584,9 @@ class SetofCurves:
                 self.curves.remove(c)
 
     def list_to_dict(self):
-        """
-        Convert curves from the set from a list to a dictionary, the key being the output variable type.
+        """Convert curves from the set from a list to a dictionary (the key being the output variable type).
 
-        :return: Dictionary of curves
+        :return: Dictionary of Copper curve objects
         :rtype: dict
         """
         curves = {}
@@ -746,8 +760,8 @@ class Curve:
     def regression(self, data, curve_types):
         """Find curve coefficient by running a multivariate linear regression.
 
-        :param DataFrame() data: DataFrame() object with the following columns: "X1","X1^2","X2","X2^2","X1*X2", "Y"
-        :param list() curve_types: List of curves types
+        :param pandas.DataFrame data: Dataframe object with the following columns: 'X1', 'X1^2', 'X2', 'X2^2', 'X1*X2', 'Y'
+        :param list curve_types: List of Copper curve types
 
         """
         # Global R^2
@@ -888,6 +902,9 @@ class Curve:
         """Return the reference output of a curve.
 
         :param eqp: Equipment
+        :return: Curve output at reference conditions
+        :rtype: float
+
         """
         x_ref, y_ref = eqp.get_ref_values(self.out_var)
         return self.evaluate(x_ref, y_ref)
@@ -895,9 +912,9 @@ class Curve:
     def normalized(self, data, x_norm, y_norm):
         """Normalize curve around the reference data points.
 
-        :param float x_norm: First independent variable normalization points.
-        :param float y_norm: Second independent variable normalization points.
-        :param DataFrame() data: DataFrame() object with the following columns: "X1","X1^2","X2","X2^2","X1*X2", "Y".
+        :param pandas.DataFrame data: Dataframe object with the following columns: 'X1', 'X1^2', 'X2', 'X2^2', 'X1*X2', 'Y'
+        :param float x_norm: First independent variable normalization points
+        :param float y_norm: Second independent variable normalization points
 
         """
         # Normalization point
@@ -909,6 +926,7 @@ class Curve:
         self.regression(data, [self.type])
 
     def convert_coefficients_to_ip(self):
+        """Convert curve coefficient to imperial units"""
         if self.units == "si":
             data_pts = []
             if "f-t" in self.out_var and "bi" in self.type:
