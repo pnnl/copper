@@ -17,6 +17,7 @@ You might be interested in **Copper** if you are an energy modeler, engineer, or
    Equipment
    Quickstart Guide
    Additional Examples
+   Applications
    Code Documentation
    Contributing
    License
