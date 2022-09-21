@@ -554,7 +554,7 @@ class generator:
         :param list pop: List of sets of curves
         :param bool scaling: Specifies whether of not to linearly scale the fitnesses
         :return: List of tuples representing the fitness of a set of curves and the set of curves
-        :rtype: list(tuple)
+        :rtype: list
 
         """
         # linear scaling: a + b * f
@@ -593,9 +593,9 @@ class generator:
     def grade_population(self, pop_scaled):
         """Grade population.
 
-        :param list(tuple) pop_scaled: List of tuples representing the fitness of a set of curves and the set of curves
+        :param list pop_scaled: List of tuples representing the fitness of a set of curves and the set of curves
         :return: List of set of curves graded from the best to the worst
-        :rtype: list(SetofCurves)
+        :rtype: list
 
         """
         pop_sorted = sorted(pop_scaled, key=lambda tup: tup[0])

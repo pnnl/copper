@@ -85,10 +85,11 @@ class Library:
                         del vals["part_eff_unit"]
 
     def load_obj(self, data):
-        """Load the data for an equipment in the libary
+        """Load data for an equipment from the libary.
 
         :param dict data: Equipment data in a dict format
-        :return: Instance of the equipment in Copper (e.g. a chiller())
+        :return: Instance of the equipment in Copper (e.g. copper.chiller.chiller)
+
         """
         # Get equipment properties
         props = inspect.getfullargspec(eval("copper." + data["eqp_type"]).__init__)[0]
@@ -113,10 +114,10 @@ class Library:
         return obj
 
     def content(self):
-        """Content of a library in a dict format
+        """Content of a library in a dict format.
 
-        :return: Dict of the data contained in a library
-        :rtype: dict()
+        :return: Dictionary of the data contained in a library
+        :rtype: dict
         """
         return self.data
 
@@ -124,7 +125,7 @@ class Library:
         """Get all unique values for each field of a particular equipment.
 
         :return: Dictionary showing all unique values for each equipment field.
-        :rtype: dict[str, ]
+        :rtype: dict
 
         """
         # Store all value for each field
@@ -145,9 +146,9 @@ class Library:
     def find_set_of_curvess_from_lib(self, filters=[], part_eff_flag=False):
         """Retrieve sets of curves from a library matching specific filters.
 
-        :param list(tuple()) filters: Filter represented by tuples (field, val)
-        :return: All set of curves object matching the filters
-        :rtype: list()
+        :param list filters: List of filters, represented by tuples (field, val)
+        :return: List of sets of curves object matching the filters
+        :rtype: list
 
         """
         # Find name of equiment that match specified filter
@@ -217,9 +218,9 @@ class Library:
         - ! means "do not include..."
         - ~ means "include..."
 
-        :param list(tuple()) filters: Filter represented by tuples (field, val)
+        :param list filters: List of filters, represented by tuples (field, val)
         :return: Dictionary of field for each equipment matching specified filter
-        :rtype: dict[str,dict[]]
+        :rtype: dict
 
         """
         eqp_match_dict = {}
@@ -253,7 +254,7 @@ class Library:
 
         :param str name: Curve name
         :return: Set of curves object
-        :rtype: SetofCurves()
+        :rtype: SetofCurves
 
         """
         # Initialize set of curves object
@@ -279,11 +280,11 @@ class Library:
     def get_curve(self, c, c_name, eqp):
         """Retrieve individual attribute of a curve object.
 
-        :param Curve() c: Curve object
+        :param Curve c: Curve object
         :param str c_name: Name of the curve object
         :param str eqp_type: Type of equipment associated with the curve
         :return: Curve object
-        :rtype: Curve()
+        :rtype: Curve
 
         """
         # Curve properties
@@ -302,10 +303,10 @@ class Library:
     def find_base_curves(self, filters, eqp):
         """Find an existing equipment curve that best matches the equipment.
 
-        :param list(tuple()) filters: Filter represented by tuples (field, val)
-        :param eqp: Equipment object(e.g. chiller())
+        :param list filters: List of filters, represented by tuples (field, val)
+        :param eqp: Instance of the equipment in Copper (e.g. copper.chiller.chiller)
         :return: Set of curves object
-        :rtype: SetofCurves()
+        :rtype: SetofCurves
 
         """
         # Find equipment match in the library
@@ -329,8 +330,8 @@ class Library:
     def get_best_match(self, eqp, matches):
         """Find the set of curves matching the equipment characteristics the best.
 
-        :param eqp: Equipment object(e.g. chiller())
-        :param dict[str,dict[]] matches: All potential matches
+        :param eqp: Instance of the equipment in Copper (e.g. copper.chiller.chiller)
+        :param dict matches: All potential matches
         :return: Name of the set of curves that best matches the equipment characteristics
         :rtype: str
 

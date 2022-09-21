@@ -32,7 +32,7 @@ class SetsofCurves:
         :param dict ranges: Dictionary that defines the ranges of values for each independent variable used to calculate aggregated dependent variable values.
         :param dict misc_attr: Dictionary that provides values for the aggregated set of curves.
         :return: Aggregated set of curves
-        :rtype: SetofCurves()
+        :rtype: SetofCurves
 
         """
         # Check that all curves are/have:
@@ -494,7 +494,7 @@ class SetofCurves:
 
         :param str path: Path and file name, do not include the extension,
                          it will be added based on the simulation engine
-                         of the SetofCurves() object.
+                         of the SetofCurves object.
         :param str fmt: Input format type, currently not used. TODO: json, idf, inp.
         :return: Success
         :rtype: bool

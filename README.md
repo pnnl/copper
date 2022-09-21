@@ -1,5 +1,5 @@
 # Copper
-Copper is a building energy simulation performance curve generator for heating, ventilation and air-conditioning equipment. It uses a genetic algorithm to modify existing or a set of aggregated existing performance curves to match specific design characteristics including full and part load energy performance metric values.
+Copper is a building energy simulation performance curve generator for heating, ventilation, and air-conditioning equipment. It uses a genetic algorithm to modify existing or a set of aggregated existing performance curves to match specific design characteristics including full and part load energy performance metric values.
 
 Copper generates performance curves that can be used in most common building energy software such as [EnergyPlus](https://energyplus.net/) or [DOE-2](https://doe2.com/).
 
@@ -17,4 +17,4 @@ The documentation for Copper is hosted [here](https://pnnl.github.io/copper/inde
 Contributions (issues and pull requests) are welcomed and greatly appreciated. Guidelines are provided in the documentation.
 
 # Help
-If you need help using Copper, please open an issue and one of the developer will get back to you at their earliest convenience.
+If you need help using Copper, please open an issue and one of the developers will get back to you at their earliest convenience.

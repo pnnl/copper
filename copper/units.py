@@ -1,7 +1,7 @@
 """
 units.py
 ====================================
-This is the unit conversion module of Copper. It handles simple unit conversions to avoid creating additional dependencies.
+The conversion module of Copper handles simple unit conversions to avoid creating additional dependencies.
 """
 
 
@@ -15,7 +15,7 @@ class Units:
 
         :param str new_unit: Unit after conversion
         :return: Converted value
-        :rtype: int
+        :rtype: float
 
         """
         if new_unit == "kw/ton":

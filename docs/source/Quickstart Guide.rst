@@ -70,7 +70,7 @@ Let's verify that the set of curves that we generated actually corresponds to th
         )
     )
 
-This will return `Efficiency: 0.61 kW/ton, IPLV: 0.52 kW/ton.`.
+This will return `Efficiency: 0.61 kW/ton, IPLV: 0.52 kW/ton.`
 
 The curves can now be exported to be used in `EnergyPlus`_.
 
