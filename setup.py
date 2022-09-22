@@ -1,9 +1,15 @@
 from setuptools import setup, find_packages
+from pathlib import Path
+
+# read the contents of the README file
+this_directory = Path(__file__)
+long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="copper-bem",
     version="0.1.2",
     description="Performance curve generator for building energy simulation",
+    long_description=long_description,
     long_description_content_type="text/markdown",
     keywords="building energy simulation performance curves",
     url="https://github.com/pnnl/copper",
