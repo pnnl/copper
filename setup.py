@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="copper",
-    version="0.1.0",
+    name="copper-bem",
+    version="0.1.2",
     description="Performance curve generator for building energy simulation",
     long_description_content_type="text/markdown",
     keywords="building energy simulation performance curves",
