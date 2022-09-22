@@ -3,6 +3,14 @@ Quickstart Guide
 
 This quickstart guide shows examples of how **Copper** can be used to generate simulation-ready sets of performance curves by either being imported as packaged or using its command line interface.
 
+Installing **Copper**
+----------------------
+**Copper** can be installed from PyPI by running the following command.
+
+.. sourcecode:: bash
+
+   pip install copper-bem
+
 Using **Copper** as a package
 ------------------------------
 In this example we will use **Copper** to generate chiller performance curves by importing **Copper** as a package in a Python script.
