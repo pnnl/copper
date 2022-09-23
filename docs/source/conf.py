@@ -24,9 +24,9 @@ copyright = '2020, Pacific Northwest National Laboratory'
 author = 'Jeremy Lerond'
 
 # The short X.Y version
-version = '0.0'
+version = '0.1'
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '0.1.5'
 
 
 # -- General configuration ---------------------------------------------------
