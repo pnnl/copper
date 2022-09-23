@@ -28,7 +28,7 @@ bibliography: paper.bib
 
 # Summary
 
-For decades, building energy simulation has been used by architects, engineers, and researchers to evaluate the performance of building designs. Heating, ventilation, and air-conditioning (HVAC) systems are one of the main energy end-users in buildings, hence it is important to reasonably capture the performance of these equipment in simulations at rated (as defined for instance in AHRI Standards [@ahri_550590; @ahri_551591] and referenced in [@90.1]), full load, and part load conditions. `Copper` is a performance curve generator that was created to allow building energy simulation practitioners to generate simulation-ready performance curves for HVAC equipment that not only capture their typical behavior at part load but are also generated to match a set of design characteristics including full load and part load efficiencies.
+For decades, building energy simulation has been used by architects, engineers, and researchers to evaluate the performance of building designs. Heating, ventilation, and air-conditioning (HVAC) systems are one of the main energy end-users in buildings, hence it is important to reasonably capture the performance of these equipment in simulations at rated (as defined for instance in AHRI and ASHRAE Standards [@ahri_550590; @ahri_551591; @90.1]), full load, and part load conditions. `Copper` is a performance curve generator that was created to allow building energy simulation practitioners to generate simulation-ready performance curves for HVAC equipment that not only capture their typical behavior at part load but are also generated to match a set of design characteristics including full load and part load efficiencies.
 
 # Statement of need
 
