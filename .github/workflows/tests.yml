@@ -37,6 +37,4 @@ jobs:
         black -l 88 copper tests --check
     - name: Tests with Nose
       run: |
-#        export PYTHONUNBUFFERED=1
-#        . ./.venv/bin/activate
         nosetests -v
