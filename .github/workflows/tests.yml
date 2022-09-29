@@ -23,6 +23,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Install Black
+      run: |
+        sudo pip install black
     - name: Run Black
       run: |
         black -l 88 copper tests --check
