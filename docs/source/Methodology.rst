@@ -7,16 +7,15 @@ Aggregation
 **Copper** allows users to choose between four different type of aggregations: `average`, `median`, `weighted average`, and `nearest neighbor weighted average`. These all follow the same approach, only step 3 below differs. 
 
     1. A set of sets of curves is selected from the dataset (all or a subset based on the method)
-    2. Curve outputs are calculated for a large grid of independent variables
-    3. Outputs are aggregated
+    2. Outputs are aggregated
 
       * `average`: Averaged curve output for each independent variables
       * `median`: Median curve output for each independent variables
       * `weighted average`: Same as average but a score is associated to each curve (the higher score, the best it matches the user specified equipment characteritics)
       * `nearest neighbor weighted average`: Same as weighted average but for a selected number of curves that best match the user specified equipment characteristics
 
-    4. OLS regression is performed using the aggregated outputs
-    5. Curve is normalized at rated/reference conditions
+    3. OLS regression is performed using the aggregated outputs
+    4. Curve is normalized at rated/reference conditions
 
 Curve Generation
 -----------------
