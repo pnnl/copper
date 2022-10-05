@@ -1,5 +1,5 @@
 ---
-title: 'Copper: A performance curve generator for building energy simulation'
+title: 'Copper: a performance curve generator for building energy simulation'
 tags:
   - python
   - energy
