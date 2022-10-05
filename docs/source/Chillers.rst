@@ -1,11 +1,11 @@
 Chillers
 =========
 
-**Copper** can generate performance curves for all types of vapor-compression chillers. It handles two of the chiller models that are implemented in most common building energy simulation software, both models use performance curves that are function of the chilled water leaving temperature and the part load ratio (ratio of load on the chiller to the operating chiller capacity). The main difference between the two models is that one uses performance curves that are function of the entering condenser temperature (refer to thereafter as the ECT model) and the other one is function of the leaving condenser temperature (refer to therafter as the LCT model). Additional documentation for the former can be found in the `EnergyPlus`_ and `DOE-2`_ engineering manuals, documentation for the later can be found in the `EnergyPlus engineering manual`_.
+**Copper** can generate performance curves for all types of vapor-compression chillers. It handles two of the chiller models that are implemented in most common building energy simulation software tools; both models use performance curves that are function of the temperature of the water leaving the chiller and the part load ratio (ratio of load on the chiller to the operating chiller capacity). The main difference between the two models is that one uses performance curves that are function of the entering condenser temperature (referred to herein as the ECT model) and the other is function of the leaving condenser temperature (referred to herein as the LCT model). Additional documentation on the ECT model can be found in the `EnergyPlus`_ and `DOE-2`_ engineering manuals; documentation on the LCT model can be found in the `EnergyPlus engineering manual`_.
 
-Chiller Data Library
+Chiller data library
 ---------------------
-The `chiller library`_ contains performance curves for exisiting chillers, both for the ECT and LCT model. The number of performance curves for each compressor/condenser/model type varies, a summary of the library is shown in Table 1.
+The `chiller library`_ contains performance curves for existing chillers for both the ECT model and the LCT model. The number of performance curves for each compressor/condenser/model type varies; Table 1 provides a summary of the library.
 
 .. csv-table:: Table 1 - Summary of the Chiller Library
    :file: chiller_lib_summary.csv

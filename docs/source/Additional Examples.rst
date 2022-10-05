@@ -1,10 +1,10 @@
 Additional Examples
 ====================
 
-LCT-based Chiller Performance Curves
+LCT-based chiller performance curves
 -------------------------------------
 
-Most building energy modeling software use an entering condenser temperature (ECT) model. Some software such as `EnergyPlus`_ have capabilities to simulate chillers using a model using a leaving condenser temperature (LCT) model. **Copper** can be used to generate performance curves for such a model. The following example generate a set of performance curves for the LCT model for a 100 ton water cooled scroll chiller.
+Most building energy modeling software use an entering condenser temperature (ECT) model. Some software tools such as `EnergyPlus`_ can simulate chillers using a leaving condenser temperature (LCT) model. **Copper** can be used to generate performance curves for such a model. The following example generates a set of performance curves for the LCT model for a 100-ton water-cooled scroll chiller.
 
 .. sourcecode:: python
 
@@ -29,10 +29,10 @@ Most building energy modeling software use an entering condenser temperature (EC
         vars=["eir-f-t", "eir-f-plr"], method="best_match", tol=tol
     )
 
-Targeting Two Different Rating Standards
+Targeting two different rating standards
 -----------------------------------------
 
-The rating conditions in AHRI Standard 550/590 and 551/591 are different. **Copper** support the IPLV and performance curve generation for both standards. It is possible to also generate curves for two sets of targeted efficiencies, one for AHRI 550/590, and the other one for 551/591. The following example demonstrate that.
+The rating conditions in AHRI Standards 550/590 and 551/591 are different. **Copper** supports the IPLV and performance curve generation for both standards. It is also possible to generate curves for two sets of targeted efficiencies, one for AHRI 550/590 and the other for 551/591 as demonstrated in the following example:
 
 .. sourcecode:: python
 
@@ -69,7 +69,7 @@ The rating conditions in AHRI Standard 550/590 and 551/591 are different. **Copp
 
 Repeatability
 --------------
-Because **Copper** is used to find a solution to an underdetermined system of equations, there exist a multitude (an infinite) number of solutions to a targeted equipment characteristics and efficiencies hence, running **Copper** multiple times can lead to different sets of curves. For applications where repeatability is necessary, users can use the `random_seed` attribute in an equipment definition, this will make sure that the same result is generated every time the same equipment definition is run using **Copper**.
+Because **Copper** is used to find a solution to an underdetermined system of equations, there are a multitude (an infinite) number of solutions to a set of targeted equipment characteristics and efficiencies; hence, running **Copper** multiple times can lead to different sets of curves. For applications where repeatability is necessary, users can use the `random_seed` attribute in an equipment definition, which ensures that the same result is generated every time the same equipment definition is run using **Copper**.
 
 .. sourcecode:: python
 
