@@ -1,7 +1,7 @@
 Quickstart Guide
 =================
 
-This quickstart guide shows examples of how **Copper** can be used to generate simulation-ready sets of performance curves by either being imported as packaged or using its command line interface.
+This quickstart guide provides examples of how **Copper** can be used to generate simulation-ready sets of performance curves by either being imported as packaged or using its command line interface.
 
 Installing **Copper**
 ----------------------
@@ -13,16 +13,16 @@ Installing **Copper**
 
 Using **Copper** as a package
 ------------------------------
-In this example we will use **Copper** to generate chiller performance curves by importing **Copper** as a package in a Python script.
+In this example we use **Copper** to generate chiller performance curves by importing **Copper** as a package in a Python script.
 
-First, let's start by importing the necessary packages:
+We start by importing the necessary packages:
 
 .. sourcecode:: python
 
     import copper as cp
     import matplotlib.pyplot as plt
 
-Second, let's define the chiller. In this example, the chiller is a 300 ton constant speed water-cooled screw chiller with a targted efficiency of 0.650 kW/ton and an IPLV of 0.480 kW/ton. The chiller will be simulated using the entering condenser temperature model included in `EnergyPlus`_. **Copper** assumes by default that the rated conditions follow the AHRI Standard 550/590. *Note: curves can also be generated for the AHRI 551/591 standard or both.*
+Next, we define the chiller. In this example, the chiller is a 300 ton constant speed water-cooled screw chiller with a targeted efficiency of 0.650 kW/ton and an integrated part load value (IPLV) of 0.480 kW/ton. The chiller will be simulated using the entering condenser temperature model included in `EnergyPlus`_. **Copper** assumes by default that the rated conditions follow AHRI Standard 550/590. *Note: Curves can also be generated for AHRI Standard 551/591 or both 550/590 and 551/591.*
 
 .. sourcecode:: python
 
@@ -40,7 +40,7 @@ Second, let's define the chiller. In this example, the chiller is a 300 ton cons
         compressor_speed="constant",
     )
 
-Then, let's generate a set of curves for it using **Copper**'s `nearest_neighbor` method.
+Then, we generate a set of curves for using **Copper**'s `nearest_neighbor` method:
 
 .. sourcecode:: python
 
@@ -48,7 +48,7 @@ Then, let's generate a set of curves for it using **Copper**'s `nearest_neighbor
         vars=["eir-f-plr"], method="nearest_neighbor", tol=0.005
     )
 
-Finally, let's plot the curves.
+Finally, we plot the curves:
 
 .. sourcecode:: python
 
@@ -63,11 +63,11 @@ Finally, let's plot the curves.
     chlr_perf_curves.curves = chlr.set_of_curves
     chlr_perf_curves.plot(out_var=out_vars, axes=axes, color="darkolivegreen", alpha=1)
 
-An example output would look like the figure below. The curves are plotted at rated chilled water temperature. In this example, the x-axis corresponds to the entering condenser temperature in degree C, and to the part load ratio.
+An example output would look like the figure below. The curves are plotted at rated chilled water temperature. In this example, the x-axis corresponds to the entering condenser temperature in degrees Celsius, and to the part load ratio.
 
 .. image:: chiller_curves.png
 
-Let's verify that the set of curves that we generated actually corresponds to the targeted efficiencies.
+We then verify that the set of curves that we generated actually corresponds to the targeted efficiencies.
 
 .. sourcecode:: python
 
@@ -78,9 +78,9 @@ Let's verify that the set of curves that we generated actually corresponds to th
         )
     )
 
-This will return `Efficiency: 0.61 kW/ton, IPLV: 0.52 kW/ton.`
+This returns `Efficiency: 0.61 kW/ton, IPLV: 0.52 kW/ton.`
 
-The curves can now be exported to be used in `EnergyPlus`_.
+The curves can now be exported for use in `EnergyPlus`_:
 
 .. sourcecode:: python
 
@@ -91,9 +91,9 @@ Using **Copper**'s command line interface
 
 **Copper** can be used via command line interface (CLI). A JSON file including the targeted equipment characteristics and functions to be called must be created and passed as an argument.
 
-In this example we will generate performance curves for a 300 ton constant speed water-cooled screw chiller with a targted efficiency of 0.650 kW/ton and an IPLV of 0.480 kW/ton. The chiller will be simulated using the entering condenser temperature model included in `EnergyPlus`_.
+In this example we generate performance curves for a 300-ton constant speed water-cooled screw chiller with a targeted efficiency of 0.650 kW/ton and an IPLV of 0.480 kW/ton. The chiller will be simulated using the entering condenser temperature model included in `EnergyPlus`_.
 
-First, let's create the JSON input file.
+First, we create the JSON input file.
 
 .. sourcecode:: JSON
 
@@ -123,13 +123,13 @@ First, let's create the JSON input file.
         }
     }
 
-Then, let's generate the curves using the CLI by running the following command in a command prompt.
+Nextm we let's generate the curves using the CLI by running the following command in a command prompt:
 
 .. sourcecode:: bash
 
     copper run in.JSON
 
-This will produce a JSON file similar to the following one which provides all information related to the curves generated by **Copper**.
+This produces a JSON file similar to the following, which provides all information related to the curves generated by **Copper**:
 
 .. sourcecode:: JSON
 
