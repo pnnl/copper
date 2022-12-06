@@ -288,7 +288,7 @@ class Chiller:
 
         """
 
-        ga = generator(
+        ga = Generator(
             self,
             method,
             pop_size,

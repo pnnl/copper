@@ -114,13 +114,13 @@ class TestAlgorithm(TestCase):
             compressor_speed="constant",
         )
 
-        ga_1 = cp.generator(chr, random_seed=1)
+        ga_1 = cp.Generator(chr, random_seed=1)
         ga_1_vals = [ga_1.get_random() for i in range(5)]
 
-        ga_2 = cp.generator(chr, random_seed=1)
+        ga_2 = cp.Generator(chr, random_seed=1)
         ga_2_vals = [ga_2.get_random() for i in range(5)]
 
-        ga_3 = cp.generator(chr)
+        ga_3 = cp.Generator(chr)
         ga_3_vals = [ga_3.get_random() for i in range(5)]
 
         self.assertTrue(ga_1_vals == ga_2_vals)
@@ -141,7 +141,7 @@ class TestAlgorithm(TestCase):
             compressor_speed="constant",
         )
 
-        algo = cp.generator(equipment=chlr, vars=["eir-f-plr"], method="best_match")
+        algo = cp.Generator(equipment=chlr, vars=["eir-f-plr"], method="best_match")
         algo.generate_set_of_curves()
 
         grad_val = algo.check_gradients()
