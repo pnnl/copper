@@ -8,7 +8,7 @@ Most building energy modeling software use an entering condenser temperature (EC
 
 .. sourcecode:: python
 
-    chlr = cp.chiller(
+    chlr = cp.Chiller(
         compressor_type="scroll",
         condenser_type="water",
         compressor_speed="constant",
@@ -41,7 +41,7 @@ The rating conditions in AHRI Standards 550/590 and 551/591 are different. **Cop
     part_eff_target = 0.876
     part_eff_target_alt = 0.869
 
-    chlr = cp.chiller(
+    chlr = cp.Chiller(
         compressor_type="scroll",
         condenser_type="water",
         compressor_speed="constant",
@@ -84,7 +84,7 @@ Because **Copper** is used to find a solution to an underdetermined system of eq
         model="ect_lwt",
         compressor_type="screw",
         condenser_type="water",
-        compressor_speed="constant",
+        compressor_speed="constant"
     )
 
     set_of_curves = chlr.generate_set_of_curves(
