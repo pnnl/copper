@@ -73,30 +73,22 @@ Because **Copper** is used to find a solution to an underdetermined system of eq
 
 .. sourcecode:: python
 
-    full_eff_target = 1.188
-    full_eff_target_alt = 1.178
-    part_eff_target = 0.876
-    part_eff_target_alt = 0.869
-
-    chlr = cp.chiller(
-        compressor_type="scroll",
+    chlr = cp.Chiller(
+        ref_cap=300,
+        ref_cap_unit="ton",
+        full_eff=0.610,
+        full_eff_unit="kw/ton",
+        part_eff=0.520,
+        part_eff_unit="kw/ton",
+        sim_engine="energyplus",
+        model="ect_lwt",
+        compressor_type="screw",
         condenser_type="water",
         compressor_speed="constant",
-        ref_cap=100,
-        ref_cap_unit="ton",
-        full_eff=full_eff_target,
-        full_eff_unit="kw/ton",
-        full_eff_alt=full_eff_target_alt,
-        full_eff_unit_alt="kw/ton",
-        part_eff=part_eff_target,
-        part_eff_unit="kw/ton",
-        part_eff_ref_std="ahri_550/590",
-        part_eff_alt=part_eff_target_alt,
-        part_eff_unit_alt="kw/ton",
-        part_eff_ref_std_alt="ahri_551/591",
-        model="ect_lwt",
-        sim_engine="energyplus",
-        random_seed=1
+    )
+
+    set_of_curves = chlr.generate_set_of_curves(
+        vars=["eir-f-plr"], method="nearest_neighbor", tol=0.005, random_seed=1
     )
 
 .. _EnergyPlus: https://energyplus.net/
