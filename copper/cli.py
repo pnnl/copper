@@ -24,7 +24,7 @@ def run(input_file):
         raise ValueError("Could not read the input file. A JSON file is expected.")
     for eqp, eqp_props in f.items():
         # Make sure that the equipment is supported by Copper
-        assert eqp_props["eqp_type"] in ["chiller"]
+        assert eqp_props["eqp_type"].lower() in ["chiller"]
 
         # Get properties for equipment type
         eqp_type_props = inspect.getfullargspec(eval(eqp_props["eqp_type"]).__init__)[0]

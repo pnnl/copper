@@ -26,7 +26,7 @@ Next, we define the chiller. In this example, the chiller is a 300 ton constant 
 
 .. sourcecode:: python
 
-    chlr = cp.chiller(
+    chlr = cp.Chiller(
         ref_cap=300,
         ref_cap_unit="ton",
         full_eff=0.610,

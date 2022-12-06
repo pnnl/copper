@@ -21,7 +21,7 @@ location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
 
 
-class generator:
+class Generator:
     def __init__(
         self,
         equipment,

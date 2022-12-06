@@ -85,7 +85,7 @@ class SetsofCurves:
                         "Normalization point not provided, the curve cannot be created."
                     )
 
-                # TODO: move assignement to Curve() class and values ot chiller() class
+                # TODO: move assignement to Curve() class and values ot Chiller() class
                 if c.eqp.model == "lct_lwt":
                     if c.out_var == "eir-f-t":
                         c.ref_x = c.ref_lwt
@@ -205,7 +205,7 @@ class SetsofCurves:
                 ref_x, ref_y = norm
             new_curve.ref_x = ref_x
             new_curve.ref_y = ref_y
-            # TODO: Move following statement to chiller class
+            # TODO: Move following statement to Chiller class
             if self.eqp_type == "chiller":
                 if agg_set_of_curves.model == "ect_lwt":
                     self.ref_lwt = ref_y
@@ -225,7 +225,7 @@ class SetsofCurves:
             agg_set_of_curves.curves.append(new_curve)
 
         # Determine reference condenser flow rate
-        # TODO: Move following statement to chiller class
+        # TODO: Move following statement to Chiller class
         if self.eqp_type == "chiller":
             self.eqp.set_of_curves = agg_set_of_curves.curves
             if self.eqp.condenser_type == "water":
@@ -639,7 +639,7 @@ class Curve:
             self.coeff10 = 0
 
         # Equipment specific charactertics
-        # TODO: move under a function in the chiller class
+        # TODO: move under a function in the Chiller class
         if self.eqp.type == "chiller":
             self.ref_evap_fluid_flow = 0
             self.ref_cond_fluid_flow = 0
