@@ -15,7 +15,7 @@ class TestChiller(TestCase):
 
     def test_get_reference_variable(self):
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -39,7 +39,7 @@ class TestChiller(TestCase):
             [34.6, 1.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -63,7 +63,7 @@ class TestChiller(TestCase):
             [35.0, 1.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -87,7 +87,7 @@ class TestChiller(TestCase):
             [1.0, 0.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -111,7 +111,7 @@ class TestChiller(TestCase):
             [1.0, 0.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="air",
             compressor_speed="constant",
@@ -135,7 +135,7 @@ class TestChiller(TestCase):
             [1.0, 0.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="air",
             compressor_speed="constant",
@@ -161,9 +161,9 @@ class TestChiller(TestCase):
 
     def test_get_lct(self):
 
-        curves = pkl.load(open("./tests/data/agg_curves.pkl", "rb"))[4]
+        curves = pkl.load(open("./tests/data/agg_curves.pkl", "rb"))
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="screw",
             condenser_type="water",
             compressor_speed="constant",
@@ -231,7 +231,7 @@ class TestChiller(TestCase):
 
     def test_calc_eff_ect(self):
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -266,7 +266,7 @@ class TestChiller(TestCase):
         full_eff_target = 0.55
         part_eff_target = 0.38
 
-        TestChlr = cp.chiller(
+        TestChlr = cp.Chiller(
             ref_cap=400,
             ref_cap_unit="ton",
             full_eff=full_eff_target,

@@ -49,7 +49,7 @@ class TestCurves(TestCase):
         self.assertTrue(all(plot_res))
 
         # Evaluate curve values
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="variable",
@@ -73,7 +73,7 @@ class TestCurves(TestCase):
     def test_curve_conversion(self):
         # Define equipment
         lib = cp.Library(path=chiller_lib, rating_std="ahri_550/590")
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -136,7 +136,7 @@ class TestCurves(TestCase):
         centrifugal_chlr = ep_wtr_screw + ep_wtr_scroll
 
         sets = centrifugal_chlr
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             ref_cap=200,
             ref_cap_unit="ton",
             full_eff=5.0,
@@ -245,7 +245,7 @@ class TestCurves(TestCase):
 
         # define chiller before passing as argument
         # Define target chiller
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="scroll, screw, recip",
             condenser_type="water",
             compressor_speed="constant",

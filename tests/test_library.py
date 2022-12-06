@@ -18,7 +18,7 @@ class TestLibrary(TestCase):
         self.assertTrue(lib.content()["6"]["part_eff"] > 0)
 
         # Check calculation for the chiller EIR model
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -35,7 +35,7 @@ class TestLibrary(TestCase):
         assert round(chlr.calc_rated_eff("part", "cop"), 2) == 5.44  # IPLV.SI
 
         # Check calculation for the chiller EIR model
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -52,7 +52,7 @@ class TestLibrary(TestCase):
         assert round(chlr.calc_rated_eff("part", "cop"), 2) == 5.47  # IPLV.IP
 
         # Check calculation for the reformulated chiller EIR model
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -69,7 +69,7 @@ class TestLibrary(TestCase):
         assert round(chlr.calc_rated_eff("part", "cop"), 2) == 8.22  # IPLV.SI
 
         # Check calculation for the reformulated chiller EIR model
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",

@@ -5,7 +5,7 @@ import copper as cp
 class TestAlgorithm(TestCase):
     def test_quickstart_guide(self):
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             ref_cap=300,
             ref_cap_unit="ton",
             full_eff=0.610,
@@ -36,7 +36,7 @@ class TestAlgorithm(TestCase):
         full_eff_target = 5.2
         part_eff_target = 7.4
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             ref_cap=1250,
             ref_cap_unit="kW",
             full_eff=full_eff_target,
@@ -69,7 +69,7 @@ class TestAlgorithm(TestCase):
         full_eff_target = 5.2
         part_eff_target = 7.4
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             ref_cap=1250,
             ref_cap_unit="kW",
             full_eff=full_eff_target,
@@ -100,7 +100,7 @@ class TestAlgorithm(TestCase):
         full_eff_target = 0.650
         part_eff_target = 0.480
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             ref_cap=300,
             ref_cap_unit="ton",
             full_eff=full_eff_target,
@@ -114,20 +114,20 @@ class TestAlgorithm(TestCase):
             compressor_speed="constant",
         )
 
-        ga_1 = cp.generator(chr, random_seed=1)
+        ga_1 = cp.Generator(chr, random_seed=1)
         ga_1_vals = [ga_1.get_random() for i in range(5)]
 
-        ga_2 = cp.generator(chr, random_seed=1)
+        ga_2 = cp.Generator(chr, random_seed=1)
         ga_2_vals = [ga_2.get_random() for i in range(5)]
 
-        ga_3 = cp.generator(chr)
+        ga_3 = cp.Generator(chr)
         ga_3_vals = [ga_3.get_random() for i in range(5)]
 
         self.assertTrue(ga_1_vals == ga_2_vals)
         self.assertTrue(ga_1_vals != ga_3_vals)
 
     def test_gradients(self):
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             ref_cap=300,
             ref_cap_unit="ton",
             full_eff=0.650,
@@ -141,7 +141,7 @@ class TestAlgorithm(TestCase):
             compressor_speed="constant",
         )
 
-        algo = cp.generator(equipment=chlr, vars=["eir-f-plr"], method="best_match")
+        algo = cp.Generator(equipment=chlr, vars=["eir-f-plr"], method="best_match")
         algo.generate_set_of_curves()
 
         grad_val = algo.check_gradients()
@@ -154,7 +154,7 @@ class TestAlgorithm(TestCase):
         part_eff_target = 0.876
         part_eff_target_alt = 0.869
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="scroll",
             condenser_type="water",
             compressor_speed="constant",
@@ -199,7 +199,7 @@ class TestAlgorithm(TestCase):
         full_eff_target = 1.188
         part_eff_target = 0.876
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="scroll",
             condenser_type="water",
             compressor_speed="constant",
@@ -234,7 +234,7 @@ class TestAlgorithm(TestCase):
         part_eff_target = 0.876
         part_eff_target_alt = 0.869
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="scroll",
             condenser_type="water",
             compressor_speed="constant",
@@ -286,7 +286,7 @@ class TestAlgorithm(TestCase):
         part_eff_target = 0.596
         part_eff_target_alt = 0.596
 
-        chlr = cp.chiller(
+        chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="any",
