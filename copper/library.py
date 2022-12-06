@@ -30,7 +30,7 @@ class Library:
 
                 # Get equipment properties
                 props = inspect.getfullargspec(
-                    eval("copper." + vals["eqp_type"]).__init__
+                    eval("copper." + vals["eqp_type"].capitalize()).__init__
                 )[0]
                 if "self" in props:
                     props.remove("self")
@@ -53,7 +53,7 @@ class Library:
                 obj_args["part_eff"] = vals["full_eff"]
 
                 # Create instance of the equipment
-                obj = eval("copper." + vals["eqp_type"])(**obj_args)
+                obj = eval("copper." + vals["eqp_type"].capitalize())(**obj_args)
 
                 # Retrieve curves for library item
                 obj_args["set_of_curves"] = self.get_set_of_curves_by_name(item).curves
@@ -66,7 +66,7 @@ class Library:
                     obj_args["part_eff_ref_std"] = self.rating_std
 
                 # Update instance of the equipment
-                obj = eval("copper." + vals["eqp_type"])(**obj_args)
+                obj = eval("copper." + vals["eqp_type"].capitalize())(**obj_args)
 
                 # Compute part load efficiency
                 part_eff = obj.calc_rated_eff(
@@ -88,11 +88,13 @@ class Library:
         """Load data for an equipment from the libary.
 
         :param dict data: Equipment data in a dict format
-        :return: Instance of the equipment in Copper (e.g. copper.chiller.chiller)
+        :return: Instance of the equipment in Copper (e.g. copper.chiller.Chiller)
 
         """
         # Get equipment properties
-        props = inspect.getfullargspec(eval("copper." + data["eqp_type"]).__init__)[0]
+        props = inspect.getfullargspec(
+            eval("copper." + data["eqp_type"].capitalize()).__init__
+        )[0]
         props.remove("self")
 
         # Set the equipment properties
@@ -109,7 +111,7 @@ class Library:
         obj_args["part_eff"] = data["full_eff"]
 
         # Create instance of the equipment
-        obj = eval("copper." + data["eqp_type"])(**obj_args)
+        obj = eval("copper." + data["eqp_type"].capitalize())(**obj_args)
 
         return obj
 
@@ -163,7 +165,7 @@ class Library:
 
             # Get equipment properties
             eqp_props = inspect.getfullargspec(
-                eval("copper." + props["eqp_type"]).__init__
+                eval("copper." + props["eqp_type"].capitalize()).__init__
             )[0]
             eqp_props.remove("self")
 
@@ -184,7 +186,7 @@ class Library:
                         obj_args[p] = props[p]
 
             # Create instance of the equipment
-            obj = eval("copper." + props["eqp_type"])(**obj_args)
+            obj = eval("copper." + props["eqp_type"].capitalize())(**obj_args)
             c_set.eqp = obj
 
             # Retrive all attributes of the sets of curves object
@@ -304,7 +306,7 @@ class Library:
         """Find an existing equipment curve that best matches the equipment.
 
         :param list filters: List of filters, represented by tuples (field, val)
-        :param eqp: Instance of the equipment in Copper (e.g. copper.chiller.chiller)
+        :param eqp: Instance of the equipment in Copper (e.g. copper.chiller.Chiller)
         :return: Set of curves object
         :rtype: SetofCurves
 
@@ -330,7 +332,7 @@ class Library:
     def get_best_match(self, eqp, matches):
         """Find the set of curves matching the equipment characteristics the best.
 
-        :param eqp: Instance of the equipment in Copper (e.g. copper.chiller.chiller)
+        :param eqp: Instance of the equipment in Copper (e.g. copper.chiller.Chiller)
         :param dict matches: All potential matches
         :return: Name of the set of curves that best matches the equipment characteristics
         :rtype: str
