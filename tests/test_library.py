@@ -3,8 +3,8 @@ from unittest import TestCase
 import copper as cp
 import os
 
-location = os.path.dirname(os.path.realpath(__file__))
-chiller_lib = os.path.join(location, "../copper/lib", "chiller_curves.json")
+LOCATION = os.path.dirname(os.path.realpath(__file__))
+CHILLER_LIB = os.path.join(LOCATION, "../copper/lib", "chiller_curves.json")
 
 
 class TestLibrary(TestCase):
@@ -14,7 +14,7 @@ class TestLibrary(TestCase):
         """
 
         # Load library
-        lib = cp.Library(path=chiller_lib)
+        lib = cp.Library(path=CHILLER_LIB)
         self.assertTrue(lib.content()["6"]["part_eff"] > 0)
 
         # Check calculation for the chiller EIR model

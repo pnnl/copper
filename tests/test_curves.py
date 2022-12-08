@@ -1,4 +1,4 @@
-from unittest import TestCase, main
+from unittest import TestCase
 
 import copper as cp
 import matplotlib.pyplot as plt

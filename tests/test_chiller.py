@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest import TestCase
 
 import copper as cp
@@ -6,12 +7,20 @@ import numpy as np
 import CoolProp.CoolProp as CP
 import os
 
-location = os.path.dirname(os.path.realpath(__file__))
-chiller_lib = os.path.join(location, "../copper/lib", "chiller_curves.json")
+LOCATION = os.path.dirname(os.path.realpath(__file__))
+CHILLER_LIB = os.path.join(LOCATION, "../copper/lib", "chiller_curves.json")
 
 
 class TestChiller(TestCase):
-    lib = cp.Library(path=chiller_lib)
+    def setUp(self) -> None:
+        """Runs before every test. Good place to initialize values and store common objects.
+        """
+        self.lib = cp.Library(path=CHILLER_LIB)
+
+    def tearDown(self) -> None:
+        """Runs after every test and cleans up file created from the tests.
+        """
+        ...
 
     def test_get_reference_variable(self):
 
