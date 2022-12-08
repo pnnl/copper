@@ -1,9 +1,26 @@
 from unittest import TestCase
-
 import copper as cp
 
 
 class TestRating(TestCase):
+
+    def setUp(self) -> None:
+        """Runs before every test. Good place to initialize values and store common objects.
+        """
+        self.tolerance = 3
+        self.generic_unit = cp.updatedUnits()
+
+    def tearDown(self) -> None:
+        """Runs after every test and cleans up file created from the tests.
+        """
+        pass
+
+    def test_cop_to_kw(self):
+        self.assertAlmostEqual(self.generic_unit.cop_to_kw_per_ton(14.0), 0.251, places=self.tolerance)
+
+    def test_kw_per_ton_to_cop(self):
+        self.assertAlmostEqual(self.generic_unit.kw_per_ton_to_cop(14.0), 0.251, places=self.tolerance)
+
     def test_conversion(self):
         # Efficiency conversion
         kWpton_ = cp.Units(14.0, "eer")
@@ -43,3 +60,5 @@ class TestRating(TestCase):
 
         degF_ = cp.Units(0, "degF")
         self.assertTrue(round(degF_.conversion("degC"), 2) == -17.78)
+
+    
