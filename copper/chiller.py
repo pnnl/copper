@@ -7,9 +7,10 @@ This is the chiller module of Copper. The module handles all calculations and da
 import CoolProp.CoolProp as CP
 from scipy import optimize
 from copper.generator import *
-from copper.units import *
+from copper.units import Units, newUnits
 from copper.curves import *
 from copper.library import *
+import copper.constants as const
 
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
@@ -62,13 +63,13 @@ class Chiller:
         self.set_of_curves = set_of_curves
         if self.condenser_type == "water":
             if self.part_eff_ref_std == "ahri_550/590":
-                lwt = (44.0 - 32.0) * 5 / 9
-                ect = (85.0 - 32.0) * 5 / 9
-                lct = (94.3 - 32.0) * 5 / 9
+                lwt = newUnits.F_to_C(const.COOLING_LCT_550_590)
+                ect = newUnits.F_to_C(const.TOWER_ECT_550_590)
+                lct = newUnits.F_to_C(const.TOWER_LCT_550_590)
             elif self.part_eff_ref_std == "ahri_551/591":
-                lwt = 7.0
-                ect = 30.0
-                lct = 35.0
+                lwt = const.COOLING_LCT_551_591
+                ect = const.TOWER_ENTERING_TEMP_551_591
+                lct = const.TOWER_ECT_551_591
 
             if self.model == "ect_lwt":
                 self.plotting_range = {
@@ -126,12 +127,12 @@ class Chiller:
                 raise ValueError("Algorithm not supported.")
         elif self.condenser_type == "air":
             if self.part_eff_ref_std == "ahri_550/590":
-                lwt = (44.0 - 32.0) * 5 / 9
-                ect = (95.0 - 32.0) * 5 / 9
+                lwt = newUnits.F_to_C(const.COOLING_LCT_550_590)
+                ect = newUnits.F_to_C(const.EVAP_ECT)
                 lct = -999  # does not apply
             elif self.part_eff_ref_std == "ahri_551/591":
-                lwt = 7.0
-                ect = 35.0
+                lwt = const.COOLING_LCT_551_591
+                ect = const.TOWER_ECT_551_591
                 lct = -999  # does not apply
 
             self.plotting_range = {
@@ -198,9 +199,7 @@ class Chiller:
         # Convert reference efficiency if needed
         if self.full_eff_unit != "kw/ton":
             full_eff_unit = Units(value=self.full_eff, unit=self.full_eff_unit)
-            full_eff = full_eff_unit.conversion(
-                new_unit="kw/ton"
-            )  # full eff needs to be in kW/ton
+            full_eff = full_eff_unit.conversion(new_unit="kw/ton")  # full eff needs to be in kW/ton
         else:
             full_eff = self.full_eff
 
