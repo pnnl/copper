@@ -23,26 +23,58 @@ class updatedUnits:
     FIVE_OVER_NINE = 5/9
     NINE_OVER_FIVE = FIVE_OVER_NINE ** -1
     TEMP_CONSTANT = 32
-    
+
     @classmethod
     def cop_to_kw_per_ton(cls, input_value: float) -> float:
         return cls.EER / (input_value * cls.COP_CONSTANT)
 
     @classmethod
-    def kw_per_ton_to_cop(cls, input_value:float) -> float:
+    def cop_to_eer(cls, input_value: float) -> float:
+        return cls.COP_CONSTANT * input_value
+
+    @classmethod
+    def kw_per_ton_to_cop(cls, input_value: float) -> float:
         return cls.EER / input_value / cls.COP_CONSTANT
+
+    @classmethod
+    def kw_per_ton_to_eer(cls, input_value: float) -> float:
+        return cls.EER / input_value
+
+    @classmethod
+    def eer_to_cop(cls, input_value: float) -> float:
+        return input_value / cls.COP_CONSTANT
 
     @classmethod
     def eer_to_kw_per_ton(cls, input_value: float) -> float:
         return cls.EER / input_value
 
     @classmethod
-    def kw_per_ton_to_eer(cls, input_value: float) -> float:
-        return cls.eer_to_kw_per_ton(input_value) ** -1
+    def kw_to_ton(cls, input_value: float) -> float:
+        return input_value * (cls.COP_CONSTANT / cls.EER)
 
     @classmethod
-    def eer_to_cop(cls, eer_value):
-        return eer_value / cls.COP_CONSTANT
+    def watt_to_ton(cls, input_value: float) -> float:
+        return input_value * (cls.COP_CONSTANT / (cls.EER * cls.KILO))
+
+    @classmethod
+    def ton_to_kw(cls, input_value: float) -> float:
+        return input_value / (cls.COP_CONSTANT / cls.EER)
+
+    @classmethod
+    def watt_to_kw(cls, input_value: float) -> float:
+        return input_value / cls.KILO
+
+    @classmethod
+    def ton_to_watt(cls, input_value: float) -> float:
+        return input_value / (cls.COP_CONSTANT / (cls.EER * cls.KILO))
+
+    @classmethod
+    def F_to_C(cls, input_value: float) -> float:
+        return (input_value - cls.TEMP_CONSTANT) * cls.FIVE_OVER_NINE
+
+    @classmethod
+    def C_to_F(cls, input_value: float) -> float:
+        return (input_value * cls.NINE_OVER_FIVE) + cls.TEMP_CONSTANT
 
 class Units:
     def __init__(self, value, unit):
@@ -58,41 +90,41 @@ class Units:
 
         """
         if new_unit == "kw/ton":
-            if self.unit == "cop":
-                return 12.0 / (self.value * 3.412) # done
-            elif self.unit == "kw/ton":
+            if self.unit == "cop":                      # done
+                return 12.0 / (self.value * 3.412) 
+            elif self.unit == "kw/ton":                 # done
                 return self.value
-            elif self.unit == "eer":
-                return 12.0 / self.value # done
+            elif self.unit == "eer":                    # done
+                return 12.0 / self.value
             else:
                 return self.value
         elif new_unit == "cop":
-            if self.unit == "kw/ton":
-                return 12.0 / self.value / 3.412 # done
-            elif self.unit == "cop":
+            if self.unit == "kw/ton":                   # done
+                return 12.0 / self.value / 3.412 
+            elif self.unit == "cop":                    # done
                 return self.value
-            elif self.unit == "eer":
-                return self.value / 3.412 # done
+            elif self.unit == "eer":                    # done
+                return self.value / 3.412
             else:
                 return self.value
         elif new_unit == "eer":
-            if self.unit == "kw/ton":
+            if self.unit == "kw/ton":                   # done
                 return 12.0 / self.value
-            elif self.unit == "eer":
+            elif self.unit == "eer":                    # done
                 return self.value
-            elif self.unit == "cop":
+            elif self.unit == "cop":                    # done
                 return 3.412 * self.value
             else:
                 return self.value
         elif new_unit == "ton":
-            if self.unit == "kW":
+            if self.unit == "kW":                       # done
                 return self.value * (3412 / 12000)
-            elif self.unit == "W":
+            elif self.unit == "W":                      # done
                 return self.value * (3.412 / 12000)
         elif new_unit == "kW":
-            if self.unit == "ton":
+            if self.unit == "ton":                      # done
                 return self.value / (3412 / 12000)
-            if self.unit == "W":
+            if self.unit == "W":                        # done
                 return self.value / 1000
         elif new_unit == "W":
             if self.unit == "ton":
