@@ -5,7 +5,7 @@ The conversion module of Copper handles simple unit conversions to avoid creatin
 """
 import copper.constants as constants
 
-class Units:
+class newUnits:
     @classmethod
     def cop_to_kw_per_ton(cls, input_value: float) -> float:
         return constants.TON_TO_KBTU / (input_value * constants.KBTU_TO_KW)
