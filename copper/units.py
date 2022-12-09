@@ -3,79 +3,62 @@ units.py
 ====================================
 The conversion module of Copper handles simple unit conversions to avoid creating additional dependencies.
 """
-from enum import Enum, auto
+import copper.constants as constants
 
-class ConversionNames(Enum):
-    COP = "cop"
-    KW_PER_TON = "kw/ton"
-    EER = "eer"
-    TON = "ton"
-    W = "W"
-    kW = "kW"
-    F_TO_C = "degF"
-    C_TO_F = "degC"
-
-class updatedUnits:
-    COP_CONSTANT = 3.412
-    EER = 12.0
-    KILO = 1000
-    kEER = EER * KILO
-    FIVE_OVER_NINE = 5/9
-    NINE_OVER_FIVE = FIVE_OVER_NINE ** -1
-    TEMP_CONSTANT = 32
-
+class Units:
     @classmethod
     def cop_to_kw_per_ton(cls, input_value: float) -> float:
-        return cls.EER / (input_value * cls.COP_CONSTANT)
+        return constants.TON_TO_KBTU / (input_value * constants.KBTU_TO_KW)
 
     @classmethod
     def cop_to_eer(cls, input_value: float) -> float:
-        return cls.COP_CONSTANT * input_value
+        return constants.KBTU_TO_KW * input_value
 
     @classmethod
     def kw_per_ton_to_cop(cls, input_value: float) -> float:
-        return cls.EER / input_value / cls.COP_CONSTANT
+        return constants.TON_TO_KBTU / input_value / constants.KBTU_TO_KW
 
     @classmethod
     def kw_per_ton_to_eer(cls, input_value: float) -> float:
-        return cls.EER / input_value
+        return constants.TON_TO_KBTU / input_value
 
     @classmethod
     def eer_to_cop(cls, input_value: float) -> float:
-        return input_value / cls.COP_CONSTANT
+        return input_value / constants.KBTU_TO_KW
 
     @classmethod
     def eer_to_kw_per_ton(cls, input_value: float) -> float:
-        return cls.EER / input_value
+        return constants.TON_TO_KBTU / input_value
 
     @classmethod
     def kw_to_ton(cls, input_value: float) -> float:
-        return input_value * (cls.COP_CONSTANT / cls.EER)
+        return input_value * (constants.KBTU_TO_KW / constants.TON_TO_KBTU)
 
     @classmethod
     def watt_to_ton(cls, input_value: float) -> float:
-        return input_value * (cls.COP_CONSTANT / (cls.EER * cls.KILO))
+        return input_value * (constants.KBTU_TO_KW / (constants.TON_TO_KBTU * constants.KILO))
 
     @classmethod
     def ton_to_kw(cls, input_value: float) -> float:
-        return input_value / (cls.COP_CONSTANT / cls.EER)
+        return input_value / (constants.KBTU_TO_KW / constants.TON_TO_KBTU)
 
     @classmethod
     def watt_to_kw(cls, input_value: float) -> float:
-        return input_value / cls.KILO
+        return input_value / constants.KILO
 
     @classmethod
     def ton_to_watt(cls, input_value: float) -> float:
-        return input_value / (cls.COP_CONSTANT / (cls.EER * cls.KILO))
+        return input_value / (constants.KBTU_TO_KW / (constants.TON_TO_KBTU * constants.KILO))
 
     @classmethod
     def F_to_C(cls, input_value: float) -> float:
-        return (input_value - cls.TEMP_CONSTANT) * cls.FIVE_OVER_NINE
+        return (input_value - constants.TEMP_CONSTANT) * constants.FIVE_OVER_NINE
 
     @classmethod
     def C_to_F(cls, input_value: float) -> float:
-        return (input_value * cls.NINE_OVER_FIVE) + cls.TEMP_CONSTANT
+        return (input_value * constants.NINE_OVER_FIVE) + constants.TEMP_CONSTANT
 
+# TODO: replace all the references to the old version of Units
 class Units:
     def __init__(self, value, unit):
         self.value = value
