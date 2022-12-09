@@ -18,3 +18,9 @@ Contributions (issues and pull requests) are welcomed and greatly appreciated. G
 
 # Help
 If you need help using Copper, please open an issue and one of the developers will get back to you at their earliest convenience.
+
+# Loading Dependencies
+In order to load Copper's dependencies, the following command can be used...
+```bash
+pip install -r requirements.txt
+```
