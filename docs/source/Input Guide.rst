@@ -1,6 +1,6 @@
 Input Guide
 ===========
-The command line argument tool reads in a json file. of the following format.
+The command line argument tool reads in a json file of the following format...
 
 .. code-block:: json
 
@@ -36,101 +36,178 @@ The command line argument tool reads in a json file. of the following format.
 
 
 .. list-table:: Table of Acceptable Values
-   :widths: 25 25
+   :widths: 25 25 50
    :header-rows: 1
 
    * - Parameter Name
      - Parameter Values
+     - Description
 
    * - eqp_type
      - chiller
+     - Type of equipment being analyzed.
 
    * - compressor_type
-     - any, centrifugal, screw, scroll
+     - any |br| centrifugal |br| screw |br| scroll
+     - Type of compressor being analyzed
 
    * - condenser_type
-     - air, water
+     - air |br| water
+     - Either an air-cooled or water-cooled condenser
 
    * - compressor_speed
-     - any, constant, variable
+     - any |br| constant |br| variable
+     - Rate the compressor moves at
 
    * - ref_cap
      - > 0
+     - TODO: i don't know
 
    * - ref_cap_unit
-     - eer, kW, kw/ton, ton, null
+     - eer |br| kW |br| kw/ton |br| ton |br| null
+     - TODO: i don't know
 
    * - full_eff
      - > 0
+     - TODO: i don't know
 
    * - full_eff_unit
-     - eer, kw/ton, cop, null
+     - eer |br| kw/ton |br| cop |br| null
+     - TODO: i don't know
 
    * - part_eff
      - > 0
+     - TODO: i don't know
 
    * - part_eff_unit
-     - eer, kw/ton, cop
+     - eer |br| kw/ton |br| cop
+     - TODO: i don't know
 
    * - sim_engine
      - energyplus
+     - TODO: i don't know
 
    * - model
-     - ect_lwt, lct_lwt
+     - ect_lwt |br| lct_lwt
+     - TODO: i don't know
 
    * - do
-     - TODO: does not exist in sample instruction set.
+     - {}
+     - TODO: i don't know
 
-   * - set_of_curves
-     - dictionary with keys of eir-f-t, cap-f-t, eir-f-plr
+   * - generate_set_of_curves
+     - {}
+     - TODO: i don't know
+
+   * - vars
+     - eir-f-t |br| cap-f-t |br| eir-f-plr
+     - TODO: i don't know
+
+   * - method
+     - best_match |br| nearest_neighbor |br| weighted_average
+     - TODO: i don't know
+
+   * - tol
+     - > 0
+     - TODO: i don't know
+
+   * - export path
+     - Any valid string
+     - TODO: i don't know
+
+   * - export_format
+     - csv |br| idf |br| json
+     - TODO: i don't know
+
+   * - export_name
+     - Any valid string
+     - TODO: i don't know
+
+   * - random_seed
+     - > 0
+     - TODO: i don't know
+
+
+
+
+.. list-table:: Table of Output
+   :widths: 25 25
+   :header-rows: 1
 
    * - out_var
-     - test
+     - eir-f-t |br| cap-f-t |br| eir-f-plr
 
    * - type
-     - test
+     - bi_quad
 
    * - ref_evap_fluid_flow
-     - test
+     - >= 0 |br| null
 
    * - ref_cond_fluid_flow
-     - test
+     - >= 0 |br| null
 
    * - ref_lwt
-     - test
+     - >= 0 |br| null
 
    * - ref_ect
-     - test
+     - >= 0 |br| null
 
    * - ref_lct
-     - test
+     - >= 0 |br| null
 
    * - units
-     - test
+     - si
 
    * - x_min
-     - test
+     - >= 0 |br| null
 
    * - y_min
-     - test
+     - >= 0 |br| null
 
    * - x_max
-     - test
+     - > x_min |br| null
 
    * - y_max
-     - test
+     - > y_min |br| null
 
    * - out_min
-     - test
+     - >= 0 |br| null
 
    * - out_max
-     - test
+     - >= out_min |br| null
 
    * - coeff1
-     - test
+     - >= 0 |br| null
 
    * - coeff2
-     - test
+     - >= 0 |br| null
 
    * - coeff3
-     - test
+     - >= 0 |br| null
+
+   * - coeff4
+     - >= 0 |br| null
+
+   * - coeff5
+     - >= 0 |br| null
+
+   * - coeff6
+     - >= 0 |br| null
+
+   * - coeff7
+     - >= 0 |br| null
+
+   * - coeff8
+     - >= 0 |br| null
+
+   * - coeff9
+     - >= 0 |br| null
+
+   * - coeff10
+     - >= 0 |br| null
+
+
+.. # define a hard line break for HTML
+.. |br| raw:: html
+
+   <br />
