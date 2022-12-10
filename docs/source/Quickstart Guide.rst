@@ -127,7 +127,7 @@ First, we create the JSON input file.
         }
     }
 
-Nextm we let's generate the curves using the CLI by running the following command in a command prompt:
+Next we let's generate the curves using the CLI by running the following command in a command prompt:
 
 .. sourcecode:: bash
 
