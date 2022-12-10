@@ -10,6 +10,11 @@ from copper.generator import *
 from copper.units import *
 from copper.curves import *
 from copper.library import *
+import copper.constants as const
+from copper.constants import LOGGING_FORMAT
+import logging
+
+logging.basicConfig(format=LOGGING_FORMAT)
 
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
@@ -497,7 +502,7 @@ class Chiller:
                     - Power: {round(kwpton * cap_op * cap_ton, 2)} kW,
                     - Efficiency: {round(kwpton, 3)} kW/ton
                     """
-                    print(part_report)
+                    logging.info(part_report)
 
                 # Store efficiency for IPLV calculation
                 kwpton_lst.append(eir / kbtu_to_kw * ton_to_kbtu)
@@ -517,7 +522,7 @@ class Chiller:
             )
 
             if output_report:
-                print(f"IPLV: {round(iplv, 3)} kW/ton")
+                logging.info(f"IPLV: {round(iplv, 3)} kW/ton")
         except:
             return -999
 
