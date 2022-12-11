@@ -14,7 +14,8 @@ import statsmodels.api as sm
 import statistics
 import itertools
 import logging
-from copper.units import *
+
+from copper.units import Units
 from copper.constants import LOGGING_FORMAT
 logging.basicConfig(format=LOGGING_FORMAT)
 

@@ -5,9 +5,9 @@ This is the library module of Copper. It contains functions used to parse the JS
 """
 
 import json, inspect
-from copper.units import *
-from copper.curves import *
-import copper.chiller
+from copper.units import Units
+import copper.curves as curves
+import os
 
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
@@ -29,9 +29,7 @@ class Library:
             if not vals["full_eff"] is None and vals["condenser_type"] != "hr_scroll":
 
                 # Get equipment properties
-                props = inspect.getfullargspec(
-                    eval("copper." + vals["eqp_type"].capitalize()).__init__
-                )[0]
+                props = inspect.getfullargspec(eval("copper." + vals["eqp_type"].capitalize()).__init__)[0]
                 if "self" in props:
                     props.remove("self")
 
@@ -161,7 +159,7 @@ class Library:
 
         # Retrieve identified equipment's sets of curves from the library
         for name, props in eqp_match.items():
-            c_set = SetofCurves()
+            c_set = curves.SetofCurves()
 
             # Get equipment properties
             eqp_props = inspect.getfullargspec(
@@ -260,7 +258,7 @@ class Library:
 
         """
         # Initialize set of curves object
-        c_set = SetofCurves()
+        c_set = curves.SetofCurves()
         c_set.name = name
 
         # List of curves
@@ -292,10 +290,10 @@ class Library:
         # Curve properties
         c_prop = c_name["set_of_curves"][c]
         # Initialize curve object
-        c_obj = Curve(eqp, c_prop["type"])
+        c_obj = curve.Curve(eqp, c_prop["type"])
         c_obj.out_var = c
         # Retrive all attributes of the curve object
-        for c_att in list(Curve(eqp, c_prop["type"]).__dict__):
+        for c_att in list(curve.Curve(eqp, c_prop["type"]).__dict__):
             # Set the attribute of new Curve object
             # if attrubute are identified in database entry
             if c_att in list(c_prop.keys()):

@@ -6,13 +6,16 @@ This is the chiller module of Copper. The module handles all calculations and da
 
 import CoolProp.CoolProp as CP
 from scipy import optimize
-from copper.generator import *
+import logging
+import os
+
+from copper.generator import Generator
+from copper.curves import SetofCurves, SetsofCurves
+from copper.library import Library
 from copper.units import Units, newUnits
-from copper.curves import *
-from copper.library import *
 import copper.constants as const
 from copper.constants import LOGGING_FORMAT
-import logging
+
 logging.basicConfig(format=LOGGING_FORMAT)
 
 location = os.path.dirname(os.path.realpath(__file__))

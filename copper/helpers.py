@@ -4,7 +4,7 @@ helpers.py
 This file contains sundries which are not specifically used when using Copper but can be useful for its development.
 """
 
-import json, sys
+import json
 
 
 def curve_csv_to_json(csv_path, equip_type="chiller"):
