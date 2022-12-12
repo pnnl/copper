@@ -9,12 +9,16 @@ import warnings
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
 import copy
 import random
 import logging
-import os
 
-from copper.curves import SetofCurves
+
+from copper.library import *
+from copper.curves import *
 from copper.constants import LOGGING_FORMAT
 
 logging.basicConfig(format=LOGGING_FORMAT)
