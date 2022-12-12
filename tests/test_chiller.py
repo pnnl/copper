@@ -13,13 +13,11 @@ CHILLER_LIB = os.path.join(LOCATION, "../copper/lib", "chiller_curves.json")
 
 class TestChiller(TestCase):
     def setUp(self) -> None:
-        """Runs before every test. Good place to initialize values and store common objects.
-        """
+        """Runs before every test. Good place to initialize values and store common objects."""
         self.lib = cp.Library(path=CHILLER_LIB)
 
     def tearDown(self) -> None:
-        """Runs after every test and cleans up file created from the tests.
-        """
+        """Runs after every test and cleans up file created from the tests."""
         ...
 
     def test_get_reference_variable(self):
