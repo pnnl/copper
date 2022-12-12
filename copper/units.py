@@ -5,6 +5,7 @@ The conversion module of Copper handles simple unit conversions to avoid creatin
 """
 import copper.constants as constants
 
+
 class newUnits:
     @classmethod
     def cop_to_kw_per_ton(cls, input_value: float) -> float:
@@ -36,7 +37,9 @@ class newUnits:
 
     @classmethod
     def watt_to_ton(cls, input_value: float) -> float:
-        return input_value * (constants.KBTU_TO_KW / (constants.TON_TO_KBTU * constants.KILO))
+        return input_value * (
+            constants.KBTU_TO_KW / (constants.TON_TO_KBTU * constants.KILO)
+        )
 
     @classmethod
     def ton_to_kw(cls, input_value: float) -> float:
@@ -48,7 +51,9 @@ class newUnits:
 
     @classmethod
     def ton_to_watt(cls, input_value: float) -> float:
-        return input_value / (constants.KBTU_TO_KW / (constants.TON_TO_KBTU * constants.KILO))
+        return input_value / (
+            constants.KBTU_TO_KW / (constants.TON_TO_KBTU * constants.KILO)
+        )
 
     @classmethod
     def F_to_C(cls, input_value: float) -> float:
@@ -57,6 +62,7 @@ class newUnits:
     @classmethod
     def C_to_F(cls, input_value: float) -> float:
         return (input_value * constants.NINE_OVER_FIVE) + constants.TEMP_CONSTANT
+
 
 # TODO: replace all the references to the old version of Units
 class Units:
@@ -73,41 +79,41 @@ class Units:
 
         """
         if new_unit == "kw/ton":
-            if self.unit == "cop":                      # done
-                return 12.0 / (self.value * 3.412) 
-            elif self.unit == "kw/ton":                 # done
+            if self.unit == "cop":  # done
+                return 12.0 / (self.value * 3.412)
+            elif self.unit == "kw/ton":  # done
                 return self.value
-            elif self.unit == "eer":                    # done
+            elif self.unit == "eer":  # done
                 return 12.0 / self.value
             else:
                 return self.value
         elif new_unit == "cop":
-            if self.unit == "kw/ton":                   # done
-                return 12.0 / self.value / 3.412 
-            elif self.unit == "cop":                    # done
+            if self.unit == "kw/ton":  # done
+                return 12.0 / self.value / 3.412
+            elif self.unit == "cop":  # done
                 return self.value
-            elif self.unit == "eer":                    # done
+            elif self.unit == "eer":  # done
                 return self.value / 3.412
             else:
                 return self.value
         elif new_unit == "eer":
-            if self.unit == "kw/ton":                   # done
+            if self.unit == "kw/ton":  # done
                 return 12.0 / self.value
-            elif self.unit == "eer":                    # done
+            elif self.unit == "eer":  # done
                 return self.value
-            elif self.unit == "cop":                    # done
+            elif self.unit == "cop":  # done
                 return 3.412 * self.value
             else:
                 return self.value
         elif new_unit == "ton":
-            if self.unit == "kW":                       # done
+            if self.unit == "kW":  # done
                 return self.value * (3412 / 12000)
-            elif self.unit == "W":                      # done
+            elif self.unit == "W":  # done
                 return self.value * (3.412 / 12000)
         elif new_unit == "kW":
-            if self.unit == "ton":                      # done
+            if self.unit == "ton":  # done
                 return self.value / (3412 / 12000)
-            if self.unit == "W":                        # done
+            if self.unit == "W":  # done
                 return self.value / 1000
         elif new_unit == "W":
             if self.unit == "ton":
