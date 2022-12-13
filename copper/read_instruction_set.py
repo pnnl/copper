@@ -3,7 +3,9 @@ import jsonschema
 from jsonschema import validate
 import json
 import logging
+
 logging.basicConfig(format=LOGGING_FORMAT)
+
 
 class InstructionSet:
     def __init__(self, instruction_set_file) -> None:
@@ -14,12 +16,12 @@ class InstructionSet:
             raise jsonschema.exceptions.ValidationError(self.error_message)
 
     def _read_instruction_set(self):
-        with open(self.instruction_set_file, 'r') as f:
+        with open(self.instruction_set_file, "r") as f:
             instruction_set_data = json.load(f)
         return instruction_set_data
-    
+
     def _is_instruction_set_valid(self):
-        with open(SCHEMA_LOCATION, 'r') as f:
+        with open(SCHEMA_LOCATION, "r") as f:
             schema_data = json.load(f)
         try:
             validate(instance=self.instruction_set_content, schema=schema_data)
@@ -28,6 +30,7 @@ class InstructionSet:
             logging.critical(f"{self.error_message}")
             return False
         return True
+
 
 if __name__ == "__main__":
     instruction_set = InstructionSet("tests/data/input_example.json")

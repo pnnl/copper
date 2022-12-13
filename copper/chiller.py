@@ -13,6 +13,7 @@ from copper.library import *
 import copper.constants as const
 from copper.constants import LOGGING_FORMAT
 import logging
+
 logging.basicConfig(format=LOGGING_FORMAT)
 
 location = os.path.dirname(os.path.realpath(__file__))
@@ -202,7 +203,9 @@ class Chiller:
         # Convert reference efficiency if needed
         if self.full_eff_unit != "kw/ton":
             full_eff_unit = Units(value=self.full_eff, unit=self.full_eff_unit)
-            full_eff = full_eff_unit.conversion(new_unit="kw/ton")  # full eff needs to be in kW/ton
+            full_eff = full_eff_unit.conversion(
+                new_unit="kw/ton"
+            )  # full eff needs to be in kW/ton
         else:
             full_eff = self.full_eff
 
