@@ -10,16 +10,15 @@ from pathlib import Path
 LOCATION = os.path.dirname(os.path.realpath(__file__))
 CHILLER_LIB = os.path.join(LOCATION, "../copper/lib", "chiller_curves.json")
 
+
 class TestCurves(TestCase):
     def setUp(self) -> None:
-        """Runs before every test. Good place to initialize values and store common objects.
-        """
+        """Runs before every test. Good place to initialize values and store common objects."""
         self.lib = cp.Library(path=CHILLER_LIB)
 
     def tearDown(self) -> None:
-        """Runs after every test and cleans up file created from the tests.
-        """
-        idf_files = Path('.').rglob("*.idf")
+        """Runs after every test and cleans up file created from the tests."""
+        idf_files = Path(".").rglob("*.idf")
         for idf_file in idf_files:
             os.remove(idf_file)
 
@@ -34,7 +33,9 @@ class TestCurves(TestCase):
         self.assertTrue(
             len(self.lib.find_equipment(filters=[("eqp_type", "chiller")]).keys())
         )
-        self.assertFalse(len(self.lib.find_equipment(filters=[("eqp_type", "vrf")]).keys()))
+        self.assertFalse(
+            len(self.lib.find_equipment(filters=[("eqp_type", "vrf")]).keys())
+        )
 
         # Set of curves lookup using filter
         filters = [
@@ -79,7 +80,6 @@ class TestCurves(TestCase):
         set_of_curves.eqp = chlr
         set_of_curves.sim_engine = "energyplus"
         self.assertTrue(set_of_curves.export())
-
 
     def test_curve_conversion(self):
         # Define equipment
