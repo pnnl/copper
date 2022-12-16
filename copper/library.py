@@ -8,13 +8,15 @@ import json, inspect
 from copper.units import *
 from copper.curves import *
 import copper.chiller
+from copper.constants import CURVE_DATA
+from typing import List, Dict
 
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
 
 
 class Library:
-    def __init__(self, path=chiller_lib, rating_std="", export=False):
+    def __init__(self, path=CURVE_DATA, rating_std="", export=False):
         self.path = path
         self.rating_std = rating_std
 
@@ -86,10 +88,8 @@ class Library:
 
     def load_obj(self, data):
         """Load data for an equipment from the libary.
-
         :param dict data: Equipment data in a dict format
         :return: Instance of the equipment in Copper (e.g. copper.chiller.Chiller)
-
         """
         # Get equipment properties
         props = inspect.getfullargspec(
@@ -123,7 +123,19 @@ class Library:
         """
         return self.data
 
-    def get_unique_eqp_fields(self):
+    def _remove_set_of_curves(self, curve_data: List[Dict]) -> pd.DataFrame:
+        curve_data_without_set_of_curves = curve_data.copy()
+        for curve_data in curve_data_without_set_of_curves:
+            del curve_data["set_of_curves"]
+        return pd.DataFrame(curve_data_without_set_of_curves)
+
+    def _merge_curve_data(self, curve_data: pd.DataFrame) -> Dict[str, List]:
+        unique_items = {}
+        for column_name in curve_data.columns:
+            unique_items[column_name] = list(curve_data[column_name].unique())
+        return unique_items
+
+    def get_unique_curve_fields(self):
         """Get all unique values for each field of a particular equipment.
 
         :return: Dictionary showing all unique values for each equipment field.
@@ -131,19 +143,9 @@ class Library:
 
         """
         # Store all value for each field
-        uni_field_val = {}
-        for _, eqp_f in self.data.items():
-            for field, val in eqp_f.items():
-                if field != "set_of_curves":
-                    # Check if field has already been added
-                    if field not in uni_field_val.keys():
-                        uni_field_val[field] = [val]
-                    else:
-                        uni_field_val[field].append(val)
-        # Retain only unique values
-        for field, val in uni_field_val.items():
-            uni_field_val[field] = set(val)
-        return uni_field_val
+        curve_data_parameters = list(self.data.values())
+        remove_set_of_curves = self._remove_set_of_curves(curve_data_parameters)
+        return self._merge_curve_data(remove_set_of_curves)
 
     def find_set_of_curvess_from_lib(self, filters=[], part_eff_flag=False):
         """Retrieve sets of curves from a library matching specific filters.
@@ -203,7 +205,9 @@ class Library:
             for c in self.data[name]["set_of_curves"]:
                 c_lst.append(
                     self.get_curve(
-                        c, self.data[name], eqp=self.load_obj(self.data[name])
+                        c,
+                        self.data[name],
+                        eqp=self.load_obj(self.data[name]),
                     )
                 )
             c_set.curves = c_lst
@@ -251,7 +255,7 @@ class Library:
 
         return eqp_match_dict
 
-    def get_set_of_curves_by_name(self, name):
+    def get_set_of_curves_by_name(self, curve_name):
         """Retrieve set of curves from the library by name.
 
         :param str name: Curve name
@@ -261,16 +265,18 @@ class Library:
         """
         # Initialize set of curves object
         c_set = SetofCurves()
-        c_set.name = name
+        c_set.name = curve_name
 
         # List of curves
         c_lst = []
         # Define curve objects
         try:
-            for c in self.data[name]["set_of_curves"]:
+            for c in self.data[curve_name]["set_of_curves"]:
                 c_lst.append(
                     self.get_curve(
-                        c, self.data[name], eqp=self.load_obj(self.data[name])
+                        c,
+                        self.data[curve_name],
+                        eqp=self.load_obj(self.data[curve_name]),
                     )
                 )
             # Add curves to set of curves object

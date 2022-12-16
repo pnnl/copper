@@ -12,11 +12,16 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
-import copy, random
+import copy
+import random
+import logging
+
 
 from copper.library import *
 from copper.curves import *
+from copper.constants import LOGGING_FORMAT
 
+logging.basicConfig(format=LOGGING_FORMAT)
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
 
@@ -162,7 +167,7 @@ class Generator:
                         )
                     else:
                         full_rating_alt = "n/a"
-                    print(
+                    logging.info(
                         "GEN: {}, IPLV: {}, {}: {} IPLV-alt: {}, {}-alt: {}".format(
                             gen,
                             round(
@@ -188,13 +193,13 @@ class Generator:
             if not self.is_target_met():
                 if self.max_restart is not None:
                     if restart < self.max_restart:
-                        print(
+                        logging.warning(
                             f"Target not met after {self.max_gen} generations; Restarting the generator."
                         )
                         gen = 0
                         restart += 1
 
-                        print(
+                        logging.info(
                             "GEN: {}, IPLV: {}, KW/TON: {}".format(
                                 gen,
                                 round(
@@ -214,12 +219,12 @@ class Generator:
                             )
                         )
                     else:
-                        print(
+                        logging.critical(
                             f"Target not met after {self.max_restart} restart; No solution was found."
                         )
                         return
 
-        print("Target met after {} generations.".format(gen))
+        logging.info("Target met after {} generations.".format(gen))
         return self.pop
 
     def is_target_met(self):

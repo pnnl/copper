@@ -32,3 +32,12 @@ EVAP_ECT = 95.00  # TODO: not sure about this one.
 TOWER_ECT_551_591 = 35.00
 TOWER_ENTERING_TEMP_551_591 = 30.00
 COOLING_LCT_551_591 = 7.0
+
+# Format for the logger when it logs messages
+LOGGING_FORMAT = "%(filename)s:%(lineno)d:%(levelname)s:%(message)s"
+
+# Schema file
+SCHEMA_LOCATION = "copper/lib/instruction_set_schema.json"
+
+# Curve data file
+CURVE_DATA = "copper/lib/chiller_curves.json"

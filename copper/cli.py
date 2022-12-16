@@ -18,7 +18,17 @@ def cli():
 @cli.command()
 @click.argument("input_file", type=click.File("rb"), required=True)
 def run(input_file):
+    """Reads in a instruction set json file and generates chiller curves.
+
+    :param input_file: Chiller instruction set
+    :type input_file: click.File
+    :raises ValueError: Error is raised if no instruction set is provided.
+    """
     try:
+        # TODO: use jsonschema package to validate the layout of the file being
+        # read in. Using a schema will eliminate the need to do a lot of checks
+        # inside the code.
+        # https://python-jsonschema.readthedocs.io/en/stable/
         f = json.load(input_file)
     except:
         raise ValueError("Could not read the input file. A JSON file is expected.")

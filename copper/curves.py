@@ -11,9 +11,13 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-import statistics, itertools
-
+import statistics
+import itertools
+import logging
 from copper.units import *
+from copper.constants import LOGGING_FORMAT
+
+logging.basicConfig(format=LOGGING_FORMAT)
 
 
 class SetsofCurves:
@@ -156,7 +160,7 @@ class SetsofCurves:
                 try:
                     assert N is not None
                 except AssertionError:
-                    print("Need to specify number of nearest neighbors N")
+                    logging.critical("Need to specify number of nearest neighbors N")
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr, N=N)
                 sorted_vals = list(map(vals.__getitem__, df.index.values))
                 y_s = [
@@ -271,7 +275,7 @@ class SetsofCurves:
         data = {}
 
         if target_attr is None:
-            print("Enter valid attributes. Returning Empty DataFrame")
+            logging.error("Enter valid attributes. Returning Empty DataFrame")
             df = pd.DataFrame
             best_idx = None
         else:
@@ -339,7 +343,7 @@ class SetsofCurves:
                     df[var].std() + epsilon
                 )
             else:
-                print(
+                logging.error(
                     "Please enter valid target_attr. Also the variable name must be in dictionary"
                 )
                 target_attr[var_name] = None
@@ -831,7 +835,7 @@ class Curve:
             model = sm.OLS(y, X).fit()
             reg_r_sqr = model.rsquared
             if reg_r_sqr < 0.8:
-                print(
+                logging.warning(
                     "Performance of the regression for {} is poor, r2: {}".format(
                         self.out_var, round(r_sqr, 2)
                     )
@@ -877,7 +881,7 @@ class Curve:
             model = sm.OLS(y, X).fit()
             reg_r_sqr = model.rsquared
             if reg_r_sqr < 0.8:
-                print(
+                logging.warning(
                     "Performance of the regression for {} is poor, r2: {}".format(
                         self.out_var, round(r_sqr, 2)
                     )

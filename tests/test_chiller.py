@@ -1,10 +1,12 @@
 from pathlib import Path
 from unittest import TestCase
 
-import copper as cp
+from copper.library import Library
+from copper.chiller import Chiller
+from copper.units import Units
 import pickle as pkl
 import numpy as np
-import CoolProp.CoolProp as CP
+from CoolProp import CoolProp
 import os
 
 LOCATION = os.path.dirname(os.path.realpath(__file__))
@@ -14,15 +16,20 @@ CHILLER_LIB = os.path.join(LOCATION, "../copper/lib", "chiller_curves.json")
 class TestChiller(TestCase):
     def setUp(self) -> None:
         """Runs before every test. Good place to initialize values and store common objects."""
-        self.lib = cp.Library(path=CHILLER_LIB)
+        self.lib = Library(path=CHILLER_LIB)
 
     def tearDown(self) -> None:
         """Runs after every test and cleans up file created from the tests."""
         ...
 
+    def test_get_unique_eqp_fields(self):
+        unique_fields = self.lib.get_unique_curve_fields()
+        number_of_unique_min_plr = len(unique_fields["min_plr"])
+        assert number_of_unique_min_plr == 26
+
     def test_get_reference_variable(self):
 
-        chlr = cp.Chiller(
+        chlr = Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -46,7 +53,7 @@ class TestChiller(TestCase):
             [34.6, 1.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.Chiller(
+        chlr = Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -70,7 +77,7 @@ class TestChiller(TestCase):
             [35.0, 1.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.Chiller(
+        chlr = Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -94,7 +101,7 @@ class TestChiller(TestCase):
             [1.0, 0.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.Chiller(
+        chlr = Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -118,7 +125,7 @@ class TestChiller(TestCase):
             [1.0, 0.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.Chiller(
+        chlr = Chiller(
             compressor_type="centrifugal",
             condenser_type="air",
             compressor_speed="constant",
@@ -142,7 +149,7 @@ class TestChiller(TestCase):
             [1.0, 0.0] == [round(v, 1) for v in chlr.get_ref_values("eir-f-plr")]
         )
 
-        chlr = cp.Chiller(
+        chlr = Chiller(
             compressor_type="centrifugal",
             condenser_type="air",
             compressor_speed="constant",
@@ -170,7 +177,7 @@ class TestChiller(TestCase):
 
         curves = pkl.load(open("./tests/data/agg_curves.pkl", "rb"))
 
-        chlr = cp.Chiller(
+        chlr = Chiller(
             compressor_type="screw",
             condenser_type="water",
             compressor_speed="constant",
@@ -188,7 +195,7 @@ class TestChiller(TestCase):
         )
 
         m = chlr.get_ref_cond_flow_rate()
-        cop = cp.Units(value=chlr.full_eff, unit=chlr.full_eff_unit)
+        cop = Units(value=chlr.full_eff, unit=chlr.full_eff_unit)
         cop = cop.conversion(new_unit="cop")
 
         # Check that the correct condenser flow is calculated
@@ -196,7 +203,7 @@ class TestChiller(TestCase):
 
         # Determine the specific heat capacity of water [kJ/kg.K]
         c_p = (
-            CP.PropsSI(
+            CoolProp.PropsSI(
                 "C",
                 "P",
                 101325,
@@ -208,7 +215,7 @@ class TestChiller(TestCase):
         )
 
         # Determine the density of water [kg/m3]
-        rho = CP.PropsSI(
+        rho = CoolProp.PropsSI(
             "D", "P", 101325, "T", 0.5 * (chlr.ref_ect + chlr.ref_lct) + 273.15, "Water"
         )
 
@@ -238,7 +245,7 @@ class TestChiller(TestCase):
 
     def test_calc_eff_ect(self):
 
-        chlr = cp.Chiller(
+        chlr = Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
             compressor_speed="constant",
@@ -273,7 +280,7 @@ class TestChiller(TestCase):
         full_eff_target = 0.55
         part_eff_target = 0.38
 
-        TestChlr = cp.Chiller(
+        TestChlr = Chiller(
             ref_cap=400,
             ref_cap_unit="ton",
             full_eff=full_eff_target,
