@@ -4,7 +4,7 @@ Additional Examples
 LCT-based chiller performance curves
 -------------------------------------
 
-Most building energy modeling software use an entering condenser temperature (ECT) model. Some software tools such as `EnergyPlus`_ can simulate chillers using a leaving condenser temperature (LCT) model. **Copper** can be used to generate performance curves for such a model. The following example generates a set of performance curves for the LCT model for a 100-ton water-cooled scroll chiller.
+Most building energy modeling software use an entering condenser temperature (ECT) model. Some software tools such as `EnergyPlus`_ can simulate chillers using a leaving condenser temperature (LCT) model as documented in the `engineering manual`_. **Copper** can be used to generate performance curves for such a model. The following example generates a set of performance curves for the LCT model for a 100-ton water-cooled scroll chiller.
 
 .. sourcecode:: python
 
@@ -98,3 +98,4 @@ Because **Copper** is used to find a solution to an underdetermined system of eq
     )
 
 .. _EnergyPlus: https://energyplus.net/
+.. _engineering manual: https://bigladdersoftware.com/epx/docs/22-2/engineering-reference/chillers.html#electric-chiller-model-based-on-condenser-leaving-temperature
