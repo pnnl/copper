@@ -8,7 +8,6 @@ import json, inspect
 from copper.units import *
 from copper.curves import *
 import copper.chiller
-from copper.constants import CURVE_DATA
 from typing import List, Dict
 
 location = os.path.dirname(os.path.realpath(__file__))
@@ -16,7 +15,7 @@ chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
 
 
 class Library:
-    def __init__(self, path=CURVE_DATA, rating_std="", export=False):
+    def __init__(self, path=chiller_lib, rating_std="", export=False):
         self.path = path
         self.rating_std = rating_std
 
