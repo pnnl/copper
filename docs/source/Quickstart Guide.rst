@@ -212,4 +212,4 @@ This produces a JSON file similar to the following, which provides all informati
     }
 
 .. _EnergyPlus: https://energyplus.net/
-.. _engineering manual: https://bigladdersoftware.com/epx/docs/22-2/engineering-reference/chillers.html#electric-chiller-model-based-on-condenser-leaving-temperature
+.. _engineering manual: https://bigladdersoftware.com/epx/docs/22-2/engineering-reference/chillers.html#electric-chiller-model-based-on-condenser-entering-temperature
