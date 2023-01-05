@@ -1,5 +1,5 @@
 from unittest import TestCase
-from copper.units import newUnits, Units
+from copper.units import Units
 
 # TODO: look into adding hypothesis to the code to do range checking.
 
@@ -12,59 +12,6 @@ class TestRating(TestCase):
     def tearDown(self) -> None:
         """Runs after every test and cleans up file created from the tests."""
         pass
-
-    def test_test_cop_to_kw_per_ton(self):
-        self.assertAlmostEqual(
-            newUnits.cop_to_kw_per_ton(14.0), 0.251, places=self.tolerance
-        )
-
-    def test_test_kw_per_ton_to_cop(self):
-        self.assertAlmostEqual(
-            newUnits.kw_per_ton_to_cop(14.0), 0.251, places=self.tolerance
-        )
-
-    def test_cop_to_eer(self):
-        self.assertAlmostEqual(
-            newUnits.cop_to_eer(14.0), 47.76998, places=self.tolerance
-        )
-
-    def test_kw_per_ton_to_eer(self):
-        self.assertAlmostEqual(
-            newUnits.kw_per_ton_to_eer(14.0), 0.857, places=self.tolerance
-        )
-
-    def test_eer_to_cop(self):
-        self.assertAlmostEqual(newUnits.eer_to_cop(14.0), 4.103, places=self.tolerance)
-
-    def test_eer_to_kw_per_ton(self):
-        self.assertAlmostEqual(
-            newUnits.eer_to_kw_per_ton(14.0), 0.857, places=self.tolerance
-        )
-
-    def test_kw_to_ton(self):
-        self.assertAlmostEqual(newUnits.kw_to_ton(14.0), 3.981, places=self.tolerance)
-
-    def test_watt_to_ton(self):
-        self.assertAlmostEqual(
-            newUnits.watt_to_ton(14.0), 0.003981, places=self.tolerance
-        )
-
-    def test_ton_to_kw(self):
-        self.assertAlmostEqual(newUnits.ton_to_kw(14.0), 49.2359, places=self.tolerance)
-
-    def test_watt_to_kw(self):
-        self.assertAlmostEqual(newUnits.watt_to_kw(14.0), 0.014, places=self.tolerance)
-
-    def test_ton_to_watt(self):
-        self.assertAlmostEqual(
-            newUnits.ton_to_watt(14.0), 49235.93979, places=self.tolerance
-        )
-
-    def test_F_to_C(self):
-        self.assertAlmostEqual(newUnits.F_to_C(14.0), -10.0, places=self.tolerance)
-
-    def test_C_to_F(self):
-        self.assertAlmostEqual(newUnits.C_to_F(14.0), 57.199999, places=self.tolerance)
 
     def test_conversion(self):
         # Efficiency conversion

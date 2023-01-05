@@ -7,7 +7,7 @@ This is the chiller module of Copper. The module handles all calculations and da
 import CoolProp.CoolProp as CP
 from scipy import optimize
 from copper.generator import *
-from copper.units import Units, newUnits
+from copper.units import Units
 from copper.curves import *
 from copper.library import *
 import logging
@@ -63,13 +63,13 @@ class Chiller:
         self.set_of_curves = set_of_curves
         if self.condenser_type == "water":
             if self.part_eff_ref_std == "ahri_550/590":
-                lwt = newUnits.F_to_C(const.COOLING_LCT_550_590)
-                ect = newUnits.F_to_C(const.TOWER_ECT_550_590)
-                lct = newUnits.F_to_C(const.TOWER_LCT_550_590)
+                lwt = (44.0 - 32.0) * 5 / 9
+                ect = (85.0 - 32.0) * 5 / 9
+                lct = (94.3 - 32.0) * 5 / 9
             elif self.part_eff_ref_std == "ahri_551/591":
-                lwt = const.COOLING_LCT_551_591
-                ect = const.TOWER_ENTERING_TEMP_551_591
-                lct = const.TOWER_ECT_551_591
+                lwt = 7.0
+                ect = 30.0
+                lct = 35.0
 
             if self.model == "ect_lwt":
                 self.plotting_range = {
@@ -127,12 +127,12 @@ class Chiller:
                 raise ValueError("Algorithm not supported.")
         elif self.condenser_type == "air":
             if self.part_eff_ref_std == "ahri_550/590":
-                lwt = newUnits.F_to_C(const.COOLING_LCT_550_590)
-                ect = newUnits.F_to_C(const.EVAP_ECT)
+                lwt = (44.0 - 32.0) * 5 / 9
+                ect = (95.0 - 32.0) * 5 / 9
                 lct = -999  # does not apply
             elif self.part_eff_ref_std == "ahri_551/591":
-                lwt = const.COOLING_LCT_551_591
-                ect = const.TOWER_ECT_551_591
+                lwt = 7.0
+                ect = 35.0
                 lct = -999  # does not apply
 
             self.plotting_range = {
