@@ -22,7 +22,7 @@ We start by importing the necessary packages:
     import copper as cp
     import matplotlib.pyplot as plt
 
-Next, we define the chiller. In this example, the chiller is a 300 ton constant speed water-cooled screw chiller with a targeted efficiency of 0.650 kW/ton and an integrated part load value (IPLV) of 0.480 kW/ton. The chiller will be simulated using the entering condenser temperature model included in `EnergyPlus`_. **Copper** assumes by default that the rated conditions follow AHRI Standard 550/590. *Note: Curves can also be generated for AHRI Standard 551/591 or both 550/590 and 551/591.*
+Next, we define the chiller. In this example, the chiller is a 300 ton constant speed water-cooled screw chiller with a targeted efficiency of 0.650 kW/ton and an integrated part load value (IPLV) of 0.480 kW/ton. The chiller will be simulated using the entering condenser temperature model included in `EnergyPlus`_ and documented in the `engineering manual`_. **Copper** assumes by default that the rated conditions follow AHRI Standard 550/590. *Note: Curves can also be generated for AHRI Standard 551/591 or both 550/590 and 551/591.*
 
 .. sourcecode:: python
 
@@ -212,3 +212,4 @@ This produces a JSON file similar to the following, which provides all informati
     }
 
 .. _EnergyPlus: https://energyplus.net/
+.. _engineering manual: https://bigladdersoftware.com/epx/docs/22-2/engineering-reference/chillers.html#electric-chiller-model-based-on-condenser-leaving-temperature
