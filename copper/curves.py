@@ -15,6 +15,9 @@ import statistics
 import itertools
 import logging
 from copper.units import *
+from copper.constants import LOGGING_FORMAT
+
+logging.basicConfig(format=LOGGING_FORMAT)
 
 
 class SetsofCurves:

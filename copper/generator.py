@@ -18,7 +18,9 @@ import logging
 
 from copper.library import *
 from copper.curves import *
+from copper.constants import LOGGING_FORMAT
 
+logging.basicConfig(format=LOGGING_FORMAT)
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
 

@@ -5,26 +5,37 @@ import matplotlib.pyplot as plt
 import numpy as np
 import CoolProp.CoolProp as CP
 import os
+from pathlib import Path
 
-location = os.path.dirname(os.path.realpath(__file__))
-chiller_lib = os.path.join(location, "../copper/lib", "chiller_curves.json")
+LOCATION = os.path.dirname(os.path.realpath(__file__))
+CHILLER_LIB = os.path.join(LOCATION, "../copper/lib", "chiller_curves.json")
 
 
 class TestCurves(TestCase):
-    def test_curves(self):
-        lib = cp.Library(path=chiller_lib)
+    def setUp(self) -> None:
+        """Runs before every test. Good place to initialize values and store common objects."""
+        self.lib = cp.Library(path=CHILLER_LIB)
 
+    def tearDown(self) -> None:
+        """Runs after every test and cleans up file created from the tests."""
+        idf_files = Path(".").rglob("*.idf")
+        for idf_file in idf_files:
+            os.remove(idf_file)
+
+    def test_curves(self):
         # Curve lookup by name
         c_name = "27"
-        self.assertTrue(len([lib.get_set_of_curves_by_name(c_name)]))
+        self.assertTrue(len([self.lib.get_set_of_curves_by_name(c_name)]))
         with self.assertRaises(ValueError):
-            lib.get_set_of_curves_by_name(c_name + "s")
+            self.lib.get_set_of_curves_by_name(c_name + "s")
 
         # Equipment lookup
         self.assertTrue(
-            len(lib.find_equipment(filters=[("eqp_type", "chiller")]).keys())
+            len(self.lib.find_equipment(filters=[("eqp_type", "chiller")]).keys())
         )
-        self.assertFalse(len(lib.find_equipment(filters=[("eqp_type", "vrf")]).keys()))
+        self.assertFalse(
+            len(self.lib.find_equipment(filters=[("eqp_type", "vrf")]).keys())
+        )
 
         # Set of curves lookup using filter
         filters = [
@@ -35,7 +46,7 @@ class TestCurves(TestCase):
             ("source", "2"),
         ]
 
-        set_of_curvess = lib.find_set_of_curvess_from_lib(filters=filters)
+        set_of_curvess = self.lib.find_set_of_curvess_from_lib(filters=filters)
         self.assertTrue(len(set_of_curvess) == 111)
 
         # Plot curves
@@ -61,7 +72,7 @@ class TestCurves(TestCase):
             sim_engine="energyplus",
         )
         c_set.eqp = chlr
-        set_of_curves = lib.get_set_of_curves_by_name(c_name)
+        set_of_curves = self.lib.get_set_of_curves_by_name(c_name)
         self.assertTrue(round(set_of_curves.curves[0].evaluate(6.67, 35), 2) == 0.96)
 
         # Export curves
@@ -72,7 +83,7 @@ class TestCurves(TestCase):
 
     def test_curve_conversion(self):
         # Define equipment
-        lib = cp.Library(path=chiller_lib, rating_std="ahri_550/590")
+        lib = cp.Library(path=CHILLER_LIB, rating_std="ahri_550/590")
         chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
@@ -126,7 +137,7 @@ class TestCurves(TestCase):
         ]
 
         # Run unittest with a centrifugal chiller
-        lib = cp.Library(path=chiller_lib)
+        lib = cp.Library(path=CHILLER_LIB)
         ep_wtr_screw = lib.find_set_of_curvess_from_lib(
             filters=filters + [("source", "2"), ("compressor_type", "screw")]
         )
@@ -206,7 +217,7 @@ class TestCurves(TestCase):
     def test_flow_calcs_after_agg(self):
 
         # Load library
-        lib = cp.Library(path=chiller_lib)
+        lib = cp.Library(path=CHILLER_LIB)
 
         # Determine aggregated curve
         ranges = {
