@@ -10,11 +10,7 @@ from copper.generator import *
 from copper.units import *
 from copper.curves import *
 from copper.library import *
-import copper.constants as const
-from copper.constants import LOGGING_FORMAT
 import logging
-
-logging.basicConfig(format=LOGGING_FORMAT)
 
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
