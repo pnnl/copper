@@ -6,9 +6,9 @@ Copper generates performance curves that can be used in most common building ene
 ![Tests](https://github.com/lymereJ/copper/actions/workflows/tests.yml/badge.svg)
 
 # Purpose
-Results from building energy simulations largely depend on how HVAC equipment are modeled. As they rarely operate at their full load and rated performance it is important that reasonable data is used to model an HVAC equipment's part load performance. Copper was created to allow building energy modelers, engineers, and researchers to generate simulation-ready performance curves of HVAC equipment that not only capture their typical behavior at part load but are also generated to match a set of design characteristics such as full load and part load efficiencies.
+Results from building energy simulations largely depend on how heating and cooling equipment are modeled. As they rarely operate at their full load and rated performance it is important that reasonable data is used to model an heating or cooling equipment's part load performance. Copper was created to allow building energy modelers, engineers, and researchers to generate simulation-ready performance curves of heating and cooling equipment that not only capture their typical behavior at part load but are also generated to match a set of design characteristics such as full load and part load efficiencies.
 
-While chillers, which are rated at both full load and part load through an integrated part load value (IPLV), are currently the main application of Copper, other HVAC equipment will be handled in the near future.
+While chillers, which are rated at both full load and part load through an integrated part load value (IPLV), are currently the main application of Copper, other heating and cooling equipment will be handled in the near future.
 
 # Documentation
 The documentation for Copper is hosted [here](https://pnnl.github.io/copper/index.html), it includes installation instructions, quick tutorials, examples, API documentation, and more.
