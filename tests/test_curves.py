@@ -204,7 +204,6 @@ class TestCurves(TestCase):
         self.assertEqual(np.round(score, 3), 0.159)
 
     def test_flow_calcs_after_agg(self):
-
         # Load library
         lib = cp.Library(path=chiller_lib)
 

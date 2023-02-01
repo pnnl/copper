@@ -240,7 +240,6 @@ class SetsofCurves:
     def nearest_neighbor_sort(
         self, target_attr=None, vars=["ref_cap", "full_eff"], N=None
     ):
-
         """This function performs the weighted average and the nearest neighbor approach.
 
         :param dict target_attr: Target attributes we want to match
@@ -312,7 +311,6 @@ class SetsofCurves:
         weights=None,
         N=None,
     ):
-
         """Normalize curve outputs.
 
         :param pandas.DataFrame df: Input dataframe containing the variable inputs
@@ -366,7 +364,6 @@ class SetsofCurves:
         return df, target_attr, best_curve_idx
 
     def l2_norm(self, df, target_attr, weights, vars=["full_eff", "ref_cap"]):
-
         """Perform L2 normalization.
 
         :param pandas.DataFrame df: Dataframe containing the attributes of different equipments for a given equipment type

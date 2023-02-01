@@ -288,7 +288,6 @@ class Generator:
         """
         if self.equipment.type == "chiller":
             if self.equipment.set_of_curves != "":
-
                 grad_list = []
                 for c in self.equipment.set_of_curves:
                     if (

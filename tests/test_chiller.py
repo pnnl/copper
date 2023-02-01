@@ -14,7 +14,6 @@ class TestChiller(TestCase):
     lib = cp.Library(path=chiller_lib)
 
     def test_get_reference_variable(self):
-
         chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
@@ -160,7 +159,6 @@ class TestChiller(TestCase):
         )
 
     def test_get_lct(self):
-
         curves = pkl.load(open("./tests/data/agg_curves.pkl", "rb"))
 
         chlr = cp.Chiller(
@@ -230,7 +228,6 @@ class TestChiller(TestCase):
         self.assertTrue(round(chlr.calc_rated_eff("full", unit="cop"), 2) == 5.15)
 
     def test_calc_eff_ect(self):
-
         chlr = cp.Chiller(
             compressor_type="centrifugal",
             condenser_type="water",
@@ -262,7 +259,6 @@ class TestChiller(TestCase):
         self.assertTrue(cop_1 == cop_2, f"{cop_1} is different than {cop_2}")
 
     def test_curves_fromm_lib(self):
-
         full_eff_target = 0.55
         part_eff_target = 0.38
 
