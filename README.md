@@ -4,6 +4,8 @@ Copper is a building energy simulation performance curve generator for heating, 
 Copper generates performance curves that can be used in most common building energy software such as [EnergyPlus](https://energyplus.net/) or [DOE-2](https://doe2.com/).
 
 ![Tests](https://github.com/lymereJ/copper/actions/workflows/tests.yml/badge.svg)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7644215.svg)](https://doi.org/10.5281/zenodo.7644215)
+[![status](https://joss.theoj.org/papers/9509076e1ef0a0c05f141fde6810c313/status.svg)](https://joss.theoj.org/papers/9509076e1ef0a0c05f141fde6810c313)
 
 # Purpose
 Results from building energy simulations largely depend on how heating and cooling equipment are modeled. As they rarely operate at their full load and rated performance it is important that reasonable data is used to model an heating or cooling equipment's part load performance. Copper was created to allow building energy modelers, engineers, and researchers to generate simulation-ready performance curves of heating and cooling equipment that not only capture their typical behavior at part load but are also generated to match a set of design characteristics such as full load and part load efficiencies.
