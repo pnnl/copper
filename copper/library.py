@@ -23,11 +23,9 @@ class Library:
 
         # Calculate part load efficiency for each item in the library
         for item, vals in self.data.items():
-
             # Cannot calculate the part load efficiency
             # if full load efficiency is not specified
             if not vals["full_eff"] is None and vals["condenser_type"] != "hr_scroll":
-
                 # Get equipment properties
                 props = inspect.getfullargspec(
                     eval("copper." + vals["eqp_type"].capitalize()).__init__

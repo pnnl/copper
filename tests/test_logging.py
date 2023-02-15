@@ -4,7 +4,6 @@ import copper as cp
 
 class TestLogging(TestCase):
     def test_logging(self):
-
         full_eff_target = 5.2
         part_eff_target = 7.4
 

@@ -4,7 +4,6 @@ import copper as cp
 
 class TestAlgorithm(TestCase):
     def test_quickstart_guide(self):
-
         chlr = cp.Chiller(
             ref_cap=300,
             ref_cap_unit="ton",
@@ -32,7 +31,6 @@ class TestAlgorithm(TestCase):
         self.assertTrue(part_eff > 0.52 * (1 - 0.005), part_eff)
 
     def test_tutorial_si(self):
-
         full_eff_target = 5.2
         part_eff_target = 7.4
 
@@ -65,7 +63,6 @@ class TestAlgorithm(TestCase):
         self.assertTrue(part_eff > part_eff_target * (1 - tol), part_eff)
 
     def test_max_restart(self):
-
         full_eff_target = 5.2
         part_eff_target = 7.4
 
@@ -96,7 +93,6 @@ class TestAlgorithm(TestCase):
         self.assertTrue(set_of_curves is None)
 
     def test_random_init(self):
-
         full_eff_target = 0.650
         part_eff_target = 0.480
 
@@ -148,7 +144,6 @@ class TestAlgorithm(TestCase):
         self.assertTrue(grad_val == True)
 
     def test_double_targets(self):
-
         full_eff_target = 1.188
         full_eff_target_alt = 1.178
         part_eff_target = 0.876
@@ -195,7 +190,6 @@ class TestAlgorithm(TestCase):
         self.assertTrue(part_eff_alt > part_eff_target_alt * (1 - tol), part_eff_alt)
 
     def test_single_target_lct(self):
-
         full_eff_target = 1.188
         part_eff_target = 0.876
 
