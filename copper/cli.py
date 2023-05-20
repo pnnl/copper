@@ -5,26 +5,33 @@ This the command line interface module of Copper. It faciliate the integration o
 """
 
 import click, json, inspect
-import copper.chiller as chiller
+
+# import copper.Chiller as chiller
+from copper.chiller import Chiller
 
 
 @click.group()
 def cli():
     """
-    Command Line Interface for Copper
+    Copper
+
+    A performance curve generator for building energy simulation
     """
 
 
 @cli.command()
 @click.argument("input_file", type=click.File("rb"), required=True)
 def run(input_file):
+    """Run a set of Copper instructions through a JSON input file. See 'Using Copper's command line interface in the Quickstart Guide section of the documenation for more information."""
     try:
         f = json.load(input_file)
     except:
         raise ValueError("Could not read the input file. A JSON file is expected.")
     for eqp, eqp_props in f.items():
         # Make sure that the equipment is supported by Copper
-        assert eqp_props["eqp_type"].lower() in ["chiller"]
+        assert eqp_props["eqp_type"].lower() in [
+            "chiller"
+        ], "Equipment type not currently supported by Copper."
 
         # Get properties for equipment type
         eqp_type_props = inspect.getfullargspec(eval(eqp_props["eqp_type"]).__init__)[0]

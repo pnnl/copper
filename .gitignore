@@ -5,3 +5,5 @@
 /dev/
 /bin/
 /dist/
+*.pyc
+*pytest_cache
