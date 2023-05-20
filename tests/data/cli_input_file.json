@@ -1,0 +1,29 @@
+{
+    "Quickstart_Guide_Chiller":{
+        "eqp_type":"Chiller",
+        "compressor_type":"screw",
+        "condenser_type":"water",
+        "compressor_speed":"constant",
+        "ref_cap":300,
+        "ref_cap_unit":"ton",
+        "full_eff":0.61,
+        "full_eff_unit":"kw/ton",
+        "part_eff":0.52,
+        "part_eff_unit":"kw/ton",
+        "sim_engine":"energyplus",
+        "model":"ect_lwt",
+        "do":{
+            "generate_set_of_curves":{
+                "vars":[
+                "eir-f-plr"
+                ],
+                "method":"nearest_neighbor",
+                "tol":0.05,
+                "export_path":"./",
+                "export_format":"json",
+                "export_name":"Quickstart_Guide_Chiller",
+                "random_seed":1
+            }
+        }
+    }
+}
