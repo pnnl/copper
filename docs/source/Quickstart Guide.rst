@@ -99,7 +99,7 @@ First, we create the JSON input file.
 
     {
         "Quickstart_Guide_Chiller":{
-            "eqp_type":"chiller",
+            "eqp_type":"Chiller",
             "compressor_type":"screw",
             "condenser_type":"water",
             "compressor_speed":"constant",

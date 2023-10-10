@@ -505,7 +505,10 @@ class SetofCurves:
             curve_export = ""
         for curve in self.curves:
             curve_type = curve.type
-            self.name = self.name.replace("/", "_").replace(" ", "_")
+            if name != "":
+                curve_name = self.name.replace("/", "_").replace(" ", "_")
+            else:
+                curve_name = name
             if fmt == "idf":
                 if curve_type == "quad":
                     curve_type = "Curve:Quadratic"
@@ -520,7 +523,7 @@ class SetofCurves:
                     if len(curve_export)
                     else "{},\n".format(curve_type)
                 )
-                curve_export += "   {}_{},\n".format(self.name, curve.out_var)
+                curve_export += "   {}_{},\n".format(curve_name, curve.out_var)
                 for i in range(1, curve.nb_coeffs() + 1):
                     curve_export += "   {},\n".format(
                         getattr(curve, "coeff{}".format(i))
@@ -544,7 +547,7 @@ class SetofCurves:
                 curve_export += (
                     "   {};\n".format(curve.out_max) if curve.out_max else "    ;\n"
                 )
-                filen = open(path + "/" + self.name + ".{}".format(fmt), "w+")
+                filen = open(path + "/" + curve_name + ".{}".format(fmt), "w+")
                 filen.write(curve_export)
             elif fmt == "csv":
                 curve_export += f"{self.name},{curve.out_var},{curve.units},{curve.type},{curve.x_min},{curve.x_max},{curve.y_min},{curve.y_max}"

@@ -717,38 +717,38 @@ class Chiller:
 
         # Selecting the relevant filters based on compressor type
         if self.compressor_type == "positive_displacement":
-            tr_wtr_screw = lib.find_set_of_curvess_from_lib(
+            tr_wtr_screw = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", "screw")], part_eff_flag=True
             )
-            tr_wtr_scroll = lib.find_set_of_curvess_from_lib(
+            tr_wtr_scroll = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", "scroll")], part_eff_flag=True
             )
-            tr_wtr_rec = lib.find_set_of_curvess_from_lib(
+            tr_wtr_rec = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", "reciprocating")],
                 part_eff_flag=True,
             )
             sets = tr_wtr_screw + tr_wtr_scroll + tr_wtr_rec
         elif self.compressor_type == "any":
-            tr_wtr_screw = lib.find_set_of_curvess_from_lib(
+            tr_wtr_screw = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", "screw")], part_eff_flag=True
             )
-            tr_wtr_scroll = lib.find_set_of_curvess_from_lib(
+            tr_wtr_scroll = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", "scroll")], part_eff_flag=True
             )
-            tr_wtr_rec = lib.find_set_of_curvess_from_lib(
+            tr_wtr_rec = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", "reciprocating")],
                 part_eff_flag=True,
             )
-            ep_wtr_cent = lib.find_set_of_curvess_from_lib(
+            ep_wtr_cent = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", "centrifugal")],
                 part_eff_flag=True,
             )
             sets = tr_wtr_screw + tr_wtr_scroll + tr_wtr_rec + ep_wtr_cent
         elif self.compressor_type == "scroll/screw":
-            tr_wtr_screw = lib.find_set_of_curvess_from_lib(
+            tr_wtr_screw = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", "screw")], part_eff_flag=True
             )
-            tr_wtr_scroll = lib.find_set_of_curvess_from_lib(
+            tr_wtr_scroll = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", "scroll")], part_eff_flag=True
             )
             sets = tr_wtr_screw + tr_wtr_scroll
@@ -758,7 +758,7 @@ class Chiller:
             "reciprocating",
             "centrifugal",
         ]:
-            ep_wtr = lib.find_set_of_curvess_from_lib(
+            ep_wtr = lib.find_set_of_curves_from_lib(
                 filters=filters + [("compressor_type", self.compressor_type)],
                 part_eff_flag=True,
             )
