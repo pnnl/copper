@@ -35,7 +35,7 @@ class TestCurves(TestCase):
             ("source", "2"),
         ]
 
-        set_of_curvess = lib.find_set_of_curvess_from_lib(filters=filters)
+        set_of_curvess = lib.find_set_of_curves_from_lib(filters=filters)
         self.assertTrue(len(set_of_curvess) == 111)
 
         # Plot curves
@@ -127,10 +127,10 @@ class TestCurves(TestCase):
 
         # Run unittest with a centrifugal chiller
         lib = cp.Library(path=chiller_lib)
-        ep_wtr_screw = lib.find_set_of_curvess_from_lib(
+        ep_wtr_screw = lib.find_set_of_curves_from_lib(
             filters=filters + [("source", "2"), ("compressor_type", "screw")]
         )
-        ep_wtr_scroll = lib.find_set_of_curvess_from_lib(
+        ep_wtr_scroll = lib.find_set_of_curves_from_lib(
             filters=filters + [("source", "2"), ("compressor_type", "scroll")]
         )
         centrifugal_chlr = ep_wtr_screw + ep_wtr_scroll
@@ -271,7 +271,7 @@ class TestCurves(TestCase):
             ("sim_engine", "energyplus"),
         ]
 
-        sets = lib.find_set_of_curvess_from_lib(
+        sets = lib.find_set_of_curves_from_lib(
             filters=filters + [("compressor_type", "centrifugal")], part_eff_flag=True
         )
 

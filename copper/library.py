@@ -143,7 +143,7 @@ class Library:
             uni_field_val[field] = set(val)
         return uni_field_val
 
-    def find_set_of_curvess_from_lib(self, filters=[], part_eff_flag=False):
+    def find_set_of_curves_from_lib(self, filters=[], part_eff_flag=False):
         """Retrieve sets of curves from a library matching specific filters.
 
         :param list filters: List of filters, represented by tuples (field, val)
