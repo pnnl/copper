@@ -1,0 +1,50 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "title": "Generate set of curves",
+    "description": "Generate set of curves for chillers",
+    "definitions": {
+        "generate_set_of_curves": {
+            "type": "object",
+            "properties": {
+                "function": {
+                    "description": "Function to be called",
+                    "type": "string",
+                    "enum": ["generate_set_of_curves"],
+                    "minLength": 1
+                },
+                "vars": {
+                    "description": "Curve modifier that will be modified to target full and part load efficiencies",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": ["eir-f-t", "cap-f-t", "eir-f-plr"]
+                    }
+                },
+                "method": {
+                    "description": "Aggregation method used to generate the typical curve",
+                    "type": "string",
+                    "enum": ["nearest_neighbor", "average", "median"]
+                },
+                "tol": {
+                    "description": "Tolerance for the optimization process",
+                    "type": "number"
+                },
+                "export_path": {
+                    "description": "Path to export the generated performance curves",
+                    "type": "string"
+                },
+                "export_format": {
+                    "description": "File format of the generated performance curves",
+                    "type": "string",
+                    "enum": ["idf", "json", "csv"]
+                },
+                "export_name": {
+                    "description": "Name of the generated set of performance curves",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        }
+    },
+    "$ref": "copper.chiller.generate_set_of_curves.schema.json#/definitions/generate_set_of_curves"
+}

@@ -1,0 +1,26 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "title": "Chiller functions",
+    "description": "Run a function for a chiller",
+    "definitions": {
+        "action": {
+            "type": "object",
+            "properties": {
+                "equipment": {
+                    "description": "Chiller definition",
+                    "$ref": "copper.chiller.schema.json#/definitions/chiller"
+                },
+                "function_call": {
+                    "description": "Chiller-specific function call",
+                    "oneOf": [
+                        {
+                            "$ref": "copper.chiller.generate_set_of_curves.schema.json#/definitions/generate_set_of_curves"
+                        }
+                    ]
+                }
+            },
+            "required": ["equipment", "function_call"]
+        }
+    },
+    "$ref": "copper.chiller.action.schema.json#/definitions/action"
+}
