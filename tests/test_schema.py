@@ -12,5 +12,5 @@ class TestCurves(TestCase):
         input_file = json.load(open("./tests/data/cli_input_file.json", "r"))
         input_file["actions"][0]["function_call"]["vars"] = 42.0
         with self.assertLogs() as captured:
-            assert cp.Schema(input=input_file).validate()
+            assert cp.Schema(input=input_file).validate() == False
             self.assertTrue(captured[0][0].msg == "Input file is not valid.")
