@@ -35,9 +35,15 @@ class Schema:
         self.validator = Validator(self.schema, resolver=self.resolver)
 
     def validate(self):
+        """Validate input file to be used in the CLI.
+
+        :return: Result of the validation
+        :rtype: bool
+
+        """
         try:
             self.validator.validate(self.input)
             return True
         except:
             logging.critical("Input file is not valid.")
-            return
+            return False

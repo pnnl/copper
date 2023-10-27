@@ -26,3 +26,8 @@ Code Documentation
     :inherited-members:
     :undoc-members:
     :show-inheritance:
+.. automodule:: copper.schema
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
