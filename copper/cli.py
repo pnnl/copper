@@ -6,8 +6,8 @@ This the command line interface module of Copper. It faciliate the integration o
 
 import click, json, inspect
 
-# import copper.Chiller as chiller
 from copper.chiller import Chiller
+import copper.schema
 
 
 @click.group()
@@ -23,18 +23,23 @@ def cli():
 @click.argument("input_file", type=click.File("rb"), required=True)
 def run(input_file):
     """Run a set of Copper instructions through a JSON input file. See 'Using Copper's command line interface in the Quickstart Guide section of the documenation for more information."""
+
     try:
         f = json.load(input_file)
+
+        # Validate input file
+        assert copper.Schema(f).validate() == True
     except:
         raise ValueError("Could not read the input file. A JSON file is expected.")
-    for eqp, eqp_props in f.items():
+    for action in f["actions"]:
+        eqp_props = action["equipment"]
         # Make sure that the equipment is supported by Copper
-        assert eqp_props["eqp_type"].lower() in [
+        assert eqp_props["type"].lower() in [
             "chiller"
         ], "Equipment type not currently supported by Copper."
 
         # Get properties for equipment type
-        eqp_type_props = inspect.getfullargspec(eval(eqp_props["eqp_type"]).__init__)[0]
+        eqp_type_props = inspect.getfullargspec(eval(eqp_props["type"]).__init__)[0]
 
         # Set the equipment properties from input file
         obj_args = {}
@@ -43,12 +48,13 @@ def run(input_file):
                 obj_args[p] = eqp_props[p]
 
         # Create instance of the equipment
-        obj = eval(eqp_props["eqp_type"])(**obj_args)
+        obj = eval(eqp_props["type"])(**obj_args)
 
         # Perform actions defined in input file
-        if "do" in list(eqp_props.keys()):
-            for action in eqp_props["do"]:
-                getattr(obj, action)(**eqp_props["do"][action])
+        func = action["function_call"]["function"]
+        del action["function_call"]["function"]
+        args = action["function_call"]
+        getattr(obj, func)(**args)
 
 
 if __name__ == "__main__":
