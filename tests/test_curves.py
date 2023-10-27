@@ -251,14 +251,14 @@ class TestCurves(TestCase):
             ref_cap=150,
             ref_cap_unit="ton",
             full_eff=0.75,
-            full_eff_unit="kw/ton",
+            full_eff_unit="kW/ton",
             full_eff_alt=0.719,
-            full_eff_unit_alt="kw/ton",
+            full_eff_unit_alt="kW/ton",
             part_eff=0.56,
-            part_eff_unit="kw/ton",
+            part_eff_unit="kW/ton",
             part_eff_ref_std="ahri_550/590",
             part_eff_alt=0.559,
-            part_eff_unit_alt="kw/ton",
+            part_eff_unit_alt="kW/ton",
             part_eff_ref_std_alt="ahri_551/591",
             model="lct_lwt",
             sim_engine="energyplus",
@@ -303,7 +303,7 @@ class TestCurves(TestCase):
             / 1000
         )
 
-        cop = cp.Units(chlr.full_eff, "kw/ton").conversion("cop")
+        cop = cp.Units(chlr.full_eff, "kW/ton").conversion("cop")
 
         # Determine the density of water [kg/m3]
         rho = CP.PropsSI(

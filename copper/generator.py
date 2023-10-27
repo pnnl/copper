@@ -197,7 +197,7 @@ class Generator:
                         restart += 1
 
                         logging.info(
-                            "GEN: {}, IPLV: {}, KW/TON: {}".format(
+                            "GEN: {}, IPLV: {}, kW/ton: {}".format(
                                 gen,
                                 round(
                                     self.equipment.calc_rated_eff(

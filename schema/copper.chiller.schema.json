@@ -1,0 +1,138 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "title": "Chiller Inputs",
+    "description": "Set of inputs for a chiller",
+    "definitions": {
+        "chiller": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "description": "Type of equipment",
+                    "type": "string",
+                    "enum": ["Chiller"],
+                    "minLength": 1
+                },
+                "ref_cap": {
+                    "description": "Reference capacity of the chiller",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                "ref_cap_unit": {
+                    "description": "Unit of the reference capacity of the chiller",
+                    "type": "string",
+                    "enum": ["ton", "kW", "W"],
+                    "minLength": 1
+                },
+                "full_eff": {
+                    "description": "Full load efficiency of the chiller",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                "full_eff_unit": {
+                    "description": "Full load efficiency units of the chiller",
+                    "type": "string",
+                    "enum": ["kW/ton", "cop", "eer"],
+                    "minLength": 1
+                },
+                "full_eff_alt": {
+                    "description": "Alternative full load efficiency of the chiller (only used when alternative reference standard is used)",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                "full_eff_unit_alt": {
+                    "description": "Alternative full load efficiency units of the chiller (only used when alternative reference standard is used)",
+                    "type": "string",
+                    "enum": ["kW/ton", "cop", "eer"],
+                    "minLength": 1
+                },
+                "part_eff": {
+                    "description": "Part load efficiency of the chiller",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                "part_eff_unit": {
+                    "description": "Part load efficiency units of the chiller",
+                    "type": "string",
+                    "enum": ["kW/ton", "cop", "eer"],
+                    "minLength": 1
+                },
+                "part_eff_alt": {
+                    "description": "Alternative part load efficiency of the chiller (only used when alternative reference standard is used)",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                "part_eff_unit_alt": {
+                    "description": "Alternative part load efficiency units of the chiller (only used when alternative reference standard is used)",
+                    "type": "string",
+                    "enum": ["kW/ton", "cop", "eer"],
+                    "minLength": 1
+                },
+                "compressor_type": {
+                    "description": "Type of compressor used by the chiller",
+                    "type": "string",
+                    "enum": [
+                        "positive_displacement",
+                        "screw",
+                        "scroll",
+                        "reciprocating",
+                        "centrifugal"
+                    ],
+                    "minLength": 1
+                },
+                "condenser_type": {
+                    "description": "Type of condenser used by the chiller",
+                    "type": "string",
+                    "enum": ["water", "air"],
+                    "minLength": 1
+                },
+                "part_eff_ref_std": {
+                    "description": "Standard for rated conditions",
+                    "type": "string",
+                    "enum": ["ahri_550/590", "ahri_551/591"],
+                    "minLength": 1
+                },
+                "part_eff_ref_std_alt": {
+                    "description": "Alternate standard for rated conditions",
+                    "type": "string",
+                    "enum": ["ahri_550/590", "ahri_551/591"],
+                    "minLength": 1
+                },
+                "model": {
+                    "description": "Chiller model corresponding to the set of performance curves",
+                    "type": "string",
+                    "enum": ["ect_lwt", "lct_lwt"],
+                    "minLength": 1
+                },
+                "sim_engine": {
+                    "description": "Simulation engine used for simulation of the performance curves",
+                    "type": "string",
+                    "enum": ["energyplus"],
+                    "minLength": 1
+                },
+                "min_unloading": {
+                    "description": "Minimum unloading ratio of the chiller",
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "exclusiveMaximum": 1
+                },
+                "min_plr": {
+                    "description": "Minimum part load ratio of the chiller",
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "exclusiveMaximum": 1
+                }
+            },
+            "required": [
+                "type",
+                "ref_cap",
+                "ref_cap_unit",
+                "full_eff",
+                "full_eff_unit",
+                "part_eff",
+                "part_eff_unit",
+                "model"
+            ]
+        }
+    },
+    "$ref": "copper.chiller.schema.json#/definitions/chiller"
+}

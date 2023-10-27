@@ -190,17 +190,17 @@ class Chiller:
         else:
             evap_power = self.ref_cap
 
-        if self.ref_cap_unit != "kw/ton":
+        if self.ref_cap_unit != "kW/ton":
             ref_cap = Units(value=self.ref_cap, unit=self.ref_cap_unit)
-            ref_cap = ref_cap.conversion(new_unit="kw/ton")
+            ref_cap = ref_cap.conversion(new_unit="kW/ton")
         else:
             ref_cap = self.ref_cap
 
         # Convert reference efficiency if needed
-        if self.full_eff_unit != "kw/ton":
+        if self.full_eff_unit != "kW/ton":
             full_eff_unit = Units(value=self.full_eff, unit=self.full_eff_unit)
             full_eff = full_eff_unit.conversion(
-                new_unit="kw/ton"
+                new_unit="kW/ton"
             )  # full eff needs to be in kW/ton
         else:
             full_eff = self.full_eff
@@ -329,9 +329,9 @@ class Chiller:
             kwpton_ref_unit = self.full_eff_unit
 
         # Convert to kWpton if necessary
-        if self.full_eff_unit != "kw/ton":
+        if self.full_eff_unit != "kW/ton":
             kwpton_ref_unit = Units(kwpton_ref, kwpton_ref_unit)
-            kwpton_ref = kwpton_ref_unit.conversion("kw/ton")
+            kwpton_ref = kwpton_ref_unit.conversion("kW/ton")
 
         # Conversion factors
         # TODO: remove these and use the unit class
@@ -372,7 +372,7 @@ class Chiller:
 
         return eir
 
-    def calc_rated_eff(self, eff_type, unit="kw/ton", output_report=False, alt=False):
+    def calc_rated_eff(self, eff_type, unit="kW/ton", output_report=False, alt=False):
         """Calculate chiller efficiency.
 
         :param str eff_type: Chiller efficiency type, currently supported `full` (full load rating)
@@ -505,8 +505,8 @@ class Chiller:
 
                 # Stop here for full load calculations
                 if eff_type == "full" and idx == 0:
-                    if unit != "kw/ton":
-                        kwpton = Units(kwpton, "kw/ton").conversion(unit)
+                    if unit != "kW/ton":
+                        kwpton = Units(kwpton, "kW/ton").conversion(unit)
                     return kwpton
 
             # Coefficients from AHRI Std 551/591
@@ -523,8 +523,8 @@ class Chiller:
             return -999
 
         # Convert IPLV to desired unit
-        if unit != "kw/ton":
-            iplv_org = Units(iplv, "kw/ton")
+        if unit != "kW/ton":
+            iplv_org = Units(iplv, "kW/ton")
             iplv = iplv_org.conversion(unit)
 
         return iplv

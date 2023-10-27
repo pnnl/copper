@@ -18,17 +18,17 @@ class Units:
         :rtype: float
 
         """
-        if new_unit == "kw/ton":
+        if new_unit == "kW/ton":
             if self.unit == "cop":
                 return 12.0 / (self.value * 3.412)
-            elif self.unit == "kw/ton":
+            elif self.unit == "kW/ton":
                 return self.value
             elif self.unit == "eer":
                 return 12.0 / self.value
             else:
                 return self.value
         elif new_unit == "cop":
-            if self.unit == "kw/ton":
+            if self.unit == "kW/ton":
                 return 12.0 / self.value / 3.412
             elif self.unit == "cop":
                 return self.value
@@ -37,7 +37,7 @@ class Units:
             else:
                 return self.value
         elif new_unit == "eer":
-            if self.unit == "kw/ton":
+            if self.unit == "kW/ton":
                 return 12.0 / self.value
             elif self.unit == "eer":
                 return self.value
