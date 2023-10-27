@@ -98,36 +98,37 @@ First, we create the JSON input file.
 .. sourcecode:: JSON
 
     {
-        "Quickstart_Guide_Chiller":{
-            "eqp_type":"Chiller",
-            "compressor_type":"screw",
-            "condenser_type":"water",
-            "compressor_speed":"constant",
-            "ref_cap":300,
-            "ref_cap_unit":"ton",
-            "full_eff":0.61,
-            "full_eff_unit":"kW/ton",
-            "part_eff":0.52,
-            "part_eff_unit":"kW/ton",
-            "sim_engine":"energyplus",
-            "model":"ect_lwt",
-            "do":{
-                "generate_set_of_curves":{
-                    "vars":[
-                    "eir-f-plr"
-                    ],
-                    "method":"nearest_neighbor",
-                    "tol":0.005,
-                    "export_path":"./",
-                    "export_format":"json",
-                    "export_name":"Quickstart_Guide_Chiller",
-                    "random_seed":1
+        "actions": [
+            {
+                "equipment": {
+                    "type": "Chiller",
+                    "compressor_type": "screw",
+                    "condenser_type": "water",
+                    "compressor_speed": "constant",
+                    "ref_cap": 300,
+                    "ref_cap_unit": "ton",
+                    "full_eff": 0.61,
+                    "full_eff_unit": "kW/ton",
+                    "part_eff": 0.52,
+                    "part_eff_unit": "kW/ton",
+                    "sim_engine": "energyplus",
+                    "model": "ect_lwt"
+                },
+                "function_call": {
+                    "function": "generate_set_of_curves",
+                    "vars": ["eir-f-plr"],
+                    "method": "nearest_neighbor",
+                    "tol": 0.05,
+                    "export_path": "./",
+                    "export_format": "json",
+                    "export_name": "Quickstart_Guide_Chiller",
+                    "random_seed": 1
                 }
             }
-        }
+        ]
     }
 
-Nextm we let's generate the curves using the CLI by running the following command in a command prompt:
+Next we let's generate the curves using the CLI by running the following command in a command prompt:
 
 .. sourcecode:: bash
 
