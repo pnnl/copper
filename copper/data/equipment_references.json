@@ -1,0 +1,40 @@
+{
+    "chiller": {
+        "ahri_550/590": {
+                "water": {
+                    "lwt": 44.0,
+                    "lwt_unit": "degF",
+                    "ect": [85.0, 75.0, 65.0, 65.0],
+                    "ect_unit": "degF",
+                    "lct": 94.3,
+                    "lct_unit": "degF"
+                },
+                "air": {
+                    "lwt": 44.0,
+                    "lwt_unit": "degF",
+                    "ect": [95.0, 80.0, 65.0, 55.0],
+                    "ect_unit": "degF",
+                    "lct": null,
+                    "lct_unit": null
+                }
+        },
+        "ahri_551/591": {
+                "water": {
+                    "lwt": 7.0,
+                    "lwt_unit": "degC",
+                    "ect": [30.0, 24.5, 19.0, 19.0],
+                    "ect_unit": "degC",
+                    "lct": 35.0,
+                    "lct_unit": "degC"
+                },
+                "air": {
+                    "lwt": 7.0,
+                    "lwt_unit": "degC",
+                    "ect": [35.0, 27.0, 19.0, 13.0],
+                    "ect_unit": "degC",
+                    "lct": null,
+                    "lct_unit": null
+                }
+        }
+    }
+}

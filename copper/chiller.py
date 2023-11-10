@@ -10,13 +10,17 @@ from copper.generator import *
 from copper.units import *
 from copper.curves import *
 from copper.library import *
-import logging
+from copper.equipment import *
+import logging, json
 
 location = os.path.dirname(os.path.realpath(__file__))
-chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
+chiller_lib = os.path.join(location, "data", "chiller_curves.json")
+equipment_references = json.load(
+    open(os.path.join(location, "data", "equipment_references.json"), "r")
+)
 
 
-class Chiller:
+class Chiller(Equipment):
     def __init__(
         self,
         ref_cap,
@@ -61,86 +65,20 @@ class Chiller:
         self.model = model
         self.sim_engine = sim_engine
         self.set_of_curves = set_of_curves
-        if self.condenser_type == "water":
-            if self.part_eff_ref_std == "ahri_550/590":
-                lwt = (44.0 - 32.0) * 5 / 9
-                ect = (85.0 - 32.0) * 5 / 9
-                lct = (94.3 - 32.0) * 5 / 9
-            elif self.part_eff_ref_std == "ahri_551/591":
-                lwt = 7.0
-                ect = 30.0
-                lct = 35.0
 
-            if self.model == "ect_lwt":
-                self.plotting_range = {
-                    "eir-f-t": {
-                        "x1_min": lwt,
-                        "x1_max": lwt,
-                        "x1_norm": lwt,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": ect,
-                    },
-                    "cap-f-t": {
-                        "x1_min": lwt,
-                        "x1_max": lwt,
-                        "x1_norm": lwt,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 40,
-                        "x2_norm": ect,
-                    },
-                    "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
-                }
-            elif self.model == "lct_lwt":
-                self.plotting_range = {
-                    "eir-f-t": {
-                        "x1_min": lwt,
-                        "x1_max": lwt,
-                        "x1_norm": lwt,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 60,
-                        "x2_norm": lct,
-                    },
-                    "cap-f-t": {
-                        "x1_min": lwt,
-                        "x1_max": lwt,
-                        "x1_norm": lwt,
-                        "nbval": 50,
-                        "x2_min": 10,
-                        "x2_max": 60,
-                        "x2_norm": lct,
-                    },
-                    "eir-f-plr": {
-                        "x1_min": lct,
-                        "x1_max": lct,
-                        "x1_norm": lct,
-                        "nbval": 50,
-                        "x2_min": 0.0,
-                        "x2_max": 1.0,
-                        "x2_norm": 1.0,
-                    },
-                }
-            else:
-                raise ValueError("Algorithm not supported.")
-        elif self.condenser_type == "air":
-            if self.part_eff_ref_std == "ahri_550/590":
-                lwt = (44.0 - 32.0) * 5 / 9
-                ect = (95.0 - 32.0) * 5 / 9
-                lct = -999  # does not apply
-            elif self.part_eff_ref_std == "ahri_551/591":
-                lwt = 7.0
-                ect = 35.0
-                lct = -999  # does not apply
+        # Define rated temperatures
+        ect, lwt, lct = self.get_rated_temperatures()
+        ect = ect[0]
 
+        # Defined plotting ranges and (rated) temperature for normalization
+        nb_val = 50
+        if self.model == "ect_lwt":
             self.plotting_range = {
                 "eir-f-t": {
                     "x1_min": lwt,
                     "x1_max": lwt,
                     "x1_norm": lwt,
-                    "nbval": 50,
+                    "nbval": nb_val,
                     "x2_min": 10,
                     "x2_max": 40,
                     "x2_norm": ect,
@@ -154,26 +92,40 @@ class Chiller:
                     "x2_max": 40,
                     "x2_norm": ect,
                 },
-                "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": 50},
+                "eir-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
+            }
+        elif self.model == "lct_lwt":
+            self.plotting_range = {
+                "eir-f-t": {
+                    "x1_min": lwt,
+                    "x1_max": lwt,
+                    "x1_norm": lwt,
+                    "nbval": nb_val,
+                    "x2_min": 10,
+                    "x2_max": 60,
+                    "x2_norm": lct,
+                },
+                "cap-f-t": {
+                    "x1_min": lwt,
+                    "x1_max": lwt,
+                    "x1_norm": lwt,
+                    "nbval": nb_val,
+                    "x2_min": 10,
+                    "x2_max": 60,
+                    "x2_norm": lct,
+                },
+                "eir-f-plr": {
+                    "x1_min": lct,
+                    "x1_max": lct,
+                    "x1_norm": lct,
+                    "nbval": nb_val,
+                    "x2_min": 0.0,
+                    "x2_max": 1.0,
+                    "x2_norm": 1.0,
+                },
             }
 
         self.ref_lwt, self.ref_ect, self.ref_lct = lwt, ect, lct
-
-    def get_ref_values(self, out_var):
-        """Get chiller reference/rated independent variables values (temperature and part load ratio) for an output variable (e.g., eir-f-t, eir-f-plr, cap-f-t).
-
-        :param str out_var: Output variable
-        :return: List of reference values
-        :rtype: list
-
-        """
-        if "x2_norm" in list(self.plotting_range[out_var].keys()):
-            return [
-                self.plotting_range[out_var]["x1_norm"],
-                self.plotting_range[out_var]["x2_norm"],
-            ]
-        else:
-            return [self.plotting_range[out_var]["x1_norm"], 0.0]
 
     def get_ref_cond_flow_rate(self):
         """Function to compute the reference condenser flow rate given ref_cap, full_eff, ref_lct and ref_lwt
@@ -319,30 +271,6 @@ class Chiller:
         else:
             return set_of_curves
 
-    def get_eir_ref(self, alt):
-        # Retrieve equipment efficiency and unit
-        if alt:
-            kwpton_ref = self.full_eff_alt
-            kwpton_ref_unit = self.full_eff_unit_alt
-        else:
-            kwpton_ref = self.full_eff
-            kwpton_ref_unit = self.full_eff_unit
-
-        # Convert to kWpton if necessary
-        if self.full_eff_unit != "kW/ton":
-            kwpton_ref_unit = Units(kwpton_ref, kwpton_ref_unit)
-            kwpton_ref = kwpton_ref_unit.conversion("kW/ton")
-
-        # Conversion factors
-        # TODO: remove these and use the unit class
-        ton_to_kbtu = 12
-        kbtu_to_kw = 3.412141633
-
-        # Full load conditions
-        eir_ref = 1 / (ton_to_kbtu / kwpton_ref / kbtu_to_kw)
-
-        return eir_ref
-
     def calc_eff_ect(self, cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect, lwt, load):
         """Calculate chiller efficiency using the ECT-based model for a specific ECT and load value (percentage load).
 
@@ -382,12 +310,6 @@ class Chiller:
         :rtype: float
 
         """
-
-        # Conversion factors
-        # TODO: remove these and use the unit class
-        ton_to_kbtu = 12
-        kbtu_to_kw = 3.412141633
-
         # Get reference eir
         eir_ref = self.get_eir_ref(alt)
         load_ref = 1
@@ -399,7 +321,7 @@ class Chiller:
         kwpton_lst = []
 
         # Temperatures at rated conditions
-        ect, lwt = self.get_rated_temperatures(alt)
+        ect, lwt, lct = self.get_rated_temperatures(alt)
 
         # Retrieve curves
         curves = self.get_chiller_curves()
@@ -482,7 +404,8 @@ class Chiller:
                     return -999
 
                 # Convert efficiency to kW/ton
-                kwpton = eir / kbtu_to_kw * ton_to_kbtu
+                eir = Units(eir, "eir")
+                kwpton = eir.conversion("kW/ton")
 
                 if output_report:
                     cap_ton = self.ref_cap
@@ -501,7 +424,7 @@ class Chiller:
                     logging.info(part_report)
 
                 # Store efficiency for IPLV calculation
-                kwpton_lst.append(eir / kbtu_to_kw * ton_to_kbtu)
+                kwpton_lst.append(kwpton)
 
                 # Stop here for full load calculations
                 if eff_type == "full" and idx == 0:
@@ -529,7 +452,7 @@ class Chiller:
 
         return iplv
 
-    def get_rated_temperatures(self, alt):
+    def get_rated_temperatures(self, alt=False):
         """Get chiller rated temperatures.
 
         :param bool alt: Indicate the chiller alternate standard rating should be used
@@ -541,24 +464,14 @@ class Chiller:
             std = self.part_eff_ref_std_alt
         else:
             std = self.part_eff_ref_std
-        if std == "ahri_551/591":  # IPLV.SI
-            lwt = 7.0
-            if self.condenser_type == "air":
-                ect = [35.0, 27.0, 19.0, 13.0]
-            elif self.condenser_type == "water":
-                ect = [30.0, 24.5, 19.0, 19.0]
-        elif std == "ahri_550/590":  # IPLV.IP
-            lwt = 44.0
-            if self.condenser_type == "air":
-                ect = [95.0, 80.0, 65.0, 55.0]
-            elif self.condenser_type == "water":
-                ect = [85.0, 75.0, 65.0, 65.0]
-            # Convert to SI
-            lwt = (lwt - 32.0) * 5 / 9
-            ect = [(t - 32.0) * 5 / 9 for t in ect]
-        else:
-            raise ValueError("Reference standard provided isn't implemented.")
-        return [ect, lwt]
+        chiller_data = equipment_references[self.type][std][self.condenser_type]
+        lwt = Equipment.convert_to_deg_c(chiller_data["lwt"], chiller_data["lwt_unit"])
+        ect = [
+            Equipment.convert_to_deg_c(t, chiller_data["ect_unit"])
+            for t in chiller_data["ect"]
+        ]
+        lct = Equipment.convert_to_deg_c(chiller_data["lct"], chiller_data["lct_unit"])
+        return [ect, lwt, lct]
 
     def get_chiller_curves(self):
         """Retrieve chiller curves from the chiller set_of_curves attribute.
