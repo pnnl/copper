@@ -18,46 +18,65 @@ class Units:
         :rtype: float
 
         """
+        ton_to_kbtu = 12
+        kbtu_to_kw = 3.412141633
         if new_unit == "kW/ton":
             if self.unit == "cop":
-                return 12.0 / (self.value * 3.412)
+                return ton_to_kbtu / (self.value * kbtu_to_kw)
             elif self.unit == "kW/ton":
                 return self.value
             elif self.unit == "eer":
-                return 12.0 / self.value
+                return ton_to_kbtu / self.value
+            elif self.unit == "eir":
+                return ton_to_kbtu * self.value / kbtu_to_kw
             else:
                 return self.value
         elif new_unit == "cop":
             if self.unit == "kW/ton":
-                return 12.0 / self.value / 3.412
+                return ton_to_kbtu / self.value / kbtu_to_kw
             elif self.unit == "cop":
                 return self.value
             elif self.unit == "eer":
-                return self.value / 3.412
+                return self.value / kbtu_to_kw
+            elif self.unit == "eir":
+                return 1 / self.value
             else:
                 return self.value
         elif new_unit == "eer":
             if self.unit == "kW/ton":
-                return 12.0 / self.value
+                return ton_to_kbtu / self.value
             elif self.unit == "eer":
                 return self.value
             elif self.unit == "cop":
-                return 3.412 * self.value
+                return kbtu_to_kw * self.value
+            elif self.unit == "eir":
+                return kbtu_to_kw / self.value
+            else:
+                return self.value
+        elif new_unit == "eir":
+            if self.unit == "kW/ton":
+                return 1 / (ton_to_kbtu / self.value / kbtu_to_kw)
+            elif self.unit == "eer":
+                return kbtu_to_kw / self.value
+            elif self.unit == "cop":
+                return 1 / self.value
+            elif self.unit == "eir":
+                return self.value
             else:
                 return self.value
         elif new_unit == "ton":
             if self.unit == "kW":
-                return self.value * (3412 / 12000)
+                return self.value * (kbtu_to_kw / ton_to_kbtu)
             elif self.unit == "W":
-                return self.value * (3.412 / 12000)
+                return self.value * (kbtu_to_kw / (ton_to_kbtu * 1000))
         elif new_unit == "kW":
             if self.unit == "ton":
-                return self.value / (3412 / 12000)
+                return self.value / (kbtu_to_kw / ton_to_kbtu)
             if self.unit == "W":
                 return self.value / 1000
         elif new_unit == "W":
             if self.unit == "ton":
-                return self.value / (3.412 / 12000)
+                return self.value / (kbtu_to_kw / (ton_to_kbtu * 1000))
             if self.unit == "kW":
                 return self.value * 1000
         elif new_unit == "degC":

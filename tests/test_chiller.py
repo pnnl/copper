@@ -7,7 +7,7 @@ import CoolProp.CoolProp as CP
 import os
 
 location = os.path.dirname(os.path.realpath(__file__))
-chiller_lib = os.path.join(location, "../copper/lib", "chiller_curves.json")
+chiller_lib = os.path.join(location, "../copper/data", "chiller_curves.json")
 
 
 class TestChiller(TestCase):

@@ -10,7 +10,7 @@ from copper.curves import *
 import copper.chiller
 
 location = os.path.dirname(os.path.realpath(__file__))
-chiller_lib = os.path.join(location, "lib", "chiller_curves.json")
+chiller_lib = os.path.join(location, "data", "chiller_curves.json")
 
 
 class Library:
