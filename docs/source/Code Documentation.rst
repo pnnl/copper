@@ -21,6 +21,11 @@ Code Documentation
     :inherited-members:
     :undoc-members:
     :show-inheritance:
+.. automodule:: copper.equipment
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
 .. automodule:: copper.chiller
     :members:
     :inherited-members:
