@@ -28,5 +28,5 @@ setup(
         "console_scripts": ["copper=copper.cli:cli"],
     },
     include_package_data=True,
-    package_data={"copper": ["copper/lib/chiller_curves.json"]},
+    package_data={"copper": ["copper/data/chiller_curves.json"]},
 )
