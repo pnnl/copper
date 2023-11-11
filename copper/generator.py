@@ -79,7 +79,7 @@ class Generator:
                 lib, filters = self.equipment.get_lib_and_filters()
                 self.base_curves = [lib.find_base_curves(filters, self.equipment)]
             else:
-                seed_curves = self.equipment.get_seed_curves()  # get seed curves
+                seed_curves = self.equipment.get_seed_curves()
                 ranges, misc_attr = self.equipment.ranges, self.equipment.misc_attr
                 if self.method == "nearest_neighbor":
                     self.base_curve = seed_curves.get_aggregated_set_of_curves(
