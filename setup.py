@@ -23,7 +23,7 @@ setup(
         "CoolProp",
         "scipy",
         "click",
-        "jsonschema"
+        "jsonschema",
     ],
     entry_points={
         "console_scripts": ["copper=copper.cli:cli"],
