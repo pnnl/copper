@@ -79,6 +79,15 @@
                     ],
                     "minLength": 1
                 },
+                "compressor_speed": {
+                    "description": "Type of compressor speed control",
+                    "type": "string",
+                    "enum": [
+                        "constant",
+                        "variable"
+                    ],
+                    "minLength": 1
+                },
                 "condenser_type": {
                     "description": "Type of condenser used by the chiller",
                     "type": "string",
