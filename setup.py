@@ -23,10 +23,11 @@ setup(
         "CoolProp",
         "scipy",
         "click",
+        "jsonschema",
     ],
     entry_points={
         "console_scripts": ["copper=copper.cli:cli"],
     },
     include_package_data=True,
-    package_data={"copper": ["copper/data/chiller_curves.json"]},
+    package_data={"copper": ["copper/data/*.json", "copper/data/schema/*.json"]},
 )
