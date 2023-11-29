@@ -37,8 +37,27 @@
             }
         }
     },
-    "unitary_dx_equipment": {
-        "ahri_340/360": {},
+    "unitary_dx": {
+        "ahri_340/360": {
+            "water": {
+                "AED": [80,67],
+                "AEW": [67,57],
+                "AE_unit": "degF",
+                "ect": [85.0, 73.5, 62.0, 55.0],
+                "ect_unit": "degF",
+                "lct": 95,
+                "lct_unit": "degF"
+            },
+            "air": {
+                "AED": [80,67],
+                "AEW": [67,57],
+                "AE_unit": "degF",
+                "ect": [95.0, 81.5, 68.0, 65.0],
+                "ect_unit": "degF",
+                "lct": null,
+                "lct_unit": null
+            }
+        },
         "ahri_341/361": {}
     }
 }
