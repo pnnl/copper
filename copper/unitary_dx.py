@@ -3,7 +3,7 @@ unitary_dx.py
 ====================================
 This is the unitary direct expansion (DX) HVAC equipment module of Copper. The module handles all calculations and data manipulation related to unitary DX equipment.
 """
-
+import CoolProp.CoolProp as CP
 from copper.generator import *
 from copper.units import *
 from copper.curves import *
@@ -32,7 +32,7 @@ class UnitaryDX(Equipment):
         set_of_curves,
         part_eff_ref_std="ahri_340/360",
         part_eff_ref_std_alt ="ahri_341/361",
-        model="simplified_bf",
+        model="simplified_bf", #what is this?
         sim_engine="energyplus",
     ):
         self.type = "unitary_dx"
@@ -49,6 +49,15 @@ class UnitaryDX(Equipment):
         self.sim_engine = sim_engine
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = "air"
+        # Define rated temperatures
+        # air entering drybulb,air entering wetbulb, outdoor enter, outdoor leaving
+        AED, AEW, ect, lct = self.get_rated_temperatures()
+        ect = ect[0]
+
+        # Defined plotting ranges and (rated) temperature for normalization
+        nb_val = 50
+
+
 
     def calc_rated_eff(self, eff_type, unit="eer", output_report=False, alt=False):
         """Calculate unitary DX equipment efficiency.
@@ -74,12 +83,141 @@ class UnitaryDX(Equipment):
         ect, lwt, lct = self.get_rated_temperatures(alt)
 
         # Retrieve curves
+        #To DO check curvetypes
         curves = self.get_DX_curves()
+        cap_f_f = curves["cap_f_f"]
         cap_f_t = curves["cap_f_t"]
         eir_f_t = curves["eir_f_t"]
-        eir_f_plr = curves["eir_f_plr"]
+        eir_f_f = curves["eir_f_f"]
+        plf_f_plr = curves["plf_f_plr"]
+
+        # correct?
+        SlopeRated = curves["sloperated"]
+        Bf = curves["BF"]
 
         #TODO I/O process
+        try:
+            for idx, load in enumerate(
+                loads
+            ):  # Calculate efficiency for each testing conditions
+                if self.model == "ect_lwt":  # DOE-2 chiller model
+                    # Efficiency calculation
+                    eir = self.calc_eff_ect(
+                        cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect[idx], lwt, load
+                    )
+
+                elif self.model == "lct_lwt":  # Reformulated EIR chiller model
+                    # Determine water properties
+                    c_p = (
+                        CP.PropsSI("C", "P", 101325, "T", ect[idx] + 273.15, "Water")
+                        / 1000
+                    )  # kJ/kg.K
+                    rho = CP.PropsSI("D", "P", 101325, "T", ect[idx] + 273.15, "Water")
+
+                    # Gather arguments for determination fo leaving condenser temperature through iteration
+                    if idx == 0:  # Full load rated conditions
+                        args = [
+                            lwt,
+                            cap_f_t,
+                            eir_f_t,
+                            eir_f_plr,
+                            load,
+                            -999,
+                            1 / eir_ref,
+                            ect[idx],
+                            self.set_of_curves[0].ref_cond_fluid_flow * rho,
+                            c_p,
+                        ]
+                    else:
+                        args = [
+                            lwt,
+                            cap_f_t,
+                            eir_f_t,
+                            eir_f_plr,
+                            load,
+                            cap_f_lwt_lct_rated,
+                            1 / eir_ref,
+                            ect[idx],
+                            self.set_of_curves[0].ref_cond_fluid_flow * rho,
+                            c_p,
+                        ]
+
+                    # Determine leaving condenser temperature
+                    lct = self.get_lct(ect[idx], args)
+
+                    # Determine rated capacity curve modifier
+                    if idx == 0:
+                        cap_f_lwt_lct_rated = cap_f_t.evaluate(lwt, lct)
+
+                    # Temperature adjustments
+                    dt = ect[idx] - lwt
+                    cap_f_lwt_lct = cap_f_t.evaluate(lwt, lct)
+                    eir_f_lwt_lct = eir_f_t.evaluate(lwt, lct)
+                    cap_op = load_ref * cap_f_lwt_lct
+
+                    # PLR adjustments
+                    plr = load * cap_f_lwt_lct_rated / cap_op
+                    if plr <= self.min_unloading:
+                        plr = self.min_unloading
+                    eir_plr_lct = eir_f_plr.evaluate(lct, plr)
+
+                    # Efficiency calculation
+                    eir = eir_ref * eir_f_lwt_lct * eir_plr_lct / plr
+
+                    if eir < 0:
+                        return 999
+
+                else:
+                    return -999
+
+                # Convert efficiency to kW/ton
+                eir = Units(eir, "eir")
+                kwpton = eir.conversion("kW/ton")
+
+                if output_report:
+                    cap_ton = self.ref_cap
+                    if self.ref_cap_unit != "ton":
+                        cap_ton = Units(self.ref_cap, self.ref_cap_unit).conversion(
+                            "ton"
+                        )
+                    part_report = f"""At {str(round(load * 100.0, 0)).replace('.0', '')}% load and AHRI rated conditions:
+                    - Entering condenser temperature: {round(ect[idx], 2)},
+                    - Leaving chiller temperature: {round(lwt, 2)},
+                    - Part load ratio: {round(plr, 2)},
+                    - Operating capacity: {round(cap_op * cap_ton, 2)} ton,
+                    - Power: {round(kwpton * cap_op * cap_ton, 2)} kW,
+                    - Efficiency: {round(kwpton, 3)} kW/ton
+                    """
+                    logging.info(part_report)
+
+                # Store efficiency for IPLV calculation
+                kwpton_lst.append(kwpton)
+
+                # Stop here for full load calculations
+                if eff_type == "full" and idx == 0:
+                    if unit != "kW/ton":
+                        kwpton = Units(kwpton, "kW/ton").conversion(unit)
+                    return kwpton
+
+            # Coefficients from AHRI Std 551/591
+            iplv = 1 / (
+                (0.01 / kwpton_lst[0])
+                + (0.42 / kwpton_lst[1])
+                + (0.45 / kwpton_lst[2])
+                + (0.12 / kwpton_lst[3])
+            )
+
+            if output_report:
+                logging.info(f"IPLV: {round(iplv, 3)} kW/ton")
+        except:
+            return -999
+
+        # Convert IPLV to desired unit
+        if unit != "kW/ton":
+            iplv_org = Units(iplv, "kW/ton")
+            iplv = iplv_org.conversion(unit)
+
+        return iplv
 
     def get_DX_curves(self):
         """Retrieve DX curves from the DX set_of_curves attribute.
