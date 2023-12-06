@@ -1,5 +1,6 @@
 from copper.chiller import *
 from copper.schema import *
+from copper.unitary_dx import *
 from copper.constants import LOGGING_FORMAT
 import sys
 
