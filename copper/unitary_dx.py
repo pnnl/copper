@@ -19,7 +19,7 @@ equipment_references = json.load(
 )
 
 
-class Unitarydx(Equipment):
+class Unitary_dx(Equipment):
     def __init__(
         self,
         ref_cap,
@@ -120,20 +120,23 @@ class Unitarydx(Equipment):
 
         # Temperatures at rated conditions
         AED, AEW, ect, lct = self.get_rated_temperatures(alt)
-
         # Retrieve curves
         #To DO check curvetypes
         curves = self.get_DX_curves()
-        cap_f_f = curves["cap_f_f"]
+        cap_f_f = curves["cap_f_ff"]
         cap_f_t = curves["cap_f_t"]
         eir_f_t = curves["eir_f_t"]
-        eir_f_f = curves["eir_f_f"]
+        eir_f_f = curves["eir_f_ff"]
         plf_f_plr = curves["plf_f_plr"]
         cap_f_AEW_ect = [cap_f_t.evaluate(AEW[0], item) for item in ect]
         eir_f_AEW_ect = [eir_f_t.evaluate(AEW[0], item) for item in ect]
         eir_f_ff = eir_f_f.evaluate(1,1)
         eir = [eir_ref * item * eir_f_ff for item in eir_f_AEW_ect]
-        ieer = 0.02*eir[0] + 0.617*eir[1] + 0.238*eir[2] + 0.125*eir[3]
+        for i in range(0,4):
+            x = Units(eir[i], "eir")
+            eir[i] = x.conversion("kW/ton")
+        ieer = 0.02/eir[0] + 0.617/eir[1] + 0.238/eir[2] + 0.125/eir[3]
+        #note eir = 1/COP, EER = COP*3.413
         return ieer
 
     def get_DX_curves(self):
@@ -147,12 +150,12 @@ class Unitarydx(Equipment):
         for curve in self.set_of_curves:
             if curve.out_var == "cap-f-t":
                 curves["cap_f_t"] = curve
-            elif curve.out_var == "cap-f-f":
-                curves["cap_f_f"] = curve
+            elif curve.out_var == "cap-f-ff":
+                curves["cap_f_ff"] = curve
             elif curve.out_var == "eir-f-t":
                 curves["eir_f_t"] = curve
-            elif curve.out_var == "eir-f-f":
-                curves["eir_f_f"] = curve
+            elif curve.out_var == "eir-f-ff":
+                curves["eir_f_ff"] = curve
             elif curve.out_var == "plf-f-plr":
                 curves["plf_f_plr"] = curve
         return curves
@@ -312,7 +315,7 @@ class Unitarydx(Equipment):
 
 if __name__=="__main__":
     lib = Library(path=unitary_dx_lib)
-    X = Unitarydx(compressor_type="centrifugal",
+    X = Unitary_dx(compressor_type="scroll",
             condenser_type="air",
             compressor_speed="constant",
             ref_cap=471000,
@@ -329,4 +332,5 @@ if __name__=="__main__":
     print(X.get_ref_values("cap-f-t"))
     print(X.get_ref_values("cap-f-f"))
     print(X.calc_rated_eff())
+    #SEER SEER2 HSPF HSPF2
     #print(X.get_ref_cond_flow_rate())
