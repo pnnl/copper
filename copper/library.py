@@ -14,6 +14,7 @@ location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "data", "chiller_curves.json")
 unitarydx_lib = os.path.join(location, "data", "unitary_dx_curves.json")
 
+
 class Library:
     def __init__(self, path=chiller_lib, rating_std="", export=False):
         self.path = path
@@ -44,13 +45,13 @@ class Library:
                         and not "alt" in p
                     ):
                         obj_args[p] = vals[p]
-                
+
                 # Temporarily set the part load efficiency to the
                 # full load efficiency, units are assumed to be
                 # the same
                 obj_args["part_eff_unit"] = vals["full_eff_unit"]
                 obj_args["part_eff"] = vals["full_eff"]
-                
+
                 # Create instance of the equipment
                 obj = eval("copper." + vals["eqp_type"].capitalize())(**obj_args)
 

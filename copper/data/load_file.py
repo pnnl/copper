@@ -1,4 +1,6 @@
 import json
+
+
 def load_json_file(file_path):
     """
     Load and print the content of a JSON file.
@@ -6,7 +8,7 @@ def load_json_file(file_path):
     file_path (str): The path to the JSON file.
     """
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             data = json.load(file)
             print(data[1])
     except FileNotFoundError:
@@ -16,5 +18,7 @@ def load_json_file(file_path):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-path = "./copper/data/DX_oat.json"
-load_json_file(path)
+
+if __name__ == "__main__":
+    path = "./copper/data/DX_oat.json"
+    load_json_file(path)

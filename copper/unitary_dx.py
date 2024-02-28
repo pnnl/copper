@@ -29,12 +29,12 @@ class Unitary_dx(Equipment):
         compressor_type,
         condenser_type,
         compressor_speed,
-        part_eff = 0,
-        part_eff_unit = "",
+        part_eff=0,
+        part_eff_unit="",
         set_of_curves="",
         part_eff_ref_std="ahri_340/360",
-        part_eff_ref_std_alt ="ahri_341/361",
-        model="simplified_bf", #what is this?
+        part_eff_ref_std_alt="ahri_341/361",
+        model="simplified_bf",  # what is this?
         sim_engine="energyplus",
     ):
         self.type = "unitary_dx"
@@ -84,24 +84,26 @@ class Unitary_dx(Equipment):
             }
 
     def get_eir_ref(self, alt):
-            """Get the reference EIR (energy input ratio) of an equipment.
-            may be move to equipment.py later
-            :param bool alt: Specify if the alternative equipment efficiency should be used to calculate the EIR
-            :return: Reference EIR
-            :rtype: float
+        """Get the reference EIR (energy input ratio) of an equipment.
+        may be move to equipment.py later
+        :param bool alt: Specify if the alternative equipment efficiency should be used to calculate the EIR
+        :return: Reference EIR
+        :rtype: float
 
-            """
-            # Retrieve equipment efficiency and unit
-            if alt:
-                ref_eff = self.full_eff_alt
-                ref_eff_unit = self.full_eff_unit_alt
-            else:
-                ref_eff = self.full_eff
-                ref_eff_unit = self.full_eff_unit
-            eff = Units(ref_eff, ref_eff_unit)
-            return eff.conversion("eir")
-    
-    def calc_rated_eff(self, eff_type = "ieer", unit="eer", output_report=False, alt=False):
+        """
+        # Retrieve equipment efficiency and unit
+        if alt:
+            ref_eff = self.full_eff_alt
+            ref_eff_unit = self.full_eff_unit_alt
+        else:
+            ref_eff = self.full_eff
+            ref_eff_unit = self.full_eff_unit
+        eff = Units(ref_eff, ref_eff_unit)
+        return eff.conversion("eir")
+
+    def calc_rated_eff(
+        self, eff_type="ieer", unit="eer", output_report=False, alt=False
+    ):
         """Calculate unitary DX equipment efficiency.
 
         :param str eff_type: Unitary DX equipment efficiency type, currently supported `full` (full load rating)
@@ -121,7 +123,7 @@ class Unitary_dx(Equipment):
         # Temperatures at rated conditions
         AED, AEW, ect, lct = self.get_rated_temperatures(alt)
         # Retrieve curves
-        #To DO check curvetypes
+        # To DO check curvetypes
         curves = self.get_DX_curves()
         cap_f_f = curves["cap_f_ff"]
         cap_f_t = curves["cap_f_t"]
@@ -130,13 +132,13 @@ class Unitary_dx(Equipment):
         plf_f_plr = curves["plf_f_plr"]
         cap_f_AEW_ect = [cap_f_t.evaluate(AEW[0], item) for item in ect]
         eir_f_AEW_ect = [eir_f_t.evaluate(AEW[0], item) for item in ect]
-        eir_f_ff = eir_f_f.evaluate(1,1)
+        eir_f_ff = eir_f_f.evaluate(1, 1)
         eir = [eir_ref * item * eir_f_ff for item in eir_f_AEW_ect]
-        for i in range(0,4):
+        for i in range(0, 4):
             x = Units(eir[i], "eir")
             eir[i] = x.conversion("kW/ton")
-        ieer = 0.02/eir[0] + 0.617/eir[1] + 0.238/eir[2] + 0.125/eir[3]
-        #note eir = 1/COP, EER = COP*3.413
+        ieer = 0.02 / eir[0] + 0.617 / eir[1] + 0.238 / eir[2] + 0.125 / eir[3]
+        # note eir = 1/COP, EER = COP*3.413
         return ieer
 
     def get_DX_curves(self):
@@ -175,23 +177,20 @@ class Unitary_dx(Equipment):
         DX_data = equipment_references[self.type][std][self.condenser_type]
         # Air Entering Indoor Drybulb
         AED = [
-            Equipment.convert_to_deg_c(t, DX_data["AE_unit"])
-            for t in DX_data["AED"]
+            Equipment.convert_to_deg_c(t, DX_data["AE_unit"]) for t in DX_data["AED"]
         ]
         # Air Entering Indoor Wetbulb
         AEW = [
-            Equipment.convert_to_deg_c(t, DX_data["AE_unit"])
-            for t in DX_data["AEW"]
+            Equipment.convert_to_deg_c(t, DX_data["AE_unit"]) for t in DX_data["AEW"]
         ]
-        #Outdoor Water/Air entering
+        # Outdoor Water/Air entering
         ect = [
-            Equipment.convert_to_deg_c(t, DX_data["ect_unit"])
-            for t in DX_data["ect"]
+            Equipment.convert_to_deg_c(t, DX_data["ect_unit"]) for t in DX_data["ect"]
         ]
-        #Outdoor Water/Air leaving
+        # Outdoor Water/Air leaving
         lct = Equipment.convert_to_deg_c(DX_data["lct"], DX_data["lct_unit"])
         return [AED, AEW, ect, lct]
-    
+
     def get_lib_and_filters(self, lib_path=unitary_dx_lib):
         """Get unitary DX equipment library object and unitary DX equipment specific filters.
 
@@ -285,6 +284,7 @@ class Unitary_dx(Equipment):
         self.ranges = self.get_ranges()
         curves = SetsofCurves(sets=csets, eqp=self)
         return curves
+
     """
     def calc_eff_ect(self, cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect, lwt, load):
         Calculate DX system efficiency
@@ -313,24 +313,27 @@ class Unitary_dx(Equipment):
         return eir
     """
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     lib = Library(path=unitary_dx_lib)
-    X = Unitary_dx(compressor_type="scroll",
-            condenser_type="air",
-            compressor_speed="constant",
-            ref_cap=471000,
-            ref_cap_unit="W",
-            full_eff=5.89,
-            full_eff_unit="cop",
-            part_eff_ref_std="ahri_340/360",
-            model="X",
-            sim_engine="energyplus",
-            set_of_curves=lib.get_set_of_curves_by_name("0").curves,)
-    
+    X = Unitary_dx(
+        compressor_type="scroll",
+        condenser_type="air",
+        compressor_speed="constant",
+        ref_cap=471000,
+        ref_cap_unit="W",
+        full_eff=5.89,
+        full_eff_unit="cop",
+        part_eff_ref_std="ahri_340/360",
+        model="X",
+        sim_engine="energyplus",
+        set_of_curves=lib.get_set_of_curves_by_name("0").curves,
+    )
+
     #
-    #print(lib.get_set_of_curves_by_name("0").curves)
+    # print(lib.get_set_of_curves_by_name("0").curves)
     print(X.get_ref_values("cap-f-t"))
     print(X.get_ref_values("cap-f-f"))
     print(X.calc_rated_eff())
-    #SEER SEER2 HSPF HSPF2
-    #print(X.get_ref_cond_flow_rate())
+    # SEER SEER2 HSPF HSPF2
+    # print(X.get_ref_cond_flow_rate())

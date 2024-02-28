@@ -1,4 +1,6 @@
 from copper.units import *
+
+
 def output(ref, ref_unit, load, ect, idx, lwt, plr, cap_op, kwpton):
     # Convert the reference capacity to tons if necessary
     cap_ton = ref
