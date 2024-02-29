@@ -682,11 +682,6 @@ class Curve:
         if self.y_max is None:
             self.y_max = 999
 
-        if self.out_min is "":
-            self.out_min = -999
-        if self.out_max is "":
-            self.out_max = 999
-
         x = min(max(x, self.x_min), self.x_max)
         y = min(max(y, self.y_min), self.y_max)
 

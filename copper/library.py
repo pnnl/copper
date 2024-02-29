@@ -4,22 +4,21 @@ library.py
 This is the library module of Copper. It contains functions used to parse the JSON library files.
 """
 
-import json, inspect
+import json, inspect, copper
 from copper.units import *
 from copper.curves import *
 import copper.chiller
-import copper.unitary_dx
+import copper.unitarydirectexpansion
 
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "data", "chiller_curves.json")
-unitarydx_lib = os.path.join(location, "data", "unitary_dx_curves.json")
+unitarydx_lib = os.path.join(location, "data", "unitarydirectexpansion_curves.json")
 
 
 class Library:
     def __init__(self, path=chiller_lib, rating_std="", export=False):
         self.path = path
         self.rating_std = rating_std
-
         # Load library
         self.data = json.loads(open(self.path, "r").read())
 
@@ -29,8 +28,10 @@ class Library:
             # if full load efficiency is not specified
             if not vals["full_eff"] is None and vals["condenser_type"] != "hr_scroll":
                 # Get equipment properties
+                class_name = vals["eqp_type"][0].upper() + vals["eqp_type"][1:]
+                full_class_path = "copper." + class_name
                 props = inspect.getfullargspec(
-                    eval("copper." + vals["eqp_type"].capitalize()).__init__
+                    eval(full_class_path).__init__
                 )[0]
                 if "self" in props:
                     props.remove("self")
@@ -53,7 +54,7 @@ class Library:
                 obj_args["part_eff"] = vals["full_eff"]
 
                 # Create instance of the equipment
-                obj = eval("copper." + vals["eqp_type"].capitalize())(**obj_args)
+                obj = eval(full_class_path)(**obj_args)
 
                 # Retrieve curves for library item
                 obj_args["set_of_curves"] = self.get_set_of_curves_by_name(item).curves
@@ -66,7 +67,7 @@ class Library:
                     obj_args["part_eff_ref_std"] = self.rating_std
 
                 # Update instance of the equipment
-                obj = eval("copper." + vals["eqp_type"].capitalize())(**obj_args)
+                obj = eval(full_class_path)(**obj_args)
 
                 # Compute part load efficiency
                 part_eff = obj.calc_rated_eff(
@@ -92,8 +93,10 @@ class Library:
 
         """
         # Get equipment properties
+        class_name = data["eqp_type"][0].upper() + data["eqp_type"][1:]
+        full_class_path = "copper." + class_name
         props = inspect.getfullargspec(
-            eval("copper." + data["eqp_type"].capitalize()).__init__
+            eval(full_class_path).__init__
         )[0]
         props.remove("self")
 
@@ -111,7 +114,7 @@ class Library:
         obj_args["part_eff"] = data["full_eff"]
 
         # Create instance of the equipment
-        obj = eval("copper." + data["eqp_type"].capitalize())(**obj_args)
+        obj = eval(full_class_path)(**obj_args)
 
         return obj
 
@@ -162,10 +165,11 @@ class Library:
         # Retrieve identified equipment's sets of curves from the library
         for name, props in eqp_match.items():
             c_set = SetofCurves()
-
+            class_name = props["eqp_type"][0].upper() + props["eqp_type"][1:]
+            full_class_path = "copper." + class_name
             # Get equipment properties
             eqp_props = inspect.getfullargspec(
-                eval("copper." + props["eqp_type"].capitalize()).__init__
+                eval(full_class_path).__init__
             )[0]
             eqp_props.remove("self")
 
@@ -184,9 +188,9 @@ class Library:
                         pass
                     else:
                         obj_args[p] = props[p]
-
+            
             # Create instance of the equipment
-            obj = eval("copper." + props["eqp_type"].capitalize())(**obj_args)
+            obj = eval(full_class_path)(**obj_args)
             c_set.eqp = obj
 
             # Retrive all attributes of the sets of curves object
@@ -277,6 +281,7 @@ class Library:
             c_set.curves = c_lst
             return c_set
         except:
+            print(self.load_obj(self.data[name]))
             raise ValueError("Cannot find curve in library.")
 
     def get_curve(self, c, c_name, eqp):

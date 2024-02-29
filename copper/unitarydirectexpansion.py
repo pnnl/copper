@@ -12,14 +12,14 @@ from copper.equipment import *
 
 location = os.path.dirname(os.path.realpath(__file__))
 unitary_dx_lib = os.path.join(
-    location, "data", "unitary_dx_curves.json"
+    location, "data", "unitarydirectexpansion_curves.json"
 )  # TODO: add the library file.
 equipment_references = json.load(
     open(os.path.join(location, "data", "equipment_references.json"), "r")
 )
 
 
-class Unitary_dx(Equipment):
+class UnitaryDirectExpansion(Equipment):
     def __init__(
         self,
         ref_cap,
@@ -33,11 +33,11 @@ class Unitary_dx(Equipment):
         part_eff_unit="",
         set_of_curves="",
         part_eff_ref_std="ahri_340/360",
-        part_eff_ref_std_alt="ahri_341/361",
-        model="simplified_bf",  # what is this?
+        part_eff_ref_std_alt=None,
+        model="simplified_bf",
         sim_engine="energyplus",
     ):
-        self.type = "unitary_dx"
+        self.type = "UnitaryDirectExpansion"
         self.ref_cap = ref_cap
         self.ref_cap_unit = ref_cap_unit
         self.full_eff = full_eff
@@ -58,7 +58,7 @@ class Unitary_dx(Equipment):
 
         # Defined plotting ranges and (rated) temperature for normalization
         nb_val = 50
-        if self.model == "X":
+        if self.model == "simplified_bf":
             self.plotting_range = {
                 "eir-f-t": {
                     "x1_min": AEW,
@@ -177,11 +177,11 @@ class Unitary_dx(Equipment):
         DX_data = equipment_references[self.type][std][self.condenser_type]
         # Air Entering Indoor Drybulb
         AED = [
-            Equipment.convert_to_deg_c(t, DX_data["AE_unit"]) for t in DX_data["AED"]
+            Equipment.convert_to_deg_c(t, DX_data["ae_unit"]) for t in DX_data["aed"]
         ]
         # Air Entering Indoor Wetbulb
         AEW = [
-            Equipment.convert_to_deg_c(t, DX_data["AE_unit"]) for t in DX_data["AEW"]
+            Equipment.convert_to_deg_c(t, DX_data["ae_unit"]) for t in DX_data["aew"]
         ]
         # Outdoor Water/Air entering
         ect = [
@@ -201,7 +201,7 @@ class Unitary_dx(Equipment):
         """
         lib = Library(path=lib_path)
         filters = [
-            ("eqp_type", "UnitaryDX"),
+            ("eqp_type", "UnitaryDirectExpansion"),
             ("condenser_type", self.condenser_type),
             ("sim_engine", self.sim_engine),
             ("model", self.model),
@@ -285,55 +285,3 @@ class Unitary_dx(Equipment):
         curves = SetsofCurves(sets=csets, eqp=self)
         return curves
 
-    """
-    def calc_eff_ect(self, cap_f_t, eir_f_t, eir_f_plr, eir_ref, ect, lwt, load):
-        Calculate DX system efficiency
-        :param Curve cap_f_t: Capacity curve modifier as a function of temperature (LWT and ECT)
-        :param Curve eir_f_t: Energy Input Ratio curve modifier as a function of temperature (LWT and ECT)
-        :param Curve eir_f_plr: Energy Input Ratio curve modifier as a function of part load ratio
-        :param float eir_ref: Reference EIR
-        :param float ect: Entering condenser temperature in deg. C
-        :param float lwt: Leaving water temperature in deg. C
-        :param float load: Percentage load, as defined in AHRI 550/590
-        # Temperature adjustments
-        dt = ect - lwt
-        cap_f_lwt_ect = cap_f_t.evaluate(lwt, ect)
-        eir_f_lwt_ect = eir_f_t.evaluate(lwt, ect)
-        cap_op = cap_f_lwt_ect
-
-        # PLR adjustments
-        plr = load * cap_f_t.evaluate(lwt, self.ref_ect) / cap_op
-        if plr <= self.min_unloading:
-            plr = self.min_unloading
-        eir_plr = eir_f_plr.evaluate(plr, dt)
-
-        # Efficiency calculation
-        eir = eir_ref * eir_f_lwt_ect * eir_plr / plr
-
-        return eir
-    """
-
-
-if __name__ == "__main__":
-    lib = Library(path=unitary_dx_lib)
-    X = Unitary_dx(
-        compressor_type="scroll",
-        condenser_type="air",
-        compressor_speed="constant",
-        ref_cap=471000,
-        ref_cap_unit="W",
-        full_eff=5.89,
-        full_eff_unit="cop",
-        part_eff_ref_std="ahri_340/360",
-        model="X",
-        sim_engine="energyplus",
-        set_of_curves=lib.get_set_of_curves_by_name("0").curves,
-    )
-
-    #
-    # print(lib.get_set_of_curves_by_name("0").curves)
-    print(X.get_ref_values("cap-f-t"))
-    print(X.get_ref_values("cap-f-f"))
-    print(X.calc_rated_eff())
-    # SEER SEER2 HSPF HSPF2
-    # print(X.get_ref_cond_flow_rate())
