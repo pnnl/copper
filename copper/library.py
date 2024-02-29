@@ -273,7 +273,6 @@ class Library:
             c_set.curves = c_lst
             return c_set
         except:
-            print(self.load_obj(self.data[name]))
             raise ValueError("Cannot find curve in library.")
 
     def get_curve(self, c, c_name, eqp):
