@@ -284,4 +284,3 @@ class UnitaryDirectExpansion(Equipment):
         self.ranges = self.get_ranges()
         curves = SetsofCurves(sets=csets, eqp=self)
         return curves
-

@@ -30,9 +30,7 @@ class Library:
                 # Get equipment properties
                 class_name = vals["eqp_type"][0].upper() + vals["eqp_type"][1:]
                 full_class_path = "copper." + class_name
-                props = inspect.getfullargspec(
-                    eval(full_class_path).__init__
-                )[0]
+                props = inspect.getfullargspec(eval(full_class_path).__init__)[0]
                 if "self" in props:
                     props.remove("self")
 
@@ -95,9 +93,7 @@ class Library:
         # Get equipment properties
         class_name = data["eqp_type"][0].upper() + data["eqp_type"][1:]
         full_class_path = "copper." + class_name
-        props = inspect.getfullargspec(
-            eval(full_class_path).__init__
-        )[0]
+        props = inspect.getfullargspec(eval(full_class_path).__init__)[0]
         props.remove("self")
 
         # Set the equipment properties
@@ -168,9 +164,7 @@ class Library:
             class_name = props["eqp_type"][0].upper() + props["eqp_type"][1:]
             full_class_path = "copper." + class_name
             # Get equipment properties
-            eqp_props = inspect.getfullargspec(
-                eval(full_class_path).__init__
-            )[0]
+            eqp_props = inspect.getfullargspec(eval(full_class_path).__init__)[0]
             eqp_props.remove("self")
 
             # Set the equipment properties
@@ -188,7 +182,7 @@ class Library:
                         pass
                     else:
                         obj_args[p] = props[p]
-            
+
             # Create instance of the equipment
             obj = eval(full_class_path)(**obj_args)
             c_set.eqp = obj
