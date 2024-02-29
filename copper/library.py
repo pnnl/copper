@@ -7,8 +7,6 @@ This is the library module of Copper. It contains functions used to parse the JS
 import json, inspect, copper
 from copper.units import *
 from copper.curves import *
-import copper.chiller
-import copper.unitarydirectexpansion
 
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "data", "chiller_curves.json")
