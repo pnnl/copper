@@ -13,7 +13,7 @@ from copper.equipment import *
 location = os.path.dirname(os.path.realpath(__file__))
 unitary_dx_lib = os.path.join(
     location, "data", "unitarydirectexpansion_curves.json"
-)  # TODO: add the library file.
+)
 equipment_references = json.load(
     open(os.path.join(location, "data", "equipment_references.json"), "r")
 )
@@ -53,7 +53,7 @@ class UnitaryDirectExpansion(Equipment):
         self.condenser_type = "air"
         # Define rated temperatures
         # air entering drybulb,air entering wetbulb, outdoor enter, outdoor leaving
-        AED, AEW, ect, lct = self.get_rated_temperatures()
+        aed, aew, ect, lct = self.get_rated_temperatures()
         ect = ect[0]
 
         # Defined plotting ranges and (rated) temperature for normalization
@@ -61,18 +61,18 @@ class UnitaryDirectExpansion(Equipment):
         if self.model == "simplified_bf":
             self.plotting_range = {
                 "eir-f-t": {
-                    "x1_min": AEW,
-                    "x1_max": AEW,
-                    "x1_norm": AEW,
+                    "x1_min": aew,
+                    "x1_max": aew,
+                    "x1_norm": aew,
                     "nbval": nb_val,
                     "x2_min": 10,
                     "x2_max": 40,
                     "x2_norm": ect,
                 },
                 "cap-f-t": {
-                    "x1_min": AEW,
-                    "x1_max": AEW,
-                    "x1_norm": AEW,
+                    "x1_min": aew,
+                    "x1_max": aew,
+                    "x1_norm": aew,
                     "nbval": 50,
                     "x2_min": 10,
                     "x2_max": 40,
@@ -83,24 +83,6 @@ class UnitaryDirectExpansion(Equipment):
                 "plf-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
             }
 
-    def get_eir_ref(self, alt):
-        """Get the reference EIR (energy input ratio) of an equipment.
-        may be move to equipment.py later
-        :param bool alt: Specify if the alternative equipment efficiency should be used to calculate the EIR
-        :return: Reference EIR
-        :rtype: float
-
-        """
-        # Retrieve equipment efficiency and unit
-        if alt:
-            ref_eff = self.full_eff_alt
-            ref_eff_unit = self.full_eff_unit_alt
-        else:
-            ref_eff = self.full_eff
-            ref_eff_unit = self.full_eff_unit
-        eff = Units(ref_eff, ref_eff_unit)
-        return eff.conversion("eir")
-
     def calc_rated_eff(
         self, eff_type="ieer", unit="eer", output_report=False, alt=False
     ):
@@ -109,37 +91,61 @@ class UnitaryDirectExpansion(Equipment):
         :param str eff_type: Unitary DX equipment efficiency type, currently supported `full` (full load rating)
                              and `part` (part load rating)
         :param str unit: Efficiency unit
+        :param bool output_report: Indicate output report generation
+        :param bool alt: Indicate the DX system alternate standard rating should be used
         :return: Unitary DX Equipment rated efficiency
         :rtype: float
 
         """
+        FanPower = 7000 #Q1: how to deal with fan power? place holder for fan power Btu/h
+        if alt:
+            std = self.part_eff_ref_std_alt
+        else:
+            std = self.part_eff_ref_std
         # Get reference eir
-        eir_ref = self.get_eir_ref(alt)
+        eir_ref = Equipment.get_eir_ref(alt)
         load_ref = 1
 
         # List of equipment efficiency for each load
         kwpton_lst = []
 
         # Temperatures at rated conditions
-        AED, AEW, ect, lct = self.get_rated_temperatures(alt)
+        aed, aew, ect, lct = self.get_rated_temperatures(alt)
         # Retrieve curves
-        # To DO check curvetypes
         curves = self.get_DX_curves()
         cap_f_f = curves["cap_f_ff"]
         cap_f_t = curves["cap_f_t"]
         eir_f_t = curves["eir_f_t"]
         eir_f_f = curves["eir_f_ff"]
         plf_f_plr = curves["plf_f_plr"]
-        cap_f_AEW_ect = [cap_f_t.evaluate(AEW[0], item) for item in ect]
-        eir_f_AEW_ect = [eir_f_t.evaluate(AEW[0], item) for item in ect]
+        cap_f_aew_ect = [cap_f_t.evaluate(aew[0], item) for item in ect]
+        eir_f_aew_ect = [eir_f_t.evaluate(aew[0], item) for item in ect]
         eir_f_ff = eir_f_f.evaluate(1, 1)
-        eir = [eir_ref * item * eir_f_ff for item in eir_f_AEW_ect]
+        cap_f_ff = cap_f_f.evaluate(1, 1)
+        eir = [eir_ref * item * eir_f_ff for item in eir_f_aew_ect]
         for i in range(0, 4):
             x = Units(eir[i], "eir")
             eir[i] = x.conversion("kW/ton")
-        ieer = 0.02 / eir[0] + 0.617 / eir[1] + 0.238 / eir[2] + 0.125 / eir[3]
+        NumOfReducedCap = equipment_references[self.type][std]['coef']['NumOfReducedCap']
+        ReducedPLR = equipment_references[self.type][std]['coef']['ReducedPLR']
+        WeightingFactor = equipment_references[self.type][std]['coef']['WeightingFactor']
+        NetCoolingCapRated = self.ref_cap # it may not be correct
+        for RedCapNum in range(NumOfReducedCap):
+            """
+            Q2: do we need this part? I dont see reduced test condition in the standard 340
+            if ReducedPLR[RedCapNum] > 0.444:
+                OutdoorUnitInletAirDryBulbTempReduced = 5.0 + 30.0 * ReducedPLR[RedCapNum]
+            else:
+                OutdoorUnitInletAirDryBulbTempReduced = OADBTempLowReducedCapacityTest
+            """
+            NetCoolingCapReduced = self.ref_cap*cap_f_aew_ect[RedCapNum]*cap_f_ff[RedCapNum] - FanPower
+            LoadFactor = ReducedPLR[RedCapNum] * NetCoolingCapRated / NetCoolingCapReduced if NetCoolingCapReduced > 0.0 else 1.0
+            DegradationCoeff = 1.130 - 0.130 * LoadFactor
+            ElecPowerReducedCap = DegradationCoeff * eir[RedCapNum] * (self.ref_cap * cap_f_aew_ect[RedCapNum]*cap_f_ff[RedCapNum])
+            EERReduced = (LoadFactor * NetCoolingCapReduced) / (LoadFactor * ElecPowerReducedCap + FanPower)
+            IEER = IEER + WeightingFactor[RedCapNum] * EERReduced
         # note eir = 1/COP, EER = COP*3.413
-        return ieer
+        return IEER
 
     def get_DX_curves(self):
         """Retrieve DX curves from the DX set_of_curves attribute.
@@ -176,11 +182,11 @@ class UnitaryDirectExpansion(Equipment):
             std = self.part_eff_ref_std
         DX_data = equipment_references[self.type][std][self.condenser_type]
         # Air Entering Indoor Drybulb
-        AED = [
+        aed = [
             Equipment.convert_to_deg_c(t, DX_data["ae_unit"]) for t in DX_data["aed"]
         ]
         # Air Entering Indoor Wetbulb
-        AEW = [
+        aew = [
             Equipment.convert_to_deg_c(t, DX_data["ae_unit"]) for t in DX_data["aew"]
         ]
         # Outdoor Water/Air entering
@@ -189,7 +195,7 @@ class UnitaryDirectExpansion(Equipment):
         ]
         # Outdoor Water/Air leaving
         lct = Equipment.convert_to_deg_c(DX_data["lct"], DX_data["lct_unit"])
-        return [AED, AEW, ect, lct]
+        return [aed, aew, ect, lct]
 
     def get_lib_and_filters(self, lib_path=unitary_dx_lib):
         """Get unitary DX equipment library object and unitary DX equipment specific filters.
@@ -238,7 +244,7 @@ class UnitaryDirectExpansion(Equipment):
         """Function to generate seed curves specific to a unitary DX equipment and sets relevant attributes (misc_attr, ranges).
 
         :param copper.library.Library lib: Unitary DX equipment library object
-        :param list fitlers: List of tuples containing the filter keys and values
+        :param list filters: List of tuples containing the filter keys and values
         :param list csets: List of set of curves object corresponding to selected unitary DX equipment from library
         :rtype: SetsofCurves
 
