@@ -11,9 +11,7 @@ from copper.library import *
 from copper.equipment import *
 
 location = os.path.dirname(os.path.realpath(__file__))
-unitary_dx_lib = os.path.join(
-    location, "data", "unitarydirectexpansion_curves.json"
-)
+unitary_dx_lib = os.path.join(location, "data", "unitarydirectexpansion_curves.json")
 equipment_references = json.load(
     open(os.path.join(location, "data", "equipment_references.json"), "r")
 )
@@ -97,7 +95,9 @@ class UnitaryDirectExpansion(Equipment):
         :rtype: float
 
         """
-        FanPower = 7000 #Q1: how to deal with fan power? place holder for fan power Btu/h
+        FanPower = (
+            7000  # Q1: how to deal with fan power? place holder for fan power Btu/h
+        )
         if alt:
             std = self.part_eff_ref_std_alt
         else:
@@ -126,10 +126,14 @@ class UnitaryDirectExpansion(Equipment):
         for i in range(0, 4):
             x = Units(eir[i], "eir")
             eir[i] = x.conversion("kW/ton")
-        NumOfReducedCap = equipment_references[self.type][std]['coef']['NumOfReducedCap']
-        ReducedPLR = equipment_references[self.type][std]['coef']['ReducedPLR']
-        WeightingFactor = equipment_references[self.type][std]['coef']['WeightingFactor']
-        NetCoolingCapRated = self.ref_cap # it may not be correct
+        NumOfReducedCap = equipment_references[self.type][std]["coef"][
+            "NumOfReducedCap"
+        ]
+        ReducedPLR = equipment_references[self.type][std]["coef"]["ReducedPLR"]
+        WeightingFactor = equipment_references[self.type][std]["coef"][
+            "WeightingFactor"
+        ]
+        NetCoolingCapRated = self.ref_cap  # it may not be correct
         for RedCapNum in range(NumOfReducedCap):
             """
             Q2: do we need this part? I dont see reduced test condition in the standard 340
@@ -138,11 +142,23 @@ class UnitaryDirectExpansion(Equipment):
             else:
                 OutdoorUnitInletAirDryBulbTempReduced = OADBTempLowReducedCapacityTest
             """
-            NetCoolingCapReduced = self.ref_cap*cap_f_aew_ect[RedCapNum]*cap_f_ff[RedCapNum] - FanPower
-            LoadFactor = ReducedPLR[RedCapNum] * NetCoolingCapRated / NetCoolingCapReduced if NetCoolingCapReduced > 0.0 else 1.0
+            NetCoolingCapReduced = (
+                self.ref_cap * cap_f_aew_ect[RedCapNum] * cap_f_ff[RedCapNum] - FanPower
+            )
+            LoadFactor = (
+                ReducedPLR[RedCapNum] * NetCoolingCapRated / NetCoolingCapReduced
+                if NetCoolingCapReduced > 0.0
+                else 1.0
+            )
             DegradationCoeff = 1.130 - 0.130 * LoadFactor
-            ElecPowerReducedCap = DegradationCoeff * eir[RedCapNum] * (self.ref_cap * cap_f_aew_ect[RedCapNum]*cap_f_ff[RedCapNum])
-            EERReduced = (LoadFactor * NetCoolingCapReduced) / (LoadFactor * ElecPowerReducedCap + FanPower)
+            ElecPowerReducedCap = (
+                DegradationCoeff
+                * eir[RedCapNum]
+                * (self.ref_cap * cap_f_aew_ect[RedCapNum] * cap_f_ff[RedCapNum])
+            )
+            EERReduced = (LoadFactor * NetCoolingCapReduced) / (
+                LoadFactor * ElecPowerReducedCap + FanPower
+            )
             IEER = IEER + WeightingFactor[RedCapNum] * EERReduced
         # note eir = 1/COP, EER = COP*3.413
         return IEER
