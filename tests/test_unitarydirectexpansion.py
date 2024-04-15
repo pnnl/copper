@@ -11,9 +11,8 @@ DX_lib = os.path.join(location, "../copper/data", "unitarydirectexpansion_curves
 
 
 class UnitaryDirectExpansion(TestCase):
-    lib = cp.Library(path=DX_lib)
-
     def test_calc_eff_ect(self):
+        lib = cp.Library(path=DX_lib)
         DX = cp.UnitaryDirectExpansion(
             compressor_type="scroll",
             condenser_type="air",
@@ -25,7 +24,7 @@ class UnitaryDirectExpansion(TestCase):
             part_eff_ref_std="ahri_340/360",
             model="simplified_bf",
             sim_engine="energyplus",
-            set_of_curves=DX_lib.get_set_of_curves_by_name("0").curves,
+            set_of_curves=lib.get_set_of_curves_by_name("0").curves,
         )
         cop_1 = round(5.981486044926383, 2)
         cop_2 = round(DX.calc_rated_eff(), 2)
