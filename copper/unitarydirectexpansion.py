@@ -26,7 +26,7 @@ class UnitaryDirectExpansion(Equipment):
         full_eff_unit,
         compressor_type,
         condenser_type,
-        compressor_speed, 
+        compressor_speed,
         part_eff=0,
         part_eff_unit="",
         set_of_curves="",
@@ -35,8 +35,8 @@ class UnitaryDirectExpansion(Equipment):
         model="simplified_bf",
         sim_engine="energyplus",
     ):
-        #To do, check inputs to the class
-        #seems some logic in lib.py blocks adding new inputs to the class
+        # To do, check inputs to the class
+        # seems some logic in lib.py blocks adding new inputs to the class
         fan_power_mode = "fix_speed"
         out_door_unit_inlet_air_dry_bulb_rated = 35
         out_door_unit_inlet_air_dry_bulb_reduced = 18.3
@@ -45,9 +45,9 @@ class UnitaryDirectExpansion(Equipment):
         ###################################################################
 
         self.type = "UnitaryDirectExpansion"
-        self.ref_cap = ref_cap # this is actually rated total capacity, 
-        #but chiller use ref, so here use ref for consistant
-        #To Do, double check this naming
+        self.ref_cap = ref_cap  # this is actually rated total capacity,
+        # but chiller use ref, so here use ref for consistant
+        # To Do, double check this naming
         self.ref_cap_unit = ref_cap_unit
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
@@ -61,11 +61,17 @@ class UnitaryDirectExpansion(Equipment):
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = "air"
         self.fan_power_mode = fan_power_mode
-        #To do, how to deal with variable speed fan, here is place holder
+        # To do, how to deal with variable speed fan, here is place holder
         self.fan_power = fan_power
-        self.out_door_unit_inlet_air_dry_bulb_rated = out_door_unit_inlet_air_dry_bulb_rated #35 degc
-        self.out_door_unit_inlet_air_dry_bulb_reduced = out_door_unit_inlet_air_dry_bulb_reduced #18.3 degc
-        self.cooling_coil_inlet_air_wet_bulb = cooling_coil_inlet_air_wet_bulb #19.44, 67F
+        self.out_door_unit_inlet_air_dry_bulb_rated = (
+            out_door_unit_inlet_air_dry_bulb_rated  # 35 degc
+        )
+        self.out_door_unit_inlet_air_dry_bulb_reduced = (
+            out_door_unit_inlet_air_dry_bulb_reduced  # 18.3 degc
+        )
+        self.cooling_coil_inlet_air_wet_bulb = (
+            cooling_coil_inlet_air_wet_bulb  # 19.44, 67F
+        )
         # Define rated temperatures
         # air entering drybulb,air entering wetbulb, outdoor enter, outdoor leaving
         aed, aew, ect, lct = self.get_rated_temperatures()
@@ -123,7 +129,7 @@ class UnitaryDirectExpansion(Equipment):
         eir_f_t = curves["eir_f_t"]
         eir_f_f = curves["eir_f_ff"]
         plf_f_plr = curves["plf_f_plr"]
-        TotCapFlowModFac  = cap_f_f.evaluate(1, 1)
+        TotCapFlowModFac = cap_f_f.evaluate(1, 1)
         EIRFlowModFac = eir_f_f.evaluate(1, 1)
         NumOfReducedCap = equipment_references[self.type][std]["coef"][
             "NumOfReducedCap"
@@ -132,20 +138,35 @@ class UnitaryDirectExpansion(Equipment):
         WeightingFactor = equipment_references[self.type][std]["coef"][
             "WeightingFactor"
         ]
-        TotCapTempModFac = cap_f_t.evaluate(self.cooling_coil_inlet_air_wet_bulb, self.out_door_unit_inlet_air_dry_bulb_rated)
-        NetCoolingCapRated = self.ref_cap*TotCapTempModFac*TotCapFlowModFac - self.fan_power
-        RatedCOP = self.full_eff #To do: check if it's correct
+        TotCapTempModFac = cap_f_t.evaluate(
+            self.cooling_coil_inlet_air_wet_bulb,
+            self.out_door_unit_inlet_air_dry_bulb_rated,
+        )
+        NetCoolingCapRated = (
+            self.ref_cap * TotCapTempModFac * TotCapFlowModFac - self.fan_power
+        )
+        RatedCOP = self.full_eff  # To do: check if it's correct
         IEER = 0
         for RedCapNum in range(NumOfReducedCap):
             if ReducedPLR[RedCapNum] > 0.444:
-                OutdoorUnitInletAirDryBulbTempReduced = 5.0 + 30.0 * ReducedPLR[RedCapNum]
+                OutdoorUnitInletAirDryBulbTempReduced = (
+                    5.0 + 30.0 * ReducedPLR[RedCapNum]
+                )
             else:
-                OutdoorUnitInletAirDryBulbTempReduced = self.out_door_unit_inlet_air_dry_bulb_reduced
-            TotCapTempModFac = cap_f_t.evaluate(self.cooling_coil_inlet_air_wet_bulb, OutdoorUnitInletAirDryBulbTempReduced)
-            NetCoolingCapReduced = (
-                self.ref_cap * TotCapTempModFac * TotCapFlowModFac  - self.fan_power
+                OutdoorUnitInletAirDryBulbTempReduced = (
+                    self.out_door_unit_inlet_air_dry_bulb_reduced
+                )
+            TotCapTempModFac = cap_f_t.evaluate(
+                self.cooling_coil_inlet_air_wet_bulb,
+                OutdoorUnitInletAirDryBulbTempReduced,
             )
-            EIRTempModFac = eir_f_t.evaluate(self.cooling_coil_inlet_air_wet_bulb, OutdoorUnitInletAirDryBulbTempReduced)
+            NetCoolingCapReduced = (
+                self.ref_cap * TotCapTempModFac * TotCapFlowModFac - self.fan_power
+            )
+            EIRTempModFac = eir_f_t.evaluate(
+                self.cooling_coil_inlet_air_wet_bulb,
+                OutdoorUnitInletAirDryBulbTempReduced,
+            )
             if RatedCOP > 0.0:
                 EIR = EIRTempModFac * EIRFlowModFac / RatedCOP
             else:

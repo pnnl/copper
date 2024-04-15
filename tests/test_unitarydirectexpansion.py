@@ -9,6 +9,7 @@ import os
 location = os.path.dirname(os.path.realpath(__file__))
 DX_lib = os.path.join(location, "../copper/data", "unitarydirectexpansion_curves.json")
 
+
 class UnitaryDirectExpansion(TestCase):
     lib = cp.Library(path=DX_lib)
 
@@ -26,6 +27,6 @@ class UnitaryDirectExpansion(TestCase):
             sim_engine="energyplus",
             set_of_curves=DX_lib.get_set_of_curves_by_name("0").curves,
         )
-        cop_1 = round(5.981486044926383,2)
+        cop_1 = round(5.981486044926383, 2)
         cop_2 = round(DX.calc_rated_eff(), 2)
         self.assertTrue(cop_1 == cop_2, f"{cop_1} is different than {cop_2}")
