@@ -26,7 +26,7 @@ class UnitaryDirectExpansion(Equipment):
         full_eff_unit,
         compressor_type,
         condenser_type,
-        compressor_speed,
+        compressor_speed, 
         part_eff=0,
         part_eff_unit="",
         set_of_curves="",
@@ -35,8 +35,19 @@ class UnitaryDirectExpansion(Equipment):
         model="simplified_bf",
         sim_engine="energyplus",
     ):
+        #To do, check inputs to the class
+        #seems some logic in lib.py blocks adding new inputs to the class
+        fan_power_mode = "fix_speed"
+        out_door_unit_inlet_air_dry_bulb_rated = 35
+        out_door_unit_inlet_air_dry_bulb_reduced = 18.3
+        cooling_coil_inlet_air_wet_bulb = 19.44
+        fan_power = 7000
+        ###################################################################
+
         self.type = "UnitaryDirectExpansion"
-        self.ref_cap = ref_cap
+        self.ref_cap = ref_cap # this is actually rated total capacity, 
+        #but chiller use ref, so here use ref for consistant
+        #To Do, double check this naming
         self.ref_cap_unit = ref_cap_unit
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
@@ -49,6 +60,12 @@ class UnitaryDirectExpansion(Equipment):
         self.sim_engine = sim_engine
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = "air"
+        self.fan_power_mode = fan_power_mode
+        #To do, how to deal with variable speed fan, here is place holder
+        self.fan_power = fan_power
+        self.out_door_unit_inlet_air_dry_bulb_rated = out_door_unit_inlet_air_dry_bulb_rated #35 degc
+        self.out_door_unit_inlet_air_dry_bulb_reduced = out_door_unit_inlet_air_dry_bulb_reduced #18.3 degc
+        self.cooling_coil_inlet_air_wet_bulb = cooling_coil_inlet_air_wet_bulb #19.44, 67F
         # Define rated temperatures
         # air entering drybulb,air entering wetbulb, outdoor enter, outdoor leaving
         aed, aew, ect, lct = self.get_rated_temperatures()
@@ -95,22 +112,10 @@ class UnitaryDirectExpansion(Equipment):
         :rtype: float
 
         """
-        FanPower = (
-            7000  # Q1: how to deal with fan power? place holder for fan power Btu/h
-        )
         if alt:
             std = self.part_eff_ref_std_alt
         else:
             std = self.part_eff_ref_std
-        # Get reference eir
-        eir_ref = Equipment.get_eir_ref(alt)
-        load_ref = 1
-
-        # List of equipment efficiency for each load
-        kwpton_lst = []
-
-        # Temperatures at rated conditions
-        aed, aew, ect, lct = self.get_rated_temperatures(alt)
         # Retrieve curves
         curves = self.get_DX_curves()
         cap_f_f = curves["cap_f_ff"]
@@ -118,14 +123,8 @@ class UnitaryDirectExpansion(Equipment):
         eir_f_t = curves["eir_f_t"]
         eir_f_f = curves["eir_f_ff"]
         plf_f_plr = curves["plf_f_plr"]
-        cap_f_aew_ect = [cap_f_t.evaluate(aew[0], item) for item in ect]
-        eir_f_aew_ect = [eir_f_t.evaluate(aew[0], item) for item in ect]
-        eir_f_ff = eir_f_f.evaluate(1, 1)
-        cap_f_ff = cap_f_f.evaluate(1, 1)
-        eir = [eir_ref * item * eir_f_ff for item in eir_f_aew_ect]
-        for i in range(0, 4):
-            x = Units(eir[i], "eir")
-            eir[i] = x.conversion("kW/ton")
+        TotCapFlowModFac  = cap_f_f.evaluate(1, 1)
+        EIRFlowModFac = eir_f_f.evaluate(1, 1)
         NumOfReducedCap = equipment_references[self.type][std]["coef"][
             "NumOfReducedCap"
         ]
@@ -133,18 +132,24 @@ class UnitaryDirectExpansion(Equipment):
         WeightingFactor = equipment_references[self.type][std]["coef"][
             "WeightingFactor"
         ]
-        NetCoolingCapRated = self.ref_cap  # it may not be correct
+        TotCapTempModFac = cap_f_t.evaluate(self.cooling_coil_inlet_air_wet_bulb, self.out_door_unit_inlet_air_dry_bulb_rated)
+        NetCoolingCapRated = self.ref_cap*TotCapTempModFac*TotCapFlowModFac - self.fan_power
+        RatedCOP = self.full_eff #To do: check if it's correct
+        IEER = 0
         for RedCapNum in range(NumOfReducedCap):
-            """
-            Q2: do we need this part? I dont see reduced test condition in the standard 340
             if ReducedPLR[RedCapNum] > 0.444:
                 OutdoorUnitInletAirDryBulbTempReduced = 5.0 + 30.0 * ReducedPLR[RedCapNum]
             else:
-                OutdoorUnitInletAirDryBulbTempReduced = OADBTempLowReducedCapacityTest
-            """
+                OutdoorUnitInletAirDryBulbTempReduced = self.out_door_unit_inlet_air_dry_bulb_reduced
+            TotCapTempModFac = cap_f_t.evaluate(self.cooling_coil_inlet_air_wet_bulb, OutdoorUnitInletAirDryBulbTempReduced)
             NetCoolingCapReduced = (
-                self.ref_cap * cap_f_aew_ect[RedCapNum] * cap_f_ff[RedCapNum] - FanPower
+                self.ref_cap * TotCapTempModFac * TotCapFlowModFac  - self.fan_power
             )
+            EIRTempModFac = eir_f_t.evaluate(self.cooling_coil_inlet_air_wet_bulb, OutdoorUnitInletAirDryBulbTempReduced)
+            if RatedCOP > 0.0:
+                EIR = EIRTempModFac * EIRFlowModFac / RatedCOP
+            else:
+                EIR = 0.0
             LoadFactor = (
                 ReducedPLR[RedCapNum] * NetCoolingCapRated / NetCoolingCapReduced
                 if NetCoolingCapReduced > 0.0
@@ -153,14 +158,13 @@ class UnitaryDirectExpansion(Equipment):
             DegradationCoeff = 1.130 - 0.130 * LoadFactor
             ElecPowerReducedCap = (
                 DegradationCoeff
-                * eir[RedCapNum]
-                * (self.ref_cap * cap_f_aew_ect[RedCapNum] * cap_f_ff[RedCapNum])
+                * EIR
+                * (self.ref_cap * TotCapTempModFac * TotCapFlowModFac)
             )
             EERReduced = (LoadFactor * NetCoolingCapReduced) / (
-                LoadFactor * ElecPowerReducedCap + FanPower
+                LoadFactor * ElecPowerReducedCap + self.fan_power
             )
             IEER = IEER + WeightingFactor[RedCapNum] * EERReduced
-        # note eir = 1/COP, EER = COP*3.413
         return IEER
 
     def get_DX_curves(self):
