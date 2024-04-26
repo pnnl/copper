@@ -26,8 +26,12 @@ class UnitaryDirectExpansion(TestCase):
             sim_engine="energyplus",
             set_of_curves=lib.get_set_of_curves_by_name("0").curves,
             fan_power_mode="constant_speed",
-            fan_power=7000,
+            fan_power=7000
         )
         cop_1 = 5.98
         cop_2 = round(DX.calc_rated_eff(), 2)
         self.assertTrue(cop_1 == cop_2, f"{cop_1} is different than {cop_2}")
+# Run the tests
+import unittest
+if __name__ == '__main__':
+    unittest.main()

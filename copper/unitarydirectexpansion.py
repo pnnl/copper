@@ -33,14 +33,12 @@ class UnitaryDirectExpansion(Equipment):
         part_eff_ref_std_alt=None,
         model="simplified_bf",
         sim_engine="energyplus",
-        fan_power_mode="constant_speed",
         fan_power=7000,
         condenser_type="air",
+        fan_power_mode="constant_speed"
     ):
         self.type = "UnitaryDirectExpansion"
-        self.ref_cap = ref_cap  # this is actually rated total capacity,
-        # but chiller use ref, so here use ref for consistant
-        # To Do, double check this naming
+        self.ref_cap = ref_cap
         self.ref_cap_unit = ref_cap_unit
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
