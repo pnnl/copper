@@ -59,10 +59,13 @@
             },
             "coef":{
                 "name": "ieer",
-                "NumOfReducedCap": 4,
-                "ReducedPLR": [1.0, 0.75, 0.5, 0.25],
-                "WeightingFactor": [0.02,  0.617,  0.238, 0.125]
-            }
+                "numofreducedcap": 4,
+                "reducedplr": [1.0, 0.75, 0.5, 0.25],
+                "weightingfactor": [0.02,  0.617,  0.238, 0.125]
+            },
+            "outdoor_unit_inlet_air_dry_bulb_rated": 35,
+            "outdoor_unit_inlet_air_dry_bulb_reduced": 18.3,
+            "cooling_coil_inlet_air_wet_bulb": 19.44
         },
         "ahri_341/361": {}
     }
