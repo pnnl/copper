@@ -9,6 +9,7 @@ from copper.units import *
 from copper.curves import *
 from copper.library import *
 from copper.equipment import *
+import logging, json
 
 location = os.path.dirname(os.path.realpath(__file__))
 unitary_dx_lib = os.path.join(location, "data", "unitarydirectexpansion_curves.json")
@@ -20,25 +21,50 @@ equipment_references = json.load(
 class UnitaryDirectExpansion(Equipment):
     def __init__(
         self,
-        ref_cap,
         ref_cap_unit,
         full_eff,
         full_eff_unit,
         compressor_type,
         compressor_speed,
+        fan_power=None,
         part_eff=0,
+        ref_gross_cap=None,
+        ref_net_cap=None,
         part_eff_unit="",
         set_of_curves="",
         part_eff_ref_std="ahri_340/360",
         part_eff_ref_std_alt=None,
         model="simplified_bf",
         sim_engine="energyplus",
-        fan_power=7000,
         condenser_type="air",
-        fan_power_mode="constant_speed"
+        fan_control_mode="constant_speed",
     ):
         self.type = "UnitaryDirectExpansion"
-        self.ref_cap = ref_cap
+        if ref_gross_cap == None:
+            if ref_net_cap == None:
+                logging.error("Input must be one and only one capacity input")
+                raise ValueError("Input must be one and only one capacity input")
+            else:
+                if fan_power == None:
+                    fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
+                ref_gross_cap = ref_net_cap + fan_power
+        else:
+            if ref_net_cap != None:
+                logging.error("Input must be one and only one capacity input")
+                raise ValueError("Input must be one and only one capacity input")
+            if fan_power == None:
+                fan_power = (
+                    0.28434517
+                    * 400
+                    * 0.365
+                    * (ref_gross_cap / 1000)
+                    / (1 + 0.28434517 * 400 * 0.365)
+                )
+            ref_net_cap = ref_gross_cap - fan_power
+        self.ref_net_cap = ref_net_cap
+        self.ref_cap = ref_gross_cap
+        self.fan_power = fan_power
+        self.ref_net_cap = ref_net_cap
         self.ref_cap_unit = ref_cap_unit
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
@@ -51,8 +77,7 @@ class UnitaryDirectExpansion(Equipment):
         self.sim_engine = sim_engine
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = condenser_type
-        self.fan_power_mode = fan_power_mode
-        self.fan_power = fan_power
+        self.fan_control_mode = fan_control_mode
         # Define rated temperatures
         # air entering drybulb,air entering wetbulb, outdoor enter, outdoor leaving
         aed, aew, ect, lct = self.get_rated_temperatures()
@@ -119,7 +144,9 @@ class UnitaryDirectExpansion(Equipment):
             "weightingfactor"
         ]
         tot_cap_temp_mod_fac = cap_f_t.evaluate(
-            equipment_references[self.type][std]["cooling_coil_inlet_air_wet_bulb"],
+            equipment_references[self.type][std][
+                "cooling_coil_inlet_air_wet_bulb_rated"
+            ],
             equipment_references[self.type][std][
                 "outdoor_unit_inlet_air_dry_bulb_rated"
             ],
@@ -139,7 +166,9 @@ class UnitaryDirectExpansion(Equipment):
                     self.type
                 ][std]["outdoor_unit_inlet_air_dry_bulb_reduced"]
             tot_cap_temp_mod_fac = cap_f_t.evaluate(
-                equipment_references[self.type][std]["cooling_coil_inlet_air_wet_bulb"],
+                equipment_references[self.type][std][
+                    "cooling_coil_inlet_air_wet_bulb_rated"
+                ],
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
             )
             net_cooling_cap_reduced = (
@@ -147,13 +176,17 @@ class UnitaryDirectExpansion(Equipment):
                 - self.fan_power
             )
             eir_temp_mod_fac = eir_f_t.evaluate(
-                equipment_references[self.type][std]["cooling_coil_inlet_air_wet_bulb"],
+                equipment_references[self.type][std][
+                    "cooling_coil_inlet_air_wet_bulb_rated"
+                ],
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
             )
             if rated_cop > 0.0:
                 eir = eir_temp_mod_fac * eir_flow_mod_fac / rated_cop
             else:
                 eir = 0.0
+                logging.error("Input COP is 0!")
+                raise ValueError("Input COP is 0!")
             load_factor = (
                 reduced_plr[red_cap_num]
                 * net_cooling_cap_rated
@@ -173,7 +206,7 @@ class UnitaryDirectExpansion(Equipment):
             ieer += weighting_factor[red_cap_num] * eer_reduced
         return ieer
 
-    def get_DX_curves(self):
+    def get_dx_curves(self):
         """Retrieve DX curves from the DX set_of_curves attribute.
 
         :return: Dictionary of the curves associated with the object

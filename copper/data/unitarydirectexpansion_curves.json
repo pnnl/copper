@@ -109,7 +109,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "1": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -221,7 +225,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "2": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -333,7 +341,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "3": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -445,7 +457,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "4": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -557,7 +573,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "5": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -669,7 +689,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "6": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -781,7 +805,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "7": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -893,7 +921,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "8": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -1005,7 +1037,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "9": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -1117,7 +1153,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "10": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -1229,7 +1269,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "11": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -1341,7 +1385,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "12": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -1453,7 +1501,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "13": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -1565,7 +1617,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "14": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -1677,7 +1733,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "15": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -1789,7 +1849,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "16": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -1901,7 +1965,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "17": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -2013,7 +2081,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "18": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -2125,7 +2197,11 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     },
     "19": {
         "eqp_type": "UnitaryDirectExpansion",
@@ -2237,6 +2313,10 @@
                 "ref_ect": 35,
                 "units": "si"
             }
-        }
+        },
+        "fan_control_mode": null,
+        "fan_power": null,
+        "ref_gross_cap": 18101.22,
+        "ref_net_cap": null
     }
 }

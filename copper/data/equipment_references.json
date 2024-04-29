@@ -65,7 +65,7 @@
             },
             "outdoor_unit_inlet_air_dry_bulb_rated": 35,
             "outdoor_unit_inlet_air_dry_bulb_reduced": 18.3,
-            "cooling_coil_inlet_air_wet_bulb": 19.44
+            "cooling_coil_inlet_air_wet_bulb_rated": 19.44
         },
         "ahri_341/361": {}
     }
