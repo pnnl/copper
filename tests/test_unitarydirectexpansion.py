@@ -18,7 +18,6 @@ class UnitaryDirectExpansion(TestCase):
             condenser_type="air",
             compressor_speed="constant",
             ref_gross_cap=471000,
-            ref_cap_unit="W",
             full_eff=5.89,
             full_eff_unit="cop",
             part_eff_ref_std="ahri_340/360",
