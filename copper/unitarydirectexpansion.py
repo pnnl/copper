@@ -21,7 +21,6 @@ equipment_references = json.load(
 class UnitaryDirectExpansion(Equipment):
     def __init__(
         self,
-        ref_cap_unit,
         full_eff,
         full_eff_unit,
         compressor_type,
@@ -47,6 +46,8 @@ class UnitaryDirectExpansion(Equipment):
             else:
                 if fan_power == None:
                     fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
+                    # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240.
+                    logging.info(f"Default fan power used: {fan_power} kW")
                 ref_gross_cap = ref_net_cap + fan_power
         else:
             if ref_net_cap != None:
@@ -60,12 +61,11 @@ class UnitaryDirectExpansion(Equipment):
                     * (ref_gross_cap / 1000)
                     / (1 + 0.28434517 * 400 * 0.365)
                 )
+                logging.info(f"Default fan power used: {fan_power} kW")
             ref_net_cap = ref_gross_cap - fan_power
         self.ref_net_cap = ref_net_cap
-        self.ref_cap = ref_gross_cap
+        self.ref_gross_cap = ref_gross_cap
         self.fan_power = fan_power
-        self.ref_net_cap = ref_net_cap
-        self.ref_cap_unit = ref_cap_unit
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
         self.part_eff = part_eff
@@ -152,7 +152,8 @@ class UnitaryDirectExpansion(Equipment):
             ],
         )
         net_cooling_cap_rated = (
-            self.ref_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac - self.fan_power
+            self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
+            - self.fan_power
         )
         rated_cop = self.full_eff
         ieer = 0
@@ -172,7 +173,7 @@ class UnitaryDirectExpansion(Equipment):
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
             )
             net_cooling_cap_reduced = (
-                self.ref_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
+                self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
                 - self.fan_power
             )
             eir_temp_mod_fac = eir_f_t.evaluate(
@@ -198,7 +199,7 @@ class UnitaryDirectExpansion(Equipment):
             elec_power_reduced_cap = (
                 degradation_coeff
                 * eir
-                * (self.ref_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac)
+                * (self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac)
             )
             eer_reduced = (load_factor * net_cooling_cap_reduced) / (
                 load_factor * elec_power_reduced_cap + self.fan_power
@@ -330,8 +331,8 @@ class UnitaryDirectExpansion(Equipment):
 
         self.misc_attr = {
             "model": self.model,
-            "ref_cap": self.ref_cap,
-            "ref_cap_unit": "",
+            "ref_net_cap": self.net_cap,
+            "ref_gross_cap": self.ref_gross_cap,
             "full_eff": full_eff_cop,
             "part_eff": part_eff_cop,
             "ref_eff_unit": "",
