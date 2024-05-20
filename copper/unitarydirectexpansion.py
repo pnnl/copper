@@ -39,6 +39,9 @@ class UnitaryDirectExpansion(Equipment):
         fan_control_mode="constant_speed",
     ):
         self.type = "UnitaryDirectExpansion"
+        if model != "simplified_bf":
+            logging.error("Model must be 'simplified_bf'")
+            raise ValueError("Model must be 'simplified_bf'")
         if ref_gross_cap == None:
             if ref_net_cap == None:
                 logging.error("Input must be one and only one capacity input")
