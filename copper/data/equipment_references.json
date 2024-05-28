@@ -37,8 +37,36 @@
             }
         }
     },
-    "unitary_dx_equipment": {
-        "ahri_340/360": {},
+    "UnitaryDirectExpansion": {
+        "ahri_340/360": {
+            "water": {
+                "aed": [80,67],
+                "aew": [67,57],
+                "ae_unit": "degF",
+                "ect": [85.0, 73.5, 62.0, 55.0],
+                "ect_unit": "degF",
+                "lct": 95,
+                "lct_unit": "degF"
+            },
+            "air": {
+                "aed": [80,67],
+                "aew": [67,57],
+                "ae_unit": "degF",
+                "ect": [95.0, 81.5, 68.0, 65.0],
+                "ect_unit": "degF",
+                "lct": null,
+                "lct_unit": null
+            },
+            "coef":{
+                "name": "ieer",
+                "numofreducedcap": 4,
+                "reducedplr": [1.0, 0.75, 0.5, 0.25],
+                "weightingfactor": [0.02,  0.617,  0.238, 0.125]
+            },
+            "outdoor_unit_inlet_air_dry_bulb_rated": 35,
+            "outdoor_unit_inlet_air_dry_bulb_reduced": 18.3,
+            "cooling_coil_inlet_air_wet_bulb_rated": 19.44
+        },
         "ahri_341/361": {}
     }
 }
