@@ -1,0 +1,2598 @@
+{
+    "LCM074U4P": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9998999584082576
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9998999584082576
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "LCM150U4E": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.999989739906452
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.999989739906452
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "LCM120U4E": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9999048377138031
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9999048377138031
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "LCM102U4E": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9999274906531881
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9999274906531881
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "LCM092U4E": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9998671168433284
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9998671168433284
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 17.372222222222206,
+            "x_max": 21.81666666666672,
+            "y_min": 29.594444444444377,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "LCM156U4M": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "compressor_1": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9997363073506528
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9997363073506528
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_2": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9993799377036773
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9993799377036773
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_3": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.999689437383669
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.999689437383669
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        }
+    },
+    "LCM240U4M": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "compressor_1": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9999416450545751
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9999416450545751
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_2": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9999728628427433
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9999728628427433
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_3": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9956829834808737
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9956829834808737
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_4": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9999144074510415
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9999144074510415
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        }
+    },
+    "LCM180U4M": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "compressor_1": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.999582344415266
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.999582344415266
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_2": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9995910820032244
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9995910820032244
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_3": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.999531068899106
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.999531068899106
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        }
+    },
+    "LCM210U4M": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "compressor_1": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9998893518568842
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9998893518568842
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_2": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9996192626351397
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9996192626351397
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_3": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9999449193834514
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9999449193834514
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_4": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9997952739043421
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9997952739043421
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        }
+    },
+    "LCM300U4V": {
+        "eqp_type": "unitary_dx",
+        "source": "Lennox",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "compressor_1": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9995018581823428
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9995018581823428
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_2": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9995787418262502
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9995787418262502
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_3": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9996517398799832
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9996517398799832
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 18.48333333333329,
+                "y_max": 35.14999999999998,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        },
+        "compressor_4": {
+            "eir-f-t": {
+                "out_var": "eir-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9995538679489339
+            },
+            "cap-f-t": {
+                "out_var": "cap-f-t",
+                "type": "bi_quad",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si",
+                "rho": 0.9995538679489339
+            },
+            "eir-f-ff": {
+                "out_var": "eir-f-ff",
+                "type": "cubic"
+            },
+            "cap-f-ff": {
+                "out_var": "cap-f-ff",
+                "type": "cubic",
+                "x_min": 17.372222222222206,
+                "x_max": 21.81666666666672,
+                "y_min": 29.594444444444377,
+                "y_max": 46.26111111111112,
+                "out_min": "",
+                "out_max": "",
+                "ref_ect": 35,
+                "units": "si"
+            }
+        }
+    },
+    "D208122216": {
+        "eqp_type": "unitary_dx",
+        "source": "Daikin",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9922274364063842
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9922274364063842
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "DFC1803D000001S": {
+        "eqp_type": "unitary_dx",
+        "source": "Daikin",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9909452498426504
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9909452498426504
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "DFC2403D000001S": {
+        "eqp_type": "unitary_dx",
+        "source": "Daikin",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9922272331186908
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9922272331186908
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "DFC3003D000001S": {
+        "eqp_type": "unitary_dx",
+        "source": "Daikin",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9924555242108215
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9924555242108215
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 15.149999999999977,
+            "x_max": 21.81666666666672,
+            "y_min": 18.48333333333329,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A040": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9986006229837187
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9986006229837187
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A050": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 49.03888888888889,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9991890573779499
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 49.03888888888889,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9991890573779499
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 49.03888888888889,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A025": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9986817234586713
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9986817234586713
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A060": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9997118483390554
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9997118483390554
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A027": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9983740880645051
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9983740880645051
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A020": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 49.03888888888889,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9969063443215408
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 49.03888888888889,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9969063443215408
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 49.03888888888889,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A035": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9978164415480308
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9978164415480308
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A055HC": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9986332253872321
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9986332253872321
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A055": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9983440588866138
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9983440588866138
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P090HC": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9992801407167147
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9992801407167147
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P040": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9995032095294056
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9995032095294056
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P6050": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9996851637807813
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9996851637807813
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A075": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9994316709053829
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9994316709053829
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P100HC": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.999206736242209
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.999206736242209
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P100": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9993004219843938
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9993004219843938
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P070HC": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9987756674240537
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9987756674240537
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P6050HC": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9996225785642713
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9996225785642713
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P035HC": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.99811658401305
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.99811658401305
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50A060HC": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9992960799854615
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9992960799854615
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P030": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9993337040236424
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9993337040236424
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P070": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9990748721909899
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9990748721909899
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P040HC": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9989219992353233
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9989219992353233
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P090": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9994414769473897
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9994414769473897
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    },
+    "48_50P075HC": {
+        "eqp_type": "unitary_dx",
+        "source": "Carrier",
+        "model": "simplified_bf",
+        "ref_cap_unit": "W",
+        "condenser_type": "air",
+        "compressor_type": "scroll",
+        "compressor_speed": "constant/variable",
+        "part_eff_ref_st": "ahri_341/361",
+        "part_eff_ref_std_alt": "",
+        "eir-f-t": {
+            "out_var": "eir-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9993299575198348
+        },
+        "cap-f-t": {
+            "out_var": "cap-f-t",
+            "type": "bi_quad",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si",
+            "rho": 0.9993299575198348
+        },
+        "eir-f-ff": {
+            "out_var": "eir-f-ff",
+            "type": "cubic"
+        },
+        "cap-f-ff": {
+            "out_var": "cap-f-ff",
+            "type": "cubic",
+            "x_min": 14.038888888888891,
+            "x_max": 24.03888888888889,
+            "y_min": 24.03888888888889,
+            "y_max": 46.26111111111112,
+            "out_min": "",
+            "out_max": "",
+            "ref_ect": 35,
+            "units": "si"
+        }
+    }
+}
