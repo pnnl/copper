@@ -493,7 +493,8 @@ class SetofCurves:
         :param str path: Path and file name, do not include the extension,
                          it will be added based on the simulation engine
                          of the SetofCurves object.
-        :param str fmt: Input format type, currently not used. TODO: json, idf, inp.
+        :param str fmt: Input format type. Currently supported: csv, json, idf.
+        :param str name: Name of the set of curves.
         :return: Success
         :rtype: bool
 
@@ -506,9 +507,9 @@ class SetofCurves:
         for curve in self.curves:
             curve_type = curve.type
             if name != "":
-                curve_name = self.name.replace("/", "_").replace(" ", "_")
-            else:
                 curve_name = name
+            else:
+                curve_name = self.name.replace("/", "_").replace(" ", "_")
             if fmt == "idf":
                 if curve_type == "quad":
                     curve_type = "Curve:Quadratic"
@@ -529,9 +530,7 @@ class SetofCurves:
                         getattr(curve, "coeff{}".format(i))
                     )
                 curve_export += (
-                    "   {},\n".format(curve.x_min)
-                    if curve.x_min
-                    else "   0.0,\n"  # TODO: Temporary fix
+                    "   {},\n".format(curve.x_min) if curve.x_min else "   0.0,\n"
                 )
                 curve_export += (
                     "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
@@ -550,7 +549,7 @@ class SetofCurves:
                 filen = open(path + "/" + curve_name + ".{}".format(fmt), "w+")
                 filen.write(curve_export)
             elif fmt == "csv":
-                curve_export += f"{self.name},{curve.out_var},{curve.units},{curve.type},{curve.x_min},{curve.x_max},{curve.y_min},{curve.y_max}"
+                curve_export += f"{curve_name}_{curve.out_var},{curve.out_var},{curve.units},{curve.type},{curve.x_min},{curve.x_max},{curve.y_min},{curve.y_max}"
                 for i in range(1, curve.nb_coeffs() + 1):
                     curve_export += ",{}".format(getattr(curve, "coeff{}".format(i)))
                 curve_export += "\n"

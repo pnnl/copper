@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import CoolProp.CoolProp as CP
 import os
+import re
 
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "../copper/data", "chiller_curves.json")
@@ -60,15 +61,20 @@ class TestCurves(TestCase):
             model="ect_lwt",
             sim_engine="energyplus",
         )
-        c_set.eqp = chlr
         set_of_curves = lib.get_set_of_curves_by_name(c_name)
         self.assertTrue(round(set_of_curves.curves[0].evaluate(6.67, 35), 2) == 0.96)
 
         # Export curves
         set_of_curves.name = set_of_curves.name.replace("/", "_")
         set_of_curves.eqp = chlr
-        set_of_curves.sim_engine = "energyplus"
-        self.assertTrue(set_of_curves.export())
+        set_of_curves_name = "super_set_of_curves"
+        for fmt in ["idf", "json", "csv"]:
+            set_of_curves.export("./", fmt, set_of_curves_name)
+            self.assertTrue(os.path.isfile(f"./{set_of_curves_name}.{fmt}"))
+            exported_curves = open(f"./{set_of_curves_name}.{fmt}", "r").read()
+            self.assertTrue(len(re.findall("eir-f-t", exported_curves)) > 0)
+            self.assertTrue(len(re.findall("eir-f-plr", exported_curves)) > 0)
+            self.assertTrue(len(re.findall("cap-f-t", exported_curves)) > 0)
 
     def test_curve_conversion(self):
         # Define equipment
