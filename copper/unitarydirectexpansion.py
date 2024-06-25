@@ -212,9 +212,9 @@ class UnitaryDirectExpansion(Equipment):
         return ieer
 
     def ieer_to_eer(ieer, ref_gross_cap):
-        """ Calculate EER from IEER and system capacity.
-        The regression function was obtained by fitting a model on performance data collected from 
-        AHRI database. 
+        """Calculate EER from IEER and system capacity.
+        The regression function was obtained by fitting a model on performance data collected from
+        AHRI database.
         output (dependent variable): EER
         input (independent variables): IEER + Capacity"""
         eer = (
