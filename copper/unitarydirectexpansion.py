@@ -221,8 +221,7 @@ class UnitaryDirectExpansion(Equipment):
         Model was internally validated using 10-fold cross validation approach and externally validated using the USDOE database.
 
         :parm float ieer: Integrated energy efficiency ratio (IEER)
-        :parm float ref_net_cap: Net system capacity
-        :return: Energy efficiency Ratio (EER)
+        :return: Energy efficiency ratio (EER)
         :rtype: float
 
         """

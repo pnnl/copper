@@ -47,4 +47,4 @@ class UnitaryDirectExpansion(TestCase):
         )
         ieer = 15.0
         eer = DX.ieer_to_eer(ieer)
-        self.assertTrue(8 <= eer <= 16, f"{eer} is within a reasonable range")
+        self.assertTrue(round(eer,0) == 12, f"{eer} is within a reasonable range")
