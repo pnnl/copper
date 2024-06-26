@@ -211,19 +211,31 @@ class UnitaryDirectExpansion(Equipment):
             ieer += weighting_factor[red_cap_num] * eer_reduced
         return ieer
 
-    def ieer_to_eer(ieer, ref_gross_cap):
+    def ieer_to_eer(self, ieer):
         """Calculate EER from IEER and system capacity.
-        The regression function was obtained by fitting a model on performance data collected from
-        AHRI database.
-        output (dependent variable): EER
-        input (independent variables): IEER + Capacity"""
+        The regression function was obtained by fitting a linear model on performance data collected from AHRI database (Sample Size = 14,268).
+        Model Diagnostics:
+        R-square = 0.5458
+        Mean Absolute Error = 0.369
+        Root Mean Square Error = 0.455
+        Model was internally validated using 10-fold cross validation approach and externally validated using the USDOE database.
+
+        :parm float ieer: Integrated energy efficiency ratio (IEER)
+        :parm float ref_net_cap: Net system capacity
+        :return: Energy efficiency Ratio (EER)
+        :rtype: float
+
+        """
+
+        ref_net_cap = self.ref_net_cap
+
         eer = (
             9.886
             + 0.1804 * ieer
-            - (1.88e-17) * (ref_gross_cap**3)
-            + (2.706e-11) * (ref_gross_cap**2)
-            - (1.047e-5) * (ref_gross_cap)
-            - (1.638e-7) * (ieer * ref_gross_cap)
+            - (1.88e-17) * (ref_net_cap**3)
+            + (2.706e-11) * (ref_net_cap**2)
+            - (1.047e-5) * (ref_net_cap)
+            - (1.638e-7) * (ieer * ref_net_cap)
         )
         return eer
 
