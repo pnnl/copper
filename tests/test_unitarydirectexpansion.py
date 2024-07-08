@@ -34,3 +34,17 @@ class UnitaryDirectExpansion(TestCase):
             ##############
             # Todo test case for error outputs
             pass
+
+    ## Test case for ieer_to_eer function:
+    def test_ieer_to_eer(self):
+        lib = cp.Library(path=DX_lib)
+        DX = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            compressor_speed="constant",
+            full_eff=5.89,
+            full_eff_unit="cop",
+            ref_net_cap=50000.0,
+        )
+        ieer = 15.0
+        eer = DX.ieer_to_eer(ieer)
+        self.assertTrue(round(eer, 0) == 12, f"{eer} is within a reasonable range")
