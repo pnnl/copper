@@ -3,11 +3,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 20221.9016703,
+        "ref_cap_unit": "W",
+        "full_eff": 12.0,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 23.3,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -21,7 +26,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9998999584082576
+                "rho": 0.9999761441162438
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -58,11 +63,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 40443.8033406,
+        "ref_cap_unit": "W",
+        "full_eff": 11.0,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 20.0,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -76,7 +86,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.999989739906452
+                "rho": 0.9999924659557224
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -113,11 +123,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 33410.0984118,
+        "ref_cap_unit": "W",
+        "full_eff": 12.2,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 21.0,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -131,7 +146,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9999048377138031
+                "rho": 0.9999735224730062
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -168,11 +183,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 28427.8907539,
+        "ref_cap_unit": "W",
+        "full_eff": 12.6,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 21.0,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -186,7 +206,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9999274906531881
+                "rho": 0.9999417522990174
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -223,11 +243,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 25204.1093282,
+        "ref_cap_unit": "W",
+        "full_eff": 12.6,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 22.0,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -241,7 +266,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9998671168433284
+                "rho": 0.9999535301527992
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -278,11 +303,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 43960.655805,
+        "ref_cap_unit": "W",
+        "full_eff": 12.2,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 19.0,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "compressor_1": {
             "eir-f-t": {
@@ -296,7 +326,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9997363073506528
+                "rho": 0.9999555265019388
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -340,7 +370,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9993799377036773
+                "rho": 0.996330668810782
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -384,7 +414,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.999689437383669
+                "rho": 0.9999734216077496
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -421,11 +451,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 66820.1968236,
+        "ref_cap_unit": "W",
+        "full_eff": 12.0,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 18.4,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "compressor_1": {
             "eir-f-t": {
@@ -439,7 +474,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9999416450545751
+                "rho": 0.999967210405579
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -483,7 +518,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9999728628427433
+                "rho": 0.9999552649147889
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -527,7 +562,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9956829834808737
+                "rho": 0.9991123657733876
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -571,7 +606,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9999144074510415
+                "rho": 0.9999648852309181
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -608,11 +643,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 50408.2186564,
+        "ref_cap_unit": "W",
+        "full_eff": 12.0,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 19.0,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "compressor_1": {
             "eir-f-t": {
@@ -626,7 +666,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.999582344415266
+                "rho": 0.9998487102004388
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -670,7 +710,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9995910820032244
+                "rho": 0.999967646629258
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -714,7 +754,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.999531068899106
+                "rho": 0.9999556240152517
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -751,11 +791,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 58614.20774000001,
+        "ref_cap_unit": "W",
+        "full_eff": 12.2,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 18.0,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "compressor_1": {
             "eir-f-t": {
@@ -769,7 +814,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9998893518568842
+                "rho": 0.9999553245653557
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -813,7 +858,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9996192626351397
+                "rho": 0.9996124596885491
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -857,7 +902,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9999449193834514
+                "rho": 0.9999737824439474
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -901,7 +946,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9997952739043421
+                "rho": 0.9999800658468931
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -938,11 +983,16 @@
         "eqp_type": "unitary_dx",
         "source": "Lennox",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 79129.180449,
+        "ref_cap_unit": "W",
+        "full_eff": 10.6,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 16.5,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "compressor_1": {
             "eir-f-t": {
@@ -956,7 +1006,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9995018581823428
+                "rho": 0.9999777118807637
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1000,7 +1050,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9995787418262502
+                "rho": 0.999966069331204
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1044,7 +1094,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9996517398799832
+                "rho": 0.9999705955396402
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1088,7 +1138,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9995538679489339
+                "rho": 0.9999180501161696
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1125,11 +1175,16 @@
         "eqp_type": "unitary_dx",
         "source": "Daikin",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 20221.9016703,
+        "ref_cap_unit": "W",
+        "full_eff": 11.2,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 15.5,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1143,7 +1198,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9922274364063842
+                "rho": 0.9993576010231106
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1180,11 +1235,16 @@
         "eqp_type": "unitary_dx",
         "source": "Daikin",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 50408.2186564,
+        "ref_cap_unit": "W",
+        "full_eff": 11.0,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.2,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1198,7 +1258,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9909452498426504
+                "rho": 0.9992718162897386
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1235,11 +1295,16 @@
         "eqp_type": "unitary_dx",
         "source": "Daikin",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 67406.338901,
+        "ref_cap_unit": "W",
+        "full_eff": 11.0,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.2,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1253,7 +1318,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9922272331186908
+                "rho": 0.9993207861838844
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1290,11 +1355,16 @@
         "eqp_type": "unitary_dx",
         "source": "Daikin",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 84990.601223,
+        "ref_cap_unit": "W",
+        "full_eff": 11.0,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.2,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1308,7 +1378,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9924555242108215
+                "rho": 0.9993035326074852
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1345,11 +1415,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 124555.1914475,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.1,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1363,7 +1438,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9986006229837187
+                "rho": 0.9988620076296099
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1400,11 +1475,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 124555.1914475,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.1,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1418,7 +1498,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9991890573779499
+                "rho": 0.9994058696577316
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1455,11 +1535,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 89679.7378422,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.1,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1473,7 +1558,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9986817234586713
+                "rho": 0.9992005035845805
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1510,11 +1595,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 186100.1095745,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.1,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1528,7 +1618,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9997118483390554
+                "rho": 0.9989560167449827
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1565,11 +1655,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 89679.7378422,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.1,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1583,7 +1678,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9983740880645051
+                "rho": 0.9988656183790346
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1620,11 +1715,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 89679.7378422,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.1,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1638,7 +1738,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9969063443215408
+                "rho": 0.9985255541451352
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1675,11 +1775,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 105139.235133625,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.75,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1693,7 +1798,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9978164415480308
+                "rho": 0.9985458757866809
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1730,11 +1835,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 173644.59042975,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.775,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1748,7 +1858,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9986332253872321
+                "rho": 0.9975162069180742
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1785,11 +1895,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 169248.52484925,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.9,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1803,7 +1918,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9983440588866138
+                "rho": 0.9967776633658122
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1840,11 +1955,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 271300.0472495276,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.225,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1858,7 +1978,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9992801407167147
+                "rho": 0.9989336985813141
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1895,11 +2015,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 120159.125867,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.75,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1913,7 +2038,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9995032095294056
+                "rho": 0.9996792801315069
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -1950,11 +2075,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 157525.68330125,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.576,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -1968,7 +2098,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9996851637807813
+                "rho": 0.9987324298966381
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2005,11 +2135,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 226083.3727030551,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.225,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2023,7 +2158,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9994316709053829
+                "rho": 0.9987459261974712
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2060,11 +2195,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 301444.4970741734,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.225,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2078,7 +2218,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.999206736242209
+                "rho": 0.9989272991889913
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2115,11 +2255,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 301444.4970741734,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.225,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2133,7 +2278,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9993004219843938
+                "rho": 0.9991993177825891
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2170,11 +2315,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 211011.147864,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.225,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2188,7 +2338,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9987756674240537
+                "rho": 0.9985252066021192
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2225,11 +2375,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 163387.10407525,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.325,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2243,7 +2398,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9996225785642713
+                "rho": 0.997863801172298
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2280,11 +2435,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 112832.3498995,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.75,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2298,7 +2458,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.99811658401305
+                "rho": 0.9986004651739768
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2335,11 +2495,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 189792.80466212,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.4,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2353,7 +2518,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9992960799854615
+                "rho": 0.9962835986700413
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2390,11 +2555,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 90119.34440025,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.75,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2408,7 +2578,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9993337040236424
+                "rho": 0.9993527193756213
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2445,11 +2615,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 203684.3718965,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.275,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2463,7 +2638,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9990748721909899
+                "rho": 0.9985086211701721
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2500,11 +2675,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 128951.257028,
+        "ref_cap_unit": "W",
+        "full_eff": 10.1,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 13.9,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2518,7 +2698,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9989219992353233
+                "rho": 0.9974196483116202
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2555,11 +2735,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 271300.0472495276,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.225,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2573,7 +2758,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9994414769473897
+                "rho": 0.999285557976216
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
@@ -2610,11 +2795,16 @@
         "eqp_type": "unitary_dx",
         "source": "Carrier",
         "model": "simplified_bf",
-        "ref_cap_unit": "W",
         "condenser_type": "air",
         "compressor_type": "scroll",
         "compressor_speed": "constant/variable",
-        "part_eff_ref_st": "ahri_341/361",
+        "ref_cap": 226083.3727030551,
+        "ref_cap_unit": "W",
+        "full_eff": 9.8,
+        "full_eff_ref_std": "ahri_341/361",
+        "full_eff_ref_std_alt": "",
+        "part_eff": 14.225,
+        "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
         "set_of_curves": {
             "eir-f-t": {
@@ -2628,7 +2818,7 @@
                 "out_max": "",
                 "ref_ect": 35,
                 "units": "si",
-                "rho": 0.9993299575198348
+                "rho": 0.9990799994343168
             },
             "cap-f-t": {
                 "out_var": "cap-f-t",
