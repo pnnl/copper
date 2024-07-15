@@ -14,6 +14,9 @@
         "part_eff": 23.3,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 120.0,
+        "max_outdoor_fan_power": 360.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -90,6 +93,9 @@
         "part_eff": 20.0,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 65.0,
+        "max_outdoor_fan_power": 750.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -166,6 +172,9 @@
         "part_eff": 21.0,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 65.0,
+        "max_outdoor_fan_power": 750.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -242,6 +251,9 @@
         "part_eff": 21.0,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 65.0,
+        "max_outdoor_fan_power": 750.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -318,6 +330,9 @@
         "part_eff": 22.0,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 65.0,
+        "max_outdoor_fan_power": 450.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -394,6 +409,9 @@
         "part_eff": 19.0,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 450.0,
+        "max_outdoor_fan_power": 1075.0,
+        "fan_power_unit": "W",
         "compressor_1": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -590,6 +608,9 @@
         "part_eff": 18.4,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 130.0,
+        "max_outdoor_fan_power": 1530.0,
+        "fan_power_unit": "W",
         "compressor_1": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -846,6 +867,9 @@
         "part_eff": 18.4,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 130.0,
+        "max_outdoor_fan_power": 1530.0,
+        "fan_power_unit": "W",
         "compressor_1": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1102,6 +1126,9 @@
         "part_eff": 19.0,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 150.0,
+        "max_outdoor_fan_power": 1350.0,
+        "fan_power_unit": "W",
         "compressor_1": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1298,6 +1325,9 @@
         "part_eff": 18.0,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 290.0,
+        "max_outdoor_fan_power": 1250.0,
+        "fan_power_unit": "W",
         "compressor_1": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1554,6 +1584,9 @@
         "part_eff": 16.5,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 180.0,
+        "max_outdoor_fan_power": 1730.0,
+        "fan_power_unit": "W",
         "compressor_1": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1810,6 +1843,9 @@
         "part_eff": 15.5,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 249.0,
+        "max_outdoor_fan_power": 249.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1886,6 +1922,9 @@
         "part_eff": 15.5,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 249.0,
+        "max_outdoor_fan_power": 249.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1962,6 +2001,9 @@
         "part_eff": 14.2,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 249.0,
+        "max_outdoor_fan_power": 249.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2038,6 +2080,9 @@
         "part_eff": 14.2,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 372.0,
+        "max_outdoor_fan_power": 372.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2114,6 +2159,9 @@
         "part_eff": 14.2,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 372.0,
+        "max_outdoor_fan_power": 372.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2190,6 +2238,9 @@
         "part_eff": 14.1,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2266,6 +2317,9 @@
         "part_eff": 14.3,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2342,6 +2396,9 @@
         "part_eff": 13.5,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2418,6 +2475,9 @@
         "part_eff": 13.1,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2494,6 +2554,9 @@
         "part_eff": 13.6,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2570,6 +2633,9 @@
         "part_eff": 13.8,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2646,6 +2712,9 @@
         "part_eff": 13.75,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2722,6 +2791,9 @@
         "part_eff": 13.7,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2798,6 +2870,9 @@
         "part_eff": 13.775,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2874,6 +2949,9 @@
         "part_eff": 13.9,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2950,6 +3028,9 @@
         "part_eff": 14.225,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3026,6 +3107,9 @@
         "part_eff": 13.75,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3102,6 +3186,9 @@
         "part_eff": 14.576,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3178,6 +3265,9 @@
         "part_eff": 14.225,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3254,6 +3344,9 @@
         "part_eff": 14.225,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3330,6 +3423,9 @@
         "part_eff": 14.225,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3406,6 +3502,9 @@
         "part_eff": 14.225,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3482,6 +3581,9 @@
         "part_eff": 14.325,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3558,6 +3660,9 @@
         "part_eff": 13.75,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3634,6 +3739,9 @@
         "part_eff": 13.4,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3710,6 +3818,9 @@
         "part_eff": 13.75,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3786,6 +3897,9 @@
         "part_eff": 14.275,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3862,6 +3976,9 @@
         "part_eff": 13.9,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3938,6 +4055,9 @@
         "part_eff": 14.225,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -4014,6 +4134,9 @@
         "part_eff": 14.225,
         "part_eff_ref_std": "ahri_341/361",
         "part_eff_ref_std_alt": "",
+        "min_outdoor_fan_power": 746.0,
+        "max_outdoor_fan_power": 746.0,
+        "fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
