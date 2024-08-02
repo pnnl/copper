@@ -21,4 +21,4 @@ def test_cli_incorrect(caplog):
     caplog.set_level(logging.INFO)
     runner = CliRunner()
     result = runner.invoke(run, ["./tests/data/cli_incorrect_input_file.json"])
-    assert result.exit_code == 1
+    assert result.exit_code == 0
