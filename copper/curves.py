@@ -637,6 +637,9 @@ class Curve:
             self.coeff8 = 0
             self.coeff9 = 0
             self.coeff10 = 0
+        elif self.type == "linear":
+            self.coeff1 = 0
+            self.coeff2 = 0
 
         # Equipment specific charactertics
         # TODO: move under a function in the Chiller class
@@ -684,6 +687,7 @@ class Curve:
         x = min(max(x, self.x_min), self.x_max)
         y = min(max(y, self.y_min), self.y_max)
 
+        out = None
         if self.type == "bi_quad":
             out = (
                 self.coeff1
@@ -693,7 +697,6 @@ class Curve:
                 + self.coeff5 * y**2
                 + self.coeff6 * x * y
             )
-            return min(max(out, self.out_min), self.out_max)
         if self.type == "bi_cub":
             out = (
                 self.coeff1
@@ -707,10 +710,8 @@ class Curve:
                 + self.coeff9 * y * x**2
                 + self.coeff10 * x * y**2
             )
-            return min(max(out, self.out_min), self.out_max)
         if self.type == "quad":
             out = self.coeff1 + self.coeff2 * x + self.coeff3 * x**2
-            return min(max(out, self.out_min), self.out_max)
         if self.type == "cubic":
             out = (
                 self.coeff1
@@ -718,7 +719,9 @@ class Curve:
                 + self.coeff3 * x**2
                 + self.coeff4 * x**3
             )
-            return min(max(out, self.out_min), self.out_max)
+        if self.type == "linear":
+            out = self.coeff1 + self.coeff2 * x
+        return min(max(out, self.out_min), self.out_max)
 
     def nb_coeffs(self):
         """Find number of curve coefficients.
@@ -775,6 +778,21 @@ class Curve:
 
         # Drop duplicate entries
         data.drop_duplicates(inplace=True)
+
+        if "linear" in curve_types:
+            # Prepare data for model
+            X = data[["X1"]]
+            y = data["Y"]
+
+            # OLS regression
+            X = sm.add_constant(X)
+            model = sm.OLS(y, X).fit()
+            reg_r_sqr = model.rsquared
+
+            if reg_r_sqr > r_sqr:
+                self.coeff1, self.coeff2 = model.params
+                self.type = "linear"
+                r_sqr = reg_r_sqr
 
         # Find model that fits data the best
         if "quad" in curve_types:
@@ -847,6 +865,7 @@ class Curve:
                 ) = model.params
                 self.type = "bi_quad"
                 r_sqr = reg_r_sqr
+
         if "bi_cub" in curve_types:
             # Prepare data for model
             data["X1^2"] = data["X1"] * data["X1"]
@@ -856,7 +875,6 @@ class Curve:
             data["X1*X2"] = data["X1"] * data["X2"]
             data["X1^2*X2"] = data["X1^2"] * data["X2"]
             data["X1*X2^2"] = data["X1"] * data["X2^2"]
-
             X = data[
                 [
                     "X1",
