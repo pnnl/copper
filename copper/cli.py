@@ -26,35 +26,35 @@ def run(input_file):
 
     try:
         f = json.load(input_file)
-
-        # Validate input file
-        assert copper.Schema(f).validate() == True
     except:
         raise ValueError("Could not read the input file. A JSON file is expected.")
-    for action in f["actions"]:
-        eqp_props = action["equipment"]
-        # Make sure that the equipment is supported by Copper
-        assert eqp_props["type"].lower() in [
-            "chiller"
-        ], "Equipment type not currently supported by Copper."
 
-        # Get properties for equipment type
-        eqp_type_props = inspect.getfullargspec(eval(eqp_props["type"]).__init__)[0]
+    # Validate input file
+    if copper.Schema(f).validate():
+        for action in f["actions"]:
+            eqp_props = action["equipment"]
+            # Make sure that the equipment is supported by Copper
+            assert eqp_props["type"].lower() in [
+                "chiller"
+            ], "Equipment type not currently supported by Copper."
 
-        # Set the equipment properties from input file
-        obj_args = {}
-        for p in eqp_type_props:
-            if p in list(eqp_props.keys()):
-                obj_args[p] = eqp_props[p]
+            # Get properties for equipment type
+            eqp_type_props = inspect.getfullargspec(eval(eqp_props["type"]).__init__)[0]
 
-        # Create instance of the equipment
-        obj = eval(eqp_props["type"])(**obj_args)
+            # Set the equipment properties from input file
+            obj_args = {}
+            for p in eqp_type_props:
+                if p in list(eqp_props.keys()):
+                    obj_args[p] = eqp_props[p]
 
-        # Perform actions defined in input file
-        func = action["function_call"]["function"]
-        del action["function_call"]["function"]
-        args = action["function_call"]
-        getattr(obj, func)(**args)
+            # Create instance of the equipment
+            obj = eval(eqp_props["type"])(**obj_args)
+
+            # Perform actions defined in input file
+            func = action["function_call"]["function"]
+            del action["function_call"]["function"]
+            args = action["function_call"]
+            getattr(obj, func)(**args)
 
 
 if __name__ == "__main__":
