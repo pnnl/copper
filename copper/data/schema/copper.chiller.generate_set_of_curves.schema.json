@@ -29,6 +29,18 @@
                     "description": "Tolerance for the optimization process",
                     "type": "number"
                 },
+                "max_gen": {
+                    "description": "Maxmimum number of generation to run",
+                    "type": "number"
+                },
+                "num_nearest_neighbors": {
+                    "description": "Number of neighbor to consider for the aggregation process",
+                    "type": "number"
+                },
+                "max_restart": {
+                    "description": "Maximum number of restarts before stopping",
+                    "type": "number"
+                },
                 "export_path": {
                     "description": "Path to export the generated performance curves",
                     "type": "string"
