@@ -44,6 +44,8 @@ class Schema:
         try:
             self.validator.validate(self.input)
             return True
-        except:
-            logging.critical("Input file is not valid.")
+        except jsonschema.ValidationError:
+            logging.critical(
+                "Validation of the input file failed. Please review the input file schema."
+            )
             return False
