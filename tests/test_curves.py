@@ -6,6 +6,7 @@ import numpy as np
 import CoolProp.CoolProp as CP
 import os
 import re
+import pandas as pd
 
 location = os.path.dirname(os.path.realpath(__file__))
 chiller_lib = os.path.join(location, "../copper/data", "chiller_curves.json")
@@ -208,6 +209,49 @@ class TestCurves(TestCase):
         score = df.loc[[best_idx], ["score"]]["score"].values[0]
         self.assertEqual(best_idx, 8)  # the best index for this test is STILL 8
         self.assertEqual(np.round(score, 3), 0.159)
+
+    def test_evaluate_regression(self):
+        chlr = cp.Chiller(
+            compressor_type="centrifugal",
+            condenser_type="water",
+            compressor_speed="constant",
+            ref_cap=471000,
+            ref_cap_unit="W",
+            full_eff=5.89,
+            full_eff_unit="cop",
+            part_eff_ref_std="ahri_551/591",
+            model="ect_lwt",
+            sim_engine="energyplus",
+        )
+        curve = cp.Curve(eqp=chlr, c_type="linear")
+        curve.coeff1 = 1
+        curve.coeff2 = 1
+        curve.coeff3 = 1
+        self.assertEqual(curve.evaluate(2, 2), 1 + 1 * 2)
+
+        # Linear regression
+        data = [
+            [0, 0, 0, 0, 0, 1],
+            [1, 1, 0, 0, 0, 4],
+        ]
+        df = pd.DataFrame(data, columns=["X1", "X1^2", "X2", "X2^2", "X1*X2", "Y"])
+        curve.regression(df, ["linear", "quad"])
+        self.assertEqual(curve.type, "linear")
+        self.assertEqual(round(curve.coeff1, 2), 1.00)
+        self.assertEqual(round(curve.coeff2, 2), 3.00)
+
+        # Quadratic regression
+        data = [
+            [0, 0, 0, 0, 0, 1],
+            [0.5, 0.25, 0, 0, 0, 1.6],
+            [1, 1, 0, 0, 0, 4],
+        ]
+        df = pd.DataFrame(data, columns=["X1", "X1^2", "X2", "X2^2", "X1*X2", "Y"])
+        curve.regression(df, ["linear", "quad"])
+        self.assertEqual(curve.type, "quad")
+        self.assertEqual(round(curve.coeff1, 2), 1.0)
+        self.assertEqual(round(curve.coeff2, 2), -0.6)
+        self.assertEqual(round(curve.coeff3, 2), 3.6)
 
     def test_flow_calcs_after_agg(self):
         # Load library
