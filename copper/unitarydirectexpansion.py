@@ -16,7 +16,7 @@ unitary_dx_lib = os.path.join(location, "data", "unitarydirectexpansion_curves.j
 equipment_references = json.load(
     open(os.path.join(location, "data", "equipment_references.json"), "r")
 )
-
+log_fan = False
 
 class UnitaryDirectExpansion(Equipment):
     def __init__(
@@ -25,6 +25,7 @@ class UnitaryDirectExpansion(Equipment):
         full_eff_unit,
         compressor_type,
         compressor_speed,
+        ref_cap_unit="si",
         fan_power=None,
         part_eff=0,
         ref_gross_cap=None,
@@ -38,6 +39,7 @@ class UnitaryDirectExpansion(Equipment):
         condenser_type="air",
         fan_control_mode="constant_speed",
     ):
+        global log_fan
         self.type = "UnitaryDirectExpansion"
         if model != "simplified_bf":
             logging.error("Model must be 'simplified_bf'")
@@ -50,7 +52,9 @@ class UnitaryDirectExpansion(Equipment):
                 if fan_power == None:
                     fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
                     # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240.
-                    logging.info(f"Default fan power used: {fan_power} kW")
+                    if not log_fan:
+                        logging.info(f"Default fan power used: {fan_power} kW")
+                        log_fan = True
                 ref_gross_cap = ref_net_cap + fan_power
         else:
             if ref_net_cap != None:
@@ -64,7 +68,9 @@ class UnitaryDirectExpansion(Equipment):
                     * (ref_gross_cap / 1000)
                     / (1 + 0.28434517 * 400 * 0.365)
                 )
-                logging.info(f"Default fan power used: {fan_power} kW")
+                if not log_fan:
+                        logging.info(f"Default fan power used: {fan_power} kW")
+                        log_fan = True
             ref_net_cap = ref_gross_cap - fan_power
         self.ref_net_cap = ref_net_cap
         self.ref_gross_cap = ref_gross_cap
