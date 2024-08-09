@@ -1,5 +1,24 @@
-[build-system]
-requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+[tool.poetry]
+name = "copper-bem"
+version = "0.2.1"
+description = "Performance curve generator for building energy simulation"
+authors = ["Lerond, Jeremy <jeremy.lerond@pnnl.gov>", "Rahman, Aowabin <aowabin.rahman@pnnl.gov>", "Wan, Hanlong <hanlong.wan@pnnl.gov>", "Singh, Manan <manan.singh@pnnl.gov>"]
+readme = "README.md"
 
-[tool.setuptools_scm]
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^2.0.1"
+matplotlib = "^3.9.1"
+pandas = "^2.2.2"
+statsmodels = "^0.14.2"
+coolprop = "^6.6.0"
+scipy = "^1.14.0"
+click = "^8.1.7"
+jsonschema = "^4.23.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.plugins."console_scripts"]
+"copper" = "copper.cli:cli"

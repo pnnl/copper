@@ -3,15 +3,27 @@ on:
   release:
     types: [published]
 jobs:
-  pypi:
+  pypi_release:
+    name: Builds Using Poetry and Publishes to PyPI
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-      - run: python3 -m pip install --upgrade build && python3 -m build
-      - name: Publish package
-        uses: pypa/gh-action-pypi-publish@release/v1
+          ref: ${{github.event.release.tag_name}}
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+          python-version: '3.10'
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+      - name: Install venv
+        run: poetry install
+      - name: Configure Poetry For Publication
+        run: poetry config pypi-token.pypi "${{secrets.PYPI_API_TOKEN}}"
+      - name: Publish package
+        run: poetry publish --build
