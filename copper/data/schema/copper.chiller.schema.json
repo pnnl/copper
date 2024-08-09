@@ -75,7 +75,9 @@
                         "screw",
                         "scroll",
                         "reciprocating",
-                        "centrifugal"
+                        "centrifugal",
+                        "scroll/screw",
+                        "any"
                     ],
                     "minLength": 1
                 },
@@ -84,7 +86,8 @@
                     "type": "string",
                     "enum": [
                         "constant",
-                        "variable"
+                        "variable",
+                        "any"
                     ],
                     "minLength": 1
                 },

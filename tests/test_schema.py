@@ -13,4 +13,7 @@ class TestCurves(TestCase):
         input_file["actions"][0]["function_call"]["vars"] = 42.0
         with self.assertLogs() as captured:
             assert cp.Schema(input=input_file).validate() == False
-            self.assertTrue(captured[0][0].msg == "Input file is not valid.")
+            self.assertTrue(
+                captured[0][0].msg
+                == "Validation of the input file failed. Please review the input file schema."
+            )

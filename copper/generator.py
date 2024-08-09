@@ -648,6 +648,8 @@ class Generator:
                     if c.out_var in self.vars or len(self.vars) == 0:
                         if c.type == "quad":
                             positions = [[1], [2, 3]]  # cst  # x^?
+                        elif c.type == "linear":
+                            positions = [[1], [2]]  # cst
                         elif c.type == "cubic":
                             positions = [[1], [2, 3, 4]]  # cst  # x^?
                         elif c.type == "bi_quad":
