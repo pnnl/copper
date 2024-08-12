@@ -25,7 +25,7 @@ class UnitaryDirectExpansion(Equipment):
         full_eff,
         full_eff_unit,
         compressor_type,
-        compressor_speed=50,
+        compressor_speed="constant",
         ref_cap_unit="si",
         fan_power=None,
         part_eff=0,
@@ -73,6 +73,7 @@ class UnitaryDirectExpansion(Equipment):
                     logging.info(f"Default fan power used: {fan_power} kW")
                     log_fan = True
             ref_net_cap = ref_gross_cap - fan_power
+        self.ref_cap_unit = ref_cap_unit
         if self.ref_cap_unit != "si":
             ref_net_cap_ton = Units(value=self.ref_net_cap, unit=self.ref_cap_unit)
             self.ref_net_cap = ref_net_cap_ton.conversion(new_unit="kW")
