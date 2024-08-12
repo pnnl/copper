@@ -75,9 +75,9 @@ class UnitaryDirectExpansion(Equipment):
             ref_net_cap = ref_gross_cap - fan_power
         self.ref_cap_unit = ref_cap_unit
         if self.ref_cap_unit != "si":
-            ref_net_cap_ton = Units(value=self.ref_net_cap, unit=self.ref_cap_unit)
+            ref_net_cap_ton = Units(value=ref_net_cap, unit=self.ref_cap_unit)
             self.ref_net_cap = ref_net_cap_ton.conversion(new_unit="kW")
-            ref_gross_cap_ton = Units(value=self.ref_gross_cap, unit=self.ref_cap_unit)
+            ref_gross_cap_ton = Units(value=ref_gross_cap, unit=self.ref_cap_unit)
             self.ref_gross_cap = ref_gross_cap_ton.conversion(new_unit="kW")
         else:
             self.ref_net_cap = ref_net_cap
