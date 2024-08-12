@@ -18,14 +18,13 @@ equipment_references = json.load(
 )
 log_fan = False
 
-
 class UnitaryDirectExpansion(Equipment):
     def __init__(
         self,
         full_eff,
         full_eff_unit,
         compressor_type,
-        compressor_speed,
+        compressor_speed = 50,
         ref_cap_unit="si",
         fan_power=None,
         part_eff=0,
@@ -70,11 +69,17 @@ class UnitaryDirectExpansion(Equipment):
                     / (1 + 0.28434517 * 400 * 0.365)
                 )
                 if not log_fan:
-                    logging.info(f"Default fan power used: {fan_power} kW")
-                    log_fan = True
+                        logging.info(f"Default fan power used: {fan_power} kW")
+                        log_fan = True
             ref_net_cap = ref_gross_cap - fan_power
-        self.ref_net_cap = ref_net_cap
-        self.ref_gross_cap = ref_gross_cap
+        if self.ref_cap_unit != "si":
+            ref_net_cap_ton = Units(value=self.ref_net_cap, unit=self.ref_cap_unit)
+            self.ref_net_cap = ref_net_cap_ton.conversion(new_unit="kW")
+            ref_gross_cap_ton = Units(value=self.ref_gross_cap, unit=self.ref_cap_unit)
+            self.ref_gross_cap = ref_gross_cap_ton.conversion(new_unit="kW")
+        else:
+            self.ref_net_cap = ref_net_cap
+            self.ref_gross_cap = ref_gross_cap
         self.fan_power = fan_power
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
@@ -88,6 +93,8 @@ class UnitaryDirectExpansion(Equipment):
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = condenser_type
         self.fan_control_mode = fan_control_mode
+        self.compressor_speed = compressor_speed
+        self.ref_cap_unit = ref_cap_unit
         # Define rated temperatures
         # air entering drybulb,air entering wetbulb, outdoor enter, outdoor leaving
         aed, aew, ect, lct = self.get_rated_temperatures()
