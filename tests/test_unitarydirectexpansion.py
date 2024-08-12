@@ -32,7 +32,7 @@ class UnitaryDirectExpansion(TestCase):
 
     def test_model_type_error(self):
         lib = cp.Library(path=DX_lib)
-        with self.assertLogs(level='ERROR') as log:
+        with self.assertLogs(level="ERROR") as log:
             with self.assertRaises(ValueError) as cm:
                 DX = cp.UnitaryDirectExpansion(
                     compressor_type="scroll",
@@ -48,12 +48,12 @@ class UnitaryDirectExpansion(TestCase):
                     fan_control_mode="constant_speed",
                 )
             self.assertEqual(str(cm.exception), "Model must be 'simplified_bf'")
-        self.assertIn("ERROR", log.output[0]) 
+        self.assertIn("ERROR", log.output[0])
         self.assertIn("Model must be 'simplified_bf'", log.output[0])
 
     def test_both_capacity_inputs_provided(self):
         lib = cp.Library(path=DX_lib)
-        with self.assertLogs(level='ERROR') as log:
+        with self.assertLogs(level="ERROR") as log:
             with self.assertRaises(ValueError) as cm:
                 DX = cp.UnitaryDirectExpansion(
                     compressor_type="scroll",
@@ -69,7 +69,9 @@ class UnitaryDirectExpansion(TestCase):
                     set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
                     fan_control_mode="constant_speed",
                 )
-            self.assertEqual(str(cm.exception), "Input must be one and only one capacity input")
+            self.assertEqual(
+                str(cm.exception), "Input must be one and only one capacity input"
+            )
         self.assertIn("ERROR", log.output[0])
         self.assertIn("Input must be one and only one capacity input", log.output[0])
 
