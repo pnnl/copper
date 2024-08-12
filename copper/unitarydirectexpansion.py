@@ -18,13 +18,14 @@ equipment_references = json.load(
 )
 log_fan = False
 
+
 class UnitaryDirectExpansion(Equipment):
     def __init__(
         self,
         full_eff,
         full_eff_unit,
         compressor_type,
-        compressor_speed = 50,
+        compressor_speed=50,
         ref_cap_unit="si",
         fan_power=None,
         part_eff=0,
@@ -69,8 +70,8 @@ class UnitaryDirectExpansion(Equipment):
                     / (1 + 0.28434517 * 400 * 0.365)
                 )
                 if not log_fan:
-                        logging.info(f"Default fan power used: {fan_power} kW")
-                        log_fan = True
+                    logging.info(f"Default fan power used: {fan_power} kW")
+                    log_fan = True
             ref_net_cap = ref_gross_cap - fan_power
         if self.ref_cap_unit != "si":
             ref_net_cap_ton = Units(value=self.ref_net_cap, unit=self.ref_cap_unit)
