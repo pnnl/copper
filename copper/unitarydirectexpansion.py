@@ -3,7 +3,6 @@ unitary_dx.py
 ====================================
 This is the unitary direct expansion (DX) HVAC equipment module of Copper. The module handles all calculations and data manipulation related to unitary DX equipment.
 """
-
 import CoolProp.CoolProp as CP
 from copper.generator import *
 from copper.units import *
@@ -17,6 +16,7 @@ unitary_dx_lib = os.path.join(location, "data", "unitarydirectexpansion_curves.j
 equipment_references = json.load(
     open(os.path.join(location, "data", "equipment_references.json"), "r")
 )
+log_fan = False
 
 
 class UnitaryDirectExpansion(Equipment):
@@ -25,7 +25,8 @@ class UnitaryDirectExpansion(Equipment):
         full_eff,
         full_eff_unit,
         compressor_type,
-        compressor_speed,
+        compressor_speed="constant",
+        ref_cap_unit="si",
         fan_power=None,
         part_eff=0,
         ref_gross_cap=None,
@@ -39,6 +40,7 @@ class UnitaryDirectExpansion(Equipment):
         condenser_type="air",
         fan_control_mode="constant_speed",
     ):
+        global log_fan
         self.type = "UnitaryDirectExpansion"
         if model != "simplified_bf":
             logging.error("Model must be 'simplified_bf'")
@@ -51,7 +53,9 @@ class UnitaryDirectExpansion(Equipment):
                 if fan_power == None:
                     fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
                     # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240.
-                    logging.info(f"Default fan power used: {fan_power} kW")
+                    if not log_fan:
+                        logging.info(f"Default fan power used: {fan_power} kW")
+                        log_fan = True
                 ref_gross_cap = ref_net_cap + fan_power
         else:
             if ref_net_cap != None:
@@ -65,10 +69,19 @@ class UnitaryDirectExpansion(Equipment):
                     * (ref_gross_cap / 1000)
                     / (1 + 0.28434517 * 400 * 0.365)
                 )
-                logging.info(f"Default fan power used: {fan_power} kW")
+                if not log_fan:
+                    logging.info(f"Default fan power used: {fan_power} kW")
+                    log_fan = True
             ref_net_cap = ref_gross_cap - fan_power
-        self.ref_net_cap = ref_net_cap
-        self.ref_gross_cap = ref_gross_cap
+        self.ref_cap_unit = ref_cap_unit
+        if self.ref_cap_unit != "si":
+            ref_net_cap_ton = Units(value=ref_net_cap, unit=self.ref_cap_unit)
+            self.ref_net_cap = ref_net_cap_ton.conversion(new_unit="kW")
+            ref_gross_cap_ton = Units(value=ref_gross_cap, unit=self.ref_cap_unit)
+            self.ref_gross_cap = ref_gross_cap_ton.conversion(new_unit="kW")
+        else:
+            self.ref_net_cap = ref_net_cap
+            self.ref_gross_cap = ref_gross_cap
         self.fan_power = fan_power
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
@@ -82,6 +95,8 @@ class UnitaryDirectExpansion(Equipment):
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = condenser_type
         self.fan_control_mode = fan_control_mode
+        self.compressor_speed = compressor_speed
+        self.ref_cap_unit = ref_cap_unit
         # Define rated temperatures
         # air entering drybulb,air entering wetbulb, outdoor enter, outdoor leaving
         aed, aew, ect, lct = self.get_rated_temperatures()
