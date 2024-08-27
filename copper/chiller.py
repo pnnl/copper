@@ -38,7 +38,7 @@ class Chiller(Equipment):
         part_eff_ref_std_alt="ahri_550/590",
         full_eff_alt=0,
         full_eff_unit_alt="",
-        set_of_curves="",
+        set_of_curves=[],
         model="ect_lwt",
         sim_engine="energyplus",
         min_unloading=0.1,

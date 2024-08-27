@@ -32,13 +32,14 @@ class UnitaryDirectExpansion(Equipment):
         ref_gross_cap=None,
         ref_net_cap=None,
         part_eff_unit="",
-        set_of_curves="",
+        set_of_curves=[],
         part_eff_ref_std="ahri_340/360",
         part_eff_ref_std_alt=None,
         model="simplified_bf",
         sim_engine="energyplus",
         condenser_type="air",
         fan_control_mode="constant_speed",
+        degradation_coefficient=0.115170535550221,  # plf = (1 - C_D) * C_D * plr in AHRI 240/210
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -127,6 +128,19 @@ class UnitaryDirectExpansion(Equipment):
                 "cap-f-f": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
                 "plf-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
             }
+        # Cycling degradation
+        self.degradation_coefficient = degradation_coefficient
+        if not "plf_f_plr" in self.get_dx_curves().keys():
+            plf_f_plr = Curve(eqp=self, c_type="linear")
+            plf_f_plr.out_var = "plf-f-plr"
+            plf_f_plr.type = "linear"
+            plf_f_plr.coeff1 = 1 - self.degradation_coefficient
+            plf_f_plr.coeff2 = self.degradation_coefficient
+            plf_f_plr.x_min = 0
+            plf_f_plr.x_max = 1
+            plf_f_plr.out_min = 0
+            plf_f_plr.out_max = 1
+            self.set_of_curves.append(plf_f_plr)
 
     def calc_rated_eff(
         self, eff_type="ieer", unit="eer", output_report=False, alt=False
@@ -214,7 +228,7 @@ class UnitaryDirectExpansion(Equipment):
                 if net_cooling_cap_reduced > 0.0
                 else 1.0
             )
-            degradation_coeff = 1.130 - 0.130 * load_factor
+            degradation_coeff = 1 / plf_f_plr.evaluate(load_factor, 1)
             elec_power_reduced_cap = (
                 degradation_coeff
                 * eir
