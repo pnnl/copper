@@ -29,7 +29,7 @@ class TestLogging(TestCase):
                 tol=tol,
                 max_restart=1,
                 max_gen=1,
-                random_seed=1
+                random_seed=1,
             )
         self.assertTrue(
             captured[0][0].msg
