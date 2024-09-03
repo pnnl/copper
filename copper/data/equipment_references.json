@@ -37,11 +37,11 @@
             }
         }
     },
-    "UnitaryDirectExpansion": {
+    "unitarydirectexpansion": {
         "ahri_340/360": {
             "water": {
-                "aed": [80,67],
-                "aew": [67,57],
+                "aed": 80,
+                "aew": 67,
                 "ae_unit": "degF",
                 "ect": [85.0, 73.5, 62.0, 55.0],
                 "ect_unit": "degF",
@@ -49,8 +49,8 @@
                 "lct_unit": "degF"
             },
             "air": {
-                "aed": [80,67],
-                "aew": [67,57],
+                "aed": 80,
+                "aew": 67,
                 "ae_unit": "degF",
                 "ect": [95.0, 81.5, 68.0, 65.0],
                 "ect_unit": "degF",

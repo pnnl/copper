@@ -29,13 +29,14 @@ class TestLogging(TestCase):
                 tol=tol,
                 max_restart=1,
                 max_gen=1,
+                random_seed=1,
             )
         self.assertTrue(
             captured[0][0].msg
             == "Target not met after 1 generations; Restarting the generator."
         )
         self.assertTrue(captured[0][0].levelname == "WARNING")
-        self.assertTrue("GEN: 0, IPLV: 5.56, kW/ton: 5" in captured[0][1].msg)
+        self.assertTrue("GEN: 0, IPLV: 5.56, kW/ton: 5.2" in captured[0][1].msg)
         self.assertTrue(captured[0][1].levelname == "INFO")
         self.assertTrue(
             captured[0][2].msg
