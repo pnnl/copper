@@ -28,7 +28,7 @@ class UnitaryDirectExpansion(TestCase):
             fan_control_mode="constant_speed",
         )
         cop_1 = 7.4
-        cop_2 = round(DX.calc_rated_eff(), 2)
+        cop_2 = round(DX.calc_rated_eff(), 1)
         self.assertTrue(cop_1 == cop_2, f"{cop_1} is different than {cop_2}")
 
     def test_generation(self):

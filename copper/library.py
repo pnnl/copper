@@ -40,6 +40,7 @@ class Library:
                         not "part_eff" in p
                         and not "set_of_curves" in p
                         and not "alt" in p
+                        and not "degradation_coefficient" in p
                     ):
                         obj_args[p] = vals[p]
 
@@ -98,7 +99,12 @@ class Library:
         # using values from the library
         obj_args = {}
         for p in props:
-            if not "part_eff" in p and not "set_of_curves" in p and not "alt" in p:
+            if (
+                not "part_eff" in p
+                and not "set_of_curves" in p
+                and not "alt" in p
+                and not "degradation_coefficient" in p
+            ):
                 obj_args[p] = data[p]
 
         # Temporarily set the part load efficiency to the
@@ -176,7 +182,9 @@ class Library:
                         else:
                             if p in props.keys():
                                 obj_args[p] = props[p]
-                    elif "part_eff" in p or "alt" in p:
+                    elif (
+                        "part_eff" in p or "alt" in p or "degradation_coefficient" in p
+                    ):
                         pass
                     else:
                         obj_args[p] = props[p]
