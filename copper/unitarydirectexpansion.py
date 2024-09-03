@@ -27,7 +27,7 @@ class UnitaryDirectExpansion(Equipment):
         compressor_type,
         compressor_speed="constant",
         ref_cap_unit="si",
-        fan_power=None,
+        indoor_fan_power=None, # assume to be 500 W
         part_eff=0,
         ref_gross_cap=None,
         ref_net_cap=None,
@@ -38,7 +38,13 @@ class UnitaryDirectExpansion(Equipment):
         model="simplified_bf",
         sim_engine="energyplus",
         condenser_type="air",
-        fan_control_mode="constant_speed",
+        outdoor_fan_control_mode="constant_speed",
+        indoor_fan_control_mode = "constant_speed",
+        indoor_fan_speed_mapping= {
+            "1": {"fan_flow_fraction": 0.66, "fan_power_fraction": 0.4, "capacity_fraction": 0.5},
+            "2": {"fan_flow_fraction": 1.0, "fan_power_fraction": 1.0, "capacity_fraction": 1.0}
+            },
+        indoor_fan_speed = "1"
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -50,19 +56,19 @@ class UnitaryDirectExpansion(Equipment):
                 logging.error("Input must be one and only one capacity input")
                 raise ValueError("Input must be one and only one capacity input")
             else:
-                if fan_power == None:
-                    fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
+                if indoor_fan_power == None:
+                    indoor_fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
                     # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240.
                     if not log_fan:
-                        logging.info(f"Default fan power used: {fan_power} kW")
+                        logging.info(f"Default fan power used: {indoor_fan_power} kW")
                         log_fan = True
-                ref_gross_cap = ref_net_cap + fan_power
+                ref_gross_cap = ref_net_cap + indoor_fan_power
         else:
             if ref_net_cap != None:
                 logging.error("Input must be one and only one capacity input")
                 raise ValueError("Input must be one and only one capacity input")
-            if fan_power == None:
-                fan_power = (
+            if indoor_fan_power == None:
+                indoor_fan_power = (
                     0.28434517
                     * 400
                     * 0.365
@@ -70,9 +76,9 @@ class UnitaryDirectExpansion(Equipment):
                     / (1 + 0.28434517 * 400 * 0.365)
                 )
                 if not log_fan:
-                    logging.info(f"Default fan power used: {fan_power} kW")
+                    logging.info(f"Default fan power used: {indoor_fan_power} kW")
                     log_fan = True
-            ref_net_cap = ref_gross_cap - fan_power
+            ref_net_cap = ref_gross_cap - indoor_fan_power
         self.ref_cap_unit = ref_cap_unit
         if self.ref_cap_unit != "si":
             ref_net_cap_ton = Units(value=ref_net_cap, unit=self.ref_cap_unit)
@@ -82,7 +88,7 @@ class UnitaryDirectExpansion(Equipment):
         else:
             self.ref_net_cap = ref_net_cap
             self.ref_gross_cap = ref_gross_cap
-        self.fan_power = fan_power
+        self.outdoor_fan_power = indoor_fan_power
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
         self.part_eff = part_eff
@@ -94,9 +100,13 @@ class UnitaryDirectExpansion(Equipment):
         self.sim_engine = sim_engine
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = condenser_type
-        self.fan_control_mode = fan_control_mode
+        self.fan_control_mode = outdoor_fan_control_mode
         self.compressor_speed = compressor_speed
         self.ref_cap_unit = ref_cap_unit
+        self.indoor_fan_control_mode = indoor_fan_control_mode
+        self.indoor_fan_speed_mapping = indoor_fan_speed_mapping
+        self.indoor_fan_speed = indoor_fan_speed
+        self.indoor_fan_power = indoor_fan_power
         # Define rated temperatures
         # air entering drybulb,air entering wetbulb, outdoor enter, outdoor leaving
         aed, aew, ect, lct = self.get_rated_temperatures()
@@ -153,8 +163,13 @@ class UnitaryDirectExpansion(Equipment):
         eir_f_t = curves["eir_f_t"]
         eir_f_f = curves["eir_f_ff"]
         plf_f_plr = curves["plf_f_plr"]
-        tot_cap_flow_mod_fac = cap_f_f.evaluate(1, 1)
-        eir_flow_mod_fac = eir_f_f.evaluate(1, 1)
+        if self.indoor_fan_control_mode == "constant_speed":
+            f = 1
+        else:
+            num = self.indoor_fan_speed
+            f = self.indoor_fan_speed_mapping[num]["fan_flow_fraction"]
+        tot_cap_flow_mod_fac = cap_f_f.evaluate(f, 1)
+        eir_flow_mod_fac = eir_f_f.evaluate(f, 1)
         num_of_reduced_cap = equipment_references[self.type][std]["coef"][
             "numofreducedcap"
         ]
@@ -221,8 +236,9 @@ class UnitaryDirectExpansion(Equipment):
                 * (self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac)
             )
             eer_reduced = (load_factor * net_cooling_cap_reduced) / (
-                load_factor * elec_power_reduced_cap + self.fan_power
+                load_factor * elec_power_reduced_cap + self.outdoor_fan_power + self.indoor_fan_power
             )
+            #other place to adjust?
             ieer += weighting_factor[red_cap_num] * eer_reduced
         return ieer
 
