@@ -91,19 +91,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999898625489256
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -205,19 +192,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9997841417696045
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -319,19 +293,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9998202629693308
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -433,19 +394,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.999805016946502
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -547,19 +495,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9997990211558602
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -661,19 +596,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9414363852377039
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -775,19 +697,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9414363852377039
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -889,19 +798,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.8643594441479289
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -1003,19 +899,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.7974786198943641
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -1117,19 +1000,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.8882829394047146
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -1231,19 +1101,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9998607205028736
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -1345,19 +1202,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999634489564555
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -1459,19 +1303,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999746498510637
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -1573,19 +1404,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999662174716383
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -1687,19 +1505,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.999739060090018
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -1801,19 +1606,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9998355355686489
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -1915,19 +1707,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999208704251976
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -2029,19 +1808,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9998942593392481
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -2143,19 +1909,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.999931805937805
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -2257,19 +2010,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.999936136922373
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -2371,19 +2111,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999969563371341
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -2485,19 +2212,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.999661495053771
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -2599,19 +2313,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999784649582972
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -2713,19 +2414,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999544390752798
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -2827,19 +2515,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 1.0
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -2941,19 +2616,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999961070029176
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -3055,19 +2717,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9998427626742821
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -3169,19 +2818,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999977767476708
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -3283,19 +2919,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9998633677193004
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -3397,19 +3020,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999768312037316
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -3511,19 +3121,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9998942593392481
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -3625,19 +3222,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999650910478683
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -3739,19 +3323,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999530170125136
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -3853,19 +3424,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9999990099710763
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,
@@ -3967,19 +3525,6 @@
                 "ref_ect": 35,
                 "units": "si",
                 "rho": 0.9995445573140064
-            },
-            "plf-f-plr": {
-                "out_var": "plf-f-plr",
-                "type": "quad",
-                "coeff1": 0,
-                "coeff2": 0,
-                "coeff3": 1.0,
-                "x_min": 0.0,
-                "x_max": 1.0,
-                "out_min": null,
-                "out_max": null,
-                "ref_ect": 35,
-                "units": "si"
             }
         },
         "fan_control_mode": null,

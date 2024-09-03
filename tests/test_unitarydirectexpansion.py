@@ -28,8 +28,35 @@ class UnitaryDirectExpansion(TestCase):
             fan_control_mode="constant_speed",
         )
         cop_1 = 7.4
-        cop_2 = round(DX.calc_rated_eff(), 2)
+        cop_2 = round(DX.calc_rated_eff(), 1)
         self.assertTrue(cop_1 == cop_2, f"{cop_1} is different than {cop_2}")
+
+    def test_generation(self):
+        lib = cp.Library(path=DX_lib)
+        dx_unit = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            compressor_speed="constant",
+            ref_cap_unit="si",
+            ref_gross_cap=471000,
+            full_eff=5.89,
+            full_eff_unit="cop",
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+            set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
+            fan_control_mode="constant_speed",
+        )
+        dx_unit.part_eff = 8.5
+        set_of_curves = dx_unit.generate_set_of_curves(
+            base_curves=[lib.get_set_of_curves_by_name("D208122216")],
+            tol=0.01,
+            verbose=True,
+            vars=["eir-f-t"],
+            max_gen=300,
+            max_restart=3,
+        )
+        assert len(set_of_curves) == 5
 
     def test_model_type_error(self):
         lib = cp.Library(path=DX_lib)

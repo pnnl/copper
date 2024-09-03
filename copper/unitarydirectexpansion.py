@@ -27,24 +27,33 @@ class UnitaryDirectExpansion(Equipment):
         compressor_type,
         compressor_speed="constant",
         ref_cap_unit="si",
-        indoor_fan_power=None, # assume to be 500 W
+        indoor_fan_power=None,
         part_eff=0,
         ref_gross_cap=None,
         ref_net_cap=None,
         part_eff_unit="",
-        set_of_curves="",
+        set_of_curves=[],
         part_eff_ref_std="ahri_340/360",
         part_eff_ref_std_alt=None,
         model="simplified_bf",
         sim_engine="energyplus",
         condenser_type="air",
         outdoor_fan_control_mode="constant_speed",
-        indoor_fan_control_mode = "constant_speed",
-        indoor_fan_speed_mapping= {
-            "1": {"fan_flow_fraction": 0.66, "fan_power_fraction": 0.4, "capacity_fraction": 0.5},
-            "2": {"fan_flow_fraction": 1.0, "fan_power_fraction": 1.0, "capacity_fraction": 1.0}
+        degradation_coefficient=0.115170535550221,  # plf = (1 - C_D) * C_D * plr in AHRI 240/210
+        indoor_fan_control_mode="constant_speed",
+        indoor_fan_speed_mapping={
+            "1": {
+                "fan_flow_fraction": 0.66,
+                "fan_power_fraction": 0.4,
+                "capacity_fraction": 0.5,
             },
-        indoor_fan_speed = "1"
+            "2": {
+                "fan_flow_fraction": 1.0,
+                "fan_power_fraction": 1.0,
+                "capacity_fraction": 1.0,
+            },
+        },
+        indoor_fan_speed="1",
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -60,8 +69,12 @@ class UnitaryDirectExpansion(Equipment):
                     indoor_fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
                     # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240.
                     if not log_fan:
-                        logging.info(f"Default fan power used: {indoor_fan_power} kW")
-                        log_fan = True
+                        if not log_fan:
+                            logging.info(
+                                f"Default fan power used: {indoor_fan_power} kW"
+                            )
+                            log_fan = True
+                            log_fan = True
                 ref_gross_cap = ref_net_cap + indoor_fan_power
         else:
             if ref_net_cap != None:
@@ -91,8 +104,12 @@ class UnitaryDirectExpansion(Equipment):
         self.outdoor_fan_power = indoor_fan_power
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
+        self.full_eff_alt = 0
+        self.full_eff_alt_unit = full_eff_unit
         self.part_eff = part_eff
         self.part_eff_unit = part_eff_unit
+        self.part_eff_alt = 0
+        self.part_eff_alt_unit = part_eff_unit
         self.compressor_type = compressor_type
         self.set_of_curves = set_of_curves
         self.part_eff_ref_std = part_eff_ref_std
@@ -132,11 +149,25 @@ class UnitaryDirectExpansion(Equipment):
                     "x2_min": 10,
                     "x2_max": 40,
                     "x2_norm": ect,
+                    "nbval": nb_val,
                 },
-                "eir-f-f": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
-                "cap-f-f": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
+                "eir-f-ff": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
+                "cap-f-ff": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
                 "plf-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
             }
+        # Cycling degradation
+        self.degradation_coefficient = degradation_coefficient
+        if not "plf_f_plr" in self.get_dx_curves().keys():
+            plf_f_plr = Curve(eqp=self, c_type="linear")
+            plf_f_plr.out_var = "plf-f-plr"
+            plf_f_plr.type = "linear"
+            plf_f_plr.coeff1 = 1 - self.degradation_coefficient
+            plf_f_plr.coeff2 = self.degradation_coefficient
+            plf_f_plr.x_min = 0
+            plf_f_plr.x_max = 1
+            plf_f_plr.out_min = 0
+            plf_f_plr.out_max = 1
+            self.set_of_curves.append(plf_f_plr)
 
     def calc_rated_eff(
         self, eff_type="ieer", unit="eer", output_report=False, alt=False
@@ -156,6 +187,7 @@ class UnitaryDirectExpansion(Equipment):
             std = self.part_eff_ref_std_alt
         else:
             std = self.part_eff_ref_std
+        eqp_type = self.type
         # Retrieve curves
         curves = self.get_dx_curves()
         cap_f_f = curves["cap_f_ff"]
@@ -173,15 +205,15 @@ class UnitaryDirectExpansion(Equipment):
         num_of_reduced_cap = equipment_references[self.type][std]["coef"][
             "numofreducedcap"
         ]
-        reduced_plr = equipment_references[self.type][std]["coef"]["reducedplr"]
-        weighting_factor = equipment_references[self.type][std]["coef"][
+        reduced_plr = equipment_references[eqp_type][std]["coef"]["reducedplr"]
+        weighting_factor = equipment_references[eqp_type][std]["coef"][
             "weightingfactor"
         ]
         tot_cap_temp_mod_fac = cap_f_t.evaluate(
-            equipment_references[self.type][std][
+            equipment_references[eqp_type][std][
                 "cooling_coil_inlet_air_wet_bulb_rated"
             ],
-            equipment_references[self.type][std][
+            equipment_references[eqp_type][std][
                 "outdoor_unit_inlet_air_dry_bulb_rated"
             ],
         )
@@ -198,10 +230,10 @@ class UnitaryDirectExpansion(Equipment):
                 )
             else:
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced = equipment_references[
-                    self.type
+                    eqp_type
                 ][std]["outdoor_unit_inlet_air_dry_bulb_reduced"]
             tot_cap_temp_mod_fac = cap_f_t.evaluate(
-                equipment_references[self.type][std][
+                equipment_references[eqp_type][std][
                     "cooling_coil_inlet_air_wet_bulb_rated"
                 ],
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
@@ -211,7 +243,7 @@ class UnitaryDirectExpansion(Equipment):
                 - self.fan_power
             )
             eir_temp_mod_fac = eir_f_t.evaluate(
-                equipment_references[self.type][std][
+                equipment_references[eqp_type][std][
                     "cooling_coil_inlet_air_wet_bulb_rated"
                 ],
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
@@ -229,16 +261,18 @@ class UnitaryDirectExpansion(Equipment):
                 if net_cooling_cap_reduced > 0.0
                 else 1.0
             )
-            degradation_coeff = 1.130 - 0.130 * load_factor
+            degradation_coeff = 1 / plf_f_plr.evaluate(load_factor, 1)
             elec_power_reduced_cap = (
                 degradation_coeff
                 * eir
                 * (self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac)
             )
             eer_reduced = (load_factor * net_cooling_cap_reduced) / (
-                load_factor * elec_power_reduced_cap + self.outdoor_fan_power + self.indoor_fan_power
+                load_factor * elec_power_reduced_cap
+                + self.outdoor_fan_power
+                + self.indoor_fan_power
             )
-            #other place to adjust?
+            # other place to adjust?
             ieer += weighting_factor[red_cap_num] * eer_reduced
         return ieer
 
@@ -302,20 +336,16 @@ class UnitaryDirectExpansion(Equipment):
             std = self.part_eff_ref_std_alt
         else:
             std = self.part_eff_ref_std
-        dx_data = equipment_references[self.type][std][self.condenser_type]
-        # Air Entering Indoor Drybulb
-        aed = [
-            Equipment.convert_to_deg_c(t, dx_data["ae_unit"]) for t in dx_data["aed"]
-        ]
-        # Air Entering Indoor Wetbulb
-        aew = [
-            Equipment.convert_to_deg_c(t, dx_data["ae_unit"]) for t in dx_data["aew"]
-        ]
-        # Outdoor Water/Air entering
+        dx_data = equipment_references[self.type.lower()][std][self.condenser_type]
+        # Air entering indoor dry-bulb
+        aed = Equipment.convert_to_deg_c(dx_data["aed"], dx_data["ae_unit"])
+        # Air entering indoor wet-bulb
+        aew = Equipment.convert_to_deg_c(dx_data["aew"], dx_data["ae_unit"])
+        # Outdoor water/air entering
         ect = [
             Equipment.convert_to_deg_c(t, dx_data["ect_unit"]) for t in dx_data["ect"]
         ]
-        # Outdoor Water/Air leaving
+        # Outdoor water/air leaving
         lct = Equipment.convert_to_deg_c(dx_data["lct"], dx_data["lct_unit"])
         return [aed, aew, ect, lct]
 

@@ -138,7 +138,9 @@ class Generator:
 
         while not self.is_target_met():
             self.pop = self.generate_population(curves)
-            while gen <= self.max_gen and not self.is_target_met():
+            while not self.is_target_met():
+                if gen >= self.max_gen:
+                    break
                 self.evolve_population(self.pop)
                 gen += 1
                 if verbose:
@@ -220,6 +222,11 @@ class Generator:
                             f"Target not met after {self.max_restart} restart; No solution was found."
                         )
                         return
+                else:
+                    logging.critical(
+                        f"Target not met after {self.max_gen} generations; No solution was found."
+                    )
+                    return
 
         logging.info("Target met after {} generations.".format(gen))
         return self.pop
@@ -257,6 +264,26 @@ class Generator:
                         # set_of_curves
                         if "cap" in c.out_var:
                             cap_rating += abs(1 - c.get_out_reference(self.equipment))
+            else:
+                return False
+        elif self.equipment.type == "UnitaryDirectExpansion":
+            if self.equipment.set_of_curves != "":
+                part_rating = self.equipment.calc_rated_eff(
+                    eff_type="ieer", unit=self.equipment.part_eff_unit
+                )
+                part_rating_alt = 0
+                full_rating_alt = 0
+                full_rating = self.full_eff
+                cap_rating = 0
+            #                full_rating = self.equipment.calc_rated_eff(
+            #                    eff_type="full", unit=self.equipment.full_eff_unit
+            #                )
+            #                cap_rating = 0
+            #                if "cap-f-t" in self.vars:
+            #                    for c in self.equipment.set_of_curves:
+            #                        # set_of_curves
+            #                        if "cap" in c.out_var:
+            #                            cap_rating += abs(1 - c.get_out_reference(self.equipment))
             else:
                 return False
         else:
