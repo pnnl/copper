@@ -41,6 +41,8 @@ class Library:
                         and not "set_of_curves" in p
                         and not "alt" in p
                         and not "degradation_coefficient" in p
+                        and not "indoor_fan_speed_mapping" in p
+                        and not "indoor_fan_speed" in p
                     ):
                         obj_args[p] = vals[p]
 
@@ -104,6 +106,8 @@ class Library:
                 and not "set_of_curves" in p
                 and not "alt" in p
                 and not "degradation_coefficient" in p
+                and not "indoor_fan_speed_mapping" in p
+                and not "indoor_fan_speed" in p
             ):
                 obj_args[p] = data[p]
 

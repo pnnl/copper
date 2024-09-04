@@ -25,7 +25,7 @@ class UnitaryDirectExpansion(TestCase):
             model="simplified_bf",
             sim_engine="energyplus",
             set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
-            fan_control_mode="constant_speed",
+            indoor_fan_control_mode="constant_speed",
         )
         cop_1 = 7.4
         cop_2 = round(DX.calc_rated_eff(), 1)
@@ -45,7 +45,7 @@ class UnitaryDirectExpansion(TestCase):
             model="simplified_bf",
             sim_engine="energyplus",
             set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
-            fan_control_mode="constant_speed",
+            indoor_fan_control_mode="constant_speed",
         )
         dx_unit.part_eff = 8.5
         set_of_curves = dx_unit.generate_set_of_curves(
@@ -73,7 +73,7 @@ class UnitaryDirectExpansion(TestCase):
                     model="simplified",
                     sim_engine="energyplus",
                     set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
-                    fan_control_mode="constant_speed",
+                    indoor_fan_control_mode="constant_speed",
                 )
             self.assertEqual(str(cm.exception), "Model must be 'simplified_bf'")
         self.assertIn("ERROR", log.output[0])
@@ -95,10 +95,15 @@ class UnitaryDirectExpansion(TestCase):
                     model="simplified_bf",
                     sim_engine="energyplus",
                     set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
-                    fan_control_mode="constant_speed",
+                    indoor_fan_control_mode="constant_speed",
                 )
             self.assertEqual(
                 str(cm.exception), "Input must be one and only one capacity input"
             )
         self.assertIn("ERROR", log.output[0])
         self.assertIn("Input must be one and only one capacity input", log.output[0])
+
+# Run the tests
+import unittest
+if __name__ == '__main__':
+    unittest.main()

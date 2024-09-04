@@ -38,22 +38,13 @@ class UnitaryDirectExpansion(Equipment):
         model="simplified_bf",
         sim_engine="energyplus",
         condenser_type="air",
-        outdoor_fan_control_mode="constant_speed",
         degradation_coefficient=0.115170535550221,  # plf = (1 - C_D) * C_D * plr in AHRI 240/210
-        indoor_fan_control_mode="constant_speed",
-        indoor_fan_speed_mapping={
-            "1": {
-                "fan_flow_fraction": 0.66,
-                "fan_power_fraction": 0.4,
-                "capacity_fraction": 0.5,
+        indoor_fan_control_mode = "constant_speed",
+        indoor_fan_speed_mapping= {
+            "1": {"fan_flow_fraction": 0.66, "fan_power_fraction": 0.4, "capacity_fraction": 0.5},
+            "2": {"fan_flow_fraction": 1.0, "fan_power_fraction": 1.0, "capacity_fraction": 1.0}
             },
-            "2": {
-                "fan_flow_fraction": 1.0,
-                "fan_power_fraction": 1.0,
-                "capacity_fraction": 1.0,
-            },
-        },
-        indoor_fan_speed="1",
+        indoor_fan_speed = "1"
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -69,12 +60,8 @@ class UnitaryDirectExpansion(Equipment):
                     indoor_fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
                     # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240.
                     if not log_fan:
-                        if not log_fan:
-                            logging.info(
-                                f"Default fan power used: {indoor_fan_power} kW"
-                            )
-                            log_fan = True
-                            log_fan = True
+                        logging.info(f"Default fan power used: {indoor_fan_power} kW")
+                        log_fan = True
                 ref_gross_cap = ref_net_cap + indoor_fan_power
         else:
             if ref_net_cap != None:
@@ -101,7 +88,6 @@ class UnitaryDirectExpansion(Equipment):
         else:
             self.ref_net_cap = ref_net_cap
             self.ref_gross_cap = ref_gross_cap
-        self.outdoor_fan_power = indoor_fan_power
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
         self.full_eff_alt = 0
@@ -117,7 +103,6 @@ class UnitaryDirectExpansion(Equipment):
         self.sim_engine = sim_engine
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = condenser_type
-        self.fan_control_mode = outdoor_fan_control_mode
         self.compressor_speed = compressor_speed
         self.ref_cap_unit = ref_cap_unit
         self.indoor_fan_control_mode = indoor_fan_control_mode
@@ -168,6 +153,7 @@ class UnitaryDirectExpansion(Equipment):
             plf_f_plr.out_min = 0
             plf_f_plr.out_max = 1
             self.set_of_curves.append(plf_f_plr)
+            self.plr_curve = plf_f_plr
 
     def calc_rated_eff(
         self, eff_type="ieer", unit="eer", output_report=False, alt=False
@@ -187,14 +173,18 @@ class UnitaryDirectExpansion(Equipment):
             std = self.part_eff_ref_std_alt
         else:
             std = self.part_eff_ref_std
-        eqp_type = self.type
+        eqp_type = self.type.lower()
         # Retrieve curves
         curves = self.get_dx_curves()
         cap_f_f = curves["cap_f_ff"]
         cap_f_t = curves["cap_f_t"]
         eir_f_t = curves["eir_f_t"]
         eir_f_f = curves["eir_f_ff"]
-        plf_f_plr = curves["plf_f_plr"]
+        if "plf_f_plr" not in curves:
+            plf_f_plr = self.plr_curve
+        else:
+            plf_f_plr = curves["plf_f_plr"]
+        
         if self.indoor_fan_control_mode == "constant_speed":
             f = 1
         else:
@@ -202,7 +192,7 @@ class UnitaryDirectExpansion(Equipment):
             f = self.indoor_fan_speed_mapping[num]["fan_flow_fraction"]
         tot_cap_flow_mod_fac = cap_f_f.evaluate(f, 1)
         eir_flow_mod_fac = eir_f_f.evaluate(f, 1)
-        num_of_reduced_cap = equipment_references[self.type][std]["coef"][
+        num_of_reduced_cap = equipment_references[eqp_type][std]["coef"][
             "numofreducedcap"
         ]
         reduced_plr = equipment_references[eqp_type][std]["coef"]["reducedplr"]
@@ -219,7 +209,7 @@ class UnitaryDirectExpansion(Equipment):
         )
         net_cooling_cap_rated = (
             self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
-            - self.fan_power
+            - self.indoor_fan_power
         )
         rated_cop = self.full_eff
         ieer = 0
@@ -240,7 +230,7 @@ class UnitaryDirectExpansion(Equipment):
             )
             net_cooling_cap_reduced = (
                 self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
-                - self.fan_power
+                - self.indoor_fan_power
             )
             eir_temp_mod_fac = eir_f_t.evaluate(
                 equipment_references[eqp_type][std][
@@ -268,11 +258,9 @@ class UnitaryDirectExpansion(Equipment):
                 * (self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac)
             )
             eer_reduced = (load_factor * net_cooling_cap_reduced) / (
-                load_factor * elec_power_reduced_cap
-                + self.outdoor_fan_power
-                + self.indoor_fan_power
+                load_factor * elec_power_reduced_cap + self.indoor_fan_power
             )
-            # other place to adjust?
+            #other place to adjust?
             ieer += weighting_factor[red_cap_num] * eer_reduced
         return ieer
 
