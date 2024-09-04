@@ -103,7 +103,9 @@ class UnitaryDirectExpansion(TestCase):
         self.assertIn("ERROR", log.output[0])
         self.assertIn("Input must be one and only one capacity input", log.output[0])
 
+
 # Run the tests
 import unittest
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

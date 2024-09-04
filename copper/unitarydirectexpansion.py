@@ -39,12 +39,20 @@ class UnitaryDirectExpansion(Equipment):
         sim_engine="energyplus",
         condenser_type="air",
         degradation_coefficient=0.115170535550221,  # plf = (1 - C_D) * C_D * plr in AHRI 240/210
-        indoor_fan_control_mode = "constant_speed",
-        indoor_fan_speed_mapping= {
-            "1": {"fan_flow_fraction": 0.66, "fan_power_fraction": 0.4, "capacity_fraction": 0.5},
-            "2": {"fan_flow_fraction": 1.0, "fan_power_fraction": 1.0, "capacity_fraction": 1.0}
+        indoor_fan_control_mode="constant_speed",
+        indoor_fan_speed_mapping={
+            "1": {
+                "fan_flow_fraction": 0.66,
+                "fan_power_fraction": 0.4,
+                "capacity_fraction": 0.5,
             },
-        indoor_fan_speed = "1"
+            "2": {
+                "fan_flow_fraction": 1.0,
+                "fan_power_fraction": 1.0,
+                "capacity_fraction": 1.0,
+            },
+        },
+        indoor_fan_speed="1",
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -184,7 +192,7 @@ class UnitaryDirectExpansion(Equipment):
             plf_f_plr = self.plr_curve
         else:
             plf_f_plr = curves["plf_f_plr"]
-        
+
         if self.indoor_fan_control_mode == "constant_speed":
             f = 1
         else:
@@ -260,7 +268,7 @@ class UnitaryDirectExpansion(Equipment):
             eer_reduced = (load_factor * net_cooling_cap_reduced) / (
                 load_factor * elec_power_reduced_cap + self.indoor_fan_power
             )
-            #other place to adjust?
+            # other place to adjust?
             ieer += weighting_factor[red_cap_num] * eer_reduced
         return ieer
 
