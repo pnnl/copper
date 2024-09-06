@@ -279,7 +279,9 @@ class UnitaryDirectExpansion(Equipment):
                 ],
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
             )
-            load_factor_gross = reduced_plr[red_cap_num] / tot_cap_temp_mod_fac # Load percentage * Rated gross capacity / Available gross capacity
+            load_factor_gross = (
+                reduced_plr[red_cap_num] / tot_cap_temp_mod_fac
+            )  # Load percentage * Rated gross capacity / Available gross capacity
             indoor_fan_power = self.calc_fan_power(load_factor_gross)
             net_cooling_cap_reduced = (
                 self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
