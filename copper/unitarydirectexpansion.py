@@ -27,7 +27,7 @@ class UnitaryDirectExpansion(Equipment):
         compressor_type,
         compressor_speed="constant",
         ref_cap_unit="si",
-        fan_power=None,
+        indoor_fan_power=None,
         part_eff=0,
         ref_gross_cap=None,
         ref_net_cap=None,
@@ -38,11 +38,25 @@ class UnitaryDirectExpansion(Equipment):
         model="simplified_bf",
         sim_engine="energyplus",
         condenser_type="air",
-        fan_control_mode="constant_speed",
-        degradation_coefficient=0.115170535550221,  # plf = (1 - C_D) * C_D * plr in AHRI 240/210
+        degradation_coefficient=0.115170535550221,  # PLF = 1 - (1 - PLR) * C_D = (1 - C_D) + C_D * PLR Equation 11.63 in AHRI 240/210 (2024)
+        indoor_fan_speeds_mapping={
+            "1": {
+                "fan_flow_fraction": 0.66,
+                "fan_power_fraction": 0.4,
+                "capacity_fraction": 0.5,
+            },
+            "2": {
+                "fan_flow_fraction": 1.0,
+                "fan_power_fraction": 1.0,
+                "capacity_fraction": 1.0,
+            },
+        },
+        indoor_fan_speeds=1,
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
+
+        # Input validation and populate default assumptions
         if model != "simplified_bf":
             logging.error("Model must be 'simplified_bf'")
             raise ValueError("Model must be 'simplified_bf'")
@@ -51,19 +65,20 @@ class UnitaryDirectExpansion(Equipment):
                 logging.error("Input must be one and only one capacity input")
                 raise ValueError("Input must be one and only one capacity input")
             else:
-                if fan_power == None:
-                    fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
-                    # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240.
+                if indoor_fan_power == None:
+                    # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240 (2024).
+                    indoor_fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
                     if not log_fan:
-                        logging.info(f"Default fan power used: {fan_power} kW")
+                        logging.info(f"Default fan power used: {indoor_fan_power} kW")
                         log_fan = True
-                ref_gross_cap = ref_net_cap + fan_power
+                ref_gross_cap = ref_net_cap + indoor_fan_power
         else:
             if ref_net_cap != None:
                 logging.error("Input must be one and only one capacity input")
                 raise ValueError("Input must be one and only one capacity input")
-            if fan_power == None:
-                fan_power = (
+            if indoor_fan_power == None:
+                # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240 (2024).
+                indoor_fan_power = (
                     0.28434517
                     * 400
                     * 0.365
@@ -71,9 +86,9 @@ class UnitaryDirectExpansion(Equipment):
                     / (1 + 0.28434517 * 400 * 0.365)
                 )
                 if not log_fan:
-                    logging.info(f"Default fan power used: {fan_power} kW")
+                    logging.info(f"Default fan power used: {indoor_fan_power} kW")
                     log_fan = True
-            ref_net_cap = ref_gross_cap - fan_power
+            ref_net_cap = ref_gross_cap - indoor_fan_power
         self.ref_cap_unit = ref_cap_unit
         if self.ref_cap_unit != "si":
             ref_net_cap_ton = Units(value=ref_net_cap, unit=self.ref_cap_unit)
@@ -83,7 +98,8 @@ class UnitaryDirectExpansion(Equipment):
         else:
             self.ref_net_cap = ref_net_cap
             self.ref_gross_cap = ref_gross_cap
-        self.fan_power = fan_power
+
+        # Get attributes
         self.full_eff = full_eff
         self.full_eff_unit = full_eff_unit
         self.full_eff_alt = 0
@@ -99,13 +115,17 @@ class UnitaryDirectExpansion(Equipment):
         self.sim_engine = sim_engine
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = condenser_type
-        self.fan_control_mode = fan_control_mode
         self.compressor_speed = compressor_speed
         self.ref_cap_unit = ref_cap_unit
+        self.indoor_fan_speeds_mapping = indoor_fan_speeds_mapping
+        self.indoor_fan_speeds = indoor_fan_speeds
+        self.indoor_fan_power = indoor_fan_power
+
         # Define rated temperatures
-        # air entering drybulb,air entering wetbulb, outdoor enter, outdoor leaving
+        # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
         aed, aew, ect, lct = self.get_rated_temperatures()
         ect = ect[0]
+
         # Defined plotting ranges and (rated) temperature for normalization
         nb_val = 50
         if self.model == "simplified_bf":
@@ -133,6 +153,7 @@ class UnitaryDirectExpansion(Equipment):
                 "cap-f-ff": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
                 "plf-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
             }
+
         # Cycling degradation
         self.degradation_coefficient = degradation_coefficient
         if not "plf_f_plr" in self.get_dx_curves().keys():
@@ -146,6 +167,37 @@ class UnitaryDirectExpansion(Equipment):
             plf_f_plr.out_min = 0
             plf_f_plr.out_max = 1
             self.set_of_curves.append(plf_f_plr)
+
+    def calc_fan_power(self, capacity_ratio):
+        # Full flow/power
+        if capacity_ratio == 1 or self.indoor_fan_speeds == 1:
+            return self.indoor_fan_power
+        else:
+            capacity_ratios = []
+            fan_power_fractions = []
+            for speed_info in self.indoor_fan_speeds_mapping.values():
+                capacity_ratios.append(speed_info["capacity_fraction"])
+                fan_power_fractions.append(speed_info["fan_power_fraction"])
+            # Minimum flow/power
+            if capacity_ratio <= capacity_ratios[0]:
+                return self.indoor_fan_power * fan_power_fractions[0]
+            elif capacity_ratio in capacity_ratios:
+                return (
+                    self.indoor_fan_power
+                    * fan_power_fractions[capacity_ratios.index(capacity_ratio)]
+                )
+            else:
+                # In between-speeds: determine power by linear interpolation
+                for i, ratio in enumerate(capacity_ratios):
+                    if (
+                        ratio < capacity_ratio
+                        and capacity_ratios[i + 1] > capacity_ratio
+                    ):
+                        a = (fan_power_fractions[i + 1] - fan_power_fractions[i]) / (
+                            capacity_ratios[i + 1] - capacity_ratios[i]
+                        )
+                        b = fan_power_fractions[i] - a * capacity_ratios[i]
+                        return self.indoor_fan_power * (a * capacity_ratio + b)
 
     def calc_rated_eff(
         self, eff_type="ieer", unit="eer", output_report=False, alt=False
@@ -161,10 +213,13 @@ class UnitaryDirectExpansion(Equipment):
         :rtype: float
 
         """
+
+        # Handle alternate ratings (not currently used)
         if alt:
             std = self.part_eff_ref_std_alt
         else:
             std = self.part_eff_ref_std
+
         # Retrieve curves
         curves = self.get_dx_curves()
         cap_f_f = curves["cap_f_ff"]
@@ -172,8 +227,12 @@ class UnitaryDirectExpansion(Equipment):
         eir_f_t = curves["eir_f_t"]
         eir_f_f = curves["eir_f_ff"]
         plf_f_plr = curves["plf_f_plr"]
+
+        # Calculate capacity and efficiency degredation as a function of flow fraction
         tot_cap_flow_mod_fac = cap_f_f.evaluate(1, 1)
         eir_flow_mod_fac = eir_f_f.evaluate(1, 1)
+
+        # Get rated conditions
         eqp_type = self.type.lower()
         num_of_reduced_cap = equipment_references[eqp_type][std]["coef"][
             "numofreducedcap"
@@ -190,13 +249,20 @@ class UnitaryDirectExpansion(Equipment):
                 "outdoor_unit_inlet_air_dry_bulb_rated"
             ],
         )
+
+        # Calculate NET rated capacity
         net_cooling_cap_rated = (
             self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
-            - self.fan_power
+            - self.indoor_fan_power
         )
+
+        # User-specific capacity is a NET efficiency
         rated_cop = self.full_eff
+
+        # Iterate through the different sets of rating conditions to calculate IEER
         ieer = 0
         for red_cap_num in range(num_of_reduced_cap):
+            # Determine the outdoor air conditions based on AHRI Standard
             if reduced_plr[red_cap_num] > 0.444:
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced = (
                     5.0 + 30.0 * reduced_plr[red_cap_num]
@@ -205,16 +271,24 @@ class UnitaryDirectExpansion(Equipment):
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced = equipment_references[
                     eqp_type
                 ][std]["outdoor_unit_inlet_air_dry_bulb_reduced"]
+
+            # Calculate capacity at rating conditions
             tot_cap_temp_mod_fac = cap_f_t.evaluate(
                 equipment_references[eqp_type][std][
                     "cooling_coil_inlet_air_wet_bulb_rated"
                 ],
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
             )
+            load_factor_gross = (
+                reduced_plr[red_cap_num] / tot_cap_temp_mod_fac
+            )  # Load percentage * Rated gross capacity / Available gross capacity
+            indoor_fan_power = self.calc_fan_power(load_factor_gross)
             net_cooling_cap_reduced = (
                 self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
-                - self.fan_power
+                - indoor_fan_power
             )
+
+            # Calculate efficency at rating conditions
             eir_temp_mod_fac = eir_f_t.evaluate(
                 equipment_references[eqp_type][std][
                     "cooling_coil_inlet_air_wet_bulb_rated"
@@ -227,6 +301,8 @@ class UnitaryDirectExpansion(Equipment):
                 eir = 0.0
                 logging.error("Input COP is 0!")
                 raise ValueError("Input COP is 0!")
+
+            # "Load Factor" (as per AHRI Standard) which is analogous to PLR
             load_factor = (
                 reduced_plr[red_cap_num]
                 * net_cooling_cap_rated
@@ -234,15 +310,23 @@ class UnitaryDirectExpansion(Equipment):
                 if net_cooling_cap_reduced > 0.0
                 else 1.0
             )
+
+            # Cycling degredation
             degradation_coeff = 1 / plf_f_plr.evaluate(load_factor, 1)
+
+            # Power
             elec_power_reduced_cap = (
                 degradation_coeff
                 * eir
                 * (self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac)
             )
+
+            # EER
             eer_reduced = (load_factor * net_cooling_cap_reduced) / (
-                load_factor * elec_power_reduced_cap + self.fan_power
+                load_factor * elec_power_reduced_cap + indoor_fan_power
             )
+
+            # Update IEER
             ieer += weighting_factor[red_cap_num] * eer_reduced
         return ieer
 

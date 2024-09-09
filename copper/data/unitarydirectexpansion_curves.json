@@ -93,8 +93,8 @@
                 "rho": 0.9999898625489256
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -194,8 +194,8 @@
                 "rho": 0.9997841417696045
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -295,8 +295,8 @@
                 "rho": 0.9998202629693308
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -396,8 +396,8 @@
                 "rho": 0.999805016946502
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -497,8 +497,8 @@
                 "rho": 0.9997990211558602
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -598,8 +598,8 @@
                 "rho": 0.9414363852377039
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -699,8 +699,8 @@
                 "rho": 0.9414363852377039
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -800,8 +800,8 @@
                 "rho": 0.8643594441479289
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -901,8 +901,8 @@
                 "rho": 0.7974786198943641
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1002,8 +1002,8 @@
                 "rho": 0.8882829394047146
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1103,8 +1103,8 @@
                 "rho": 0.9998607205028736
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1204,8 +1204,8 @@
                 "rho": 0.9999634489564555
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1305,8 +1305,8 @@
                 "rho": 0.9999746498510637
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1406,8 +1406,8 @@
                 "rho": 0.9999662174716383
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1507,8 +1507,8 @@
                 "rho": 0.999739060090018
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1608,8 +1608,8 @@
                 "rho": 0.9998355355686489
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1709,8 +1709,8 @@
                 "rho": 0.9999208704251976
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1810,8 +1810,8 @@
                 "rho": 0.9998942593392481
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -1911,8 +1911,8 @@
                 "rho": 0.999931805937805
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2012,8 +2012,8 @@
                 "rho": 0.999936136922373
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2113,8 +2113,8 @@
                 "rho": 0.9999969563371341
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2214,8 +2214,8 @@
                 "rho": 0.999661495053771
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2315,8 +2315,8 @@
                 "rho": 0.9999784649582972
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2416,8 +2416,8 @@
                 "rho": 0.9999544390752798
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2517,8 +2517,8 @@
                 "rho": 1.0
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2618,8 +2618,8 @@
                 "rho": 0.9999961070029176
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2719,8 +2719,8 @@
                 "rho": 0.9998427626742821
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2820,8 +2820,8 @@
                 "rho": 0.9999977767476708
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -2921,8 +2921,8 @@
                 "rho": 0.9998633677193004
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -3022,8 +3022,8 @@
                 "rho": 0.9999768312037316
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -3123,8 +3123,8 @@
                 "rho": 0.9998942593392481
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -3224,8 +3224,8 @@
                 "rho": 0.9999650910478683
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -3325,8 +3325,8 @@
                 "rho": 0.9999530170125136
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -3426,8 +3426,8 @@
                 "rho": 0.9999990099710763
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
@@ -3527,8 +3527,8 @@
                 "rho": 0.9995445573140064
             }
         },
-        "fan_control_mode": null,
-        "fan_power": null,
+        "indoor_fan_control_mode": null,
+        "indoor_fan_power": null,
         "ref_gross_cap": 18101.22,
         "ref_net_cap": null,
         "ref_gross_cap_unit": "si",
