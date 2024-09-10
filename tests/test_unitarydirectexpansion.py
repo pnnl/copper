@@ -28,7 +28,7 @@ class UnitaryDirectExpansion(TestCase):
         sim_engine="energyplus",
         set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
     )
-    
+
     def test_calc_eff_ect(self):
         ieer = round(self.dx_unit_dft.calc_rated_eff(), 1)
         self.assertTrue(7.4 == ieer, f"{ieer} is different than 7.4")
