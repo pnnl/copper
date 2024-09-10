@@ -297,3 +297,11 @@ class TestChiller(TestCase):
 
         seed_curve_check = np.asarray(list_of_seed_bools)
         self.assertTrue(np.all(seed_curve_check) == True)
+
+    def test_lib_default_props_chiller(self):
+        assert (
+            self.lib.find_set_of_curves_from_lib(
+                filters=[("compressor_type", "screw")], part_eff_flag=True
+            )[0].eqp.__dict__["part_eff_ref_std"]
+            == "ahri_550/590"
+        )

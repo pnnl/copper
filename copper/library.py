@@ -172,8 +172,17 @@ class Library:
             class_name = props["eqp_type"][0].upper() + props["eqp_type"][1:]
             full_class_path = "copper." + class_name
             # Get equipment properties
-            eqp_props = inspect.getfullargspec(eval(full_class_path).__init__)[0]
+            eqp_class_info = inspect.getfullargspec(eval(full_class_path).__init__)
+            sign_eqp_class = inspect.signature(eval(full_class_path).__init__)
+            eqp_props = eqp_class_info[0]
             eqp_props.remove("self")
+
+            # List of propeties that should get defaulted
+            prop_to_default = [
+                "part_eff_ref_std",
+                "indoor_fan_speeds_mapping",
+                "indoor_fan_speeds",
+            ]
 
             # Set the equipment properties
             # using values from the library
@@ -181,11 +190,10 @@ class Library:
             for p in eqp_props:
                 if not "set_of_curves" in p:
                     if part_eff_flag and "part_eff" in p:
-                        if p == "part_eff_ref_std":
-                            obj_args["part_eff_ref_std"] = "ahri_550/590"
-                        else:
-                            if p in props.keys():
-                                obj_args[p] = props[p]
+                        if p in props.keys():
+                            obj_args[p] = props[p]
+                    elif p in prop_to_default:
+                        obj_args[p] = sign_eqp_class.parameters[p].default
                     elif (
                         "part_eff" in p or "alt" in p or "degradation_coefficient" in p
                     ):

@@ -11,6 +11,9 @@ DX_lib = os.path.join(location, "../copper/data", "unitarydirectexpansion_curves
 
 
 class UnitaryDirectExpansion(TestCase):
+    # Load curve library
+    lib = cp.Library(path=DX_lib)
+
     def test_calc_eff_ect(self):
         lib = cp.Library(path=DX_lib)
         DX = cp.UnitaryDirectExpansion(
@@ -181,6 +184,12 @@ class UnitaryDirectExpansion(TestCase):
 
         # Check that all curves have been generated
         assert len(set_of_curves) == 5
+
+    def test_lib_default_props_dx(self):
+        assert (
+            self.lib.find_set_of_curves_from_lib()[0].eqp.__dict__["part_eff_ref_std"]
+            == "ahri_340/360"
+        )
 
     def test_model_type_error(self):
         lib = cp.Library(path=DX_lib)
