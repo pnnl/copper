@@ -123,30 +123,30 @@ class UnitaryDirectExpansion(Equipment):
 
         # Define rated temperatures
         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
-        aed, aew, ect, lct = self.get_rated_temperatures()
-        ect = ect[0]
+        aed, self.aew, ect, lct = self.get_rated_temperatures()
+        self.ect = ect[0]
 
         # Defined plotting ranges and (rated) temperature for normalization
         nb_val = 50
         if self.model == "simplified_bf":
             self.plotting_range = {
                 "eir-f-t": {
-                    "x1_min": aew,
-                    "x1_max": aew,
-                    "x1_norm": aew,
+                    "x1_min": self.aew,
+                    "x1_max": self.aew,
+                    "x1_norm": self.aew,
                     "nbval": nb_val,
                     "x2_min": 10,
                     "x2_max": 40,
-                    "x2_norm": ect,
+                    "x2_norm": self.ect,
                 },
                 "cap-f-t": {
-                    "x1_min": aew,
-                    "x1_max": aew,
-                    "x1_norm": aew,
+                    "x1_min": self.aew,
+                    "x1_max": self.aew,
+                    "x1_norm": self.aew,
                     "nbval": 50,
                     "x2_min": 10,
                     "x2_max": 40,
-                    "x2_norm": ect,
+                    "x2_norm": self.ect,
                     "nbval": nb_val,
                 },
                 "eir-f-ff": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
@@ -394,14 +394,14 @@ class UnitaryDirectExpansion(Equipment):
         # Air entering indoor dry-bulb
         aed = Equipment.convert_to_deg_c(dx_data["aed"], dx_data["ae_unit"])
         # Air entering indoor wet-bulb
-        aew = Equipment.convert_to_deg_c(dx_data["aew"], dx_data["ae_unit"])
+        self.aew = Equipment.convert_to_deg_c(dx_data["aew"], dx_data["ae_unit"])
         # Outdoor water/air entering
         ect = [
             Equipment.convert_to_deg_c(t, dx_data["ect_unit"]) for t in dx_data["ect"]
         ]
         # Outdoor water/air leaving
         lct = Equipment.convert_to_deg_c(dx_data["lct"], dx_data["lct_unit"])
-        return [aed, aew, ect, lct]
+        return [aed, self.aew, ect, lct]
 
     def get_lib_and_filters(self, lib_path=unitary_dx_lib):
         """Get unitary DX equipment library object and unitary DX equipment specific filters.
@@ -428,19 +428,17 @@ class UnitaryDirectExpansion(Equipment):
         :rtype: dict
 
         """
-        norm_val = {"ect_lwt": self.ref_ect, "lct_lwt": self.ref_lct}[self.model]
-
         ranges = {
             "eir-f-t": {
-                "vars_range": [(4, 10), (10.0, 40.0)],
-                "normalization": (self.ref_lwt, norm_val),
+                "vars_range": [(12.8, 26), (10.0, 40.0)],
+                "normalization": (self.aew, self.ect),
             },
-            "eir-f-f": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
+            "eir-f-ff": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
             "cap-f-t": {
-                "vars_range": [(4, 10), (10.0, 40.0)],
-                "normalization": (self.ref_lwt, norm_val),
+                "vars_range": [(12.8, 26), (10.0, 40.0)],
+                "normalization": (self.aew, self.ect),
             },
-            "cap-f-f": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
+            "cap-f-ff": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
             "plf-f-plr": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
         }
 
