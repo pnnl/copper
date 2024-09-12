@@ -19,7 +19,7 @@ class UnitaryDirectExpansion(TestCase):
         compressor_type="scroll",
         condenser_type="air",
         compressor_speed="constant",
-        ref_cap_unit="si",
+        ref_cap_unit="W",
         ref_gross_cap=471000,
         full_eff=5.89,
         full_eff_unit="cop",
@@ -31,7 +31,7 @@ class UnitaryDirectExpansion(TestCase):
 
     def test_calc_eff_ect(self):
         ieer = round(self.dx_unit_dft.calc_rated_eff(), 1)
-        self.assertTrue(7.4 == ieer, f"{ieer} is different than 7.4")
+        self.assertTrue(5.7 == ieer, f"{ieer} is different than 5.7")
 
         # Two-speed fan unit
         dx_unit_two_speed = self.dx_unit_dft
