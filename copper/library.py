@@ -45,6 +45,10 @@ class Library:
                         and not "indoor_fan_speeds" in p
                     ):
                         obj_args[p] = vals[p]
+                    elif (
+                        p == "part_eff" and class_name == "UnitaryDirectExpansion"
+                    ):  # TODO: set to be recalculated like chillers
+                        org_part_eff = vals[p]
 
                 # Temporarily set the part load efficiency to the
                 # full load efficiency, units are assumed to be
@@ -76,7 +80,12 @@ class Library:
                 # Set part load efficiency if
                 # the calculation was sucessful
                 if part_eff > -999:
-                    vals["part_eff"] = part_eff
+                    if (
+                        class_name == "UnitaryDirectExpansion"
+                    ):  # TODO: set to be recalculated like chillers
+                        vals["part_eff"] = org_part_eff
+                    else:
+                        vals["part_eff"] = part_eff
                     vals["part_eff_unit"] = vals["full_eff_unit"]
                 else:
                     if "part_eff" in vals.keys():
