@@ -26,7 +26,7 @@ class UnitaryDirectExpansion(Equipment):
         full_eff_unit,
         compressor_type,
         compressor_speed="constant",
-        ref_cap_unit="si",
+        ref_cap_unit="W",
         indoor_fan_power=None,
         part_eff=0,
         ref_gross_cap=None,
@@ -90,11 +90,12 @@ class UnitaryDirectExpansion(Equipment):
                     log_fan = True
             ref_net_cap = ref_gross_cap - indoor_fan_power
         self.ref_cap_unit = ref_cap_unit
-        if self.ref_cap_unit != "si":
+        if self.ref_cap_unit != "kW":
             ref_net_cap_ton = Units(value=ref_net_cap, unit=self.ref_cap_unit)
             self.ref_net_cap = ref_net_cap_ton.conversion(new_unit="kW")
             ref_gross_cap_ton = Units(value=ref_gross_cap, unit=self.ref_cap_unit)
             self.ref_gross_cap = ref_gross_cap_ton.conversion(new_unit="kW")
+            self.ref_cap_unit = "kW"
         else:
             self.ref_net_cap = ref_net_cap
             self.ref_gross_cap = ref_gross_cap
@@ -149,8 +150,8 @@ class UnitaryDirectExpansion(Equipment):
                     "x2_norm": self.ect,
                     "nbval": nb_val,
                 },
-                "eir-f-ff": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
-                "cap-f-ff": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
+                "eir-f-ff": {"x1_min": 0, "x1_max": 2, "x1_norm": 1, "nbval": nb_val},
+                "cap-f-ff": {"x1_min": 0, "x1_max": 2, "x1_norm": 1, "nbval": nb_val},
                 "plf-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
             }
 
@@ -200,7 +201,7 @@ class UnitaryDirectExpansion(Equipment):
                         return self.indoor_fan_power * (a * capacity_ratio + b)
 
     def calc_rated_eff(
-        self, eff_type="ieer", unit="eer", output_report=False, alt=False
+        self, eff_type="part", unit="cop", output_report=False, alt=False
     ):
         """Calculate unitary DX equipment efficiency.
 
@@ -256,8 +257,10 @@ class UnitaryDirectExpansion(Equipment):
             - self.indoor_fan_power
         )
 
-        # User-specific capacity is a NET efficiency
-        rated_cop = self.full_eff
+        # Convert user-specified full load efficiency to COP
+        # User-specified capacity is a NET efficiency
+        full_eff = Units(value=self.full_eff, unit=self.full_eff_unit)
+        rated_cop = full_eff.conversion(new_unit="cop")
 
         # Iterate through the different sets of rating conditions to calculate IEER
         ieer = 0
@@ -282,7 +285,7 @@ class UnitaryDirectExpansion(Equipment):
             load_factor_gross = (
                 reduced_plr[red_cap_num] / tot_cap_temp_mod_fac
             )  # Load percentage * Rated gross capacity / Available gross capacity
-            indoor_fan_power = self.calc_fan_power(load_factor_gross)
+            indoor_fan_power = self.calc_fan_power(load_factor_gross) / 1000
             net_cooling_cap_reduced = (
                 self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
                 - indoor_fan_power
@@ -326,8 +329,17 @@ class UnitaryDirectExpansion(Equipment):
                 load_factor * elec_power_reduced_cap + indoor_fan_power
             )
 
+            if eff_type == "full":
+                ieer = eer_reduced
+                break
+
             # Update IEER
             ieer += weighting_factor[red_cap_num] * eer_reduced
+
+        # Convert efficiency to original unit unless specified
+        if unit != "cop":
+            ieer = Units(value=ieer, unit="cop")
+            ieer = ieer.conversion(new_unit=self.full_eff_unit)
         return ieer
 
     def ieer_to_eer(self, ieer):
