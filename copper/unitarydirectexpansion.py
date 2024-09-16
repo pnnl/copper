@@ -506,3 +506,6 @@ class UnitaryDirectExpansion(Equipment):
         self.ranges = self.get_ranges()
         curves = SetsofCurves(sets=csets, eqp=self)
         return curves
+
+    def get_ref_vars_for_aggregation(self):
+        return ["ref_net_cap", "full_eff", "part_eff"]

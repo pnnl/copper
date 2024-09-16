@@ -237,9 +237,7 @@ class SetsofCurves:
 
         return agg_set_of_curves
 
-    def nearest_neighbor_sort(
-        self, target_attr=None, vars=["ref_gross_cap", "full_eff", "part_eff"], N=None
-    ):
+    def nearest_neighbor_sort(self, target_attr=None, vars=[], N=None):
         """This function performs the weighted average and the nearest neighbor approach.
 
         :param dict target_attr: Target attributes we want to match
@@ -250,6 +248,10 @@ class SetsofCurves:
         :rtype: int
 
         """
+
+        # Get default variable if not specified
+        if vars == []:
+            vars = self.eqp.get_ref_vars_for_aggregation()
 
         if target_attr is None:
             raise ValueError("target_attr cannot be None. Enter valid attributes")

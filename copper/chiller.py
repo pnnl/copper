@@ -664,3 +664,6 @@ class Chiller(Equipment):
         self.ranges = self.get_ranges()
         curves = SetsofCurves(sets=csets, eqp=self)
         return curves
+
+    def get_ref_vars_for_aggregation(self):
+        return ["ref_cap", "full_eff"]
