@@ -231,6 +231,7 @@ class Library:
                         c, self.data[name], eqp=self.load_obj(self.data[name])
                     )
                 )
+            c_set.name = name
             c_set.curves = c_lst
             set_of_curvess.append(c_set)
 
