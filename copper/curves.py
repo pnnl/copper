@@ -831,7 +831,9 @@ class Curve:
             for x in data["X1"]:
                 vals.append(c.evaluate(x, 0))
 
-            if reg_r_sqr > r_sqr and self.compute_grad(data["X1"], vals, sign_val, threshold=0.02):
+            if reg_r_sqr > r_sqr and self.compute_grad(
+                data["X1"], vals, sign_val, threshold=0.02
+            ):
                 self.coeff1, self.coeff2, self.coeff3, self.coeff4 = model.params
                 self.type = "cubic"
                 r_sqr = reg_r_sqr
