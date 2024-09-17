@@ -52,6 +52,7 @@ class UnitaryDirectExpansion(Equipment):
             },
         },
         indoor_fan_speeds=1,
+        fan_power_unit="kW",
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -67,28 +68,59 @@ class UnitaryDirectExpansion(Equipment):
             else:
                 if indoor_fan_power == None:
                     # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240 (2024).
-                    indoor_fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
+                    fan_power_unit = "kW"
+                    indoor_fan_power = Units(
+                        value=Units(value=ref_net_cap, unit=ref_cap_unit).conversion(
+                            new_unit="ton"
+                        )
+                        * 400
+                        * 0.365,
+                        unit="W",
+                    ).conversion(new_unit=fan_power_unit)
                     if not log_fan:
                         logging.info(f"Default fan power used: {indoor_fan_power} kW")
                         log_fan = True
-                ref_gross_cap = ref_net_cap + indoor_fan_power
+                ref_gross_cap = Units(
+                    value=Units(value=ref_net_cap, unit=ref_cap_unit).conversion(
+                        new_unit=fan_power_unit
+                    )
+                    + indoor_fan_power,
+                    unit=fan_power_unit,
+                ).conversion(ref_cap_unit)
         else:
             if ref_net_cap != None:
                 logging.error("Input must be one and only one capacity input")
                 raise ValueError("Input must be one and only one capacity input")
             if indoor_fan_power == None:
                 # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240 (2024).
-                indoor_fan_power = (
-                    0.28434517
-                    * 400
-                    * 0.365
-                    * (ref_gross_cap / 1000)
-                    / (1 + 0.28434517 * 400 * 0.365)
-                )
+                fan_power_unit = "kW"
+                indoor_fan_power = Units(
+                    value=(
+                        400
+                        * 0.365
+                        * Units(value=ref_gross_cap, unit=ref_cap_unit).conversion(
+                            new_unit="ton"
+                        )
+                    )
+                    / (
+                        1
+                        + 400
+                        * 0.365
+                        * Units(value=1.0, unit=ref_cap_unit).conversion(new_unit="ton")
+                        * Units(value=1.0, unit="W").conversion(new_unit=ref_cap_unit)
+                    ),
+                    unit="W",
+                ).conversion(new_unit=fan_power_unit)
                 if not log_fan:
                     logging.info(f"Default fan power used: {indoor_fan_power} kW")
                     log_fan = True
-            ref_net_cap = ref_gross_cap - indoor_fan_power
+            ref_net_cap = Units(
+                value=Units(value=ref_gross_cap, unit=ref_cap_unit).conversion(
+                    new_unit=fan_power_unit
+                )
+                - indoor_fan_power,
+                unit=fan_power_unit,
+            ).conversion(ref_cap_unit)
         self.ref_cap_unit = ref_cap_unit
         if self.ref_cap_unit != "kW":
             ref_net_cap_ton = Units(value=ref_net_cap, unit=self.ref_cap_unit)
@@ -99,6 +131,7 @@ class UnitaryDirectExpansion(Equipment):
         else:
             self.ref_net_cap = ref_net_cap
             self.ref_gross_cap = ref_gross_cap
+            self.ref_cap_unit = ref_cap_unit
 
         # Get attributes
         self.full_eff = full_eff
@@ -117,10 +150,10 @@ class UnitaryDirectExpansion(Equipment):
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = condenser_type
         self.compressor_speed = compressor_speed
-        self.ref_cap_unit = ref_cap_unit
         self.indoor_fan_speeds_mapping = indoor_fan_speeds_mapping
         self.indoor_fan_speeds = indoor_fan_speeds
         self.indoor_fan_power = indoor_fan_power
+        self.fan_power_unit = fan_power_unit
 
         # Define rated temperatures
         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
