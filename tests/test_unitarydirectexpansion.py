@@ -30,14 +30,77 @@ class UnitaryDirectExpansion(TestCase):
     )
 
     def test_calc_eff_ect(self):
-        ieer = round(self.dx_unit_dft.calc_rated_eff(), 1)
-        self.assertTrue(5.7 == ieer, f"{ieer} is different than 5.7")
+        ieer = round(self.dx_unit_dft.calc_rated_eff(unit="eer"), 1)
+        self.assertTrue(7.5 == ieer, f"{ieer} is different than 7.5")
 
         # Two-speed fan unit
         dx_unit_two_speed = self.dx_unit_dft
         dx_unit_two_speed.indoor_fan_speeds = 2
         ieer_two_spd = round(dx_unit_two_speed.calc_rated_eff(), 2)
         assert ieer_two_spd > ieer
+
+    def test_check_net_gross_capacity(self):
+        # Check that the difference between the gross and net capacity is the indoor fan power
+        assert round(
+            cp.Units(
+                value=self.dx_unit_dft.ref_gross_cap - self.dx_unit_dft.ref_net_cap,
+                unit=self.dx_unit_dft.ref_cap_unit,
+            ).conversion(new_unit="kW"),
+            3,
+        ) == round(self.dx_unit_dft.indoor_fan_power, 3)
+
+        # Same check but with "ton" based capacity
+        dx_unit_alt = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            compressor_speed="constant",
+            ref_cap_unit="ton",
+            ref_gross_cap=2.5,
+            full_eff=5.89,
+            full_eff_unit="cop",
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+            set_of_curves=self.lib.get_set_of_curves_by_name("D208122216").curves,
+        )
+        assert round(
+            cp.Units(
+                value=dx_unit_alt.ref_gross_cap - dx_unit_alt.ref_net_cap,
+                unit=dx_unit_alt.ref_cap_unit,
+            ).conversion(new_unit="kW"),
+            3,
+        ) == round(dx_unit_alt.indoor_fan_power, 3)
+
+    def test_check_lib_ieer(self):
+        # Get all curves from the library
+        filters = [("eqp_type", "UnitaryDirectExpansion")]
+        curves = self.lib.find_set_of_curves_from_lib(
+            filters=filters, part_eff_flag=True
+        )
+
+        for i in range(len(curves)):
+            # Get equipment from curves from the library
+            eqp = curves[i].eqp
+
+            # Assign a default PLF curve
+            plf_f_plr = cp.Curve(eqp=eqp, c_type="linear")
+            plf_f_plr.out_var = "plf-f-plr"
+            plf_f_plr.type = "linear"
+            plf_f_plr.coeff1 = 1 - eqp.degradation_coefficient * 0.9  # TODO: to revise
+            plf_f_plr.coeff2 = eqp.degradation_coefficient * 0.9
+            plf_f_plr.x_min = 0
+            plf_f_plr.x_max = 1
+            plf_f_plr.out_min = 0
+            plf_f_plr.out_max = 1
+
+            # Re-assigne curve to equipment
+            eqp.set_of_curves = curves[i].curves
+            eqp.set_of_curves.append(plf_f_plr)
+
+            # Check that the IEER is always better than full load EER
+            assert round(eqp.full_eff, 2) < round(
+                eqp.calc_rated_eff(eff_type="part", unit="eer"), 3
+            )
 
     def test_multi_speed(self):
         # Two-speed fan unit
