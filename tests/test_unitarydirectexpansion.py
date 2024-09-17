@@ -31,7 +31,7 @@ class UnitaryDirectExpansion(TestCase):
 
     def test_calc_eff_ect(self):
         ieer = round(self.dx_unit_dft.calc_rated_eff(unit="eer"), 1)
-        self.assertTrue(5.7 == ieer, f"{ieer} is different than 5.7")
+        self.assertTrue(7.5 == ieer, f"{ieer} is different than 7.5")
 
         # Two-speed fan unit
         dx_unit_two_speed = self.dx_unit_dft
