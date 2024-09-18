@@ -59,6 +59,7 @@ class UnitaryDirectExpansion(Equipment):
             "4": 0.63 * 0.9437,
         },
         indoor_fan_speeds=1,
+        indoor_fan_curve=0,
         fan_power_unit="kW",
     ):
         global log_fan
@@ -162,7 +163,7 @@ class UnitaryDirectExpansion(Equipment):
         self.indoor_fan_power = indoor_fan_power
         self.infdoor_fan_curve_coef = infdoor_fan_curve_coef
         self.fan_power_unit = fan_power_unit
-
+        self.indoor_fan_curve = indoor_fan_curve
         # Define rated temperatures
         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
         aed, self.aew, ect, lct = self.get_rated_temperatures()
@@ -225,7 +226,7 @@ class UnitaryDirectExpansion(Equipment):
         if capacity_ratio == 1 or self.indoor_fan_speeds == 1:
             return self.indoor_fan_power
         else:
-            if self.indoor_fan_speeds == 2:
+            if self.indoor_fan_curve == 0:
                 capacity_ratios = []
                 fan_power_fractions = []
                 for speed_info in self.indoor_fan_speeds_mapping.values():

@@ -44,6 +44,7 @@ class Library:
                         and not "indoor_fan_speeds_mapping" in p
                         and not "indoor_fan_speeds" in p
                         and not "infdoor_fan_curve_coef" in p
+                        and not "indoor_fan_curve" in p
                     ):
                         obj_args[p] = vals[p]
                     elif (
@@ -119,6 +120,7 @@ class Library:
                 and not "indoor_fan_speeds_mapping" in p
                 and not "indoor_fan_speeds" in p
                 and not "infdoor_fan_curve_coef" in p
+                and not "indoor_fan_curve" in p
             ):
                 obj_args[p] = data[p]
 
@@ -211,6 +213,7 @@ class Library:
                         or "alt" in p
                         or "degradation_coefficient" in p
                         or "infdoor_fan_curve_coef" in p
+                        or "indoor_fan_curve" in p
                     ):
                         pass
                     else:
