@@ -18,6 +18,7 @@ equipment_references = json.load(
 )
 log_fan = False
 
+
 class UnitaryDirectExpansion(Equipment):
     def __init__(
         self,
@@ -50,19 +51,15 @@ class UnitaryDirectExpansion(Equipment):
                 "capacity_fraction": 1.0,
             },
         },
-<<<<<<< HEAD
         infdoor_fan_curve_coef={
-            "type":"cubic",
-            "1":0.63*0.0408,
-            "2":0.63*0.088,
-            "3":-0.63*0.0729,
-            "4":0.63*0.9437
+            "type": "cubic",
+            "1": 0.63 * 0.0408,
+            "2": 0.63 * 0.088,
+            "3": -0.63 * 0.0729,
+            "4": 0.63 * 0.9437,
         },
-        indoor_fan_speeds=1
-=======
         indoor_fan_speeds=1,
         fan_power_unit="kW",
->>>>>>> origin/develop
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -163,12 +160,9 @@ class UnitaryDirectExpansion(Equipment):
         self.indoor_fan_speeds_mapping = indoor_fan_speeds_mapping
         self.indoor_fan_speeds = indoor_fan_speeds
         self.indoor_fan_power = indoor_fan_power
-<<<<<<< HEAD
-        self.infdoor_fan_curve_coef=infdoor_fan_curve_coef
-=======
+        self.infdoor_fan_curve_coef = infdoor_fan_curve_coef
         self.fan_power_unit = fan_power_unit
 
->>>>>>> origin/develop
         # Define rated temperatures
         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
         aed, self.aew, ect, lct = self.get_rated_temperatures()
@@ -216,8 +210,10 @@ class UnitaryDirectExpansion(Equipment):
             plf_f_plr.out_max = 1
             self.set_of_curves.append(plf_f_plr)
 
-        #default fan curve
-        self.default_fan_curve = Curve(eqp=self, c_type = self.infdoor_fan_curve_coef["type"])
+        # default fan curve
+        self.default_fan_curve = Curve(
+            eqp=self, c_type=self.infdoor_fan_curve_coef["type"]
+        )
         self.default_fan_curve.coeff1 = self.infdoor_fan_curve_coef["1"]
         self.default_fan_curve.coeff2 = self.infdoor_fan_curve_coef["2"]
         self.default_fan_curve.coeff3 = self.infdoor_fan_curve_coef["3"]
@@ -225,6 +221,7 @@ class UnitaryDirectExpansion(Equipment):
 
     def calc_fan_power(self, capacity_ratio):
         # Full flow/power
+        ratio = capacity_ratio
         if capacity_ratio == 1 or self.indoor_fan_speeds == 1:
             return self.indoor_fan_power
         else:
@@ -249,17 +246,21 @@ class UnitaryDirectExpansion(Equipment):
                             ratio < capacity_ratio
                             and capacity_ratios[i + 1] > capacity_ratio
                         ):
-                            a = (fan_power_fractions[i + 1] - fan_power_fractions[i]) / (
-                                capacity_ratios[i + 1] - capacity_ratios[i]
-                            )
+                            a = (
+                                fan_power_fractions[i + 1] - fan_power_fractions[i]
+                            ) / (capacity_ratios[i + 1] - capacity_ratios[i])
                             b = fan_power_fractions[i] - a * capacity_ratios[i]
                             return self.indoor_fan_power * (a * capacity_ratio + b)
-            else:#using curve
-                defualt_coef = 1 # can update this coef later
-                default_min_fan_power = self.indoor_fan_power * 0.25 # default min fan power
-                power_factor = self.default_fan_curve.evaluate(x=defualt_coef * capacity_ratios) # x:ff factor
-                if self.indoor_fan_power*power_factor > default_min_fan_power:
-                    return self.indoor_fan_power*power_factor
+            else:  # using curve
+                defualt_coef = 1  # can update this coef later
+                default_min_fan_power = (
+                    self.indoor_fan_power * 0.25
+                )  # default min fan power
+                power_factor = self.default_fan_curve.evaluate(
+                    x=defualt_coef * ratio, y=0
+                )  # x:ff factor
+                if self.indoor_fan_power * power_factor > default_min_fan_power:
+                    return self.indoor_fan_power * power_factor
                 else:
                     return default_min_fan_power
 

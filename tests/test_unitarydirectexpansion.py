@@ -258,3 +258,10 @@ class UnitaryDirectExpansion(TestCase):
         ranges = self.dx_unit_dft.get_ranges()
         assert isinstance(ranges, dict)
         assert len(ranges) == 5
+
+
+# Run the tests
+import unittest
+
+if __name__ == "__main__":
+    unittest.main()

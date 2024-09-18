@@ -43,6 +43,7 @@ class Library:
                         and not "degradation_coefficient" in p
                         and not "indoor_fan_speeds_mapping" in p
                         and not "indoor_fan_speeds" in p
+                        and not "infdoor_fan_curve_coef" in p
                     ):
                         obj_args[p] = vals[p]
                     elif (
@@ -117,6 +118,7 @@ class Library:
                 and not "degradation_coefficient" in p
                 and not "indoor_fan_speeds_mapping" in p
                 and not "indoor_fan_speeds" in p
+                and not "infdoor_fan_curve_coef" in p
             ):
                 obj_args[p] = data[p]
 
@@ -191,6 +193,7 @@ class Library:
                 "part_eff_ref_std",
                 "indoor_fan_speeds_mapping",
                 "indoor_fan_speeds",
+                "infdoor_fan_curve_coef",
             ]
 
             # Set the equipment properties
@@ -204,7 +207,10 @@ class Library:
                     elif p in prop_to_default:
                         obj_args[p] = sign_eqp_class.parameters[p].default
                     elif (
-                        "part_eff" in p or "alt" in p or "degradation_coefficient" in p
+                        "part_eff" in p
+                        or "alt" in p
+                        or "degradation_coefficient" in p
+                        or "infdoor_fan_curve_coef" in p
                     ):
                         pass
                     else:
