@@ -237,9 +237,7 @@ class SetsofCurves:
 
         return agg_set_of_curves
 
-    def nearest_neighbor_sort(
-        self, target_attr=None, vars=["ref_cap", "full_eff"], N=None
-    ):
+    def nearest_neighbor_sort(self, target_attr=None, vars=[], N=None):
         """This function performs the weighted average and the nearest neighbor approach.
 
         :param dict target_attr: Target attributes we want to match
@@ -250,6 +248,10 @@ class SetsofCurves:
         :rtype: int
 
         """
+
+        # Get default variable if not specified
+        if vars == []:
+            vars = self.eqp.get_ref_vars_for_aggregation()
 
         if target_attr is None:
             raise ValueError("target_attr cannot be None. Enter valid attributes")
@@ -771,9 +773,9 @@ class Curve:
         r_sqr = 0
 
         # Define expected gradient sign
-        if self.out_var == "eir-f-t" or self.out_var == "eir-f-plr":
+        if self.out_var in ["eir-f-t", "eir-f-plr", "cap-f-ff"]:
             sign_val = +1
-        elif self.out_var == "cap-f-t":
+        elif self.out_var in ["cap-f-t", "eir-f-ff"]:
             sign_val = -1
 
         # Drop duplicate entries
@@ -831,7 +833,9 @@ class Curve:
             for x in data["X1"]:
                 vals.append(c.evaluate(x, 0))
 
-            if reg_r_sqr > r_sqr and self.compute_grad(data["X1"], vals, sign_val):
+            if reg_r_sqr > r_sqr and self.compute_grad(
+                data["X1"], vals, sign_val, threshold=0.02
+            ):
                 self.coeff1, self.coeff2, self.coeff3, self.coeff4 = model.params
                 self.type = "cubic"
                 r_sqr = reg_r_sqr

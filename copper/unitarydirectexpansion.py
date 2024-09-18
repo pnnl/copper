@@ -25,7 +25,7 @@ class UnitaryDirectExpansion(Equipment):
         full_eff_unit,
         compressor_type,
         compressor_speed="constant",
-        ref_cap_unit="si",
+        ref_cap_unit="W",
         indoor_fan_power=None,
         part_eff=0,
         ref_gross_cap=None,
@@ -50,6 +50,7 @@ class UnitaryDirectExpansion(Equipment):
                 "capacity_fraction": 1.0,
             },
         },
+<<<<<<< HEAD
         infdoor_fan_curve_coef={
             "type":"cubic",
             "1":0.63*0.0408,
@@ -58,6 +59,10 @@ class UnitaryDirectExpansion(Equipment):
             "4":0.63*0.9437
         },
         indoor_fan_speeds=1
+=======
+        indoor_fan_speeds=1,
+        fan_power_unit="kW",
+>>>>>>> origin/develop
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -73,37 +78,70 @@ class UnitaryDirectExpansion(Equipment):
             else:
                 if indoor_fan_power == None:
                     # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240 (2024).
-                    indoor_fan_power = 0.28434517 * ref_net_cap * 400 * 0.365 / 1000
+                    fan_power_unit = "kW"
+                    indoor_fan_power = Units(
+                        value=Units(value=ref_net_cap, unit=ref_cap_unit).conversion(
+                            new_unit="ton"
+                        )
+                        * 400
+                        * 0.365,
+                        unit="W",
+                    ).conversion(new_unit=fan_power_unit)
                     if not log_fan:
                         logging.info(f"Default fan power used: {indoor_fan_power} kW")
                         log_fan = True
-                ref_gross_cap = ref_net_cap + indoor_fan_power
+                ref_gross_cap = Units(
+                    value=Units(value=ref_net_cap, unit=ref_cap_unit).conversion(
+                        new_unit=fan_power_unit
+                    )
+                    + indoor_fan_power,
+                    unit=fan_power_unit,
+                ).conversion(ref_cap_unit)
         else:
             if ref_net_cap != None:
                 logging.error("Input must be one and only one capacity input")
                 raise ValueError("Input must be one and only one capacity input")
             if indoor_fan_power == None:
                 # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240 (2024).
-                indoor_fan_power = (
-                    0.28434517
-                    * 400
-                    * 0.365
-                    * (ref_gross_cap / 1000)
-                    / (1 + 0.28434517 * 400 * 0.365)
-                )
+                fan_power_unit = "kW"
+                indoor_fan_power = Units(
+                    value=(
+                        400
+                        * 0.365
+                        * Units(value=ref_gross_cap, unit=ref_cap_unit).conversion(
+                            new_unit="ton"
+                        )
+                    )
+                    / (
+                        1
+                        + 400
+                        * 0.365
+                        * Units(value=1.0, unit=ref_cap_unit).conversion(new_unit="ton")
+                        * Units(value=1.0, unit="W").conversion(new_unit=ref_cap_unit)
+                    ),
+                    unit="W",
+                ).conversion(new_unit=fan_power_unit)
                 if not log_fan:
                     logging.info(f"Default fan power used: {indoor_fan_power} kW")
                     log_fan = True
-            ref_net_cap = ref_gross_cap - indoor_fan_power
+            ref_net_cap = Units(
+                value=Units(value=ref_gross_cap, unit=ref_cap_unit).conversion(
+                    new_unit=fan_power_unit
+                )
+                - indoor_fan_power,
+                unit=fan_power_unit,
+            ).conversion(ref_cap_unit)
         self.ref_cap_unit = ref_cap_unit
-        if self.ref_cap_unit != "si":
+        if self.ref_cap_unit != "kW":
             ref_net_cap_ton = Units(value=ref_net_cap, unit=self.ref_cap_unit)
             self.ref_net_cap = ref_net_cap_ton.conversion(new_unit="kW")
             ref_gross_cap_ton = Units(value=ref_gross_cap, unit=self.ref_cap_unit)
             self.ref_gross_cap = ref_gross_cap_ton.conversion(new_unit="kW")
+            self.ref_cap_unit = "kW"
         else:
             self.ref_net_cap = ref_net_cap
             self.ref_gross_cap = ref_gross_cap
+            self.ref_cap_unit = ref_cap_unit
 
         # Get attributes
         self.full_eff = full_eff
@@ -122,11 +160,15 @@ class UnitaryDirectExpansion(Equipment):
         self.part_eff_ref_std_alt = part_eff_ref_std_alt
         self.condenser_type = condenser_type
         self.compressor_speed = compressor_speed
-        self.ref_cap_unit = ref_cap_unit
         self.indoor_fan_speeds_mapping = indoor_fan_speeds_mapping
         self.indoor_fan_speeds = indoor_fan_speeds
         self.indoor_fan_power = indoor_fan_power
+<<<<<<< HEAD
         self.infdoor_fan_curve_coef=infdoor_fan_curve_coef
+=======
+        self.fan_power_unit = fan_power_unit
+
+>>>>>>> origin/develop
         # Define rated temperatures
         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
         aed, self.aew, ect, lct = self.get_rated_temperatures()
@@ -155,8 +197,8 @@ class UnitaryDirectExpansion(Equipment):
                     "x2_norm": self.ect,
                     "nbval": nb_val,
                 },
-                "eir-f-ff": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
-                "cap-f-ff": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
+                "eir-f-ff": {"x1_min": 0, "x1_max": 2, "x1_norm": 1, "nbval": nb_val},
+                "cap-f-ff": {"x1_min": 0, "x1_max": 2, "x1_norm": 1, "nbval": nb_val},
                 "plf-f-plr": {"x1_min": 0, "x1_max": 1, "x1_norm": 1, "nbval": nb_val},
             }
 
@@ -222,7 +264,7 @@ class UnitaryDirectExpansion(Equipment):
                     return default_min_fan_power
 
     def calc_rated_eff(
-        self, eff_type="ieer", unit="eer", output_report=False, alt=False
+        self, eff_type="part", unit="cop", output_report=False, alt=False
     ):
         """Calculate unitary DX equipment efficiency.
 
@@ -278,8 +320,10 @@ class UnitaryDirectExpansion(Equipment):
             - self.indoor_fan_power
         )
 
-        # User-specific capacity is a NET efficiency
-        rated_cop = self.full_eff
+        # Convert user-specified full load efficiency to COP
+        # User-specified capacity is a NET efficiency
+        full_eff = Units(value=self.full_eff, unit=self.full_eff_unit)
+        rated_cop = full_eff.conversion(new_unit="cop")
 
         # Iterate through the different sets of rating conditions to calculate IEER
         ieer = 0
@@ -304,7 +348,7 @@ class UnitaryDirectExpansion(Equipment):
             load_factor_gross = (
                 reduced_plr[red_cap_num] / tot_cap_temp_mod_fac
             )  # Load percentage * Rated gross capacity / Available gross capacity
-            indoor_fan_power = self.calc_fan_power(load_factor_gross)
+            indoor_fan_power = self.calc_fan_power(load_factor_gross) / 1000
             net_cooling_cap_reduced = (
                 self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
                 - indoor_fan_power
@@ -348,8 +392,17 @@ class UnitaryDirectExpansion(Equipment):
                 load_factor * elec_power_reduced_cap + indoor_fan_power
             )
 
+            if eff_type == "full":
+                ieer = eer_reduced
+                break
+
             # Update IEER
             ieer += weighting_factor[red_cap_num] * eer_reduced
+
+        # Convert efficiency to original unit unless specified
+        if unit != "cop":
+            ieer = Units(value=ieer, unit="cop")
+            ieer = ieer.conversion(new_unit=self.full_eff_unit)
         return ieer
 
     def ieer_to_eer(self, ieer):
@@ -516,3 +569,6 @@ class UnitaryDirectExpansion(Equipment):
         self.ranges = self.get_ranges()
         curves = SetsofCurves(sets=csets, eqp=self)
         return curves
+
+    def get_ref_vars_for_aggregation(self):
+        return ["ref_net_cap", "full_eff", "part_eff"]

@@ -69,16 +69,22 @@ class Units:
                 return self.value * (kbtu_to_kw / ton_to_kbtu)
             elif self.unit == "W":
                 return self.value * (kbtu_to_kw / (ton_to_kbtu * 1000))
+            if self.unit == "ton":
+                return self.value
         elif new_unit == "kW":
             if self.unit == "ton":
                 return self.value / (kbtu_to_kw / ton_to_kbtu)
             if self.unit == "W":
                 return self.value / 1000
+            if self.unit == "kW":
+                return self.value
         elif new_unit == "W":
             if self.unit == "ton":
                 return self.value / (kbtu_to_kw / (ton_to_kbtu * 1000))
             if self.unit == "kW":
                 return self.value * 1000
+            if self.unit == "W":
+                return self.value
         elif new_unit == "degC":
             if self.unit == "degF":
                 return (self.value - 32) * 5 / 9
