@@ -374,32 +374,42 @@ class Library:
             if eqp.type == "chiller":
                 cap = val["ref_cap"]
                 cap_unit = val["ref_cap_unit"]
+                ref_cap = eqp.ref_cap
                 eff = val["full_eff"]
                 eff_unit = matches[name]["full_eff_unit"]
 
-                if cap is not None:
-                    # Capacity conversion
-                    if cap_unit != eqp.ref_cap_unit:
-                        c_unit = Units(cap, cap_unit)
-                        cap = c_unit.conversion(eqp.ref_cap_unit)
-                        cap_unit = eqp.ref_cap_unit
+            elif eqp.type == "UnitaryDirectExpansion":
+                cap = val["ref_net_cap"]
+                cap_unit = val["ref_cap_unit"]
+                ref_cap = eqp.ref_net_cap
+                eff = val["full_eff"]
+                eff_unit = matches[name]["full_eff_unit"]
+            else:
+                raise ValueError("Equipment type not supported.")
 
-                    # Efficiency conversion
-                    if eff_unit != eqp.full_eff_unit:
-                        c_unit = Units(eff, eff_unit)
-                        eff = c_unit.conversion(eqp.full_eff_unit)
-                        eff_unit = eqp.full_eff_unit
+            if cap is not None:
+                # Capacity conversion
+                if cap_unit != eqp.ref_cap_unit:
+                    c_unit = Units(cap, cap_unit)
+                    cap = c_unit.conversion(eqp.ref_cap_unit)
+                    cap_unit = eqp.ref_cap_unit
 
-                    # Compute difference
-                    c_diff = abs((eqp.ref_cap - cap) / eqp.ref_cap) + abs(
-                        (eqp.full_eff - eff) / eqp.full_eff
-                    )
+                # Efficiency conversion
+                if eff_unit != eqp.full_eff_unit:
+                    c_unit = Units(eff, eff_unit)
+                    eff = c_unit.conversion(eqp.full_eff_unit)
+                    eff_unit = eqp.full_eff_unit
 
-                    if c_diff < diff:
-                        # Update lowest numeric difference
-                        diff = c_diff
+                # Compute difference
+                c_diff = abs((ref_cap - cap) / ref_cap) + abs(
+                    (eqp.full_eff - eff) / eqp.full_eff
+                )
 
-                        # Update best match
-                        best_match = name
+                if c_diff < diff:
+                    # Update lowest numeric difference
+                    diff = c_diff
+
+                    # Update best match
+                    best_match = name
 
         return best_match
