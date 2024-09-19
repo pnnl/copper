@@ -205,6 +205,34 @@ class UnitaryDirectExpansion(TestCase):
         # Check that all curves have been generated
         assert len(set_of_curves) == 5
 
+    def test_generation_best_match(self):
+        # Define equipment characteristics
+        dx = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            compressor_speed="constant",
+            ref_cap_unit="ton",
+            ref_gross_cap=8,
+            full_eff=11.55,
+            full_eff_unit="eer",
+            part_eff=14.8,
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+        )
+        # Generate the curves
+        set_of_curves = dx.generate_set_of_curves(
+            tol=0.05,
+            verbose=True,
+            method="best_match",
+            num_nearest_neighbors=5,
+            random_seed=1,
+            vars=["eir-f-t"],
+        )
+
+        # Check that all curves have been generated
+        assert len(set_of_curves) == 5
+
     def test_lib_default_props_dx(self):
         assert (
             self.lib.find_set_of_curves_from_lib()[0].eqp.__dict__["part_eff_ref_std"]
