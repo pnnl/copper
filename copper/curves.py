@@ -24,12 +24,12 @@ class SetsofCurves:
         self.sets_of_curves = sets
 
     def get_aggregated_set_of_curves(
-        self, method="weighted-average", N=None, ranges={}, misc_attr={}
+        self, method="weighted_average", N=None, ranges={}, misc_attr={}
     ):
         """Determine sets of curves based on aggregation.
 
-        :param str method: Type of aggregation, currently supported: 'average', 'median', 'weighted-average', and 'NN-weighted-average' as in nearest neighbor weighted average.
-        :param int N: Number of neighbor used to the aggregation, only used when the method is 'NN-weighted-average'.
+        :param str method: Type of aggregation, currently supported: 'average', 'median', 'weighted_average', and 'NN_weighted_average' as in nearest neighbor weighted average.
+        :param int N: Number of neighbor used to the aggregation, only used when the method is 'NN_weighted_average'.
         :param dict ranges: Dictionary that defines the ranges of values for each independent variable used to calculate aggregated dependent variable values.
         :param dict misc_attr: Dictionary that provides values for the aggregated set of curves.
         :return: Aggregated set of curves
@@ -142,7 +142,7 @@ class SetsofCurves:
                 y_s = [list(map(lambda x: sum(x) / len(x), zip(*vals)))]
             elif method == "median":
                 y_s = [list(map(lambda x: statistics.median(x), zip(*vals)))]
-            elif method == "weighted-average":
+            elif method == "weighted_average":
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr)
                 sorted_vals = list(
                     map(vals.__getitem__, df.index.values)
@@ -152,7 +152,7 @@ class SetsofCurves:
                         map(lambda x: np.dot(df["score"].values, x), zip(*sorted_vals))
                     )
                 ]
-            elif method == "NN-weighted-average":
+            elif method == "NN_weighted_average":
                 # first make sure that the user has specified to pick N values
                 try:
                     assert N is not None
@@ -242,7 +242,7 @@ class SetsofCurves:
 
         :param dict target_attr: Target attributes we want to match
         :param list vars: The variables we want to use to compute our l2 score. note COP will be added
-        :param int N: Indicates the number of nearest neighbors to consider. N=None for weighted-average
+        :param int N: Indicates the number of nearest neighbors to consider. N=None for weighted_average
         :param pandas.DataFrame df: Pandas dataframe with selected chiller names and the associated weightings
         :return: Index of set_of_curve that should be the closest fit
         :rtype: int
@@ -319,7 +319,7 @@ class SetsofCurves:
         :param dict target_attr: Reference targets with respect to which l2 score needs to computed
         :param list vars: List of strings for variables we want to normalize
         :param list weights: Weights associated with each variable in vars
-        :param int N: Number of nearest neighbors. It should be none unless method is 'NN-weighted-average'
+        :param int N: Number of nearest neighbors. It should be none unless method is 'NN_weighted_average'
         :return: Dataframe with added columns with normalized variables, dict with added normalized values of var in vars, index of the best curve
         :rtype: list
 
@@ -467,7 +467,7 @@ class SetofCurves:
 
         return [x, y]
 
-    def plot(self, out_var=[], axes=[], norm=True, color="Black", alpha=0.3):
+    def plot(self, out_var=[], axes=[], norm=False, color="Black", alpha=0.3):
         """Plot a set of curves.
 
         :param list out_var: List of the output variables to plot, e.g. `eir-f-t`, `eir-f-plr`, `cap-f-t`.

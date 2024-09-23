@@ -36,7 +36,10 @@ class TestLogging(TestCase):
             == "Target not met after 1 generations; Restarting the generator."
         )
         self.assertTrue(captured[0][0].levelname == "WARNING")
-        self.assertTrue("GEN: 0, IPLV: 5.56, kW/ton: 5.2" in captured[0][1].msg)
+        self.assertTrue(
+            "GEN: 0, part load efficiency: 5.5583 COP, full load efficiency: 5.2 COP"
+            in captured[0][1].msg
+        )
         self.assertTrue(captured[0][1].levelname == "INFO")
         self.assertTrue(
             captured[0][2].msg
