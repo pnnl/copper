@@ -85,7 +85,7 @@ class Generator:
                     self.base_curve = seed_curves.get_aggregated_set_of_curves(
                         ranges=ranges,
                         misc_attr=misc_attr,
-                        method="NN-weighted-average",
+                        method="NN_weighted_average",
                         N=self.num_nearest_neighbors,
                     )
                     self.base_curves = [self.base_curve]
@@ -94,7 +94,7 @@ class Generator:
                     )
                 elif self.method == "weighted_average":
                     self.base_curve = seed_curves.get_aggregated_set_of_curves(
-                        ranges=ranges, misc_attr=misc_attr, method="weighted-average"
+                        ranges=ranges, misc_attr=misc_attr, method="weighted_average"
                     )
                     self.base_curves = [self.base_curve]
                     self.df, _ = seed_curves.nearest_neighbor_sort(
@@ -102,7 +102,7 @@ class Generator:
                     )
                 else:
                     logging.error(
-                        f"{self.method} is not a valid aggregation method. Choices are `nearest_neighbor`, `NN-weighted-average`, and `weighted_average`."
+                        f"{self.method} is not a valid aggregation method. Choices are `best_match`, `nearest_neighbor`, and `weighted_average`."
                     )
                     raise ValueError("Generator failed.")
         if len(self.base_curves) == 0:

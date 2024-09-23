@@ -328,7 +328,7 @@ class TestCurves(TestCase):
         curves = cp.SetsofCurves(sets=sets, eqp=chlr)
 
         base_curve = curves.get_aggregated_set_of_curves(
-            ranges=ranges, misc_attr=misc_attr, method="weighted-average", N=10
+            ranges=ranges, misc_attr=misc_attr, method="weighted_average", N=10
         )
 
         base_curve.eqp = chlr

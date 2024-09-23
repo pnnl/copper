@@ -292,3 +292,52 @@ class UnitaryDirectExpansion(TestCase):
         self.dx_unit_dft.add_cycling_degradation_curve(overwrite=True)
         assert len(self.dx_unit_dft.set_of_curves) == 5
         assert self.dx_unit_dft.get_dx_curves()["plf-f-plr"].coeff1 == 1.0
+
+    def test_NN_wght_avg(self):
+        # Define equipment
+        dx = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            compressor_speed="constant",
+            ref_cap_unit="ton",
+            ref_gross_cap=8,
+            full_eff=11.55,
+            full_eff_unit="eer",
+            part_eff=14.8,
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+            indoor_fan_speeds=2,
+            indoor_fan_speeds_mapping={
+                "1": {
+                    "fan_flow_fraction": 0.66,
+                    "fan_power_fraction": 0.4,
+                    "capacity_fraction": 0.5,
+                },
+                "2": {
+                    "fan_flow_fraction": 1.0,
+                    "fan_power_fraction": 1.0,
+                    "capacity_fraction": 1.0,
+                },
+            },
+            indoor_fan_power=cp.Units(value=8, unit="ton").conversion(new_unit="W")
+            * 0.05
+            / 1000,
+            indoor_fan_power_unit="kW",
+        )
+
+        # Generate the curves
+        set_of_curves = dx.generate_set_of_curves(
+            method="nearest_neighbor",
+            tol=0.005,
+            num_nearest_neighbors=5,
+            verbose=True,
+            vars=["eir-f-t", "plf_f_plr"],
+            random_seed=1,
+        )
+
+        # Check that all curves have been generated
+        assert len(set_of_curves) == 5
+
+        # Check normalization
+        assert round(set_of_curves.curves[0].evaluate(19, 35), 2) == 1.0
