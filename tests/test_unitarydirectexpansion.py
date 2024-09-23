@@ -286,3 +286,9 @@ class UnitaryDirectExpansion(TestCase):
         ranges = self.dx_unit_dft.get_ranges()
         assert isinstance(ranges, dict)
         assert len(ranges) == 5
+
+    def test_degradation(self):
+        self.dx_unit_dft.degradation_coefficient = 0
+        self.dx_unit_dft.add_cycling_degradation_curve(overwrite=True)
+        assert len(self.dx_unit_dft.set_of_curves) == 5
+        assert self.dx_unit_dft.get_dx_curves()["plf-f-plr"].coeff1 == 1.0

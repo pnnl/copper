@@ -467,7 +467,7 @@ class SetofCurves:
 
         return [x, y]
 
-    def plot(self, out_var=[], axes=[], norm=True, color="Black", alpha=0.3):
+    def plot(self, out_var=[], axes=[], norm=False, color="Black", alpha=0.3):
         """Plot a set of curves.
 
         :param list out_var: List of the output variables to plot, e.g. `eir-f-t`, `eir-f-plr`, `cap-f-t`.
