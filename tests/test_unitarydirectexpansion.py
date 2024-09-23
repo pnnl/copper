@@ -340,4 +340,8 @@ class UnitaryDirectExpansion(TestCase):
         assert len(set_of_curves) == 5
 
         # Check normalization
-        assert round(set_of_curves.curves[0].evaluate(19, 35), 2) == 1.0
+        assert round(set_of_curves[0].evaluate(19.44, 35), 2) == 1.0
+        assert round(set_of_curves[1].evaluate(19.44, 35), 2) == 1.0
+        assert round(set_of_curves[2].evaluate(1.0, 0), 2) == 1.0
+        assert round(set_of_curves[3].evaluate(1.0, 0), 2) == 1.0
+        assert round(set_of_curves[4].evaluate(1.0, 0), 2) == 1.0
