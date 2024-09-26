@@ -180,6 +180,28 @@ class UnitaryDirectExpansion(TestCase):
             == 0.65
         )
 
+    def test_multi_speed_with_curve(self):
+        # Two-speed fan unit
+        dx_unit_multi_speed = self.dx_unit_dft
+        dx_unit_multi_speed.indoor_fan_curve = 1
+        dx_unit_multi_speed.indoor_fan_speeds = 2
+        assert (
+            dx_unit_multi_speed.calc_fan_power(capacity_ratio=0.5)
+            / dx_unit_multi_speed.indoor_fan_power
+            == 0.25
+        )
+        assert (
+            dx_unit_multi_speed.calc_fan_power(capacity_ratio=1.0)
+            / dx_unit_multi_speed.indoor_fan_power
+            == 1.0
+        )
+        assert (
+            dx_unit_multi_speed.calc_fan_power(capacity_ratio=0.75)
+            / dx_unit_multi_speed.indoor_fan_power
+            < 0.7
+        )
+
+
     def test_generation(self):
         # Define equipment characteristics
         dx_unit = self.dx_unit_dft
@@ -258,10 +280,3 @@ class UnitaryDirectExpansion(TestCase):
         ranges = self.dx_unit_dft.get_ranges()
         assert isinstance(ranges, dict)
         assert len(ranges) == 5
-
-
-# Run the tests
-import unittest
-
-if __name__ == "__main__":
-    unittest.main()

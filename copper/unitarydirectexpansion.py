@@ -51,7 +51,7 @@ class UnitaryDirectExpansion(Equipment):
                 "capacity_fraction": 1.0,
             },
         },
-        infdoor_fan_curve_coef={
+        indoor_fan_curve_coef={
             "type": "cubic",
             "1": 0.63 * 0.0408,
             "2": 0.63 * 0.088,
@@ -59,7 +59,7 @@ class UnitaryDirectExpansion(Equipment):
             "4": 0.63 * 0.9437,
         },
         indoor_fan_speeds=1,
-        indoor_fan_curve=0,
+        indoor_fan_curve=None,
         fan_power_unit="kW",
     ):
         global log_fan
@@ -161,7 +161,7 @@ class UnitaryDirectExpansion(Equipment):
         self.indoor_fan_speeds_mapping = indoor_fan_speeds_mapping
         self.indoor_fan_speeds = indoor_fan_speeds
         self.indoor_fan_power = indoor_fan_power
-        self.infdoor_fan_curve_coef = infdoor_fan_curve_coef
+        self.indoor_fan_curve_coef = indoor_fan_curve_coef
         self.fan_power_unit = fan_power_unit
         self.indoor_fan_curve = indoor_fan_curve
         # Define rated temperatures
@@ -213,20 +213,22 @@ class UnitaryDirectExpansion(Equipment):
 
         # default fan curve
         self.default_fan_curve = Curve(
-            eqp=self, c_type=self.infdoor_fan_curve_coef["type"]
+            eqp=self, c_type=self.indoor_fan_curve_coef["type"]
         )
-        self.default_fan_curve.coeff1 = self.infdoor_fan_curve_coef["1"]
-        self.default_fan_curve.coeff2 = self.infdoor_fan_curve_coef["2"]
-        self.default_fan_curve.coeff3 = self.infdoor_fan_curve_coef["3"]
-        self.default_fan_curve.coeff4 = self.infdoor_fan_curve_coef["4"]
+        self.default_fan_curve.coeff1 = self.indoor_fan_curve_coef["1"]
+        self.default_fan_curve.coeff2 = self.indoor_fan_curve_coef["2"]
+        self.default_fan_curve.coeff3 = self.indoor_fan_curve_coef["3"]
+        self.default_fan_curve.coeff4 = self.indoor_fan_curve_coef["4"]
 
     def calc_fan_power(self, capacity_ratio):
         # Full flow/power
-        ratio = capacity_ratio
+        flow_fraction = (
+            capacity_ratio  # we assume flow_fraction = 1*capacity_ratio as default
+        )
         if capacity_ratio == 1 or self.indoor_fan_speeds == 1:
             return self.indoor_fan_power
         else:
-            if self.indoor_fan_curve == 0:
+            if self.indoor_fan_curve == None:
                 capacity_ratios = []
                 fan_power_fractions = []
                 for speed_info in self.indoor_fan_speeds_mapping.values():
@@ -253,13 +255,10 @@ class UnitaryDirectExpansion(Equipment):
                             b = fan_power_fractions[i] - a * capacity_ratios[i]
                             return self.indoor_fan_power * (a * capacity_ratio + b)
             else:  # using curve
-                defualt_coef = 1  # can update this coef later
                 default_min_fan_power = (
                     self.indoor_fan_power * 0.25
                 )  # default min fan power
-                power_factor = self.default_fan_curve.evaluate(
-                    x=defualt_coef * ratio, y=0
-                )  # x:ff factor
+                power_factor = self.default_fan_curve.evaluate(x=flow_fraction, y=0)
                 if self.indoor_fan_power * power_factor > default_min_fan_power:
                     return self.indoor_fan_power * power_factor
                 else:
