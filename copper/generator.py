@@ -85,7 +85,7 @@ class Generator:
                     self.base_curve = seed_curves.get_aggregated_set_of_curves(
                         ranges=ranges,
                         misc_attr=misc_attr,
-                        method="NN-weighted-average",
+                        method="NN_weighted_average",
                         N=self.num_nearest_neighbors,
                     )
                     self.base_curves = [self.base_curve]
@@ -94,16 +94,22 @@ class Generator:
                     )
                 elif self.method == "weighted_average":
                     self.base_curve = seed_curves.get_aggregated_set_of_curves(
-                        ranges=ranges, misc_attr=misc_attr, method="weighted-average"
+                        ranges=ranges, misc_attr=misc_attr, method="weighted_average"
                     )
                     self.base_curves = [self.base_curve]
                     self.df, _ = seed_curves.nearest_neighbor_sort(
                         target_attr=misc_attr
                     )
                 else:
-                    self.base_curves = None
-                    self.df = None
-
+                    logging.error(
+                        f"{self.method} is not a valid aggregation method. Choices are `best_match`, `nearest_neighbor`, and `weighted_average`."
+                    )
+                    raise ValueError("Generator failed.")
+        if len(self.base_curves) == 0:
+            logging.error(
+                "The base set of curves needed by the generator could not be generated. Please check input and library entries."
+            )
+            raise ValueError("Generator failed.")
         self.set_of_base_curves = self.base_curves[0]
         self.set_of_base_curves.eqp = self.equipment
         self.set_of_base_curves.eqp.set_of_curves = self.set_of_base_curves.curves
@@ -166,26 +172,20 @@ class Generator:
                         )
                     else:
                         full_rating_alt = "n/a"
+                    part_eff = round(
+                        self.equipment.calc_rated_eff(
+                            eff_type="part", unit=self.equipment.part_eff_unit
+                        ),
+                        4,
+                    )
+                    full_eff = round(
+                        self.equipment.calc_rated_eff(
+                            eff_type="full", unit=self.equipment.full_eff_unit
+                        ),
+                        4,
+                    )
                     logging.info(
-                        "GEN: {}, IPLV: {}, {}: {} IPLV-alt: {}, {}-alt: {}".format(
-                            gen,
-                            round(
-                                self.equipment.calc_rated_eff(
-                                    eff_type="part", unit=self.equipment.part_eff_unit
-                                ),
-                                4,
-                            ),
-                            self.equipment.part_eff_unit.upper(),
-                            round(
-                                self.equipment.calc_rated_eff(
-                                    eff_type="full", unit=self.equipment.full_eff_unit
-                                ),
-                                4,
-                            ),
-                            self.equipment.part_eff_unit.upper(),
-                            part_rating_alt,
-                            full_rating_alt,
-                        )
+                        f"GEN: {gen}, part load efficiency: {part_eff} {self.equipment.full_eff_unit.upper()}, full load efficiency: {full_eff} {self.equipment.full_eff_unit.upper()}"
                     )
                 max_gen = gen
 
@@ -197,25 +197,20 @@ class Generator:
                         )
                         gen = 0
                         restart += 1
-
+                        part_eff = round(
+                            self.equipment.calc_rated_eff(
+                                eff_type="part", unit=self.equipment.part_eff_unit
+                            ),
+                            4,
+                        )
+                        full_eff = round(
+                            self.equipment.calc_rated_eff(
+                                eff_type="full", unit=self.equipment.full_eff_unit
+                            ),
+                            4,
+                        )
                         logging.info(
-                            "GEN: {}, IPLV: {}, kW/ton: {}".format(
-                                gen,
-                                round(
-                                    self.equipment.calc_rated_eff(
-                                        eff_type="part",
-                                        unit=self.equipment.part_eff_unit,
-                                    ),
-                                    2,
-                                ),
-                                round(
-                                    self.equipment.calc_rated_eff(
-                                        eff_type="full",
-                                        unit=self.equipment.full_eff_unit,
-                                    ),
-                                    2,
-                                ),
-                            )
+                            f"GEN: {gen}, part load efficiency: {part_eff} {self.equipment.full_eff_unit.upper()}, full load efficiency: {full_eff} {self.equipment.full_eff_unit.upper()}"
                         )
                     else:
                         logging.critical(
@@ -269,21 +264,14 @@ class Generator:
         elif self.equipment.type == "UnitaryDirectExpansion":
             if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_rated_eff(
-                    eff_type="ieer", unit=self.equipment.part_eff_unit
+                    eff_type="part", unit=self.equipment.part_eff_unit
                 )
                 part_rating_alt = 0
                 full_rating_alt = 0
-                full_rating = self.full_eff
+                full_rating = self.equipment.calc_rated_eff(
+                    eff_type="full", unit=self.equipment.part_eff_unit
+                )
                 cap_rating = 0
-            #                full_rating = self.equipment.calc_rated_eff(
-            #                    eff_type="full", unit=self.equipment.full_eff_unit
-            #                )
-            #                cap_rating = 0
-            #                if "cap-f-t" in self.vars:
-            #                    for c in self.equipment.set_of_curves:
-            #                        # set_of_curves
-            #                        if "cap" in c.out_var:
-            #                            cap_rating += abs(1 - c.get_out_reference(self.equipment))
             else:
                 return False
         else:
@@ -401,11 +389,28 @@ class Generator:
 
         """
         new_curves = copy.deepcopy(curves[0])
-        for curve in new_curves.curves:
-            if len(self.vars) == 0 or curve.out_var in self.vars:
+        for i, curve in enumerate(new_curves.curves):
+            # Modify degradation coefficient instead of curve coefficients
+            # for equipment using part load fraction degradation curve
+            # such as unitary DX equipment
+            if curve.out_var == "plf-f-plr" and "plf-f-plr" in self.vars:
+                # Randomly choose another degradation coefficient (between 0 and 0.5)
+                self.equipment.degradation_coefficient = (
+                    random.randrange(25, 100, 1) / 500.0
+                )
+                setattr(
+                    curve,
+                    "coeff1",
+                    1 - self.equipment.degradation_coefficient,
+                )
+                setattr(
+                    curve,
+                    "coeff2",
+                    self.equipment.degradation_coefficient,
+                )
+            elif len(self.vars) == 0 or curve.out_var in self.vars:
                 for idx in range(1, 11):
                     try:
-                        # TODO: screening criteria
                         setattr(
                             curve,
                             "coeff{}".format(idx),
@@ -639,8 +644,26 @@ class Generator:
 
         """
         new_individual = copy.deepcopy(individual)
-        for curve in new_individual.curves:
-            if len(self.vars) == 0 or curve.out_var in self.vars:
+        for i, curve in enumerate(new_individual.curves):
+            # Modify degradation coefficient instead of curve coefficients
+            # for equipment using part load fraction degradation curve
+            # such as unitary DX equipment
+            if curve.out_var == "plf-f-plr" and "plf-f-plr" in self.vars:
+                # Randomly choose another degradation coefficient (between 0.05 and 0.5)
+                self.equipment.degradation_coefficient = (
+                    random.randrange(25, 100, 1) / 500.0
+                )
+                setattr(
+                    curve,
+                    "coeff1",
+                    1 - self.equipment.degradation_coefficient,
+                )
+                setattr(
+                    curve,
+                    "coeff2",
+                    self.equipment.degradation_coefficient,
+                )
+            elif len(self.vars) == 0 or curve.out_var in self.vars:
                 idx = random.randint(1, curve.nb_coeffs())
                 setattr(
                     curve,

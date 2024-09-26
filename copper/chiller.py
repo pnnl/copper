@@ -159,8 +159,8 @@ class Chiller(Equipment):
 
         # Retrieve curves
         curves = self.get_chiller_curves()
-        cap_f_t = curves["cap_f_t"]
-        eir_f_t = curves["eir_f_t"]
+        cap_f_t = curves["cap-f-t"]
+        eir_f_t = curves["eir-f-t"]
         eir_f_plr = curves["eir_f_plr"]
 
         cap_f_lwt_lct_rated = cap_f_t.evaluate(self.ref_lwt, self.ref_lct)
@@ -255,8 +255,8 @@ class Chiller(Equipment):
 
         # Retrieve curves
         curves = self.get_chiller_curves()
-        cap_f_t = curves["cap_f_t"]
-        eir_f_t = curves["eir_f_t"]
+        cap_f_t = curves["cap-f-t"]
+        eir_f_t = curves["eir-f-t"]
         eir_f_plr = curves["eir_f_plr"]
 
         try:
@@ -413,9 +413,9 @@ class Chiller(Equipment):
         curves = {}
         for curve in self.set_of_curves:
             if curve.out_var == "cap-f-t":
-                curves["cap_f_t"] = curve
+                curves["cap-f-t"] = curve
             elif curve.out_var == "eir-f-t":
-                curves["eir_f_t"] = curve
+                curves["eir-f-t"] = curve
             else:
                 curves["eir_f_plr"] = curve
 

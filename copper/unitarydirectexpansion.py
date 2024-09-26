@@ -76,7 +76,7 @@ class UnitaryDirectExpansion(Equipment):
             else:
                 if indoor_fan_power == None:
                     # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240 (2024).
-                    fan_power_unit = "kW"
+                    indoor_fan_power_unit = "kW"
                     indoor_fan_power = Units(
                         value=Units(value=ref_net_cap, unit=ref_cap_unit).conversion(
                             new_unit="ton"
@@ -84,16 +84,18 @@ class UnitaryDirectExpansion(Equipment):
                         * 400
                         * 0.365,
                         unit="W",
-                    ).conversion(new_unit=fan_power_unit)
+                    ).conversion(new_unit=indoor_fan_power_unit)
                     if not log_fan:
-                        logging.info(f"Default fan power used: {indoor_fan_power} kW")
+                        logging.info(
+                            f"Default fan power is based on 400 cfm/ton and 0.365 kW/cfm"
+                        )
                         log_fan = True
                 ref_gross_cap = Units(
                     value=Units(value=ref_net_cap, unit=ref_cap_unit).conversion(
-                        new_unit=fan_power_unit
+                        new_unit=indoor_fan_power_unit
                     )
                     + indoor_fan_power,
-                    unit=fan_power_unit,
+                    unit=indoor_fan_power_unit,
                 ).conversion(ref_cap_unit)
         else:
             if ref_net_cap != None:
@@ -101,7 +103,7 @@ class UnitaryDirectExpansion(Equipment):
                 raise ValueError("Input must be one and only one capacity input")
             if indoor_fan_power == None:
                 # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240 (2024).
-                fan_power_unit = "kW"
+                indoor_fan_power_unit = "kW"
                 indoor_fan_power = Units(
                     value=(
                         400
@@ -118,16 +120,16 @@ class UnitaryDirectExpansion(Equipment):
                         * Units(value=1.0, unit="W").conversion(new_unit=ref_cap_unit)
                     ),
                     unit="W",
-                ).conversion(new_unit=fan_power_unit)
+                ).conversion(new_unit=indoor_fan_power_unit)
                 if not log_fan:
                     logging.info(f"Default fan power used: {indoor_fan_power} kW")
                     log_fan = True
             ref_net_cap = Units(
                 value=Units(value=ref_gross_cap, unit=ref_cap_unit).conversion(
-                    new_unit=fan_power_unit
+                    new_unit=indoor_fan_power_unit
                 )
                 - indoor_fan_power,
-                unit=fan_power_unit,
+                unit=indoor_fan_power_unit,
             ).conversion(ref_cap_unit)
         self.ref_cap_unit = ref_cap_unit
         if self.ref_cap_unit != "kW":
@@ -199,7 +201,23 @@ class UnitaryDirectExpansion(Equipment):
 
         # Cycling degradation
         self.degradation_coefficient = degradation_coefficient
-        if not "plf_f_plr" in self.get_dx_curves().keys():
+        self.add_cycling_degradation_curve()
+
+    def add_cycling_degradation_curve(self, overwrite=False, return_curve=False):
+        """Determine and assign a part load fraction as a function of part load ratio curve to a unitary DX equipment.
+
+        :param str overwrite: Flag to overwrite the existing degradation curve. Default is False.
+        :param str assign_curve: Add curve to equipment's. Default is True.
+        """
+        # Remove exisiting curve if it exists
+        if overwrite:
+            for curve in self.set_of_curves:
+                if curve.out_var == "plf-f-plr":
+                    self.set_of_curves.remove(curve)
+                    break
+
+        # Add new curve
+        if not "plf-f-plr" in self.get_dx_curves().keys() or overwrite:
             plf_f_plr = Curve(eqp=self, c_type="linear")
             plf_f_plr.out_var = "plf-f-plr"
             plf_f_plr.type = "linear"
@@ -209,7 +227,10 @@ class UnitaryDirectExpansion(Equipment):
             plf_f_plr.x_max = 1
             plf_f_plr.out_min = 0
             plf_f_plr.out_max = 1
-            self.set_of_curves.append(plf_f_plr)
+            if return_curve:
+                return plf_f_plr
+            else:
+                self.set_of_curves.append(plf_f_plr)
 
         # default fan curve
         self.default_fan_curve = Curve(
@@ -221,6 +242,13 @@ class UnitaryDirectExpansion(Equipment):
         self.default_fan_curve.coeff4 = self.indoor_fan_curve_coef["4"]
 
     def calc_fan_power(self, capacity_ratio):
+        """Calculate unitary DX equipment fan power.
+
+        :param float capacity_ratio: Ratio of actual capacity to net rated capacity
+        :return: Unitary DX Equipment fan power in Watts
+        :rtype: float
+
+        """
         # Full flow/power
         flow_fraction = (
             capacity_ratio  # we assume flow_fraction = 1*capacity_ratio as default
@@ -287,13 +315,16 @@ class UnitaryDirectExpansion(Equipment):
 
         # Retrieve curves
         curves = self.get_dx_curves()
-        cap_f_f = curves["cap_f_ff"]
-        cap_f_t = curves["cap_f_t"]
-        eir_f_t = curves["eir_f_t"]
-        eir_f_f = curves["eir_f_ff"]
-        plf_f_plr = curves["plf_f_plr"]
+        cap_f_f = curves["cap-f-ff"]
+        cap_f_t = curves["cap-f-t"]
+        eir_f_t = curves["eir-f-t"]
+        eir_f_f = curves["eir-f-ff"]
+        if not "plf-f-plr" in curves.keys():
+            self.add_cycling_degradation_curve()
+            curves = self.get_dx_curves()
+        plf_f_plr = curves["plf-f-plr"]
 
-        # Calculate capacity and efficiency degredation as a function of flow fraction
+        # Calculate capacity and efficiency degradation as a function of flow fraction
         tot_cap_flow_mod_fac = cap_f_f.evaluate(1, 1)
         eir_flow_mod_fac = eir_f_f.evaluate(1, 1)
 
@@ -346,8 +377,8 @@ class UnitaryDirectExpansion(Equipment):
                 ],
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
             )
-            load_factor_gross = (
-                reduced_plr[red_cap_num] / tot_cap_temp_mod_fac
+            load_factor_gross = min(
+                1.0, (reduced_plr[red_cap_num] / tot_cap_temp_mod_fac)
             )  # Load percentage * Rated gross capacity / Available gross capacity
             indoor_fan_power = self.calc_fan_power(load_factor_gross) / 1000
             net_cooling_cap_reduced = (
@@ -378,7 +409,7 @@ class UnitaryDirectExpansion(Equipment):
                 else 1.0
             )
 
-            # Cycling degredation
+            # Cycling degradation
             degradation_coeff = 1 / plf_f_plr.evaluate(load_factor, 1)
 
             # Power
@@ -421,7 +452,9 @@ class UnitaryDirectExpansion(Equipment):
 
         """
 
-        ref_net_cap = self.ref_net_cap
+        ref_net_cap = Units(value=self.ref_net_cap, unit=self.ref_cap_unit).conversion(
+            new_unit="btu/h"
+        )
 
         eer = (
             9.886
@@ -443,16 +476,29 @@ class UnitaryDirectExpansion(Equipment):
         curves = {}
         for curve in self.set_of_curves:
             if curve.out_var == "cap-f-t":
-                curves["cap_f_t"] = curve
+                curves["cap-f-t"] = curve
             elif curve.out_var == "cap-f-ff":
-                curves["cap_f_ff"] = curve
+                curves["cap-f-ff"] = curve
             elif curve.out_var == "eir-f-t":
-                curves["eir_f_t"] = curve
+                curves["eir-f-t"] = curve
             elif curve.out_var == "eir-f-ff":
-                curves["eir_f_ff"] = curve
+                curves["eir-f-ff"] = curve
             elif curve.out_var == "plf-f-plr":
-                curves["plf_f_plr"] = curve
+                curves["plf-f-plr"] = curve
         return curves
+
+    def get_curves_from_lib(self, lib, filters):
+        """Function to get the sort from the library based on chiller filters.
+
+        :param copper.library.Library lib: Chiller library object
+        :param list filters: List of tuples containing the relevant filter keys and values
+        :return: List of set of curves object corresponding to seed curves
+        :rtype: list
+
+        """
+        sets = lib.find_set_of_curves_from_lib(filters=filters, part_eff_flag=True)
+        assert sets is not None
+        return sets
 
     def get_rated_temperatures(self, alt=False):
         """Get unitary DX equipment rated temperatures.
@@ -529,16 +575,7 @@ class UnitaryDirectExpansion(Equipment):
         :rtype: SetsofCurves
 
         """
-        assert self.compressor_type in [
-            "centrifugal",
-            "any",
-            "positive_displacement",
-            "reciprocating",
-            "scroll",
-            "screw",
-            "scroll/screw",
-        ]
-        assert self.compressor_speed in ["constant", "variable", "any"]
+        assert self.compressor_type in ["scroll"]
 
         if lib is None or filters is None or csets is None:
             lib, filters = self.get_lib_and_filters()
@@ -551,18 +588,15 @@ class UnitaryDirectExpansion(Equipment):
 
         self.misc_attr = {
             "model": self.model,
-            "ref_net_cap": self.net_cap,
+            "ref_net_cap": self.ref_net_cap,
             "ref_gross_cap": self.ref_gross_cap,
             "full_eff": full_eff_cop,
             "part_eff": part_eff_cop,
-            "ref_eff_unit": "",
+            "ref_eff_unit": self.full_eff_unit,
             "compressor_type": self.compressor_type,
             "condenser_type": self.condenser_type,
             "compressor_speed": self.compressor_speed,
             "sim_engine": self.sim_engine,
-            "min_plr": self.min_plr,
-            "min_unloading": self.min_unloading,
-            "max_plr": 1,
             "name": "Aggregated set of curves",
             "source": "Copper",
         }

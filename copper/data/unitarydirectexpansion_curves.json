@@ -18,7 +18,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 120,
         "max_outdoor_fan_power": 360,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -116,7 +116,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 65,
         "max_outdoor_fan_power": 750,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -214,7 +214,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 65,
         "max_outdoor_fan_power": 750,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -312,7 +312,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 65,
         "max_outdoor_fan_power": 750,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -410,7 +410,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 65,
         "max_outdoor_fan_power": 450,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -508,7 +508,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 249,
         "max_outdoor_fan_power": 249,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -606,7 +606,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 249,
         "max_outdoor_fan_power": 249,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -704,7 +704,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 249,
         "max_outdoor_fan_power": 249,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -802,7 +802,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 372,
         "max_outdoor_fan_power": 372,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -900,7 +900,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 372,
         "max_outdoor_fan_power": 372,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -998,7 +998,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1096,7 +1096,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1194,7 +1194,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1292,7 +1292,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1390,7 +1390,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1488,7 +1488,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1586,7 +1586,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1684,7 +1684,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1782,7 +1782,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1880,7 +1880,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -1978,7 +1978,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2076,7 +2076,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2174,7 +2174,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2272,7 +2272,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2370,7 +2370,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2468,7 +2468,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2566,7 +2566,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2664,7 +2664,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2762,7 +2762,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2860,7 +2860,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -2958,7 +2958,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3056,7 +3056,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3154,7 +3154,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3252,7 +3252,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
@@ -3350,7 +3350,7 @@
         "part_eff_ref_std_alt": null,
         "min_outdoor_fan_power": 746,
         "max_outdoor_fan_power": 746,
-        "fan_power_unit": "W",
+        "indoor_fan_power_unit": "W",
         "set_of_curves": {
             "eir-f-t": {
                 "out_var": "eir-f-t",
