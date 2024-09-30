@@ -484,7 +484,7 @@ class SetofCurves:
             for curve in self.curves:
                 if curve.out_var == var:
                     x, y = self.get_data_for_plotting(curve, norm)
-                    axes[i].plot(x, y, color=color, alpha=alpha)
+                    axes[i].plot(x, y, color=color, alpha=alpha, label=self.name)
                     axes[i].set_title(var)
 
         return True
@@ -521,6 +521,8 @@ class SetofCurves:
                     curve_type = "Curve:Bicubic"
                 elif curve_type == "cubic":
                     curve_type = "Curve:Cubic"
+                elif curve_type == "linear":
+                    curve_type = "Curve:Linear"
                 curve_export += (
                     "\n{},\n".format(curve_type)
                     if len(curve_export)
@@ -537,7 +539,11 @@ class SetofCurves:
                 curve_export += (
                     "   {},\n".format(curve.x_max) if curve.x_max else "    ,\n"
                 )
-                if curve_type != "quad" and curve_type != "cubic":
+                if (
+                    curve.type != "quad"
+                    and curve.type != "cubic"
+                    and curve.type != "linear"
+                ):
                     curve_export += (
                         "   {},\n".format(curve.y_min) if curve.y_min else "    ,\n"
                     )
@@ -833,9 +839,9 @@ class Curve:
             for x in data["X1"]:
                 vals.append(c.evaluate(x, 0))
 
-            if reg_r_sqr > r_sqr and self.compute_grad(
-                data["X1"], vals, sign_val, threshold=0.02
-            ):
+            if reg_r_sqr > r_sqr:  # and self.compute_grad(
+                #                data["X1"], vals, sign_val, threshold=0.05
+                #            ):
                 self.coeff1, self.coeff2, self.coeff3, self.coeff4 = model.params
                 self.type = "cubic"
                 r_sqr = reg_r_sqr

@@ -61,7 +61,7 @@ class Generator:
         if isinstance(random_seed, int):
             random.seed(random_seed)
 
-    def generate_set_of_curves(self, verbose=False):
+    def generate_set_of_curves(self, verbose=False, agg_only=False):
         """Generate set of curves using genetic algorithm.
 
         :param str verbose: Output results at each generation.
@@ -119,13 +119,16 @@ class Generator:
                 curve.out_var
             ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
-        # Run generator
-        res = self.run_ga(curves=self.base_curves, verbose=verbose)
-
-        if res is None:
-            return
+        # Return if aggregation is only needed
+        if agg_only:
+            return self.base_curves
         else:
-            return self.equipment.set_of_curves
+            # Run generator
+            res = self.run_ga(curves=self.base_curves, verbose=verbose)
+            if res is None:
+                return
+            else:
+                return self.equipment.set_of_curves
 
     def run_ga(self, curves, verbose=False):
         """Run genetic algorithm.
@@ -396,7 +399,7 @@ class Generator:
             if curve.out_var == "plf-f-plr" and "plf-f-plr" in self.vars:
                 # Randomly choose another degradation coefficient (between 0 and 0.5)
                 self.equipment.degradation_coefficient = (
-                    random.randrange(25, 100, 1) / 500.0
+                    random.randrange(25, 125, 1) / 500.0
                 )
                 setattr(
                     curve,
@@ -651,7 +654,7 @@ class Generator:
             if curve.out_var == "plf-f-plr" and "plf-f-plr" in self.vars:
                 # Randomly choose another degradation coefficient (between 0.05 and 0.5)
                 self.equipment.degradation_coefficient = (
-                    random.randrange(25, 100, 1) / 500.0
+                    random.randrange(25, 125, 1) / 500.0
                 )
                 setattr(
                     curve,
