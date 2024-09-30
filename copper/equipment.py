@@ -83,6 +83,7 @@ class Equipment:
         export_name="",
         num_nearest_neighbors=10,
         max_restart=None,
+        agg_only=False,
     ):
         """Generate a set of curves for a particular equipment.
 
@@ -120,7 +121,7 @@ class Equipment:
             num_nearest_neighbors,
             max_restart,
         )
-        set_of_curves = ga.generate_set_of_curves(verbose=verbose)
+        set_of_curves = ga.generate_set_of_curves(verbose=verbose, agg_only=agg_only)
 
         if len(export_path):
             set_of_curves_obj = SetofCurves()

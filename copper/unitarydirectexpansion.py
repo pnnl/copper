@@ -43,12 +43,12 @@ class UnitaryDirectExpansion(Equipment):
             "1": {
                 "fan_flow_fraction": 0.66,
                 "fan_power_fraction": 0.4,
-                "capacity_fraction": 0.5,
+                "capacity_ratio": 0.5,
             },
             "2": {
                 "fan_flow_fraction": 1.0,
                 "fan_power_fraction": 1.0,
-                "capacity_fraction": 1.0,
+                "capacity_ratio": 1.0,
             },
         },
         indoor_fan_speeds=1,
@@ -86,8 +86,10 @@ class UnitaryDirectExpansion(Equipment):
                     value=Units(value=ref_net_cap, unit=ref_cap_unit).conversion(
                         new_unit=indoor_fan_power_unit
                     )
-                    + indoor_fan_power,
-                    unit=indoor_fan_power_unit,
+                    + Units(
+                        value=indoor_fan_power, unit=indoor_fan_power_unit
+                    ).conversion(new_unit="kW"),
+                    unit="kW",
                 ).conversion(ref_cap_unit)
         else:
             if ref_net_cap != None:
@@ -171,7 +173,7 @@ class UnitaryDirectExpansion(Equipment):
                     "x1_max": self.aew,
                     "x1_norm": self.aew,
                     "nbval": nb_val,
-                    "x2_min": 10,
+                    "x2_min": 15,
                     "x2_max": 40,
                     "x2_norm": self.ect,
                 },
@@ -180,7 +182,7 @@ class UnitaryDirectExpansion(Equipment):
                     "x1_max": self.aew,
                     "x1_norm": self.aew,
                     "nbval": 50,
-                    "x2_min": 10,
+                    "x2_min": 15,
                     "x2_max": 40,
                     "x2_norm": self.ect,
                     "nbval": nb_val,
@@ -238,7 +240,7 @@ class UnitaryDirectExpansion(Equipment):
             capacity_ratios = []
             fan_power_fractions = []
             for speed_info in self.indoor_fan_speeds_mapping.values():
-                capacity_ratios.append(speed_info["capacity_fraction"])
+                capacity_ratios.append(speed_info["capacity_ratio"])
                 fan_power_fractions.append(speed_info["fan_power_fraction"])
             # Minimum flow/power
             if capacity_ratio <= capacity_ratios[0]:
@@ -370,13 +372,16 @@ class UnitaryDirectExpansion(Equipment):
                 raise ValueError("Input COP is 0!")
 
             # "Load Factor" (as per AHRI Standard) which is analogous to PLR
-            load_factor = (
-                reduced_plr[red_cap_num]
-                * net_cooling_cap_rated
-                / net_cooling_cap_reduced
-                if net_cooling_cap_reduced > 0.0
-                else 1.0
-            )
+            if reduced_plr[red_cap_num] < 1.0:
+                load_factor = (
+                    reduced_plr[red_cap_num]
+                    * net_cooling_cap_rated
+                    / net_cooling_cap_reduced
+                    if net_cooling_cap_reduced > 0.0
+                    else 1.0
+                )
+            else:
+                load_factor = 1
 
             # Cycling degradation
             degradation_coeff = 1 / plf_f_plr.evaluate(load_factor, 1)
@@ -420,7 +425,6 @@ class UnitaryDirectExpansion(Equipment):
         :rtype: float
 
         """
-
         ref_net_cap = Units(value=self.ref_net_cap, unit=self.ref_cap_unit).conversion(
             new_unit="btu/h"
         )
@@ -524,12 +528,12 @@ class UnitaryDirectExpansion(Equipment):
                 "vars_range": [(12.8, 26), (10.0, 40.0)],
                 "normalization": (self.aew, self.ect),
             },
-            "eir-f-ff": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
+            "eir-f-ff": {"vars_range": [(0.0, 1.5)], "normalization": (1.0)},
             "cap-f-t": {
                 "vars_range": [(12.8, 26), (10.0, 40.0)],
                 "normalization": (self.aew, self.ect),
             },
-            "cap-f-ff": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
+            "cap-f-ff": {"vars_range": [(0.0, 1.5)], "normalization": (1.0)},
             "plf-f-plr": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
         }
 

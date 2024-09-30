@@ -130,22 +130,22 @@ class UnitaryDirectExpansion(TestCase):
             "1": {
                 "fan_flow_fraction": 0.2,
                 "fan_power_fraction": 0.15,
-                "capacity_fraction": 0.2,
+                "capacity_ratio": 0.2,
             },
             "2": {
                 "fan_flow_fraction": 0.45,
                 "fan_power_fraction": 0.4,
-                "capacity_fraction": 0.45,
+                "capacity_ratio": 0.45,
             },
             "3": {
                 "fan_flow_fraction": 0.75,
                 "fan_power_fraction": 0.7,
-                "capacity_fraction": 0.75,
+                "capacity_ratio": 0.75,
             },
             "4": {
                 "fan_flow_fraction": 1.0,
                 "fan_power_fraction": 1.0,
-                "capacity_fraction": 1.0,
+                "capacity_ratio": 1.0,
             },
         }
         assert (
@@ -300,7 +300,7 @@ class UnitaryDirectExpansion(TestCase):
             condenser_type="air",
             compressor_speed="constant",
             ref_cap_unit="ton",
-            ref_gross_cap=8,
+            ref_net_cap=8,
             full_eff=11.55,
             full_eff_unit="eer",
             part_eff=14.8,
@@ -312,12 +312,12 @@ class UnitaryDirectExpansion(TestCase):
                 "1": {
                     "fan_flow_fraction": 0.66,
                     "fan_power_fraction": 0.4,
-                    "capacity_fraction": 0.5,
+                    "capacity_ratio": 0.5,
                 },
                 "2": {
                     "fan_flow_fraction": 1.0,
                     "fan_power_fraction": 1.0,
-                    "capacity_fraction": 1.0,
+                    "capacity_ratio": 1.0,
                 },
             },
             indoor_fan_power=cp.Units(value=8, unit="ton").conversion(new_unit="W")
