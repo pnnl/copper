@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "copper-bem"
+name = "copper"
 version = "0.2.3"
 description = "Performance curve generator for building energy simulation"
 authors = ["Lerond, Jeremy <jeremy.lerond@pnnl.gov>", "Rahman, Aowabin <aowabin.rahman@pnnl.gov>", "Wan, Hanlong <hanlong.wan@pnnl.gov>", "Singh, Manan <manan.singh@pnnl.gov>"]
