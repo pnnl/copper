@@ -130,22 +130,22 @@ class UnitaryDirectExpansion(TestCase):
             "1": {
                 "fan_flow_fraction": 0.2,
                 "fan_power_fraction": 0.15,
-                "capacity_ratio": 0.2,
+                "capacity_fraction": 0.2,
             },
             "2": {
                 "fan_flow_fraction": 0.45,
                 "fan_power_fraction": 0.4,
-                "capacity_ratio": 0.45,
+                "capacity_fraction": 0.45,
             },
             "3": {
                 "fan_flow_fraction": 0.75,
                 "fan_power_fraction": 0.7,
-                "capacity_ratio": 0.75,
+                "capacity_fraction": 0.75,
             },
             "4": {
                 "fan_flow_fraction": 1.0,
                 "fan_power_fraction": 1.0,
-                "capacity_ratio": 1.0,
+                "capacity_fraction": 1.0,
             },
         }
         assert (
@@ -366,3 +366,10 @@ class UnitaryDirectExpansion(TestCase):
         assert round(set_of_curves[2].evaluate(1.0, 0), 2) == 1.0
         assert round(set_of_curves[3].evaluate(1.0, 0), 2) == 1.0
         assert round(set_of_curves[4].evaluate(1.0, 0), 2) == 1.0
+
+
+# Run the tests
+import unittest
+
+if __name__ == "__main__":
+    unittest.main()

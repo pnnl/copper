@@ -43,12 +43,12 @@ class UnitaryDirectExpansion(Equipment):
             "1": {
                 "fan_flow_fraction": 0.66,
                 "fan_power_fraction": 0.4,
-                "capacity_ratio": 0.5,
+                "capacity_fraction": 0.5,
             },
             "2": {
                 "fan_flow_fraction": 1.0,
                 "fan_power_fraction": 1.0,
-                "capacity_ratio": 1.0,
+                "capacity_fraction": 1.0,
             },
         },
         indoor_fan_curve_coef={
@@ -60,7 +60,7 @@ class UnitaryDirectExpansion(Equipment):
         },
         indoor_fan_speeds=1,
         indoor_fan_curve=None,
-        fan_power_unit="kW",
+        indoor_fan_power_unit="kW",
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -170,7 +170,7 @@ class UnitaryDirectExpansion(Equipment):
         self.indoor_fan_speeds = indoor_fan_speeds
         self.indoor_fan_power = indoor_fan_power
         self.indoor_fan_curve_coef = indoor_fan_curve_coef
-        self.fan_power_unit = fan_power_unit
+        self.indoor_fan_power_unit = indoor_fan_power_unit
         self.indoor_fan_curve = indoor_fan_curve
         # Define rated temperatures
         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
