@@ -58,13 +58,6 @@ class UnitaryDirectExpansion(Equipment):
             "3": -0.63 * 0.0729,
             "4": 0.63 * 0.9437,
         },
-        indoor_fan_curve_coef={
-            "type": "cubic",
-            "1": 0.63 * 0.0408,
-            "2": 0.63 * 0.088,
-            "3": -0.63 * 0.0729,
-            "4": 0.63 * 0.9437,
-        },
         indoor_fan_speeds=1,
         indoor_fan_curve=None,
         fan_power_unit="kW",
@@ -92,7 +85,6 @@ class UnitaryDirectExpansion(Equipment):
                         * 400
                         * 0.365,
                         unit="W",
-                    ).conversion(new_unit=indoor_fan_power_unit)
                     ).conversion(new_unit=indoor_fan_power_unit)
                     if not log_fan:
                         logging.info(
