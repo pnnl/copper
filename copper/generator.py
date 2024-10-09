@@ -61,7 +61,7 @@ class Generator:
         if isinstance(random_seed, int):
             random.seed(random_seed)
 
-    def generate_set_of_curves(self, verbose=False):
+    def generate_set_of_curves(self, verbose=False, agg_only=False):
         """Generate set of curves using genetic algorithm.
 
         :param str verbose: Output results at each generation.
@@ -86,6 +86,7 @@ class Generator:
                         ranges=ranges,
                         misc_attr=misc_attr,
                         method="NN_weighted_average",
+                        method="NN_weighted_average",
                         N=self.num_nearest_neighbors,
                     )
                     self.base_curves = [self.base_curve]
@@ -95,12 +96,22 @@ class Generator:
                 elif self.method == "weighted_average":
                     self.base_curve = seed_curves.get_aggregated_set_of_curves(
                         ranges=ranges, misc_attr=misc_attr, method="weighted_average"
+                        ranges=ranges, misc_attr=misc_attr, method="weighted_average"
                     )
                     self.base_curves = [self.base_curve]
                     self.df, _ = seed_curves.nearest_neighbor_sort(
                         target_attr=misc_attr
                     )
                 else:
+                    logging.error(
+                        f"{self.method} is not a valid aggregation method. Choices are `best_match`, `nearest_neighbor`, and `weighted_average`."
+                    )
+                    raise ValueError("Generator failed.")
+        if len(self.base_curves) == 0:
+            logging.error(
+                "The base set of curves needed by the generator could not be generated. Please check input and library entries."
+            )
+            raise ValueError("Generator failed.")
                     logging.error(
                         f"{self.method} is not a valid aggregation method. Choices are `best_match`, `nearest_neighbor`, and `weighted_average`."
                     )
@@ -119,13 +130,16 @@ class Generator:
                 curve.out_var
             ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
-        # Run generator
-        res = self.run_ga(curves=self.base_curves, verbose=verbose)
-
-        if res is None:
-            return
+        # Return if aggregation is only needed
+        if agg_only:
+            return self.base_curves
         else:
-            return self.equipment.set_of_curves
+            # Run generator
+            res = self.run_ga(curves=self.base_curves, verbose=verbose)
+            if res is None:
+                return
+            else:
+                return self.equipment.set_of_curves
 
     def run_ga(self, curves, verbose=False):
         """Run genetic algorithm.
