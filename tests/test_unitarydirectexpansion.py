@@ -201,7 +201,6 @@ class UnitaryDirectExpansion(TestCase):
             < 0.7
         )
 
-
     def test_generation(self):
         # Define equipment characteristics
         dx_unit = self.dx_unit_dft

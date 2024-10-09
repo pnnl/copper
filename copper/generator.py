@@ -86,7 +86,6 @@ class Generator:
                         ranges=ranges,
                         misc_attr=misc_attr,
                         method="NN_weighted_average",
-                        method="NN_weighted_average",
                         N=self.num_nearest_neighbors,
                     )
                     self.base_curves = [self.base_curve]
@@ -96,22 +95,12 @@ class Generator:
                 elif self.method == "weighted_average":
                     self.base_curve = seed_curves.get_aggregated_set_of_curves(
                         ranges=ranges, misc_attr=misc_attr, method="weighted_average"
-                        ranges=ranges, misc_attr=misc_attr, method="weighted_average"
                     )
                     self.base_curves = [self.base_curve]
                     self.df, _ = seed_curves.nearest_neighbor_sort(
                         target_attr=misc_attr
                     )
                 else:
-                    logging.error(
-                        f"{self.method} is not a valid aggregation method. Choices are `best_match`, `nearest_neighbor`, and `weighted_average`."
-                    )
-                    raise ValueError("Generator failed.")
-        if len(self.base_curves) == 0:
-            logging.error(
-                "The base set of curves needed by the generator could not be generated. Please check input and library entries."
-            )
-            raise ValueError("Generator failed.")
                     logging.error(
                         f"{self.method} is not a valid aggregation method. Choices are `best_match`, `nearest_neighbor`, and `weighted_average`."
                     )
@@ -410,7 +399,7 @@ class Generator:
             if curve.out_var == "plf-f-plr" and "plf-f-plr" in self.vars:
                 # Randomly choose another degradation coefficient (between 0 and 0.5)
                 self.equipment.degradation_coefficient = (
-                    random.randrange(25, 100, 1) / 500.0
+                    random.randrange(25, 125, 1) / 500.0
                 )
                 setattr(
                     curve,
@@ -665,7 +654,7 @@ class Generator:
             if curve.out_var == "plf-f-plr" and "plf-f-plr" in self.vars:
                 # Randomly choose another degradation coefficient (between 0.05 and 0.5)
                 self.equipment.degradation_coefficient = (
-                    random.randrange(25, 100, 1) / 500.0
+                    random.randrange(25, 125, 1) / 500.0
                 )
                 setattr(
                     curve,
