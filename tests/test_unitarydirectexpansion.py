@@ -107,17 +107,17 @@ class UnitaryDirectExpansion(TestCase):
         dx_unit_two_speed = self.dx_unit_dft
         dx_unit_two_speed.indoor_fan_speeds = 2
         assert (
-            dx_unit_two_speed.calc_fan_power(capacity_ratio=0.5)
+            dx_unit_two_speed.calc_fan_power(capacity_fraction=0.5)
             / dx_unit_two_speed.indoor_fan_power
             == 0.4
         )
         assert (
-            dx_unit_two_speed.calc_fan_power(capacity_ratio=1.0)
+            dx_unit_two_speed.calc_fan_power(capacity_fraction=1.0)
             / dx_unit_two_speed.indoor_fan_power
             == 1.0
         )
         assert (
-            dx_unit_two_speed.calc_fan_power(capacity_ratio=0.75)
+            dx_unit_two_speed.calc_fan_power(capacity_fraction=0.75)
             / dx_unit_two_speed.indoor_fan_power
             == 0.7
         )
@@ -149,23 +149,23 @@ class UnitaryDirectExpansion(TestCase):
             },
         }
         assert (
-            dx_unit_four_speed.calc_fan_power(capacity_ratio=0.1)
+            dx_unit_four_speed.calc_fan_power(capacity_fraction=0.1)
             / dx_unit_four_speed.indoor_fan_power
             == 0.15
         )
         assert (
-            dx_unit_four_speed.calc_fan_power(capacity_ratio=1.0)
+            dx_unit_four_speed.calc_fan_power(capacity_fraction=1.0)
             / dx_unit_four_speed.indoor_fan_power
             == 1.0
         )
         assert (
-            dx_unit_four_speed.calc_fan_power(capacity_ratio=0.75)
+            dx_unit_four_speed.calc_fan_power(capacity_fraction=0.75)
             / dx_unit_four_speed.indoor_fan_power
             == 0.7
         )
         assert (
             round(
-                dx_unit_four_speed.calc_fan_power(capacity_ratio=0.58)
+                dx_unit_four_speed.calc_fan_power(capacity_fraction=0.58)
                 / dx_unit_four_speed.indoor_fan_power,
                 2,
             )
@@ -173,7 +173,7 @@ class UnitaryDirectExpansion(TestCase):
         )
         assert (
             round(
-                dx_unit_four_speed.calc_fan_power(capacity_ratio=0.70)
+                dx_unit_four_speed.calc_fan_power(capacity_fraction=0.70)
                 / dx_unit_four_speed.indoor_fan_power,
                 2,
             )
@@ -183,20 +183,20 @@ class UnitaryDirectExpansion(TestCase):
     def test_multi_speed_with_curve(self):
         # Two-speed fan unit
         dx_unit_multi_speed = self.dx_unit_dft
-        dx_unit_multi_speed.indoor_fan_curve = 1
+        dx_unit_multi_speed.indoor_fan_curve = True
         dx_unit_multi_speed.indoor_fan_speeds = 2
         assert (
-            dx_unit_multi_speed.calc_fan_power(capacity_ratio=0.5)
+            dx_unit_multi_speed.calc_fan_power(capacity_fraction=0.5)
             / dx_unit_multi_speed.indoor_fan_power
             == 0.25
         )
         assert (
-            dx_unit_multi_speed.calc_fan_power(capacity_ratio=1.0)
+            dx_unit_multi_speed.calc_fan_power(capacity_fraction=1.0)
             / dx_unit_multi_speed.indoor_fan_power
             == 1.0
         )
         assert (
-            dx_unit_multi_speed.calc_fan_power(capacity_ratio=0.75)
+            dx_unit_multi_speed.calc_fan_power(capacity_fraction=0.75)
             / dx_unit_multi_speed.indoor_fan_power
             < 0.7
         )
