@@ -256,9 +256,7 @@ class UnitaryDirectExpansion(Equipment):
 
         """
         # Full flow/power
-        flow_fraction = (
-            capacity_fraction  # we assume flow_fraction = 1*capacity_fraction as default
-        )
+        flow_fraction = capacity_fraction  # we assume flow_fraction = 1*capacity_fraction as default
         if capacity_fraction == 1 or self.indoor_fan_speeds == 1:
             return self.indoor_fan_power
         else:
@@ -274,7 +272,9 @@ class UnitaryDirectExpansion(Equipment):
                 elif capacity_fraction in capacity_fractions:
                     return (
                         self.indoor_fan_power
-                        * fan_power_fractions[capacity_fractions.index(capacity_fraction)]
+                        * fan_power_fractions[
+                            capacity_fractions.index(capacity_fraction)
+                        ]
                     )
                 else:
                     # In between-speeds: determine power by linear interpolation
