@@ -43,15 +43,23 @@ class UnitaryDirectExpansion(Equipment):
             "1": {
                 "fan_flow_fraction": 0.66,
                 "fan_power_fraction": 0.4,
-                "capacity_ratio": 0.5,
+                "capacity_fraction": 0.5,
             },
             "2": {
                 "fan_flow_fraction": 1.0,
                 "fan_power_fraction": 1.0,
-                "capacity_ratio": 1.0,
+                "capacity_fraction": 1.0,
             },
         },
+        indoor_fan_curve_coef={
+            "type": "cubic",
+            "1": 0.63 * 0.0408,
+            "2": 0.63 * 0.088,
+            "3": -0.63 * 0.0729,
+            "4": 0.63 * 0.9437,
+        },
         indoor_fan_speeds=1,
+        indoor_fan_curve=False,
         indoor_fan_power_unit="kW",
     ):
         global log_fan
@@ -69,6 +77,7 @@ class UnitaryDirectExpansion(Equipment):
                 if indoor_fan_power == None:
                     # This is 400 cfm/ton and 0.365 W/cfm. Equation 11.1 from AHRI 210/240 (2024).
                     indoor_fan_power_unit = "kW"
+                    indoor_fan_power_unit = "kW"
                     indoor_fan_power = Units(
                         value=Units(value=ref_net_cap, unit=ref_cap_unit).conversion(
                             new_unit="ton"
@@ -78,6 +87,9 @@ class UnitaryDirectExpansion(Equipment):
                         unit="W",
                     ).conversion(new_unit=indoor_fan_power_unit)
                     if not log_fan:
+                        logging.info(
+                            f"Default fan power is based on 400 cfm/ton and 0.365 kW/cfm"
+                        )
                         logging.info(
                             f"Default fan power is based on 400 cfm/ton and 0.365 kW/cfm"
                         )
@@ -157,8 +169,9 @@ class UnitaryDirectExpansion(Equipment):
         self.indoor_fan_speeds_mapping = indoor_fan_speeds_mapping
         self.indoor_fan_speeds = indoor_fan_speeds
         self.indoor_fan_power = indoor_fan_power
+        self.indoor_fan_curve_coef = indoor_fan_curve_coef
         self.indoor_fan_power_unit = indoor_fan_power_unit
-
+        self.indoor_fan_curve = indoor_fan_curve
         # Define rated temperatures
         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
         aed, self.aew, ect, lct = self.get_rated_temperatures()
@@ -225,43 +238,65 @@ class UnitaryDirectExpansion(Equipment):
             else:
                 self.set_of_curves.append(plf_f_plr)
 
-    def calc_fan_power(self, capacity_ratio):
+        # default fan curve
+        self.default_fan_curve = Curve(
+            eqp=self, c_type=self.indoor_fan_curve_coef["type"]
+        )
+        self.default_fan_curve.coeff1 = self.indoor_fan_curve_coef["1"]
+        self.default_fan_curve.coeff2 = self.indoor_fan_curve_coef["2"]
+        self.default_fan_curve.coeff3 = self.indoor_fan_curve_coef["3"]
+        self.default_fan_curve.coeff4 = self.indoor_fan_curve_coef["4"]
+
+    def calc_fan_power(self, capacity_fraction):
         """Calculate unitary DX equipment fan power.
 
-        :param float capacity_ratio: Ratio of actual capacity to net rated capacity
+        :param float capacity_fraction: Ratio of actual capacity to net rated capacity
         :return: Unitary DX Equipment fan power in Watts
         :rtype: float
 
         """
         # Full flow/power
-        if capacity_ratio == 1 or self.indoor_fan_speeds == 1:
+        flow_fraction = capacity_fraction  # we assume flow_fraction = 1*capacity_fraction as default
+        if capacity_fraction == 1 or self.indoor_fan_speeds == 1:
             return self.indoor_fan_power
         else:
-            capacity_ratios = []
-            fan_power_fractions = []
-            for speed_info in self.indoor_fan_speeds_mapping.values():
-                capacity_ratios.append(speed_info["capacity_ratio"])
-                fan_power_fractions.append(speed_info["fan_power_fraction"])
-            # Minimum flow/power
-            if capacity_ratio <= capacity_ratios[0]:
-                return self.indoor_fan_power * fan_power_fractions[0]
-            elif capacity_ratio in capacity_ratios:
-                return (
-                    self.indoor_fan_power
-                    * fan_power_fractions[capacity_ratios.index(capacity_ratio)]
-                )
-            else:
-                # In between-speeds: determine power by linear interpolation
-                for i, ratio in enumerate(capacity_ratios):
-                    if (
-                        ratio < capacity_ratio
-                        and capacity_ratios[i + 1] > capacity_ratio
-                    ):
-                        a = (fan_power_fractions[i + 1] - fan_power_fractions[i]) / (
-                            capacity_ratios[i + 1] - capacity_ratios[i]
-                        )
-                        b = fan_power_fractions[i] - a * capacity_ratios[i]
-                        return self.indoor_fan_power * (a * capacity_ratio + b)
+            if self.indoor_fan_curve == False:
+                capacity_fractions = []
+                fan_power_fractions = []
+                for speed_info in self.indoor_fan_speeds_mapping.values():
+                    capacity_fractions.append(speed_info["capacity_fraction"])
+                    fan_power_fractions.append(speed_info["fan_power_fraction"])
+                # Minimum flow/power
+                if capacity_fraction <= capacity_fractions[0]:
+                    return self.indoor_fan_power * fan_power_fractions[0]
+                elif capacity_fraction in capacity_fractions:
+                    return (
+                        self.indoor_fan_power
+                        * fan_power_fractions[
+                            capacity_fractions.index(capacity_fraction)
+                        ]
+                    )
+                else:
+                    # In between-speeds: determine power by linear interpolation
+                    for i, ratio in enumerate(capacity_fractions):
+                        if (
+                            ratio < capacity_fraction
+                            and capacity_fractions[i + 1] > capacity_fraction
+                        ):
+                            a = (
+                                fan_power_fractions[i + 1] - fan_power_fractions[i]
+                            ) / (capacity_fractions[i + 1] - capacity_fractions[i])
+                            b = fan_power_fractions[i] - a * capacity_fractions[i]
+                            return self.indoor_fan_power * (a * capacity_fraction + b)
+            else:  # using curve
+                default_min_fan_power = (
+                    self.indoor_fan_power * 0.25
+                )  # default min fan power
+                power_factor = self.default_fan_curve.evaluate(x=flow_fraction, y=0)
+                if self.indoor_fan_power * power_factor > default_min_fan_power:
+                    return self.indoor_fan_power * power_factor
+                else:
+                    return default_min_fan_power
 
     def calc_rated_eff(
         self, eff_type="part", unit="cop", output_report=False, alt=False
@@ -425,6 +460,7 @@ class UnitaryDirectExpansion(Equipment):
         :rtype: float
 
         """
+
         ref_net_cap = Units(value=self.ref_net_cap, unit=self.ref_cap_unit).conversion(
             new_unit="btu/h"
         )

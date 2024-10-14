@@ -107,17 +107,17 @@ class UnitaryDirectExpansion(TestCase):
         dx_unit_two_speed = self.dx_unit_dft
         dx_unit_two_speed.indoor_fan_speeds = 2
         assert (
-            dx_unit_two_speed.calc_fan_power(capacity_ratio=0.5)
+            dx_unit_two_speed.calc_fan_power(capacity_fraction=0.5)
             / dx_unit_two_speed.indoor_fan_power
             == 0.4
         )
         assert (
-            dx_unit_two_speed.calc_fan_power(capacity_ratio=1.0)
+            dx_unit_two_speed.calc_fan_power(capacity_fraction=1.0)
             / dx_unit_two_speed.indoor_fan_power
             == 1.0
         )
         assert (
-            dx_unit_two_speed.calc_fan_power(capacity_ratio=0.75)
+            dx_unit_two_speed.calc_fan_power(capacity_fraction=0.75)
             / dx_unit_two_speed.indoor_fan_power
             == 0.7
         )
@@ -130,42 +130,42 @@ class UnitaryDirectExpansion(TestCase):
             "1": {
                 "fan_flow_fraction": 0.2,
                 "fan_power_fraction": 0.15,
-                "capacity_ratio": 0.2,
+                "capacity_fraction": 0.2,
             },
             "2": {
                 "fan_flow_fraction": 0.45,
                 "fan_power_fraction": 0.4,
-                "capacity_ratio": 0.45,
+                "capacity_fraction": 0.45,
             },
             "3": {
                 "fan_flow_fraction": 0.75,
                 "fan_power_fraction": 0.7,
-                "capacity_ratio": 0.75,
+                "capacity_fraction": 0.75,
             },
             "4": {
                 "fan_flow_fraction": 1.0,
                 "fan_power_fraction": 1.0,
-                "capacity_ratio": 1.0,
+                "capacity_fraction": 1.0,
             },
         }
         assert (
-            dx_unit_four_speed.calc_fan_power(capacity_ratio=0.1)
+            dx_unit_four_speed.calc_fan_power(capacity_fraction=0.1)
             / dx_unit_four_speed.indoor_fan_power
             == 0.15
         )
         assert (
-            dx_unit_four_speed.calc_fan_power(capacity_ratio=1.0)
+            dx_unit_four_speed.calc_fan_power(capacity_fraction=1.0)
             / dx_unit_four_speed.indoor_fan_power
             == 1.0
         )
         assert (
-            dx_unit_four_speed.calc_fan_power(capacity_ratio=0.75)
+            dx_unit_four_speed.calc_fan_power(capacity_fraction=0.75)
             / dx_unit_four_speed.indoor_fan_power
             == 0.7
         )
         assert (
             round(
-                dx_unit_four_speed.calc_fan_power(capacity_ratio=0.58)
+                dx_unit_four_speed.calc_fan_power(capacity_fraction=0.58)
                 / dx_unit_four_speed.indoor_fan_power,
                 2,
             )
@@ -173,11 +173,32 @@ class UnitaryDirectExpansion(TestCase):
         )
         assert (
             round(
-                dx_unit_four_speed.calc_fan_power(capacity_ratio=0.70)
+                dx_unit_four_speed.calc_fan_power(capacity_fraction=0.70)
                 / dx_unit_four_speed.indoor_fan_power,
                 2,
             )
             == 0.65
+        )
+
+    def test_multi_speed_with_curve(self):
+        # Two-speed fan unit
+        dx_unit_multi_speed = self.dx_unit_dft
+        dx_unit_multi_speed.indoor_fan_curve = True
+        dx_unit_multi_speed.indoor_fan_speeds = 2
+        assert (
+            dx_unit_multi_speed.calc_fan_power(capacity_fraction=0.5)
+            / dx_unit_multi_speed.indoor_fan_power
+            == 0.25
+        )
+        assert (
+            dx_unit_multi_speed.calc_fan_power(capacity_fraction=1.0)
+            / dx_unit_multi_speed.indoor_fan_power
+            == 1.0
+        )
+        assert (
+            dx_unit_multi_speed.calc_fan_power(capacity_fraction=0.75)
+            / dx_unit_multi_speed.indoor_fan_power
+            < 0.7
         )
 
     def test_generation(self):
@@ -300,7 +321,7 @@ class UnitaryDirectExpansion(TestCase):
             condenser_type="air",
             compressor_speed="constant",
             ref_cap_unit="ton",
-            ref_net_cap=8,
+            ref_gross_cap=8,
             full_eff=11.55,
             full_eff_unit="eer",
             part_eff=14.8,
@@ -312,12 +333,12 @@ class UnitaryDirectExpansion(TestCase):
                 "1": {
                     "fan_flow_fraction": 0.66,
                     "fan_power_fraction": 0.4,
-                    "capacity_ratio": 0.5,
+                    "capacity_fraction": 0.5,
                 },
                 "2": {
                     "fan_flow_fraction": 1.0,
                     "fan_power_fraction": 1.0,
-                    "capacity_ratio": 1.0,
+                    "capacity_fraction": 1.0,
                 },
             },
             indoor_fan_power=cp.Units(value=8, unit="ton").conversion(new_unit="W")
