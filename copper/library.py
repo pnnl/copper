@@ -46,6 +46,8 @@ class Library:
                         and not "indoor_fan_curve_coef" in p
                         and not "indoor_fan_curve" in p
                         and not "indoor_fan_power_unit" in p
+                        and not "compressor_stage" in p
+                        and not "compressor_stage_input" in p
                     ):
                         obj_args[p] = vals[p]
                     elif (
@@ -123,6 +125,8 @@ class Library:
                 and not "indoor_fan_curve_coef" in p
                 and not "indoor_fan_curve" in p
                 and not "indoor_fan_power_unit" in p
+                and not "compressor_stage" in p
+                and not "compressor_stage_input" in p
             ):
                 obj_args[p] = data[p]
 
@@ -199,6 +203,8 @@ class Library:
                 "indoor_fan_speeds",
                 "indoor_fan_curve_coef",
                 "indoor_fan_power_unit",
+                "compressor_stage",
+                "compressor_stage_input",
             ]
 
             # Set the equipment properties

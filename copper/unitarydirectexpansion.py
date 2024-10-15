@@ -61,6 +61,8 @@ class UnitaryDirectExpansion(Equipment):
         indoor_fan_speeds=1,
         indoor_fan_curve=False,
         indoor_fan_power_unit="kW",
+        compressor_stage_input=False,
+        compressor_stage=[0.3, 0.6],
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -172,6 +174,8 @@ class UnitaryDirectExpansion(Equipment):
         self.indoor_fan_curve_coef = indoor_fan_curve_coef
         self.indoor_fan_power_unit = indoor_fan_power_unit
         self.indoor_fan_curve = indoor_fan_curve
+        self.compressor_stage = compressor_stage
+        self.compressor_stage_input = compressor_stage_input
         # Define rated temperatures
         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
         aed, self.aew, ect, lct = self.get_rated_temperatures()
@@ -365,17 +369,9 @@ class UnitaryDirectExpansion(Equipment):
 
         # Iterate through the different sets of rating conditions to calculate IEER
         ieer = 0
-        for red_cap_num in range(num_of_reduced_cap):
-            # Determine the outdoor air conditions based on AHRI Standard
-            if reduced_plr[red_cap_num] > 0.444:
-                outdoor_unit_inlet_air_dry_bulb_temp_reduced = (
-                    5.0 + 30.0 * reduced_plr[red_cap_num]
-                )
-            else:
-                outdoor_unit_inlet_air_dry_bulb_temp_reduced = equipment_references[
-                    eqp_type
-                ][std]["outdoor_unit_inlet_air_dry_bulb_reduced"]
 
+        def cal_reduced_eer(ratio, outdoor_unit_inlet_air_dry_bulb_temp_reduced):
+            """inner function to calculate reduced eer."""
             # Calculate capacity at rating conditions
             tot_cap_temp_mod_fac = cap_f_t.evaluate(
                 equipment_references[eqp_type][std][
@@ -384,7 +380,7 @@ class UnitaryDirectExpansion(Equipment):
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
             )
             load_factor_gross = min(
-                1.0, (reduced_plr[red_cap_num] / tot_cap_temp_mod_fac)
+                1.0, (ratio / tot_cap_temp_mod_fac)
             )  # Load percentage * Rated gross capacity / Available gross capacity
             indoor_fan_power = self.calc_fan_power(load_factor_gross) / 1000
             net_cooling_cap_reduced = (
@@ -407,9 +403,9 @@ class UnitaryDirectExpansion(Equipment):
                 raise ValueError("Input COP is 0!")
 
             # "Load Factor" (as per AHRI Standard) which is analogous to PLR
-            if reduced_plr[red_cap_num] < 1.0:
+            if ratio < 1.0:
                 load_factor = (
-                    reduced_plr[red_cap_num]
+                    ratio  # reduced_plr[red_cap_num]
                     * net_cooling_cap_rated
                     / net_cooling_cap_reduced
                     if net_cooling_cap_reduced > 0.0
@@ -432,14 +428,54 @@ class UnitaryDirectExpansion(Equipment):
             eer_reduced = (load_factor * net_cooling_cap_reduced) / (
                 load_factor * elec_power_reduced_cap + indoor_fan_power
             )
+            return eer_reduced
 
+        for red_cap_num in range(num_of_reduced_cap):
+            # Determine the outdoor air conditions based on AHRI Standard
+            if reduced_plr[red_cap_num] > 0.444:
+                outdoor_unit_inlet_air_dry_bulb_temp_reduced = (
+                    5.0 + 30.0 * reduced_plr[red_cap_num]
+                )
+            else:
+                outdoor_unit_inlet_air_dry_bulb_temp_reduced = equipment_references[
+                    eqp_type
+                ][std]["outdoor_unit_inlet_air_dry_bulb_reduced"]
+            if (
+                self.compressor_stage_input
+                and (reduced_plr[red_cap_num] > min(self.compressor_stage))
+                and (reduced_plr[red_cap_num] < max(self.compressor_stage))
+            ):
+                lower_value = None
+                upper_value = None
+                for value in self.compressor_stage:
+                    if value <= red_cap_num:
+                        lower_value = value
+                    elif value > red_cap_num and upper_value is None:
+                        upper_value = value
+                # interpolation
+                eer_reduced = (
+                    (
+                        cal_reduced_eer(
+                            lower_value, outdoor_unit_inlet_air_dry_bulb_temp_reduced
+                        )
+                        - cal_reduced_eer(
+                            upper_value, outdoor_unit_inlet_air_dry_bulb_temp_reduced
+                        )
+                    )
+                    / (lower_value - upper_value)
+                ) * (reduced_plr[red_cap_num] - upper_value) + cal_reduced_eer(
+                    upper_value, outdoor_unit_inlet_air_dry_bulb_temp_reduced
+                )
+            else:
+                eer_reduced = cal_reduced_eer(
+                    reduced_plr[red_cap_num],
+                    outdoor_unit_inlet_air_dry_bulb_temp_reduced,
+                )
             if eff_type == "full":
                 ieer = eer_reduced
                 break
-
             # Update IEER
             ieer += weighting_factor[red_cap_num] * eer_reduced
-
         # Convert efficiency to original unit unless specified
         if unit != "cop":
             ieer = Units(value=ieer, unit="cop")
