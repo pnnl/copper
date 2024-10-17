@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>copper.equipment &mdash; Copper 0.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=a47416a6"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #B87333" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Copper
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Methodology.html">Methodology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Equipment.html">Equipment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Quickstart%20Guide.html">Quickstart Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Additional%20Examples.html">Additional Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Applications.html">Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Code%20Documentation.html">Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../License.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #B87333" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Copper</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">copper.equipment</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for copper.equipment</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">equipment.py</span>
+<span class="sd">====================================</span>
+<span class="sd">This is the equipment module of Copper. The module includes function that can be used by all types of equipment included in Copper.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">copper.units</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">copper.generator</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="Equipment">
+<a class="viewcode-back" href="../../Code%20Documentation.html#copper.equipment.Equipment">[docs]</a>
+<span class="k">class</span> <span class="nc">Equipment</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit_alt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Equipment.convert_to_deg_c">
+<a class="viewcode-back" href="../../Code%20Documentation.html#copper.equipment.Equipment.convert_to_deg_c">[docs]</a>
+    <span class="k">def</span> <span class="nf">convert_to_deg_c</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;degF&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function to convert equipment data to degree F.</span>
+
+<span class="sd">        :param float value: Value to convert to degree C</span>
+<span class="sd">        :return: Vlue converted to degree C</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;degF&quot;</span><span class="p">:</span>
+            <span class="n">curr_value</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">curr_value</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="s2">&quot;degC&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="Equipment.get_ref_values">
+<a class="viewcode-back" href="../../Code%20Documentation.html#copper.equipment.Equipment.get_ref_values">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_ref_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_var</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get equipment reference/rated independent variables values (temperature and part load ratio) for an output variable (e.g., eir-f-t, eir-f-plr, cap-f-t).</span>
+
+<span class="sd">        :param str out_var: Output variable</span>
+<span class="sd">        :return: List of reference values</span>
+<span class="sd">        :rtype: list</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;x2_norm&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span><span class="p">[</span><span class="n">out_var</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span><span class="p">[</span><span class="n">out_var</span><span class="p">][</span><span class="s2">&quot;x1_norm&quot;</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span><span class="p">[</span><span class="n">out_var</span><span class="p">][</span><span class="s2">&quot;x2_norm&quot;</span><span class="p">],</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">plotting_range</span><span class="p">[</span><span class="n">out_var</span><span class="p">][</span><span class="s2">&quot;x1_norm&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Equipment.get_eir_ref">
+<a class="viewcode-back" href="../../Code%20Documentation.html#copper.equipment.Equipment.get_eir_ref">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_eir_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the reference EIR (energy input ratio) of an equipment.</span>
+
+<span class="sd">        :param bool alt: Specify if the alternative equipment efficiency should be used to calculate the EIR</span>
+<span class="sd">        :return: Reference EIR</span>
+<span class="sd">        :rtype: float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Retrieve equipment efficiency and unit</span>
+        <span class="k">if</span> <span class="n">alt</span><span class="p">:</span>
+            <span class="n">ref_eff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_alt</span>
+            <span class="n">ref_eff_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit_alt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ref_eff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff</span>
+            <span class="n">ref_eff_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_eff_unit</span>
+        <span class="n">eff</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="n">ref_eff</span><span class="p">,</span> <span class="n">ref_eff_unit</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">eff</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="s2">&quot;eir&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Equipment.generate_set_of_curves">
+<a class="viewcode-back" href="../../Code%20Documentation.html#copper.equipment.Equipment.generate_set_of_curves">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_set_of_curves</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;best_match&quot;</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">tol</span><span class="o">=</span><span class="mf">0.0025</span><span class="p">,</span>
+        <span class="n">max_gen</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+        <span class="nb">vars</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">sFac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">retain</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">random_select</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">mutate</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">base_curves</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">random_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">export_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">export_format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span>
+        <span class="n">export_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">num_nearest_neighbors</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">max_restart</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">agg_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a set of curves for a particular equipment.</span>
+
+<span class="sd">        :param str method: Method used to generate the set of curves: `best_match`, `nearest_neighbor`, or `weighted_average`</span>
+<span class="sd">        :param int pop_size: Population size used by the genetic algorithm</span>
+<span class="sd">        :param float tol: Tolerance used by the genetic algorithm to determine if the proposed solution is acceptable</span>
+<span class="sd">                          The lower, the more stringent</span>
+<span class="sd">        :param int max_gen: Maximum number of generation</span>
+<span class="sd">        :param list() vars: List of variable to run the alorithm on</span>
+<span class="sd">        :param float sFac: Linear fitness normalization factor, the higher the more aggressive the normalization will be</span>
+<span class="sd">        :param float retain: Probability of retaining an individual in the next generation</span>
+<span class="sd">        :param float random_select: Probability of randomly selecting an individual to be part of the next generation</span>
+<span class="sd">        :param float mutate: Probability of an individual to be mutated in the next generation</span>
+<span class="sd">        :param tuple() bounds: Random modification bounds</span>
+<span class="sd">        :param int random_seed: Integer that is used to inialize the random number generator, this should be used when identical results are needed from one run to another</span>
+<span class="sd">        :return: Set of curves object generated by the genetic algorithm that matches the  definition</span>
+<span class="sd">        :rtype: SetofCurves</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ga</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">method</span><span class="p">,</span>
+            <span class="n">pop_size</span><span class="p">,</span>
+            <span class="n">tol</span><span class="p">,</span>
+            <span class="n">max_gen</span><span class="p">,</span>
+            <span class="nb">vars</span><span class="p">,</span>
+            <span class="n">sFac</span><span class="p">,</span>
+            <span class="n">retain</span><span class="p">,</span>
+            <span class="n">random_select</span><span class="p">,</span>
+            <span class="n">mutate</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="p">,</span>
+            <span class="n">base_curves</span><span class="p">,</span>
+            <span class="n">random_seed</span><span class="p">,</span>
+            <span class="n">num_nearest_neighbors</span><span class="p">,</span>
+            <span class="n">max_restart</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">ga</span><span class="o">.</span><span class="n">generate_set_of_curves</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">agg_only</span><span class="o">=</span><span class="n">agg_only</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">export_path</span><span class="p">):</span>
+            <span class="n">set_of_curves_obj</span> <span class="o">=</span> <span class="n">SetofCurves</span><span class="p">()</span>
+            <span class="n">set_of_curves_obj</span><span class="o">.</span><span class="n">curves</span> <span class="o">=</span> <span class="n">set_of_curves</span>
+            <span class="n">set_of_curves_obj</span><span class="o">.</span><span class="n">eqp</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">set_of_curves_obj</span><span class="o">.</span><span class="n">export</span><span class="p">(</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">export_path</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">export_format</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">export_name</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">set_of_curves</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Pacific Northwest National Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

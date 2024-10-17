@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quickstart Guide &mdash; Copper 0.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a47416a6"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Additional Examples" href="Additional%20Examples.html" />
+    <link rel="prev" title="Chillers" href="Chillers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #B87333" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Copper
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Methodology.html">Methodology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Equipment.html">Equipment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-copper">Installing <strong>Copper</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-copper-as-a-package">Using <strong>Copper</strong> as a package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-copper-s-command-line-interface">Using <strong>Copper</strong>’s command line interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Additional%20Examples.html">Additional Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Applications.html">Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Code%20Documentation.html">Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="License.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Acknowledgement.html">Acknowledgement</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #B87333" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Copper</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Quickstart Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Quickstart Guide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="quickstart-guide">
+<h1>Quickstart Guide<a class="headerlink" href="#quickstart-guide" title="Link to this heading"></a></h1>
+<p>This quickstart guide provides examples of how <strong>Copper</strong> can be used to generate simulation-ready sets of performance curves by either being imported as packaged or using its command line interface.</p>
+<section id="installing-copper">
+<h2>Installing <strong>Copper</strong><a class="headerlink" href="#installing-copper" title="Link to this heading"></a></h2>
+<p><strong>Copper</strong> can be installed from PyPI by running the following command.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>copper-bem
+</pre></div>
+</div>
+</section>
+<section id="using-copper-as-a-package">
+<h2>Using <strong>Copper</strong> as a package<a class="headerlink" href="#using-copper-as-a-package" title="Link to this heading"></a></h2>
+<p>In this example we use <strong>Copper</strong> to generate chiller performance curves by importing <strong>Copper</strong> as a package in a Python script.</p>
+<p>We start by importing the necessary packages:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">copper</span> <span class="k">as</span> <span class="nn">cp</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<p>Next, we define the chiller. In this example, the chiller is a 300 ton constant speed water-cooled screw chiller with a targeted efficiency of 0.650 kW/ton and an integrated part load value (IPLV) of 0.480 kW/ton. The chiller will be simulated using the entering condenser temperature model included in <a class="reference external" href="https://energyplus.net/">EnergyPlus</a> and documented in the <a class="reference external" href="https://bigladdersoftware.com/epx/docs/22-2/engineering-reference/chillers.html#electric-chiller-model-based-on-condenser-entering-temperature">engineering manual</a>. <strong>Copper</strong> assumes by default that the rated conditions follow AHRI Standard 550/590. <em>Note: Curves can also be generated for AHRI Standard 551/591 or both 550/590 and 551/591.</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">chlr</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Chiller</span><span class="p">(</span>
+    <span class="n">ref_cap</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">ref_cap_unit</span><span class="o">=</span><span class="s2">&quot;ton&quot;</span><span class="p">,</span>
+    <span class="n">full_eff</span><span class="o">=</span><span class="mf">0.610</span><span class="p">,</span>
+    <span class="n">full_eff_unit</span><span class="o">=</span><span class="s2">&quot;kW/ton&quot;</span><span class="p">,</span>
+    <span class="n">part_eff</span><span class="o">=</span><span class="mf">0.520</span><span class="p">,</span>
+    <span class="n">part_eff_unit</span><span class="o">=</span><span class="s2">&quot;kW/ton&quot;</span><span class="p">,</span>
+    <span class="n">sim_engine</span><span class="o">=</span><span class="s2">&quot;energyplus&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;ect_lwt&quot;</span><span class="p">,</span>
+    <span class="n">compressor_type</span><span class="o">=</span><span class="s2">&quot;screw&quot;</span><span class="p">,</span>
+    <span class="n">condenser_type</span><span class="o">=</span><span class="s2">&quot;water&quot;</span><span class="p">,</span>
+    <span class="n">compressor_speed</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, we generate a set of curves for using <strong>Copper</strong>’s <cite>nearest_neighbor</cite> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">set_of_curves</span> <span class="o">=</span> <span class="n">chlr</span><span class="o">.</span><span class="n">generate_set_of_curves</span><span class="p">(</span>
+    <span class="nb">vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;eir-f-plr&quot;</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest_neighbor&quot;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.005</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, we plot the curves:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define plot and variables to plot</span>
+<span class="n">out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;eir-f-t&quot;</span><span class="p">,</span> <span class="s2">&quot;cap-f-t&quot;</span><span class="p">,</span> <span class="s2">&quot;eir-f-plr&quot;</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">out_vars</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Plotting space set of curves</span>
+<span class="n">chlr_perf_curves</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">SetofCurves</span><span class="p">()</span>
+<span class="n">chlr_perf_curves</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Quickstart Guide Performance Curves&quot;</span>
+<span class="n">chlr_perf_curves</span><span class="o">.</span><span class="n">eqp</span> <span class="o">=</span> <span class="n">chlr</span>
+<span class="n">chlr_perf_curves</span><span class="o">.</span><span class="n">curves</span> <span class="o">=</span> <span class="n">chlr</span><span class="o">.</span><span class="n">set_of_curves</span>
+<span class="n">chlr_perf_curves</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">out_var</span><span class="o">=</span><span class="n">out_vars</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;darkolivegreen&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>An example output would look like the figure below. The curves are plotted at rated chilled water temperature. In this example, the x-axis corresponds to the entering condenser temperature in degrees Celsius, and to the part load ratio.</p>
+<img alt="_images/chiller_curves.png" src="_images/chiller_curves.png" />
+<p>We then verify that the set of curves that we generated actually corresponds to the targeted efficiencies.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Efficiency: </span><span class="si">{}</span><span class="s2"> kW/ton, IPLV: </span><span class="si">{}</span><span class="s2"> kW/ton.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">chlr</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">chlr</span><span class="o">.</span><span class="n">calc_rated_eff</span><span class="p">(</span><span class="n">eff_type</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This returns <cite>Efficiency: 0.61 kW/ton, IPLV: 0.52 kW/ton.</cite></p>
+<p>The curves can now be exported for use in <a class="reference external" href="https://energyplus.net/">EnergyPlus</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">chlr_perf_curves</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;idf&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">chlr_perf_curves</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="using-copper-s-command-line-interface">
+<h2>Using <strong>Copper</strong>’s command line interface<a class="headerlink" href="#using-copper-s-command-line-interface" title="Link to this heading"></a></h2>
+<p><strong>Copper</strong> can be used via command line interface (CLI). A JSON file including the targeted equipment characteristics and functions to be called must be created and passed as an argument.</p>
+<p>In this example we generate performance curves for a 300-ton constant speed water-cooled screw chiller with a targeted efficiency of 0.650 kW/ton and an IPLV of 0.480 kW/ton. The chiller will be simulated using the entering condenser temperature model included in <a class="reference external" href="https://energyplus.net/">EnergyPlus</a>.</p>
+<p>First, we create the JSON input file.</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;actions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;equipment&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Chiller&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;compressor_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;screw&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;condenser_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;water&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;compressor_speed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;constant&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;ref_cap&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;ref_cap_unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ton&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;full_eff&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.61</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;full_eff_unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kW/ton&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;part_eff&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.52</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;part_eff_unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kW/ton&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;sim_engine&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;energyplus&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ect_lwt&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;function_call&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;function&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;generate_set_of_curves&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;vars&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;eir-f-plr&quot;</span><span class="p">],</span>
+<span class="w">                </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nearest_neighbor&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;tol&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.05</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;export_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;export_format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;json&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;export_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Quickstart_Guide_Chiller&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;random_seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Next we let’s generate the curves using the CLI by running the following command in a command prompt:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>copper<span class="w"> </span>run<span class="w"> </span><span class="k">in</span>.JSON
+</pre></div>
+</div>
+<p>This produces a JSON file similar to the following, which provides all information related to the curves generated by <strong>Copper</strong>:</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;Quickstart_Guide_Chiller&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;out_var&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eir-f-t&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bi_quad&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;units&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;si&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;x_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;y_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;x_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;y_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;out_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;out_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.666666666666667</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">29.444444444444443</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_evap_fluid_flow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_cond_fluid_flow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5.439463472960298</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_lwt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.666666666666667</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_ect&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">29.444444444444443</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_lct&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">34.611111111111114</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff1&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.4714919803545887</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff2&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-0.00034135585158081606</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff3&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-0.000697957200141703</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff4&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02997434988897927</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff5&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-0.00028259585409552777</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff6&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-0.0003860001861457355</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;out_var&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eir-f-plr&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;quad&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;units&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;si&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;x_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;y_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;x_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;y_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;out_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;out_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_evap_fluid_flow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_cond_fluid_flow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5.439463472960298</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_lwt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.666666666666667</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_ect&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">29.444444444444443</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_lct&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">34.611111111111114</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff1&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.22533063777829992</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff2&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.2127397264337366</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff3&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5627140676879633</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;out_var&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cap-f-t&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bi_quad&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;units&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;si&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;x_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;y_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;x_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;y_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;out_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;out_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.666666666666667</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">29.444444444444443</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_evap_fluid_flow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_cond_fluid_flow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5.439463472960298</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_lwt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.666666666666667</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_ect&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">29.444444444444443</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ref_lct&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">34.611111111111114</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff1&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.9685131980886335</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff2&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-0.004964252905445898</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff3&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0009250222553367286</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff4&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0005571266682425939</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff5&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-8.731725051841458e-05</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;coeff6&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.00042164491939888525</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Chillers.html" class="btn btn-neutral float-left" title="Chillers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Additional%20Examples.html" class="btn btn-neutral float-right" title="Additional Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Pacific Northwest National Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
