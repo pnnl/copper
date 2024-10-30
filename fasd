@@ -1,0 +1,215 @@
+[1mdiff --git a/DISCLAMER.md b/DISCLAMER.md[m
+[1mdeleted file mode 100644[m
+[1mindex b3ea641..0000000[m
+[1m--- a/DISCLAMER.md[m
+[1m+++ /dev/null[m
+[36m@@ -1,8 +0,0 @@[m
+[31m-This material was prepared as an account of work sponsored by an agency of the United States Government. Neither the United States Government nor the United States Department of Energy, nor the Contractor, nor any or their employees, nor any jurisdiction or organization that has cooperated in the development of these materials, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness or any information, apparatus, product, software, or process disclosed, or represents that its use would not infringe privately owned rights.[m
+[31m-Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommendation, or favoring by the United States Government or any agency thereof, or Battelle Memorial Institute. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof.[m
+[31m-PACIFIC NORTHWEST NATIONAL LABORATORY[m
+[31m-operated by[m
+[31m-BATTELLE[m
+[31m-for the[m
+[31m-UNITED STATES DEPARTMENT OF ENERGY[m
+[31m-under Contract DE-AC05-76RL01830[m
+\ No newline at end of file[m
+[1mdiff --git a/copper/chiller.py b/copper/chiller.py[m
+[1mindex 43dcde6..79d2149 100644[m
+[1m--- a/copper/chiller.py[m
+[1m+++ b/copper/chiller.py[m
+[36m@@ -528,33 +528,17 @@[m [mclass Chiller(Equipment):[m
+         """[m
+         norm_val = {"ect_lwt": self.ref_ect, "lct_lwt": self.ref_lct}[self.model][m
+ [m
+[31m-        if self.model == "ect_lwt":[m
+[31m-            ranges = {[m
+[31m-                "eir-f-t": {[m
+[31m-                    "vars_range": [(4, 10), (10.0, 40.0)],[m
+[31m-                    "normalization": (self.ref_lwt, norm_val),[m
+[31m-                },[m
+[31m-                "cap-f-t": {[m
+[31m-                    "vars_range": [(4, 10), (10.0, 40.0)],[m
+[31m-                    "normalization": (self.ref_lwt, norm_val),[m
+[31m-                },[m
+[31m-                "eir-f-plr": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},[m
+[31m-            }[m
+[31m-        elif self.model == "lct_lwt":[m
+[31m-            ranges = {[m
+[31m-                "eir-f-t": {[m
+[31m-                    "vars_range": [(4, 10), (10.0, 45.0)],[m
+[31m-                    "normalization": (self.ref_lwt, norm_val),[m
+[31m-                },[m
+[31m-                "cap-f-t": {[m
+[31m-                    "vars_range": [(4, 10), (10.0, 45.0)],[m
+[31m-                    "normalization": (self.ref_lwt, norm_val),[m
+[31m-                },[m
+[31m-                "eir-f-plr": {[m
+[31m-                    "vars_range": [(10, 45.0), (0, 1)],[m
+[31m-                    "normalization": (norm_val, 1.0),[m
+[31m-                },[m
+[31m-            }[m
+[32m+[m[32m        ranges = {[m
+[32m+[m[32m            "eir-f-t": {[m
+[32m+[m[32m                "vars_range": [(4, 10), (10.0, 40.0)],[m
+[32m+[m[32m                "normalization": (self.ref_lwt, norm_val),[m
+[32m+[m[32m            },[m
+[32m+[m[32m            "cap-f-t": {[m
+[32m+[m[32m                "vars_range": [(4, 10), (10.0, 40.0)],[m
+[32m+[m[32m                "normalization": (self.ref_lwt, norm_val),[m
+[32m+[m[32m            },[m
+[32m+[m[32m            "eir-f-plr": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},[m
+[32m+[m[32m        }[m
+ [m
+         return ranges[m
+ [m
+[1mdiff --git a/copper/library.py b/copper/library.py[m
+[1mindex 83c3ac2..eec294d 100644[m
+[1m--- a/copper/library.py[m
+[1m+++ b/copper/library.py[m
+[36m@@ -46,6 +46,8 @@[m [mclass Library:[m
+                         and not "indoor_fan_curve_coef" in p[m
+                         and not "indoor_fan_curve" in p[m
+                         and not "indoor_fan_power_unit" in p[m
+[32m+[m[32m                        and not "compressor_stage" in p[m
+[32m+[m[32m                        and not "compressor_stage_input" in p[m
+                     ):[m
+                         obj_args[p] = vals[p][m
+                     elif ([m
+[36m@@ -123,6 +125,8 @@[m [mclass Library:[m
+                 and not "indoor_fan_curve_coef" in p[m
+                 and not "indoor_fan_curve" in p[m
+                 and not "indoor_fan_power_unit" in p[m
+[32m+[m[32m                and not "compressor_stage" in p[m
+[32m+[m[32m                and not "compressor_stage_input" in p[m
+             ):[m
+                 obj_args[p] = data[p][m
+ [m
+[36m@@ -199,6 +203,8 @@[m [mclass Library:[m
+                 "indoor_fan_speeds",[m
+                 "indoor_fan_curve_coef",[m
+                 "indoor_fan_power_unit",[m
+[32m+[m[32m                "compressor_stage",[m
+[32m+[m[32m                "compressor_stage_input",[m
+             ][m
+ [m
+             # Set the equipment properties[m
+[1mdiff --git a/copper/unitarydirectexpansion.py b/copper/unitarydirectexpansion.py[m
+[1mindex 5bf45a5..f80f083 100644[m
+[1m--- a/copper/unitarydirectexpansion.py[m
+[1m+++ b/copper/unitarydirectexpansion.py[m
+[36m@@ -61,6 +61,8 @@[m [mclass UnitaryDirectExpansion(Equipment):[m
+         indoor_fan_speeds=1,[m
+         indoor_fan_curve=False,[m
+         indoor_fan_power_unit="kW",[m
+[32m+[m[32m        compressor_stage_input=False,[m
+[32m+[m[32m        compressor_stage=[0.3, 0.6],[m
+     ):[m
+         global log_fan[m
+         self.type = "UnitaryDirectExpansion"[m
+[36m@@ -172,6 +174,8 @@[m [mclass UnitaryDirectExpansion(Equipment):[m
+         self.indoor_fan_curve_coef = indoor_fan_curve_coef[m
+         self.indoor_fan_power_unit = indoor_fan_power_unit[m
+         self.indoor_fan_curve = indoor_fan_curve[m
+[32m+[m[32m        self.compressor_stage = compressor_stage[m
+[32m+[m[32m        self.compressor_stage_input = compressor_stage_input[m
+         # Define rated temperatures[m
+         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature[m
+         aed, self.aew, ect, lct = self.get_rated_temperatures()[m
+[36m@@ -365,17 +369,9 @@[m [mclass UnitaryDirectExpansion(Equipment):[m
+ [m
+         # Iterate through the different sets of rating conditions to calculate IEER[m
+         ieer = 0[m
+[31m-        for red_cap_num in range(num_of_reduced_cap):[m
+[31m-            # Determine the outdoor air conditions based on AHRI Standard[m
+[31m-            if reduced_plr[red_cap_num] > 0.444:[m
+[31m-                outdoor_unit_inlet_air_dry_bulb_temp_reduced = ([m
+[31m-                    5.0 + 30.0 * reduced_plr[red_cap_num][m
+[31m-                )[m
+[31m-            else:[m
+[31m-                outdoor_unit_inlet_air_dry_bulb_temp_reduced = equipment_references[[m
+[31m-                    eqp_type[m
+[31m-                ][std]["outdoor_unit_inlet_air_dry_bulb_reduced"][m
+ [m
+[32m+[m[32m        def cal_reduced_eer(ratio, outdoor_unit_inlet_air_dry_bulb_temp_reduced):[m
+[32m+[m[32m            """inner function to calculate reduced eer."""[m
+             # Calculate capacity at rating conditions[m
+             tot_cap_temp_mod_fac = cap_f_t.evaluate([m
+                 equipment_references[eqp_type][std][[m
+[36m@@ -384,7 +380,7 @@[m [mclass UnitaryDirectExpansion(Equipment):[m
+                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,[m
+             )[m
+             load_factor_gross = min([m
+[31m-                1.0, (reduced_plr[red_cap_num] / tot_cap_temp_mod_fac)[m
+[32m+[m[32m                1.0, (ratio / tot_cap_temp_mod_fac)[m
+             )  # Load percentage * Rated gross capacity / Available gross capacity[m
+             indoor_fan_power = self.calc_fan_power(load_factor_gross) / 1000[m
+             net_cooling_cap_reduced = ([m
+[36m@@ -407,9 +403,9 @@[m [mclass UnitaryDirectExpansion(Equipment):[m
+                 raise ValueError("Input COP is 0!")[m
+ [m
+             # "Load Factor" (as per AHRI Standard) which is analogous to PLR[m
+[31m-            if reduced_plr[red_cap_num] < 1.0:[m
+[32m+[m[32m            if ratio < 1.0:[m
+                 load_factor = ([m
+[31m-                    reduced_plr[red_cap_num][m
+[32m+[m[32m                    ratio  # reduced_plr[red_cap_num][m
+                     * net_cooling_cap_rated[m
+                     / net_cooling_cap_reduced[m
+                     if net_cooling_cap_reduced > 0.0[m
+[36m@@ -432,14 +428,54 @@[m [mclass UnitaryDirectExpansion(Equipment):[m
+             eer_reduced = (load_factor * net_cooling_cap_reduced) / ([m
+                 load_factor * elec_power_reduced_cap + indoor_fan_power[m
+             )[m
+[32m+[m[32m            return eer_reduced[m
+ [m
+[32m+[m[32m        for red_cap_num in range(num_of_reduced_cap):[m
+[32m+[m[32m            # Determine the outdoor air conditions based on AHRI Standard[m
+[32m+[m[32m            if reduced_plr[red_cap_num] > 0.444:[m
+[32m+[m[32m                outdoor_unit_inlet_air_dry_bulb_temp_reduced = ([m
+[32m+[m[32m                    5.0 + 30.0 * reduced_plr[red_cap_num][m
+[32m+[m[32m                )[m
+[32m+[m[32m            else:[m
+[32m+[m[32m                outdoor_unit_inlet_air_dry_bulb_temp_reduced = equipment_references[[m
+[32m+[m[32m                    eqp_type[m
+[32m+[m[32m                ][std]["outdoor_unit_inlet_air_dry_bulb_reduced"][m
+[32m+[m[32m            if ([m
+[32m+[m[32m                self.compressor_stage_input[m
+[32m+[m[32m                and (reduced_plr[red_cap_num] > min(self.compressor_stage))[m
+[32m+[m[32m                and (reduced_plr[red_cap_num] < max(self.compressor_stage))[m
+[32m+[m[32m            ):[m
+[32m+[m[32m                lower_value = None[m
+[32m+[m[32m                upper_value = None[m
+[32m+[m[32m                for value in self.compressor_stage:[m
+[32m+[m[32m                    if value <= red_cap_num:[m
+[32m+[m[32m                        lower_value = value[m
+[32m+[m[32m                    elif value > red_cap_num and upper_value is None:[m
+[32m+[m[32m                        upper_value = value[m
+[32m+[m[32m                # interpolation[m
+[32m+[m[32m                eer_reduced = ([m
+[32m+[m[32m                    ([m
+[32m+[m[32m                        cal_reduced_eer([m
+[32m+[m[32m                            lower_value, outdoor_unit_inlet_air_dry_bulb_temp_reduced[m
+[32m+[m[32m                        )[m
+[32m+[m[32m                        - cal_reduced_eer([m
+[32m+[m[32m                            upper_value, outdoor_unit_inlet_air_dry_bulb_temp_reduced[m
+[32m+[m[32m                        )[m
+[32m+[m[32m                    )[m
+[32m+[m[32m                    / (lower_value - upper_value)[m
+[32m+[m[32m                ) * (reduced_plr[red_cap_num] - upper_value) + cal_reduced_eer([m
+[32m+[m[32m                    upper_value, outdoor_unit_inlet_air_dry_bulb_temp_reduced[m
+[32m+[m[32m                )[m
+[32m+[m[32m            else:[m
+[32m+[m[32m                eer_reduced = cal_reduced_eer([m
+[32m+[m[32m                    reduced_plr[red_cap_num],[m
+[32m+[m[32m                    outdoor_unit_inlet_air_dry_bulb_temp_reduced,[m
+[32m+[m[32m                )[m
+             if eff_type == "full":[m
+                 ieer = eer_reduced[m
+                 break[m
+[31m-[m
+             # Update IEER[m
+             ieer += weighting_factor[red_cap_num] * eer_reduced[m
+[31m-[m
+         # Convert efficiency to original unit unless specified[m
+         if unit != "cop":[m
+             ieer = Units(value=ieer, unit="cop")[m

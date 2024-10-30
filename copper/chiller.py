@@ -528,17 +528,33 @@ class Chiller(Equipment):
         """
         norm_val = {"ect_lwt": self.ref_ect, "lct_lwt": self.ref_lct}[self.model]
 
-        ranges = {
-            "eir-f-t": {
-                "vars_range": [(4, 10), (10.0, 40.0)],
-                "normalization": (self.ref_lwt, norm_val),
-            },
-            "cap-f-t": {
-                "vars_range": [(4, 10), (10.0, 40.0)],
-                "normalization": (self.ref_lwt, norm_val),
-            },
-            "eir-f-plr": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
-        }
+        if self.model == "ect_lwt":
+            ranges = {
+                "eir-f-t": {
+                    "vars_range": [(4, 10), (10.0, 40.0)],
+                    "normalization": (self.ref_lwt, norm_val),
+                },
+                "cap-f-t": {
+                    "vars_range": [(4, 10), (10.0, 40.0)],
+                    "normalization": (self.ref_lwt, norm_val),
+                },
+                "eir-f-plr": {"vars_range": [(0.0, 1.0)], "normalization": (1.0)},
+            }
+        elif self.model == "lct_lwt":
+            ranges = {
+                "eir-f-t": {
+                    "vars_range": [(4, 10), (10.0, 45.0)],
+                    "normalization": (self.ref_lwt, norm_val),
+                },
+                "cap-f-t": {
+                    "vars_range": [(4, 10), (10.0, 45.0)],
+                    "normalization": (self.ref_lwt, norm_val),
+                },
+                "eir-f-plr": {
+                    "vars_range": [(10, 45.0), (0, 1)],
+                    "normalization": (norm_val, 1.0),
+                },
+            }
 
         return ranges
 
