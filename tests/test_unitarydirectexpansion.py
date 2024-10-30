@@ -29,6 +29,26 @@ class UnitaryDirectExpansion(TestCase):
         set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
     )
 
+    def test_new_ieer(self):
+        lib = cp.Library(path=DX_lib)
+        dx_unit_new = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            compressor_speed="constant",
+            ref_cap_unit="W",
+            ref_gross_cap=471000,
+            full_eff=5.89,
+            full_eff_unit="cop",
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+            set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
+            compressor_stage_input=True,
+            compressor_stage=[0.3, 0.6],
+        )
+        ieer = round(self.dx_unit_dft.calc_rated_eff(unit="eer"), 1)
+        self.assertTrue(7.5 == ieer, f"{ieer} is different than 7.5")
+
     def test_calc_eff_ect(self):
         ieer = round(self.dx_unit_dft.calc_rated_eff(unit="eer"), 1)
         self.assertTrue(7.5 == ieer, f"{ieer} is different than 7.5")
