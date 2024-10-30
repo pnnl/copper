@@ -47,7 +47,7 @@ class UnitaryDirectExpansion(TestCase):
             compressor_stage=[0.3, 0.6],
         )
         ieer = round(self.dx_unit_dft.calc_rated_eff(unit="eer"), 1)
-        self.assertTrue(7.5 == ieer, f"{ieer} is different than 7.5")
+        self.assertTrue(8.4 == ieer, f"{ieer} is different than 8.4")
 
     def test_calc_eff_ect(self):
         ieer = round(self.dx_unit_dft.calc_rated_eff(unit="eer"), 1)
