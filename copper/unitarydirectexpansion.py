@@ -344,12 +344,12 @@ class UnitaryDirectExpansion(Equipment):
             "weightingfactor"
         ]
         tot_cap_temp_mod_fac = cap_f_t.evaluate(
-            equipment_references[eqp_type][std][
-                "cooling_coil_inlet_air_wet_bulb_rated"
-            ],
-            equipment_references[eqp_type][std][
-                "outdoor_unit_inlet_air_dry_bulb_rated"
-            ],
+            Equipment.convert_to_deg_c(
+                value=equipment_references[eqp_type][std][self.condenser_type]["aew"]
+            ),
+            Equipment.convert_to_deg_c(
+                value=equipment_references[eqp_type][std][self.condenser_type]["ect"][0]
+            ),
         )
 
         # Calculate NET rated capacity
@@ -372,15 +372,19 @@ class UnitaryDirectExpansion(Equipment):
                     5.0 + 30.0 * reduced_plr[red_cap_num]
                 )
             else:
-                outdoor_unit_inlet_air_dry_bulb_temp_reduced = equipment_references[
-                    eqp_type
-                ][std]["outdoor_unit_inlet_air_dry_bulb_reduced"]
+                outdoor_unit_inlet_air_dry_bulb_temp_reduced = (
+                    Equipment.convert_to_deg_c(
+                        equipment_references[eqp_type][std][self.condenser_type]["ect"][
+                            -1
+                        ]
+                    )
+                )
 
             # Calculate capacity at rating conditions
             tot_cap_temp_mod_fac = cap_f_t.evaluate(
-                equipment_references[eqp_type][std][
-                    "cooling_coil_inlet_air_wet_bulb_rated"
-                ],
+                Equipment.convert_to_deg_c(
+                    equipment_references[eqp_type][std][self.condenser_type]["aew"]
+                ),
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
             )
             load_factor_gross = min(
@@ -394,9 +398,9 @@ class UnitaryDirectExpansion(Equipment):
 
             # Calculate efficency at rating conditions
             eir_temp_mod_fac = eir_f_t.evaluate(
-                equipment_references[eqp_type][std][
-                    "cooling_coil_inlet_air_wet_bulb_rated"
-                ],
+                Equipment.convert_to_deg_c(
+                    equipment_references[eqp_type][std][self.condenser_type]["aew"]
+                ),
                 outdoor_unit_inlet_air_dry_bulb_temp_reduced,
             )
             if rated_cop > 0.0:
