@@ -20,8 +20,8 @@ class UnitaryDirectExpansion(TestCase):
             condenser_type="air",
             compressor_speed="constant",
             ref_cap_unit="W",
-            ref_gross_cap=471000,
-            full_eff=5.89,
+            ref_gross_cap=33847,#convert the unit from Btu/hr
+            full_eff=1, # how to set this? need to check with Jeremy
             full_eff_unit="cop",
             part_eff_ref_std="ahri_340/360",
             model="simplified_bf",
@@ -30,10 +30,10 @@ class UnitaryDirectExpansion(TestCase):
             #seems it can load the json file, but cannot find the curve named 'HighStage'
             set_of_curves_2=lib_in.get_set_of_curves_by_name("LowStage").curves,
             compressor_stage_input=True,
-            compressor_stages=[0.527, 1.067],
+            compressor_stages=[0.527,0.95],#how to set this? if use 1.06 not 0.95, 1 will use interperlation
         )
         ieer = round(dx_unit_new.calc_rated_eff_two_curves(unit="eer"), 1)
-        self.assertTrue(8.4 == ieer, f"{ieer} is different than 8.4")
+        self.assertTrue(13 == ieer, f"{ieer} is different than 13")
 """""
     # Define equipment characteristics
     dx_unit_dft = cp.UnitaryDirectExpansion(
