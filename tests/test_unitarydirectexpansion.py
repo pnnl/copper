@@ -20,20 +20,24 @@ class UnitaryDirectExpansion(TestCase):
             condenser_type="air",
             compressor_speed="constant",
             ref_cap_unit="W",
-            ref_gross_cap=33847,#convert the unit from Btu/hr
-            full_eff=1, # how to set this? need to check with Jeremy
+            ref_gross_cap=119075.6/3.412,#convert the unit from Btu/hr
+            full_eff=0.26548, # EIR at full?
             full_eff_unit="cop",
             part_eff_ref_std="ahri_340/360",
             model="simplified_bf",
             sim_engine="energyplus",
+            indoor_fan_power=[1.050, 0.262],
+            control_power = [0.100, 0.150],
+            indoor_fan_power_unit="kW",
+            control_power_unit = "kW",
             set_of_curves_1=lib_in.get_set_of_curves_by_name("HighStage").curves,# this is the part have problem
             #seems it can load the json file, but cannot find the curve named 'HighStage'
             set_of_curves_2=lib_in.get_set_of_curves_by_name("LowStage").curves,
             compressor_stage_input=True,
-            compressor_stages=[0.527,0.95],#how to set this? if use 1.06 not 0.95, 1 will use interperlation
+            compressor_stages=[0.5,1],#how to set this? if use 1.06 not 0.95, 1 will use interperlation
         )
-        ieer = round(dx_unit_new.calc_rated_eff_two_curves(unit="eer"), 1)
-        self.assertTrue(13 == ieer, f"{ieer} is different than 13")
+        ieer = round(dx_unit_new.calc_rated_eff_two_curves(unit="cop"), 1)
+        self.assertTrue(3.8 == ieer, f"{ieer} is different than 3.8")
 """""
     # Define equipment characteristics
     dx_unit_dft = cp.UnitaryDirectExpansion(
