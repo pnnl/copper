@@ -714,10 +714,7 @@ class Curve:
             out = self.coeff1 + self.coeff2 * x + self.coeff3 * x**2
         if self.type == "cubic":
             out = (
-                self.coeff1
-                + self.coeff2 * x
-                + self.coeff3 * x**2
-                + self.coeff4 * x**3
+                self.coeff1 + self.coeff2 * x + self.coeff3 * x**2 + self.coeff4 * x**3
             )
         if self.type == "linear":
             out = self.coeff1 + self.coeff2 * x
@@ -746,9 +743,9 @@ class Curve:
         grad = np.around(
             np.gradient(y, x), 2
         )  # add a small number to get rid of very small negative values
-        grad[
-            np.abs(grad) <= threshold
-        ] = 0  # making sure that small gradients are set to zero to avoid
+        grad[np.abs(grad) <= threshold] = (
+            0  # making sure that small gradients are set to zero to avoid
+        )
         sign = np.sign(grad)
 
         if np.all(np.asarray(y) == 0):  # all values are false
@@ -831,7 +828,9 @@ class Curve:
             for x in data["X1"]:
                 vals.append(c.evaluate(x, 0))
 
-            if reg_r_sqr > r_sqr and self.compute_grad(data["X1"], vals, sign_val, threshold=0.02):
+            if reg_r_sqr > r_sqr and self.compute_grad(
+                data["X1"], vals, sign_val, threshold=0.02
+            ):
                 self.coeff1, self.coeff2, self.coeff3, self.coeff4 = model.params
                 self.type = "cubic"
                 r_sqr = reg_r_sqr
