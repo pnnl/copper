@@ -223,7 +223,9 @@ class UnitaryDirectExpansion(Equipment):
                     break
 
         # Add new curve
-        if not "plf-f-plr" in self.get_dx_curves().keys() or overwrite:
+        if (
+            not "plf-f-plr" in self.get_dx_curves()["1"].keys() or overwrite
+        ):  # Use only first speed for now; TODO: Use all speeds
             plf_f_plr = Curve(eqp=self, c_type="linear")
             plf_f_plr.out_var = "plf-f-plr"
             plf_f_plr.type = "linear"
@@ -320,14 +322,18 @@ class UnitaryDirectExpansion(Equipment):
             std = self.part_eff_ref_std
 
         # Retrieve curves
-        curves = self.get_dx_curves()
+        curves = self.get_dx_curves()[
+            "1"
+        ]  # Use only first speed for now; TODO: Use all speeds
         cap_f_f = curves["cap-f-ff"]
         cap_f_t = curves["cap-f-t"]
         eir_f_t = curves["eir-f-t"]
         eir_f_f = curves["eir-f-ff"]
         if not "plf-f-plr" in curves.keys():
             self.add_cycling_degradation_curve()
-            curves = self.get_dx_curves()
+            curves = self.get_dx_curves()[
+                "1"
+            ]  # Use only first speed for now; TODO: Use all speeds
         plf_f_plr = curves["plf-f-plr"]
 
         # Calculate capacity and efficiency degradation as a function of flow fraction
@@ -487,17 +493,20 @@ class UnitaryDirectExpansion(Equipment):
 
         """
         curves = {}
+        curves["1"] = {}
         for curve in self.set_of_curves:
+            if curve.speed not in curves.keys():
+                curves[curve.speed] = {}
             if curve.out_var == "cap-f-t":
-                curves["cap-f-t"] = curve
+                curves[curve.speed]["cap-f-t"] = curve
             elif curve.out_var == "cap-f-ff":
-                curves["cap-f-ff"] = curve
+                curves[curve.speed]["cap-f-ff"] = curve
             elif curve.out_var == "eir-f-t":
-                curves["eir-f-t"] = curve
+                curves[curve.speed]["eir-f-t"] = curve
             elif curve.out_var == "eir-f-ff":
-                curves["eir-f-ff"] = curve
+                curves[curve.speed]["eir-f-ff"] = curve
             elif curve.out_var == "plf-f-plr":
-                curves["plf-f-plr"] = curve
+                curves[curve.speed]["plf-f-plr"] = curve
         return curves
 
     def get_curves_from_lib(self, lib, filters):

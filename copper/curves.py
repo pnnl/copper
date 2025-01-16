@@ -648,6 +648,7 @@ class Curve:
         elif self.type == "linear":
             self.coeff1 = 0
             self.coeff2 = 0
+        self.speed = "1"
 
         # Equipment specific charactertics
         # TODO: move under a function in the Chiller class

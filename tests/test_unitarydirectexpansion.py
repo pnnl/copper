@@ -312,7 +312,7 @@ class UnitaryDirectExpansion(TestCase):
         self.dx_unit_dft.degradation_coefficient = 0
         self.dx_unit_dft.add_cycling_degradation_curve(overwrite=True)
         assert len(self.dx_unit_dft.set_of_curves) == 5
-        assert self.dx_unit_dft.get_dx_curves()["plf-f-plr"].coeff1 == 1.0
+        assert self.dx_unit_dft.get_dx_curves()["1"]["plf-f-plr"].coeff1 == 1.0
 
     def test_NN_wght_avg(self):
         # Define equipment
@@ -361,8 +361,15 @@ class UnitaryDirectExpansion(TestCase):
         assert len(set_of_curves) == 5
 
         # Check normalization
-        assert round(set_of_curves[0].evaluate(19.44, 35), 2) == 0.99
+        assert round(set_of_curves[0].evaluate(19.44, 35), 2) == 1.0
         assert round(set_of_curves[1].evaluate(19.44, 35), 2) == 1.0
         assert round(set_of_curves[2].evaluate(1.0, 0), 2) == 1.0
         assert round(set_of_curves[3].evaluate(1.0, 0), 2) == 1.0
         assert round(set_of_curves[4].evaluate(1.0, 0), 2) == 1.0
+
+    def test_get_ms_curves(self):
+        new_curve = cp.Curve(eqp=self.dx_unit_dft, c_type="quad")
+        new_curve.speed = "2"
+        new_curve.out_var = "eir-f-t"
+        self.dx_unit_dft.set_of_curves.append(new_curve)
+        assert len(self.dx_unit_dft.get_dx_curves()["2"]) == 1
