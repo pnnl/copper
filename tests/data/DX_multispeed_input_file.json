@@ -1,25 +1,28 @@
 {
-    "HighStage": {
-        "eqp_type": "UnitaryDirectExpansion",
-        "source": "Placeholder",
-        "model": "simplified_bf",
-        "condenser_type": "air",
-        "compressor_type": "scroll",
-        "compressor_speed": "variable",
-        "ref_net_cap": 471000,
-        "ref_cap_unit": "W",
-        "full_eff": null,
-        "full_eff_unit": "eer",
-        "sim_engine": "energyplus",
-        "full_eff_ref_std": null,
-        "full_eff_ref_std_alt": null,
-        "part_eff": null,
-        "part_eff_ref_std": null,
-        "part_eff_ref_std_alt": null,
-        "min_outdoor_fan_power": null,
-        "max_outdoor_fan_power": null,
-        "indoor_fan_power_unit": "W",
-        "set_of_curves": {
+    "Test":
+    {
+    "eqp_type": "UnitaryDirectExpansion",
+    "source": "Placeholder",
+    "model": "simplified_bf",
+    "condenser_type": "air",
+    "compressor_type": "scroll",
+    "compressor_speed": "variable",
+    "ref_net_cap": 471000,
+    "ref_cap_unit": "W",
+    "full_eff": null,
+    "full_eff_unit": "eer",
+    "sim_engine": "energyplus",
+    "full_eff_ref_std": null,
+    "full_eff_ref_std_alt": null,
+    "part_eff": null,
+    "part_eff_ref_std": null,
+    "part_eff_ref_std_alt": null,
+    "min_outdoor_fan_power": null,
+    "max_outdoor_fan_power": null,
+    "indoor_fan_power_unit": "W",
+    "set_of_curves": 
+        [
+            {
             "cap-f-t": {
                 "out_var": "cap-f-t",
                 "type": "linear",
@@ -62,32 +65,8 @@
                 "out_max": 999
             }
         },
-        "indoor_fan_control_mode": null,
-        "indoor_fan_power": null,
-        "ref_gross_cap": null
-    },
-    "LowStage": {
-        "eqp_type": "UnitaryDirectExpansion",
-        "source": "Placeholder",
-        "model": "simplified_bf",
-        "condenser_type": "air",
-        "compressor_type": "scroll",
-        "compressor_speed": "variable",
-        "ref_net_cap": 471000,
-        "ref_cap_unit": "W",
-        "full_eff": null,
-        "full_eff_unit": "eer",
-        "sim_engine": "energyplus",
-        "full_eff_ref_std": null,
-        "full_eff_ref_std_alt": null,
-        "part_eff": null,
-        "part_eff_ref_std": null,
-        "part_eff_ref_std_alt": null,
-        "min_outdoor_fan_power": null,
-        "max_outdoor_fan_power": null,
-        "indoor_fan_power_unit": "W",
-        "set_of_curves": {
-            "cap-f-t": {
+        {
+        "cap-f-t": {
                 "out_var": "cap-f-t",
                 "type": "cubic",
                 "coeff1": 1.44913,
@@ -133,9 +112,10 @@
                 "out_min": 0,
                 "out_max": 999
             }
-        },
-        "indoor_fan_control_mode": null,
-        "indoor_fan_power": null,
-        "ref_gross_cap": null
+        }
+    ],
+    "indoor_fan_control_mode": null,
+    "indoor_fan_power": null,
+    "ref_gross_cap": null
     }
 }

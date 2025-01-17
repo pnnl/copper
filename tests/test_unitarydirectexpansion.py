@@ -30,9 +30,9 @@ class UnitaryDirectExpansion(TestCase):
             control_power = [0.100, 0.150],
             indoor_fan_power_unit="kW",
             control_power_unit = "kW",
-            set_of_curves_1=lib_in.get_set_of_curves_by_name("HighStage").curves,# this is the part have problem
+            set_of_curves_1=lib_in.get_set_of_curves_by_name("Test").curves[0],# this is the part have problem
             #seems it can load the json file, but cannot find the curve named 'HighStage'
-            set_of_curves_2=lib_in.get_set_of_curves_by_name("LowStage").curves,
+            set_of_curves_2=lib_in.get_set_of_curves_by_name("Test").curves[1],
             compressor_stage_input=True,
             compressor_stages=[0.5,1],#how to set this? if use 1.06 not 0.95, 1 will use interperlation
         )
