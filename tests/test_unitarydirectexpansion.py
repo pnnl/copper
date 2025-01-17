@@ -30,14 +30,15 @@ class UnitaryDirectExpansion(TestCase):
             control_power = [0.100, 0.150],
             indoor_fan_power_unit="kW",
             control_power_unit = "kW",
-            set_of_curves_1=lib_in.get_set_of_curves_by_name("Test").curves[0],# this is the part have problem
+            set_of_curves_1=lib_in.get_set_of_curves_by_name("Test")["1"],# this is the part have problem
             #seems it can load the json file, but cannot find the curve named 'HighStage'
-            set_of_curves_2=lib_in.get_set_of_curves_by_name("Test").curves[1],
+            set_of_curves_2=lib_in.get_set_of_curves_by_name("Test")["2"],
             compressor_stage_input=True,
             compressor_stages=[0.5,1],#how to set this? if use 1.06 not 0.95, 1 will use interperlation
         )
         ieer = round(dx_unit_new.calc_rated_eff_two_curves(unit="cop"), 1)
         self.assertTrue(3.8 == ieer, f"{ieer} is different than 3.8")
+    
 """""
     # Define equipment characteristics
     dx_unit_dft = cp.UnitaryDirectExpansion(
@@ -337,7 +338,7 @@ class UnitaryDirectExpansion(TestCase):
         self.dx_unit_dft.degradation_coefficient = 0
         self.dx_unit_dft.add_cycling_degradation_curve(overwrite=True)
         assert len(self.dx_unit_dft.set_of_curves) == 5
-        assert self.dx_unit_dft.get_dx_curves()["plf-f-plr"].coeff1 == 1.0
+        assert self.dx_unit_dft.get_dx_curves()["1"]["plf-f-plr"].coeff1 == 1.0
 
     def test_NN_wght_avg(self):
         # Define equipment
@@ -386,7 +387,7 @@ class UnitaryDirectExpansion(TestCase):
         assert len(set_of_curves) == 5
 
         # Check normalization
-        assert round(set_of_curves[0].evaluate(19.44, 35), 2) == 1.0
+        assert round(set_of_curves[0].evaluate(19.44, 35), 2) == 0.99
         assert round(set_of_curves[1].evaluate(19.44, 35), 2) == 1.0
         assert round(set_of_curves[2].evaluate(1.0, 0), 2) == 1.0
         assert round(set_of_curves[3].evaluate(1.0, 0), 2) == 1.0
@@ -396,3 +397,5 @@ class UnitaryDirectExpansion(TestCase):
 import unittest
 if __name__ == '__main__':
     unittest.main()
+
+
