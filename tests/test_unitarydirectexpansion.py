@@ -26,18 +26,33 @@ class UnitaryDirectExpansion(TestCase):
             part_eff_ref_std="ahri_340/360",
             model="simplified_bf",
             sim_engine="energyplus",
-            indoor_fan_power=[1.050, 0.262],
+            #indoor_fan_power=[1.050, 0.262],
             control_power = [0.100, 0.150],
             indoor_fan_power_unit="kW",
             control_power_unit = "kW",
-            set_of_curves_1=lib_in.get_set_of_curves_by_name("Test")["1"],# this is the part have problem
-            #seems it can load the json file, but cannot find the curve named 'HighStage'
-            set_of_curves_2=lib_in.get_set_of_curves_by_name("Test")["2"],
+            set_of_curves=lib_in.get_set_of_curves_by_name("Test").curves,
             compressor_stage_input=True,
             compressor_stages=[0.5,1],#how to set this? if use 1.06 not 0.95, 1 will use interperlation
         )
-        ieer = round(dx_unit_new.calc_rated_eff_two_curves(unit="cop"), 1)
-        self.assertTrue(3.8 == ieer, f"{ieer} is different than 3.8")
+        dx_unit_new.indoor_fan_power = 1.05
+        dx_unit_new.indoor_fan_speeds = 2
+        dx_unit_new.indoor_fan_speeds_mapping = {
+            "1": {
+                "fan_flow_fraction": 0.2,
+                "fan_power_fraction": 0.262/1.05,
+                "capacity_fraction": 0.5,
+            },
+            "2": {
+                "fan_flow_fraction": 0.45,
+                "fan_power_fraction": 1,
+                "capacity_fraction": 1,
+            },
+        }
+        #ieer = round(dx_unit_new.calc_rated_eff(unit="cop"), 1)
+        #self.assertTrue(3.8 == ieer, f"{ieer} is different than 3.8")
+
+        ieer2 = round(dx_unit_new.calc_rated_eff_two_curves(unit="cop"), 1)
+        self.assertTrue(3.8 == ieer2, f"{ieer2} is different than 3.8")
     
 """""
     # Define equipment characteristics

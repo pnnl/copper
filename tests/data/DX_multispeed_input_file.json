@@ -20,12 +20,24 @@
     "min_outdoor_fan_power": null,
     "max_outdoor_fan_power": null,
     "indoor_fan_power_unit": "W",
+    "degradation_coefficient":null,
+    "indoor_fan_speeds_mapping": null,
+    "indoor_fan_curve_coef": null,
+    "indoor_fan_speeds": null,
+    "indoor_fan_curve": null,
+    "indoor_fan_control_mode": null,
+    "indoor_fan_power": null,
+    "ref_gross_cap": null,
+    "control_power": null,
+    "control_power_unit": null,
+    "compressor_stage_input": null,
+    "compressor_stages": [0.3, 0.6],
     "set_of_curves": 
-        [
-            {
+        {
             "cap-f-t": {
                 "out_var": "cap-f-t",
                 "type": "linear",
+                "speed": "1",
                 "coeff1": 1.304669191,
                 "coeff2": -0.008704834,
                 "x_min": 20,
@@ -36,6 +48,7 @@
             "eir-f-ff": {
                 "out_var": "eir-f-ff",
                 "type": "linear",
+                "speed": "1",
                 "coeff1": 1,
                 "coeff2": 0,
                 "x_min": 0,
@@ -46,6 +59,7 @@
             "eir-f-t": {
                 "out_var": "eir-f-t",
                 "type": "linear",
+                "speed": "1",
                 "coeff1": 0.457735,
                 "coeff2": 0.015493299,
                 "x_min": 20,
@@ -56,6 +70,7 @@
             "cap-f-ff": {
                 "out_var": "cap-f-ff",
                 "type": "quad",
+                "speed": "1",
                 "coeff1": 1,
                 "coeff2": 0,
                 "coeff3": 0,
@@ -63,12 +78,11 @@
                 "x_max": 30,
                 "out_min": 0,
                 "out_max": 999
-            }
-        },
-        {
-        "cap-f-t": {
+            },
+            "cap-f-t_2": {
                 "out_var": "cap-f-t",
                 "type": "cubic",
+                "speed": "2",
                 "coeff1": 1.44913,
                 "coeff2": -0.04264,
                 "coeff3": 0.001574633,
@@ -78,9 +92,10 @@
                 "out_min": 0,
                 "out_max": 999
             },
-            "eir-f-t": {
+            "eir-f-t_2": {
                 "out_var": "eir-f-t",
                 "type": "cubic",
+                "speed": "2",
                 "coeff1": 0.467928,
                 "coeff2": 0.032332,
                 "coeff3": -0.00114,
@@ -90,9 +105,10 @@
                 "out_min": 0,
                 "out_max": 999
             },
-            "cap-f-ff": {
+            "cap-f-ff_2": {
                 "out_var": "cap-f-ff",
                 "type": "quad",
+                "speed": "2",
                 "coeff1": 1,
                 "coeff2": 0,
                 "coeff3": 0,
@@ -101,9 +117,10 @@
                 "out_min": 0,
                 "out_max": 999
             },
-            "eir-f-ff": {
+            "eir-f-ff_2": {
                 "out_var": "eir-f-ff",
                 "type": "quad",
+                "speed": "2",
                 "coeff1": 1,
                 "coeff2": 0,
                 "coeff3": 0,
@@ -113,9 +130,5 @@
                 "out_max": 999
             }
         }
-    ],
-    "indoor_fan_control_mode": null,
-    "indoor_fan_power": null,
-    "ref_gross_cap": null
     }
 }
