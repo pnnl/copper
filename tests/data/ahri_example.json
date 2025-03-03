@@ -7,9 +7,17 @@
         "compressor_speed": "constant",
         "ref_net_cap": 471000,
         "ref_cap_unit": "W",
-        "full_eff": 11.09,
+        "full_eff": null,
         "full_eff_unit": "eer",
         "sim_engine": "energyplus",
+        "full_eff_ref_std": null,
+        "full_eff_ref_std_alt": null,
+        "part_eff": null,
+        "indoor_fan_power_unit": "W",
+        "degradation_coefficient": null,
+        "indoor_fan_power": null,
+        "ref_gross_cap": null,
+        "control_power": null,
         "compressor_stages": [
             0.3,
             0.6
