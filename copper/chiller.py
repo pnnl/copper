@@ -230,7 +230,14 @@ class Chiller(Equipment):
 
         return eir
 
-    def calc_rated_eff(self, eff_type, unit="kW/ton", output_report=False, alt=False, apply_modifiers_at_full_load = True):
+    def calc_rated_eff(
+        self,
+        eff_type,
+        unit="kW/ton",
+        output_report=False,
+        alt=False,
+        apply_modifiers_at_full_load=True,
+    ):
         """Calculate chiller efficiency.
 
         :param str eff_type: Chiller efficiency type, currently supported `full` (full load rating)

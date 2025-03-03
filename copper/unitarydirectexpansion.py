@@ -3,6 +3,7 @@ unitary_dx.py
 ====================================
 This is the unitary direct expansion (DX) HVAC equipment module of Copper. The module handles all calculations and data manipulation related to unitary DX equipment.
 """
+
 import CoolProp.CoolProp as CP
 from copper.generator import *
 from copper.units import *
@@ -62,7 +63,7 @@ class UnitaryDirectExpansion(Equipment):
         indoor_fan_curve=False,
         indoor_fan_power_unit="kW",
         compressor_stages=[],
-        control_power= {},
+        control_power={},
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -232,8 +233,9 @@ class UnitaryDirectExpansion(Equipment):
     def add_cycling_degradation_curve(self, overwrite=False, return_curve=False):
         """Determine and assign a part load fraction as a function of part load ratio curve to a unitary DX equipment.
 
-        :param str overwrite: Flag to overwrite the existing degradation curve. Default is False.
-        :param str assign_curve: Add curve to equipment's. Default is True.
+        :param str overwrite: Flag to overwrite the existing degradation curve. Default is False
+        :param bool overwrite: Overwrite exisiting plf-f-plr curves
+        :param bool return_curve: Return the curves
         """
         # Remove exisiting curve if it exists
         if overwrite:
@@ -260,21 +262,28 @@ class UnitaryDirectExpansion(Equipment):
                 else:
                     self.set_of_curves.append(plf_f_plr)
 
-    def calc_fan_power(self, compressor_stage, provide_flow_fraction=False, report=False, flow_fraction=1):
+    def calc_fan_power(
+        self, compressor_stage, provide_flow_fraction=False, flow_fraction=1
+    ):
         """Calculate unitary DX equipment fan power.
 
         :param float compressor_stage: Compressor stage associated with a specific fan speed
-        :return: Unitary DX Equipment fan power in Watts
+        :param bool provide_flow_fraction: Flag that indicates if the flow fraction should be returned
+        :param float flow_fraction: Default flow fraction
+        :return: Unitary DX Equipment fan power in Watts, (and flow fraction)
         :rtype: float
 
         """
         # Full flow/power
         compressor_stage = float(compressor_stage)
-        if compressor_stage == len(self.compressor_stages) or self.indoor_fan_speeds == 1:
+        if (
+            compressor_stage == len(self.compressor_stages)
+            or self.indoor_fan_speeds == 1
+        ):
             flow_fraction = 1.0
             if provide_flow_fraction:
                 return self.indoor_fan_power, flow_fraction
-            else: 
+            else:
                 return self.indoor_fan_power
         else:
             if self.indoor_fan_curve == False:
@@ -285,12 +294,15 @@ class UnitaryDirectExpansion(Equipment):
                     compressor_stages.append(speed_info["compressor_stage"])
                     fan_power_fractions.append(speed_info["fan_power_fraction"])
                     fan_flow_fractions.append(speed_info["fan_flow_fraction"])
-                if compressor_stage <= compressor_stages[0]: # Minimum flow/power
+                if compressor_stage <= compressor_stages[0]:  # Minimum flow/power
                     if provide_flow_fraction:
-                        return self.indoor_fan_power * fan_power_fractions[0], fan_flow_fractions[0]
-                    else: 
+                        return (
+                            self.indoor_fan_power * fan_power_fractions[0],
+                            fan_flow_fractions[0],
+                        )
+                    else:
                         return self.indoor_fan_power * fan_power_fractions[0]
-                    
+
                 elif compressor_stage in compressor_stages:
                     if provide_flow_fraction:
                         return (
@@ -298,8 +310,8 @@ class UnitaryDirectExpansion(Equipment):
                             * fan_power_fractions[
                                 compressor_stages.index(compressor_stage)
                             ],
-                            fan_flow_fractions.index(compressor_stage)
-                        )                        
+                            fan_flow_fractions.index(compressor_stage),
+                        )
                     else:
                         return (
                             self.indoor_fan_power
@@ -318,14 +330,19 @@ class UnitaryDirectExpansion(Equipment):
                                 fan_power_fractions[i + 1] - fan_power_fractions[i]
                             ) / (compressor_stages[i + 1] - compressor_stages[i])
                             b = fan_power_fractions[i] - a * compressor_stages[i]
-                            c = (
-                                fan_flow_fractions[i + 1] - fan_flow_fractions[i]
-                            ) / (compressor_stages[i + 1] - compressor_stages[i])
+                            c = (fan_flow_fractions[i + 1] - fan_flow_fractions[i]) / (
+                                compressor_stages[i + 1] - compressor_stages[i]
+                            )
                             d = fan_flow_fractions[i] - c * compressor_stages[i]
                             if provide_flow_fraction:
-                                return self.indoor_fan_power * (a * compressor_stage + b), c * compressor_stage + d
+                                return (
+                                    self.indoor_fan_power * (a * compressor_stage + b),
+                                    c * compressor_stage + d,
+                                )
                             else:
-                                return self.indoor_fan_power * (a * compressor_stage + b)
+                                return self.indoor_fan_power * (
+                                    a * compressor_stage + b
+                                )
             else:  # using curve
                 default_min_fan_power = (
                     self.indoor_fan_power * 0.25
@@ -343,7 +360,12 @@ class UnitaryDirectExpansion(Equipment):
                         return default_min_fan_power
 
     def calc_rated_eff(
-        self, eff_type="part", unit="cop", output_report=False, alt=False, apply_modifiers_at_full_load=False
+        self,
+        eff_type="part",
+        unit="cop",
+        output_report=False,
+        alt=False,
+        apply_modifiers_at_full_load=False,
     ):
         """Calculate unitary DX equipment efficiency.
 
@@ -352,6 +374,7 @@ class UnitaryDirectExpansion(Equipment):
         :param str unit: Efficiency unit
         :param bool output_report: Indicate output report generation
         :param bool alt: Indicate the DX system alternate standard rating should be used
+        :param bool apply_modifiers_at_full_load: Indicate if capacity and EIR modifiers at rated conditions will be applied at 100% load, False assumes that the performance curves are normalized at the rating conditions
         :return: Unitary DX Equipment rated efficiency
         :rtype: float
 
@@ -365,9 +388,10 @@ class UnitaryDirectExpansion(Equipment):
 
         # Get curves
         high_stage_id = self.stages
+        high_stage_id_str = high_stage_id
         curves = self.get_dx_curves()
 
-        # Check if PLR curves exists, if not add default
+        # Check if PLR curves exists, if not, add default curves
         plf_curves_found = False
         for stage_curves in curves.values():
             if "plf-f-plr" in stage_curves.keys():
@@ -376,11 +400,10 @@ class UnitaryDirectExpansion(Equipment):
         if not plf_curves_found:
             self.add_cycling_degradation_curve()
         curves = self.get_dx_curves()
-        #print(self.__dict__)
 
         # Calculate capacity and efficiency degradation as a function of flow fraction
-        tot_cap_flow_mod_fac = curves[str(high_stage_id)]["cap-f-ff"].evaluate(1, 1)
-        eir_flow_mod_fac = curves[str(high_stage_id)]["eir-f-ff"].evaluate(1, 1)
+        tot_cap_flow_mod_fac = curves[high_stage_id_str]["cap-f-ff"].evaluate(1, 1)
+        eir_flow_mod_fac = curves[high_stage_id_str]["eir-f-ff"].evaluate(1, 1)
 
         # Get rated conditions
         eqp_type = self.type.lower()
@@ -388,43 +411,49 @@ class UnitaryDirectExpansion(Equipment):
         load_fractions = equipment_type["coef"]["load_fractions"]
         weighting_factor = equipment_type["coef"]["weightingfactor"]
         eawbt = Equipment.convert_to_deg_c(equipment_type[self.condenser_type]["aew"])
-        oabdt = Equipment.convert_to_deg_c(equipment_type[self.condenser_type]["ect"][0])
-        tot_cap_temp_mod_fac = curves[str(high_stage_id)]["cap-f-t"].evaluate(eawbt, oabdt)
-        eir_temp_mod_fac = curves[str(high_stage_id)]["eir-f-t"].evaluate(eawbt, oabdt)
+        oabdt = Equipment.convert_to_deg_c(
+            equipment_type[self.condenser_type]["ect"][0]
+        )
+        tot_cap_temp_mod_fac = curves[high_stage_id_str]["cap-f-t"].evaluate(
+            eawbt, oabdt
+        )
+        eir_temp_mod_fac = curves[high_stage_id_str]["eir-f-t"].evaluate(eawbt, oabdt)
         if apply_modifiers_at_full_load:
             cap_modifiers = tot_cap_temp_mod_fac * tot_cap_flow_mod_fac
             eir_modifiers = eir_temp_mod_fac * eir_flow_mod_fac
-        else: 
+        else:
             cap_modifiers = 1
             eir_modifiers = 1
 
         # Calculate NET rated capacity
         net_cooling_cap_rated = (
-            self.ref_gross_cap * cap_modifiers 
-            - self.indoor_fan_power
+            self.ref_gross_cap * cap_modifiers - self.indoor_fan_power
         )
 
         # Convert user-specified full load efficiency to COP
         # User-specified efficiency is a NET efficiency
         full_eff = Units(value=self.full_eff, unit=self.full_eff_unit)
         rated_cop = full_eff.conversion(new_unit="cop")
-        # Handle control power
         control_power = 0
         if len(self.control_power) > 0:
-            control_power = self.control_power[str(high_stage_id)]
+            control_power = self.control_power[high_stage_id_str]
         if rated_cop > 0.0:
             net_power = net_cooling_cap_rated / rated_cop
-            gross_power = net_power - self.indoor_fan_power - control_power
+            gross_power = (
+                net_power - self.indoor_fan_power - control_power
+            )  # gross_power = compressor power + condenser power (outdoor fan)
             gross_cop = self.ref_gross_cap / gross_power
-            gross_eir = eir_modifiers / gross_cop 
+            gross_eir = eir_modifiers / gross_cop
             if output_report:
-                print(f"net_cooling_cap_rated: {net_cooling_cap_rated}")
-                print(f"rated_cop: {rated_cop}")
-                print(f"gross_power: {gross_power}")
+                logging.info(
+                    f"Net cooling capacity at rated conditions: {net_cooling_cap_rated} W"
+                )
+                logging.info(f"Net rated COP at rated conditions: {rated_cop}")
+                logging.info(f"Gross power at rated conditions: {gross_power} W")
         else:
             gross_eir = 0.0
-            logging.error("Input COP is 0!")
-            raise ValueError("Input COP is 0!")
+            logging.error("Input COP is 0")
+            raise ValueError("Input COP is 0")
 
         # Iterate through the different sets of rating conditions to calculate IEER
         ieer = 0
@@ -432,17 +461,28 @@ class UnitaryDirectExpansion(Equipment):
             # Load on the system
             load = load_fraction * net_cooling_cap_rated
 
-            _, eawbt, _, _ = self.get_rated_temperatures() # TODO make sure that we're grabbing the right temp per load
-            oabdt = self.get_rated_outdoor_unit_inlet_air_dry_bulb_temperature(load_fraction)
+            # Get the rating temperatures
+            _, eawbt, _, _ = self.get_rated_temperatures()
+            oabdt = self.get_rating_outdoor_unit_inlet_air_dry_bulb_temperature(
+                load_fraction
+            )
 
             # Determine intermediate efficiency calculation approach
+            # - full_load: the unit has to run without having to cycle in order to meet the load
+            # - degradation: the unit cycles to meet the load, the calculation is done using AHRI's coeffient of degradation, see Section 6.2.3.2 in AHRI 340/360 (2022)
+            # - interpolation: the unit will cycle in between speeds to meet the load, the calculation is done using AHRI's, see Section 6.2.3.1 in AHRI 340/360 (2022)
             if load_fraction < 1:
                 if len(self.compressor_stages) == 0:
                     capacity_ratio = 1
                 else:
                     capacity_ratio = self.compressor_stages[0]
 
-                lowest_stage_capacity = capacity_ratio * net_cooling_cap_rated * curves["1"]["cap-f-ff"].evaluate(1, 1) * curves["1"]["cap-f-t"].evaluate(eawbt, oabdt)
+                lowest_stage_capacity = (
+                    capacity_ratio
+                    * net_cooling_cap_rated
+                    * curves["1"]["cap-f-ff"].evaluate(1, 1)
+                    * curves["1"]["cap-f-t"].evaluate(eawbt, oabdt)
+                )
 
                 if load <= lowest_stage_capacity:
                     calculation_approach = "degradation"
@@ -453,13 +493,36 @@ class UnitaryDirectExpansion(Equipment):
 
             # Calculate intermediate EER
             if calculation_approach == "degradation":
-                intermediate_eer, _, _ = self.calculate_intermediate_eer(curves, load_fraction, "1", gross_eir, report=output_report, apply_modifiers_at_full_load=apply_modifiers_at_full_load)
+                intermediate_eer, _, _ = self.calculate_intermediate_eer(
+                    curves,
+                    load_fraction,
+                    "1",
+                    gross_eir,
+                    report=output_report,
+                    apply_modifiers_at_full_load=apply_modifiers_at_full_load,
+                )
             elif calculation_approach == "full_load":
-                intermediate_eer, _, _ = self.calculate_intermediate_eer(curves, load_fraction, str(len(self.compressor_stages)), gross_eir, report=output_report, apply_modifiers_at_full_load=apply_modifiers_at_full_load)
+                intermediate_eer, _, _ = self.calculate_intermediate_eer(
+                    curves,
+                    load_fraction,
+                    str(len(self.compressor_stages)),
+                    gross_eir,
+                    report=output_report,
+                    apply_modifiers_at_full_load=apply_modifiers_at_full_load,
+                )
             elif calculation_approach == "interpolation":
-                intermediate_eer, _, = self.calculate_intermediate_eer_by_interpolation(net_cooling_cap_rated, curves, load, load_fraction, gross_eir, report=output_report)
+                intermediate_eer = self.calculate_intermediate_eer_by_interpolation(
+                    net_cooling_cap_rated,
+                    curves,
+                    load,
+                    load_fraction,
+                    gross_eir,
+                    report=output_report,
+                )
             else:
-                logging.error(f"The intermediate efficiency calculation approach could not be determined for a {load_fraction} load fraction.")
+                logging.error(
+                    f"The intermediate efficiency calculation approach could not be determined for a {load_fraction} load fraction."
+                )
                 raise ValueError
 
             # Stop the process if only the full load efficiency is needed
@@ -468,10 +531,11 @@ class UnitaryDirectExpansion(Equipment):
                 break
 
             if output_report:
-                int_eer = Units(value=intermediate_eer, unit="cop")
-                int_eer = int_eer.conversion(new_unit=self.full_eff_unit)
-                print(f"EER at {load_fraction}: {int_eer}")
-                print("________________")
+                eer = Units(value=intermediate_eer, unit="cop")
+                eer = eer.conversion(new_unit=self.full_eff_unit)
+                logging.info(
+                    f"EER at {load_fraction} AHRI load fraction: {eer.round(2)}\n"
+                )
 
             # Update IEER
             ieer += weighting_factor[id] * intermediate_eer
@@ -483,147 +547,281 @@ class UnitaryDirectExpansion(Equipment):
 
         return ieer
 
-    def get_rated_outdoor_unit_inlet_air_dry_bulb_temperature(self, percent_load):
+    def get_rating_outdoor_unit_inlet_air_dry_bulb_temperature(self, percent_load):
+        """Determine for a specific percent load percent the outdoor unit inlet air dry-bulb temperature.
+
+        :param float percent_load: Efficiency unit
+        :return: Outdoor unit inlet air dry-bulb temperature
+        :rtype: float
+
+        """
         if percent_load > 0.444:
-            temperature = (
-                5.0 + 30.0 * percent_load
-            )
+            temperature = 5.0 + 30.0 * percent_load
         else:
-            temperature = Equipment.convert_to_deg_c(equipment_references[
-                "unitarydirectexpansion"
-            ][self.part_eff_ref_std][self.condenser_type]["ect"][3])
+            temperature = Equipment.convert_to_deg_c(
+                equipment_references["unitarydirectexpansion"][self.part_eff_ref_std][
+                    self.condenser_type
+                ]["ect"][3]
+            )
         return temperature
 
+    def calculate_intermediate_eer_by_interpolation(
+        self,
+        net_cooling_cap_rated,
+        curves,
+        load,
+        load_fraction,
+        gross_eir,
+        report=False,
+        apply_modifiers_at_full_load=False,
+    ):
+        """Calculate intermediate EER (as part of the IEER calculation) by interpolation as per AHRI, see Section 6.2.3.1 in AHRI 340/360 (2022).
 
-    def calculate_intermediate_eer_by_interpolation(self, net_cooling_cap_rated, curves, load, load_fraction, gross_eir, report=False, apply_modifiers_at_full_load = False):
-        for stage_id, capacity_ratio  in enumerate(self.compressor_stages):
-            # Calculate capacity at rating conditions
-            _, eawbt, _, _ = self.get_rated_temperatures() # TODO make sure that we're grabbing the right temp per load
-            oabdt = self.get_rated_outdoor_unit_inlet_air_dry_bulb_temperature(load_fraction)
+        :param float net_cooling_cap_rated: Net rated cooling capacity
+        :parm dict curves: Performance curves associated with the unit
+        :parm float load: Load corresponding to the load fraction for the IEER calculation
+        :parm float load_fraction: Load fraction used for the IEER calculation: 1, 0.75, 0.5, or 0.25
+        :parm float gross_eir: The unit's gross (only compressor and condenser section power) energy recovery ratio (1/COP)
+        :parm bool report: Flag that indicates if intermediate calculated variables should be logged
+        :parm bool apply_modifiers_at_full_load: Flag that defines if the capacity and EIR modifiers should be applied when the unit's performance is calculated for a load_fraction = 1
+        :return: Energy Efficiency Ration (EER)
+        :rtype: float
+
+        """
+        for stage_id, capacity_ratio in enumerate(self.compressor_stages):
+            # Get the rating temperatures
+            _, eawbt, _, _ = self.get_rated_temperatures()
+            oabdt = self.get_rating_outdoor_unit_inlet_air_dry_bulb_temperature(
+                load_fraction
+            )
 
             # Capacity at current stage
-            stage_capacity = capacity_ratio * net_cooling_cap_rated * curves[str(stage_id + 1)]["cap-f-ff"].evaluate(1, 1) * curves[str(stage_id + 1)]["cap-f-t"].evaluate(eawbt, oabdt)
+            current_stage = stage_id + 1  # stages uses a 1-based indexing
+            current_stage_str = str(current_stage)
+            stage_capacity = (
+                capacity_ratio
+                * net_cooling_cap_rated
+                * curves[current_stage_str]["cap-f-ff"].evaluate(1, 1)
+                * curves[current_stage_str]["cap-f-t"].evaluate(eawbt, oabdt)
+            )
 
             # Capacity at next stage, if available
-            if stage_id + 2 <= len(self.compressor_stages):
-                next_capacity_ratio = self.compressor_stages[stage_id + 1]
-                next_stage_capacity = next_capacity_ratio * net_cooling_cap_rated * curves[str(stage_id + 2)]["cap-f-ff"].evaluate(1, 1) * curves[str(stage_id + 2)]["cap-f-t"].evaluate(eawbt, oabdt)
+            next_stage = stage_id + 2
+            next_stage_str = str(next_stage)
+            if next_stage <= len(self.compressor_stages):
+                next_capacity_ratio = self.compressor_stages[
+                    stage_id + 1
+                ]  # compressor stages uses a 0-based indexing
+                next_stage_capacity = (
+                    next_capacity_ratio
+                    * net_cooling_cap_rated
+                    * curves[next_stage_str]["cap-f-ff"].evaluate(1, 1)
+                    * curves[next_stage_str]["cap-f-t"].evaluate(eawbt, oabdt)
+                )
 
                 # Check if interpolation is required
                 if stage_capacity < load < next_stage_capacity:
-                    stage_id_low = str(stage_id + 1)
-                    stage_id_high = str(stage_id + 2)
-        eer_low, load_fraction_low, actual_load_low = self.calculate_intermediate_eer(curves, load / net_cooling_cap_rated, stage_id_low, gross_eir, report, apply_modifiers_at_full_load, degradation=False)
-        eer_high, load_fraction_high, actual_load_high = self.calculate_intermediate_eer(curves, load / net_cooling_cap_rated, stage_id_high, gross_eir, report, apply_modifiers_at_full_load, degradation=False)
+                    stage_id_low = current_stage
+                    stage_id_high = next_stage
+                else:
+                    logging.error(
+                        f"The load {load} is either greater than then capacity at stage {current_stage} ({stage_capacity} kW) or larger than the capacity at stage {next_stage} ({next_stage_capacity} kW)."
+                    )
+                    raise ValueError("Interpolation cannot be performed")
+        # Perform interpolation
+        eer_low, _, actual_load_low = self.calculate_intermediate_eer(
+            curves,
+            load / net_cooling_cap_rated,
+            stage_id_low,
+            gross_eir,
+            report,
+            apply_modifiers_at_full_load,
+            degradation=False,
+        )
+        eer_high, _, actual_load_high = self.calculate_intermediate_eer(
+            curves,
+            load / net_cooling_cap_rated,
+            stage_id_high,
+            gross_eir,
+            report,
+            apply_modifiers_at_full_load,
+            degradation=False,
+        )
+        intermediate_eer = (
+            (eer_high - eer_low) / (actual_load_high - actual_load_low)
+        ) * (load_fraction - actual_load_low) + eer_low
         if report:
-            print(f"eer_low: {eer_low*3.412}")
-            print(f"eer_high: {eer_high*3.412}")
-        intermediate_eer = ((eer_high - eer_low) / (actual_load_high - actual_load_low)) * (load_fraction - actual_load_low) + eer_low
-        return intermediate_eer, _
+            logging.info(
+                f"EER at current stage {current_stage}: {Units(value=eer_low, unit='cop').conversion(new_unit='eer')}"
+            )
+            logging.info(
+                f"EER at next stage stage: {Units(value=eer_high, unit='cop').conversion(new_unit='eer')}"
+            )
+        return intermediate_eer
 
+    def calculate_intermediate_eer(
+        self,
+        curves,
+        load_fraction,
+        stage,
+        gross_eir,
+        report,
+        apply_modifiers_at_full_load,
+        degradation=True,
+    ):
+        """Calculate intermediate EER (as part of the IEER calculation) using the degredation approach as per Section 6.2.3.2 in AHRI 340/360 (2022).
 
-    def calculate_intermediate_eer(self, curves, load_fraction, stage, gross_eir, report, apply_modifiers_at_full_load, degradation=True):
+        :parm dict curves: Performance curves associated with the unit
+        :parm float load_fraction: Load fraction used for the IEER calculation: 1, 0.75, 0.5, or 0.25
+        :parm int stage: Current stage
+        :parm float gross_eir: The unit's gross (only compressor and condenser section power) energy recovery ratio (1/COP)
+        :parm bool report: Flag that indicates if intermediate calculated variables should be logged
+        :parm bool apply_modifiers_at_full_load: Flag that defines if the capacity and EIR modifiers should be applied when the unit's performance is calculated for a load_fraction = 1
+        :parm bool degradation: Flag that indicates whether or not the degradation coefficient should be applied
+        :return: Energy Efficiency Ration (EER), Load factor (LF), Actual load
+        :rtype: list
+
+        """
         # Calculate capacity at rating conditions
         _, eawbt, _, _ = self.get_rated_temperatures()
-        oabdt = self.get_rated_outdoor_unit_inlet_air_dry_bulb_temperature(load_fraction)
+        oabdt = self.get_rating_outdoor_unit_inlet_air_dry_bulb_temperature(
+            load_fraction
+        )
 
-        # First pass
-        # "Load Factor" (as per AHRI Standard) which is a "net" PLR TODO EnergyPlus uses gross
-        tot_cap_temp_mod_fac = curves[str(stage)]["cap-f-t"].evaluate(eawbt,oabdt)
-        tot_cap_flow_mod_fac = curves[str(stage)]["cap-f-ff"].evaluate(1.0,1.0)
-        indoor_fan_power, flow_fraction = self.calc_fan_power(str(stage), True, report)
+        # Determine the fan power
+        # First pass: assumes no performance impact of airflow
+        current_stage = str(stage)
+        tot_cap_temp_mod_fac = curves[current_stage]["cap-f-t"].evaluate(eawbt, oabdt)
+        tot_cap_flow_mod_fac = curves[current_stage]["cap-f-ff"].evaluate(1.0, 1.0)
+        indoor_fan_power, flow_fraction = self.calc_fan_power(
+            current_stage, True, report
+        )
 
-        # Second pass
-        tot_cap_flow_mod_fac = curves[str(stage)]["cap-f-ff"].evaluate(flow_fraction,1.0)
-        indoor_fan_power, flow_fraction = self.calc_fan_power(str(stage), True)
-        if report:
-            print(f"stage: {stage}")
-            print(f"flow fraction: {flow_fraction}")
-            print(f"EAWBT: {eawbt}")
-            print(f"oabdt: {oabdt}")
-            print(f"indoor_fan_power: {indoor_fan_power}")
-            print(f"cap-f-ff: {tot_cap_flow_mod_fac}")
-            print(f"cap-f-t: {tot_cap_temp_mod_fac}")
+        # Second pass: assume performance impact of airflow now that the airflow fraction is known
+        tot_cap_flow_mod_fac = curves[current_stage]["cap-f-ff"].evaluate(
+            flow_fraction, 1.0
+        )
+        indoor_fan_power, flow_fraction = self.calc_fan_power(current_stage, True)
 
+        # Determine the net cooling capacity for this stage at the rating condition corresponding to the IEER load fraction
         if not apply_modifiers_at_full_load and load_fraction == 1:
             net_cooling_cap = (
-                self.ref_gross_cap * self.compressor_stages[int(stage) - 1]
+                self.ref_gross_cap * self.compressor_stages[int(current_stage) - 1]
                 - indoor_fan_power
             )
         else:
             net_cooling_cap = (
-                self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac * self.compressor_stages[int(stage) - 1]
+                self.ref_gross_cap
+                * tot_cap_temp_mod_fac
+                * tot_cap_flow_mod_fac
+                * self.compressor_stages[int(current_stage) - 1]
                 - indoor_fan_power
             )
 
+        # Calculate the load factor (not the same as the load fraction) as per AHRI 340/360
         if degradation:
             load_factor = min(1.0, load_fraction * self.ref_net_cap / net_cooling_cap)
         else:
             load_factor = 1.0
-        if report:
-            print(f"load_factor: {load_factor}")
-            print(f"capacity ratio: {self.compressor_stages[int(stage) - 1]}")
-            print(f"self.ref_gross_cap : {self.ref_gross_cap}")
-            print(f"self.ref_net_cap : {self.ref_net_cap}")
-            print(f"net_cooling_cap: {net_cooling_cap}")
 
         # Calculate efficency at rating conditions
-        eir_temp_mod_fac = curves[str(stage)]["eir-f-t"].evaluate(eawbt, oabdt)
-        eir_flow_mod_fac = curves[str(stage)]["eir-f-ff"].evaluate(flow_fraction, 1.0)
+        eir_temp_mod_fac = curves[current_stage]["eir-f-t"].evaluate(eawbt, oabdt)
+        eir_flow_mod_fac = curves[current_stage]["eir-f-ff"].evaluate(
+            flow_fraction, 1.0
+        )
         if not apply_modifiers_at_full_load and load_fraction == 1:
             eir = gross_eir
         else:
-            eir = (gross_eir * eir_temp_mod_fac * eir_flow_mod_fac)
-        if report:
-            print(f"eir_temp_mod_fac: {eir_temp_mod_fac}")
-            print(f"eir_flow_mod_fac: {eir_flow_mod_fac}")
-            print(f"gross_eir: {gross_eir}")
-            print(f"eir: {eir}, {1/eir}")
+            eir = gross_eir * eir_temp_mod_fac * eir_flow_mod_fac
 
-        # Cycling degradation
+        if report:
+            logging.info(f"Current stage: {stage}")
+            logging.info(f"Flow fraction: {flow_fraction}")
+            logging.info(
+                f"Rating entering air wet-bulb temperature (in deg. C): {eawbt}"
+            )
+            logging.info(
+                f"Rating outdoor air dry-bulb temperature (in deg. C): {oabdt}"
+            )
+            logging.info(f"Indoor fan power: {indoor_fan_power} kW")
+            logging.info(
+                f"Capacity modifier as a function of flow fraction: {tot_cap_flow_mod_fac}"
+            )
+            logging.info(
+                f"Capacity modifier as a function of temperature: {tot_cap_temp_mod_fac}"
+            )
+            logging.info(f"Load factor (LF in AHRI 340/360): {load_factor}")
+            logging.info(
+                f"Compressor capacity ratio (net rated capacity at current stage to net rated cooling capacity at highest stage): {self.compressor_stages[int(stage) - 1]}"
+            )
+            logging.info(f"Net cooling capacity at this stage: {net_cooling_cap}")
+            logging.info(
+                f"EIR modifier as a function of flow fraction: {eir_flow_mod_fac}"
+            )
+            logging.info(
+                f"EIR modifier as a function of temperature: {eir_temp_mod_fac}"
+            )
+            logging.info(f"The unit's gross reference EIR: {gross_eir}")
+            logging.info(f"Gross EIR at this stage: {eir}")
+
+        # Determine cycling degradation coefficient
         if degradation:
             if not apply_modifiers_at_full_load and load_fraction == 1:
                 degradation_coeff = 1
             else:
-                degradation_coeff = 1 / curves[str(stage)]["plf-f-plr"].evaluate(load_factor, 1)
+                degradation_coeff = 1 / curves[current_stage]["plf-f-plr"].evaluate(
+                    load_factor, 1
+                )
             if report:
-                print(f"degradation_coeff: {degradation_coeff}")
+                logging.info(f"Degradation coefficient: {degradation_coeff}")
         else:
             degradation_coeff = 1.0
 
-        # Compressor power and outdoor fan (P_C + P_CD)
+        # Determine Compressor power and outdoor fan (P_C + P_CD)
         if not apply_modifiers_at_full_load and load_fraction == 1:
             elec_power = (
                 degradation_coeff
                 * eir
-                * (self.ref_gross_cap * 1 * self.compressor_stages[int(stage) - 1])
+                * (
+                    self.ref_gross_cap
+                    * 1
+                    * self.compressor_stages[int(current_stage) - 1]
+                )
             )
         else:
             elec_power = (
                 degradation_coeff
                 * eir
-                * (self.ref_gross_cap * tot_cap_temp_mod_fac * tot_cap_flow_mod_fac * self.compressor_stages[int(stage) - 1])
+                * (
+                    self.ref_gross_cap
+                    * tot_cap_temp_mod_fac
+                    * tot_cap_flow_mod_fac
+                    * self.compressor_stages[int(current_stage) - 1]
+                )
             )
 
-        # Handle control power (P_CT)
+        # Determine control power (P_CT)
         control_power = 0
         if len(self.control_power) > 0:
-            if str(stage) in self.control_power.keys():
-                control_power = self.control_power[str(stage)]
+            if current_stage in self.control_power.keys():
+                control_power = self.control_power[current_stage]
 
+        # Determine load on the unit
         actual_load = net_cooling_cap / self.ref_net_cap
 
-        if report:
-            print(f"control_power: {control_power}")
-            print(f"elec_power: {elec_power}")
-            print(f"actual load: {actual_load}")
-
-        # EER
+        # Calculate EER
         eer = (load_factor * net_cooling_cap) / (
             load_factor * elec_power + indoor_fan_power + control_power
         )
+
         if report:
-            print(f"eer: {eer*3.412}")
+            logging.info(f"Control power: {control_power} kW")
+            logging.info(f"Compressor and condenser power: {elec_power} kW")
+            logging.info(f"Actual load: {actual_load} kW")
+            logging.info(
+                f"EER at current stage {current_stage}: {Units(value=eer, unit='cop').conversion(new_unit='eer')}"
+            )
+
         return eer, load_factor, actual_load
 
     def ieer_to_eer(self, ieer):
@@ -678,7 +876,9 @@ class UnitaryDirectExpansion(Equipment):
                 if curve.out_var == "plf-f-plr":
                     curves[str(curve.speed)]["plf-f-plr"] = curve
 
-        if int(self.stages) > 1 and copy_all_stages: # Add curves to other stages after aggregation
+        if (
+            int(self.stages) > 1 and copy_all_stages
+        ):  # Add curves to other stages after aggregation
             for ct in ["cap-f-t", "cap-f-ff", "eir-f-t", "eir-f-ff", "plf-f-plr"]:
                 for s in curves.keys():
                     if ct not in curves[s].keys() and ct in curves["1"]:
@@ -713,7 +913,9 @@ class UnitaryDirectExpansion(Equipment):
             std = self.part_eff_ref_std
         dx_data = equipment_references[self.type.lower()][std][self.condenser_type]
         # Air entering indoor dry-bulb
-        aed = Equipment.convert_to_deg_c(dx_data["aed"], dx_data["ae_unit"]) # TODO should be based on load
+        aed = Equipment.convert_to_deg_c(
+            dx_data["aed"], dx_data["ae_unit"]
+        )  # TODO should be based on load
         # Air entering indoor wet-bulb
         self.aew = Equipment.convert_to_deg_c(dx_data["aew"], dx_data["ae_unit"])
         # Outdoor water/air entering

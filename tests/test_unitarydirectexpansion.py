@@ -5,11 +5,11 @@ import pickle as pkl
 import numpy as np
 import CoolProp.CoolProp as CP
 import os
-import inspect
 import copy
 
 location = os.path.dirname(os.path.realpath(__file__))
 DX_lib = os.path.join(location, "../copper/data", "unitarydirectexpansion_curves.json")
+
 
 class UnitaryDirectExpansion(TestCase):
     # Load curve library
@@ -28,14 +28,15 @@ class UnitaryDirectExpansion(TestCase):
         model="simplified_bf",
         sim_engine="energyplus",
         compressor_stages=[1.0],
-        control_power= {},
+        control_power={},
         set_of_curves=lib.get_set_of_curves_by_name("D208122216").curves,
     )
 
     def test_calc_eff_ect(self):
-        ieer = round(self.dx_unit_dft.calc_rated_eff(unit="eer", output_report=False), 1)
+        ieer = round(
+            self.dx_unit_dft.calc_rated_eff(unit="eer", output_report=False), 1
+        )
         self.assertTrue(5.8 == ieer, f"{ieer} is different than 5.8")
-
 
     def test_check_net_gross_capacity(self):
         # Check that the difference between the gross and net capacity is the indoor fan power
@@ -95,30 +96,14 @@ class UnitaryDirectExpansion(TestCase):
             eqp.set_of_curves = curves[i].curves
             eqp.set_of_curves.append(plf_f_plr)
 
-            if eqp.ref_net_cap > 19.0: # 90.1 requires two-speed fan above 65 kBtu/h
+            if eqp.ref_net_cap > 19.0:  # 90.1 requires two-speed fan above 65 kBtu/h
                 eqp.indoor_fan_speeds = 2
                 eqp.compressor_stages = [0.5, 1.0]
                 eqp.stages = 2
-#                obj_args = eqp.__dict__
-#                full_class_path = "cp.UnitaryDirectExpansion"
-#                dx_class_attr = inspect.getfullargspec(eval(full_class_path).__init__)[0]
-#                rm = []
-#                for k in obj_args.keys():
-#                    if k not in dx_class_attr:
-#                        rm.append(k)
-#                for k in rm:
-#                    del obj_args[k]
-#                del obj_args['ref_gross_cap']
                 new_curves = copy.deepcopy(eqp.set_of_curves)
                 for c in new_curves:
                     c.speed = 2
                 eqp.set_of_curves += new_curves
-                #print(eqp.set_of_curves[-2].__dict__)
-                #print(eqp.get_dx_curves())
-                #obj_args['set_of_curves'] = eqp.set_of_curves
-                #eqp = eval(full_class_path, )(**obj_args)
-            #print(eqp.get_dx_curves())
-                
 
             # Check that the IEER is always better than full load EER
             assert round(eqp.full_eff, 2) < round(
@@ -211,17 +196,22 @@ class UnitaryDirectExpansion(TestCase):
         dx_unit_multi_speed.indoor_fan_curve = True
         dx_unit_multi_speed.indoor_fan_speeds = 2
         assert (
-            dx_unit_multi_speed.calc_fan_power(compressor_stage= 1, flow_fraction=0.5)
+            dx_unit_multi_speed.calc_fan_power(compressor_stage=1, flow_fraction=0.5)
             / dx_unit_multi_speed.indoor_fan_power
             == 0.25
         )
         assert (
-            round(dx_unit_multi_speed.calc_fan_power(compressor_stage= 1, flow_fraction=1.0)
-            / dx_unit_multi_speed.indoor_fan_power,2)
+            round(
+                dx_unit_multi_speed.calc_fan_power(
+                    compressor_stage=1, flow_fraction=1.0
+                )
+                / dx_unit_multi_speed.indoor_fan_power,
+                2,
+            )
             == 1.0
         )
         assert (
-            dx_unit_multi_speed.calc_fan_power(compressor_stage= 1, flow_fraction=0.75)
+            dx_unit_multi_speed.calc_fan_power(compressor_stage=1, flow_fraction=0.75)
             / dx_unit_multi_speed.indoor_fan_power
             < 0.7
         )
@@ -231,7 +221,7 @@ class UnitaryDirectExpansion(TestCase):
         dx_unit = self.dx_unit_dft
 
         # Define targeted efficiency
-        dx_unit.part_eff = 7
+        dx_unit.part_eff = 8.5
 
         # Define the base curves to be use as the starting point in the generation process
         base_curves = cp.SetofCurves()
@@ -261,7 +251,7 @@ class UnitaryDirectExpansion(TestCase):
             ref_gross_cap=8,
             full_eff=11.55,
             full_eff_unit="eer",
-            part_eff=12.5,
+            part_eff=14.8,
             part_eff_ref_std="ahri_340/360",
             model="simplified_bf",
             sim_engine="energyplus",
@@ -336,8 +326,6 @@ class UnitaryDirectExpansion(TestCase):
     def test_degradation(self):
         self.dx_unit_dft.degradation_coefficient = 0
         self.dx_unit_dft.add_cycling_degradation_curve(overwrite=True)
-#        for c in self.dx_unit_dft.set_of_curves:
-#            print(c.__dict__)
         assert len(self.dx_unit_dft.set_of_curves) == 5
         assert self.dx_unit_dft.get_dx_curves()["1"]["plf-f-plr"].coeff1 == 1.0
 
@@ -404,7 +392,9 @@ class UnitaryDirectExpansion(TestCase):
         assert len(self.dx_unit_dft.get_dx_curves(copy_all_stages=False)["2"]) == 1
 
     def test_ahri_340_360_example_g4_3(self):
-        ahri_example_lib = cp.Library(path=os.path.join(location, "./data", "ahri_example.json"))
+        ahri_example_lib = cp.Library(
+            path=os.path.join(location, "./data", "ahri_example.json")
+        )
         dx_unit_new = cp.UnitaryDirectExpansion(
             compressor_type="scroll",
             condenser_type="air",
@@ -418,29 +408,33 @@ class UnitaryDirectExpansion(TestCase):
             sim_engine="energyplus",
             indoor_fan_power=1.050,
             indoor_fan_power_unit="kW",
-            set_of_curves=ahri_example_lib.get_set_of_curves_by_name("AHRI 340/360 Example G4.3").curves,
+            set_of_curves=ahri_example_lib.get_set_of_curves_by_name(
+                "AHRI 340/360 Example G4.3"
+            ).curves,
             compressor_stages=[0.5],
             control_power={
                 "1": 0.150,
                 "2": 0.100,
             },
-            #control_power_unit = "kW",
-            indoor_fan_speeds = 2,
-            indoor_fan_speeds_mapping = {
-            "1": {
-                "fan_flow_fraction": 0.66,
-                "fan_power_fraction": 0.262/1.05,
-                "compressor_stage": 1,
+            # control_power_unit = "kW",
+            indoor_fan_speeds=2,
+            indoor_fan_speeds_mapping={
+                "1": {
+                    "fan_flow_fraction": 0.66,
+                    "fan_power_fraction": 0.262 / 1.05,
+                    "compressor_stage": 1,
+                },
+                "2": {
+                    "fan_flow_fraction": 1.0,
+                    "fan_power_fraction": 1.0,
+                    "compressor_stage": 2,
+                },
             },
-            "2": {
-                "fan_flow_fraction": 1.0,
-                "fan_power_fraction": 1.0,
-                "compressor_stage": 2,
-            },
-            }
         )
-        output_report=False
-        ieer = dx_unit_new.calc_rated_eff(unit="eer", output_report=output_report, apply_modifiers_at_full_load=False)
+        output_report = False
+        ieer = dx_unit_new.calc_rated_eff(
+            unit="eer", output_report=output_report, apply_modifiers_at_full_load=False
+        )
         if output_report:
             print(ieer)
-        assert (13.01 * (1 - 0.001) <= ieer <= 13.01 * 1.001)
+        assert 13.01 * (1 - 0.001) <= ieer <= 13.01 * 1.001

@@ -115,9 +115,9 @@ class Generator:
         self.set_of_base_curves.eqp.set_of_curves = self.set_of_base_curves.curves
         self.base_curves_data = {}
         for curve in self.set_of_base_curves.curves:
-            self.base_curves_data[
-                curve.out_var
-            ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
+            self.base_curves_data[curve.out_var] = (
+                self.set_of_base_curves.get_data_for_plotting(curve, False)
+            )
 
         # Return if aggregation is only needed
         if agg_only:
@@ -179,13 +179,17 @@ class Generator:
                         full_rating_alt = "n/a"
                     part_eff = round(
                         self.equipment.calc_rated_eff(
-                            eff_type="part", unit=self.equipment.part_eff_unit, apply_modifiers_at_full_load=True
+                            eff_type="part",
+                            unit=self.equipment.part_eff_unit,
+                            apply_modifiers_at_full_load=True,
                         ),
                         4,
                     )
                     full_eff = round(
                         self.equipment.calc_rated_eff(
-                            eff_type="full", unit=self.equipment.full_eff_unit, apply_modifiers_at_full_load=True
+                            eff_type="full",
+                            unit=self.equipment.full_eff_unit,
+                            apply_modifiers_at_full_load=True,
                         ),
                         4,
                     )
@@ -204,13 +208,17 @@ class Generator:
                         restart += 1
                         part_eff = round(
                             self.equipment.calc_rated_eff(
-                                eff_type="part", unit=self.equipment.part_eff_unit, apply_modifiers_at_full_load=True
+                                eff_type="part",
+                                unit=self.equipment.part_eff_unit,
+                                apply_modifiers_at_full_load=True,
                             ),
                             4,
                         )
                         full_eff = round(
                             self.equipment.calc_rated_eff(
-                                eff_type="full", unit=self.equipment.full_eff_unit, apply_modifiers_at_full_load=True
+                                eff_type="full",
+                                unit=self.equipment.full_eff_unit,
+                                apply_modifiers_at_full_load=True,
                             ),
                             4,
                         )
@@ -241,20 +249,30 @@ class Generator:
         if self.equipment.type == "chiller":
             if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_rated_eff(
-                    eff_type="part", unit=self.equipment.part_eff_unit, apply_modifiers_at_full_load=True
+                    eff_type="part",
+                    unit=self.equipment.part_eff_unit,
+                    apply_modifiers_at_full_load=True,
                 )
                 full_rating = self.equipment.calc_rated_eff(
-                    eff_type="full", unit=self.equipment.full_eff_unit, apply_modifiers_at_full_load=True
+                    eff_type="full",
+                    unit=self.equipment.full_eff_unit,
+                    apply_modifiers_at_full_load=True,
                 )
                 if self.target_alt > 0:
                     part_rating_alt = self.equipment.calc_rated_eff(
-                        eff_type="part", unit=self.equipment.part_eff_unit_alt, alt=True, apply_modifiers_at_full_load=True
+                        eff_type="part",
+                        unit=self.equipment.part_eff_unit_alt,
+                        alt=True,
+                        apply_modifiers_at_full_load=True,
                     )
                 else:
                     part_rating_alt = 0
                 if self.full_eff_alt > 0:
                     full_rating_alt = self.equipment.calc_rated_eff(
-                        eff_type="full", unit=self.equipment.full_eff_unit_alt, alt=True, apply_modifiers_at_full_load=True
+                        eff_type="full",
+                        unit=self.equipment.full_eff_unit_alt,
+                        alt=True,
+                        apply_modifiers_at_full_load=True,
                     )
                 else:
                     full_rating_alt = 0
@@ -269,12 +287,16 @@ class Generator:
         elif self.equipment.type == "UnitaryDirectExpansion":
             if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_rated_eff(
-                    eff_type="part", unit=self.equipment.part_eff_unit, apply_modifiers_at_full_load=True
+                    eff_type="part",
+                    unit=self.equipment.part_eff_unit,
+                    apply_modifiers_at_full_load=True,
                 )
                 part_rating_alt = 0
                 full_rating_alt = 0
                 full_rating = self.equipment.calc_rated_eff(
-                    eff_type="full", unit=self.equipment.part_eff_unit, apply_modifiers_at_full_load=True
+                    eff_type="full",
+                    unit=self.equipment.part_eff_unit,
+                    apply_modifiers_at_full_load=True,
                 )
                 cap_rating = 0
             else:
@@ -343,9 +365,9 @@ class Generator:
         grad = np.around(
             np.gradient(y, x), 2
         )  # add a small number to get rid of very small negative values
-        grad[
-            np.abs(grad) <= threshold
-        ] = 0  # making sure that small gradients are set to zero to avoid
+        grad[np.abs(grad) <= threshold] = (
+            0  # making sure that small gradients are set to zero to avoid
+        )
         sign = np.sign(grad)
 
         if np.all(np.asarray(y) == 0):  # all values are false
@@ -531,14 +553,19 @@ class Generator:
         self.equipment.set_of_curves = set_of_curves.curves
         part_eff_score = abs(
             self.equipment.calc_rated_eff(
-                eff_type="part", unit=self.equipment.part_eff_unit, apply_modifiers_at_full_load=True
+                eff_type="part",
+                unit=self.equipment.part_eff_unit,
+                apply_modifiers_at_full_load=True,
             )
             - self.target
         )
         if self.target_alt > 0:
             part_eff_score += abs(
                 self.equipment.calc_rated_eff(
-                    eff_type="part", unit=self.equipment.part_eff_unit_alt, alt=True, apply_modifiers_at_full_load=True
+                    eff_type="part",
+                    unit=self.equipment.part_eff_unit_alt,
+                    alt=True,
+                    apply_modifiers_at_full_load=True,
                 )
                 - self.target_alt
             )
@@ -556,14 +583,19 @@ class Generator:
         self.equipment.set_of_curves = set_of_curves.curves
         full_eff_score = abs(
             self.equipment.calc_rated_eff(
-                eff_type="full", unit=self.equipment.full_eff_unit, apply_modifiers_at_full_load=True
+                eff_type="full",
+                unit=self.equipment.full_eff_unit,
+                apply_modifiers_at_full_load=True,
             )
             - self.equipment.full_eff
         )
         if self.equipment.full_eff_alt > 0:
             full_eff_score += abs(
                 self.equipment.calc_rated_eff(
-                    eff_type="full", unit=self.equipment.full_eff_unit_alt, alt=True, apply_modifiers_at_full_load=True
+                    eff_type="full",
+                    unit=self.equipment.full_eff_unit_alt,
+                    alt=True,
+                    apply_modifiers_at_full_load=True,
                 )
                 - self.equipment.full_eff_alt
             )
