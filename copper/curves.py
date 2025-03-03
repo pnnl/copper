@@ -723,7 +723,10 @@ class Curve:
             out = self.coeff1 + self.coeff2 * x + self.coeff3 * x**2
         if self.type == "cubic":
             out = (
-                self.coeff1 + self.coeff2 * x + self.coeff3 * x**2 + self.coeff4 * x**3
+                self.coeff1
+                + self.coeff2 * x
+                + self.coeff3 * x**2
+                + self.coeff4 * x**3
             )
         if self.type == "linear":
             out = self.coeff1 + self.coeff2 * x
@@ -752,9 +755,9 @@ class Curve:
         grad = np.around(
             np.gradient(y, x), 2
         )  # add a small number to get rid of very small negative values
-        grad[np.abs(grad) <= threshold] = (
-            0  # making sure that small gradients are set to zero to avoid
-        )
+        grad[
+            np.abs(grad) <= threshold
+        ] = 0  # making sure that small gradients are set to zero to avoid
         sign = np.sign(grad)
 
         if np.all(np.asarray(y) == 0):  # all values are false

@@ -115,9 +115,9 @@ class Generator:
         self.set_of_base_curves.eqp.set_of_curves = self.set_of_base_curves.curves
         self.base_curves_data = {}
         for curve in self.set_of_base_curves.curves:
-            self.base_curves_data[curve.out_var] = (
-                self.set_of_base_curves.get_data_for_plotting(curve, False)
-            )
+            self.base_curves_data[
+                curve.out_var
+            ] = self.set_of_base_curves.get_data_for_plotting(curve, False)
 
         # Return if aggregation is only needed
         if agg_only:
@@ -365,9 +365,9 @@ class Generator:
         grad = np.around(
             np.gradient(y, x), 2
         )  # add a small number to get rid of very small negative values
-        grad[np.abs(grad) <= threshold] = (
-            0  # making sure that small gradients are set to zero to avoid
-        )
+        grad[
+            np.abs(grad) <= threshold
+        ] = 0  # making sure that small gradients are set to zero to avoid
         sign = np.sign(grad)
 
         if np.all(np.asarray(y) == 0):  # all values are false
