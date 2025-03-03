@@ -388,7 +388,7 @@ class UnitaryDirectExpansion(Equipment):
 
         # Get curves
         high_stage_id = self.stages
-        high_stage_id_str = high_stage_id
+        high_stage_id_str = str(high_stage_id)
         curves = self.get_dx_curves()
 
         # Check if PLR curves exists, if not, add default curves
