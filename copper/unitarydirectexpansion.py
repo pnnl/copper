@@ -64,6 +64,7 @@ class UnitaryDirectExpansion(Equipment):
         indoor_fan_power_unit="kW",
         compressor_stages=[],
         control_power={},
+        control_power_unit="kW",
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -175,7 +176,7 @@ class UnitaryDirectExpansion(Equipment):
         self.indoor_fan_curve_coef = indoor_fan_curve_coef
         self.indoor_fan_power_unit = indoor_fan_power_unit
         self.indoor_fan_curve = indoor_fan_curve
-        self.control_power = control_power
+
         compressor_stages = sorted(compressor_stages)
         if len(compressor_stages) == 0:
             compressor_stages = [1]
@@ -185,9 +186,17 @@ class UnitaryDirectExpansion(Equipment):
         self.compressor_stages = compressor_stages
         self.stages = str(len(self.compressor_stages))
 
+        # Convert control power to kW
+        if len(control_power) > 0:
+            for stage, power in control_power.items():
+                control_power[stage] = Units(
+                    value=power, unit=control_power_unit
+                ).conversion(new_unit="kW")
+        self.control_power = control_power
+
         # Define rated temperatures
         # air entering drybulb, air entering wetbulb, entering condenser temperature, leaving condenser temperature
-        aed, self.aew, ect, lct = self.get_rated_temperatures()
+        _, self.aew, ect, _ = self.get_rated_temperatures()
         self.ect = ect[0]
 
         self.default_fan_curve = Curve(
