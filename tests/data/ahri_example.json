@@ -17,7 +17,8 @@
         "degradation_coefficient": null,
         "indoor_fan_power": null,
         "ref_gross_cap": null,
-        "control_power": null,
+        "control_power": {},
+        "control_power_unit": null,
         "compressor_stages": [
             0.3,
             0.6
