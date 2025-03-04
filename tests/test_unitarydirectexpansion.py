@@ -377,7 +377,7 @@ class UnitaryDirectExpansion(TestCase):
         assert len(set_of_curves) == 6
 
         # Check normalization
-        assert abs(set_of_curves[0].evaluate(19.44, 35) - 0.99) < 0.011
+        assert abs(set_of_curves[0].evaluate(19.44, 35) - 0.99) < 0.01
         assert round(set_of_curves[1].evaluate(19.44, 35), 2) == 1.0
         assert round(set_of_curves[2].evaluate(1.0, 0), 2) == 1.0
         assert round(set_of_curves[3].evaluate(1.0, 0), 2) == 1.0
@@ -413,10 +413,10 @@ class UnitaryDirectExpansion(TestCase):
             ).curves,
             compressor_stages=[0.5],
             control_power={
-                "1": 0.150,
-                "2": 0.100,
+                "1": 150,
+                "2": 100,
             },
-            # control_power_unit = "kW",
+            control_power_unit="W",
             indoor_fan_speeds=2,
             indoor_fan_speeds_mapping={
                 "1": {
