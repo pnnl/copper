@@ -85,9 +85,9 @@ class Units:
             if self.unit == "kW":
                 return self.value
             if self.unit == "kbtu/h":
-                return self.value * kbtu_to_kw
+                return self.value / kbtu_to_kw
             if self.unit == "btu/h":
-                return self.value * kbtu_to_kw / 1000
+                return self.value / kbtu_to_kw / 1000
         elif new_unit == "W":
             if self.unit == "ton":
                 return self.value / (kbtu_to_kw / (ton_to_kbtu * 1000))
@@ -105,7 +105,7 @@ class Units:
             if self.unit == "kW":
                 return self.value * kbtu_to_kw
             if self.unit == "W":
-                return self.value / (kbtu_to_kw * 1000)
+                return self.value * kbtu_to_kw * 1000
             if self.unit == "kbtu/h":
                 return self.value
             if self.unit == "btu/h":
