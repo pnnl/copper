@@ -20,7 +20,7 @@ def plot_lib(lib_path, rating_std="ahri_340/360"):
     filters = [
         ("eqp_type", "UnitaryDirectExpansion"),
         ("compressor_type", "scroll"),
-        ("compressor_speed", "variable"),
+        ("compressor_speed", "constant/variable"),
         ("full_eff_ref_std", rating_std),
         ("condenser_type", "air"),
         ("sim_engine", "energyplus")
@@ -45,6 +45,6 @@ def plot_lib(lib_path, rating_std="ahri_340/360"):
 
 if __name__ == "__main__":
     location = os.path.dirname(os.path.realpath(__file__))
-    dx_lib = os.path.join(location, "./test_lib/multi_stage.json")
+    dx_lib = os.path.join(location, "./copper/data/multi_stage.json")
     #print(dx_lib)
     plot_lib(lib_path=dx_lib)
