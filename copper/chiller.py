@@ -161,7 +161,7 @@ class Chiller(Equipment):
         curves = self.get_chiller_curves()
         cap_f_t = curves["cap-f-t"]
         eir_f_t = curves["eir-f-t"]
-        eir_f_plr = curves["eir_f_plr"]
+        eir_f_plr = curves["eir-f-plr"]
 
         cap_f_lwt_lct_rated = cap_f_t.evaluate(self.ref_lwt, self.ref_lct)
         cap_f_lwt_lct = cap_f_t.evaluate(self.ref_lwt, self.ref_lct)
@@ -264,7 +264,7 @@ class Chiller(Equipment):
         curves = self.get_chiller_curves()
         cap_f_t = curves["cap-f-t"]
         eir_f_t = curves["eir-f-t"]
-        eir_f_plr = curves["eir_f_plr"]
+        eir_f_plr = curves["eir-f-plr"]
 
         try:
             for idx, load in enumerate(
@@ -424,7 +424,7 @@ class Chiller(Equipment):
             elif curve.out_var == "eir-f-t":
                 curves["eir-f-t"] = curve
             else:
-                curves["eir_f_plr"] = curve
+                curves["eir-f-plr"] = curve
 
         return curves
 
