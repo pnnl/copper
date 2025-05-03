@@ -9,6 +9,9 @@
                 "anyOf": [
                     {
                         "$ref": "copper.chiller.action.schema.json#/definitions/action"
+                    },
+                    {
+                        "$ref": "copper.unitarydirectexpansion.action.schema.json#/definitions/action"
                     }
                 ]
             }

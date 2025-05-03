@@ -1,0 +1,26 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "title": "UnitaryDirectExpansion functions",
+    "description": "Run a function for a unitary direct expansion unit",
+    "definitions": {
+        "action": {
+            "type": "object",
+            "properties": {
+                "equipment": {
+                    "description": "UnitaryDirectExpansion definition",
+                    "$ref": "copper.unitarydirectexpansion.schema.json#/definitions/unitarydirectexpansion"
+                },
+                "function_call": {
+                    "description": "UnitaryDirectExpansion-specific function call",
+                    "oneOf": [
+                        {
+                            "$ref": "copper.unitarydirectexpansion.generate_set_of_curves.schema.json#/definitions/generate_set_of_curves"
+                        }
+                    ]
+                }
+            },
+            "required": ["equipment", "function_call"]
+        }
+    },
+    "$ref": "copper.unitarydirectexpansion.action.schema.json#/definitions/action"
+}

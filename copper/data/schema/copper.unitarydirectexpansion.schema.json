@@ -1,0 +1,143 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "title": "UnitaryDirectExpansion  Inputs",
+    "description": "Set of inputs for a unitary direct expansion unit",
+    "definitions": {
+        "unitarydirectexpansion": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "description": "Type of equipment",
+                    "type": "string",
+                    "enum": ["UnitaryDirectExpansion"],
+                    "minLength": 1
+                },
+                "ref_net_cap": {
+                    "description": "Reference capacity of the unitary direct expansion unit",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                "ref_cap_unit": {
+                    "description": "Unit of the reference capacity of the unitary direct expansion unit",
+                    "type": "string",
+                    "enum": ["ton", "kW", "W", "kbtu/h"],
+                    "minLength": 1
+                },
+                "full_eff": {
+                    "description": "Full load efficiency of the unitary direct expansion unit",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                "full_eff_unit": {
+                    "description": "Full load efficiency units of the unitary direct expansion unit",
+                    "type": "string",
+                    "enum": ["eer"],
+                    "minLength": 1
+                },
+                "part_eff": {
+                    "description": "Part load efficiency of the unitary direct expansion unit",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                "part_eff_unit": {
+                    "description": "Part load efficiency units of the unitary direct expansion unit",
+                    "type": "string",
+                    "enum": ["eer"],
+                    "minLength": 1
+                },
+                "compressor_type": {
+                    "description": "Type of compressor used by the unitary direct expansion unit",
+                    "type": "string",
+                    "enum": [
+                        "scroll",
+                        "any"
+                    ],
+                    "minLength": 1
+                },
+                "compressor_speed": {
+                    "description": "Type of compressor speed control",
+                    "type": "string",
+                    "enum": [
+                        "constant",
+                        "variable",
+                        "any"
+                    ],
+                    "minLength": 1
+                },
+                "condenser_type": {
+                    "description": "Type of condenser used by the unitary direct expansion unit",
+                    "type": "string",
+                    "enum": ["air"],
+                    "minLength": 1
+                },
+                "part_eff_ref_std": {
+                    "description": "Standard for rated conditions",
+                    "type": "string",
+                    "enum": ["ahri_340/360"],
+                    "minLength": 1
+                },
+                "model": {
+                    "description": "Unitary direct expansion unit model corresponding to the set of performance curves",
+                    "type": "string",
+                    "enum": ["simplified_bf"],
+                    "minLength": 1
+                },
+                "sim_engine": {
+                    "description": "Simulation engine used for simulation of the performance curves",
+                    "type": "string",
+                    "enum": ["energyplus"],
+                    "minLength": 1
+                },
+                "degradation_coefficient": {
+                    "description": "Degradation coefficient of the unitary direct expansion unit",
+                    "type": "number"
+                },
+                "indoor_fan_speeds": {
+                    "description": "Number of indoor fan speed associated with the unitary direct expansion unit",
+                    "type": "number"
+                },
+                "indoor_fan_power": {
+                    "description": "Indoor fan power of the unitary direct expansion unit",
+                    "type": "number"
+                },
+                "indoor_fan_power_unit": {
+                    "description": "Unit of the fan power of the unitary direct expansion unit",
+                    "type": "string",
+                    "enum": ["W", "kW"]
+                },
+                "indoor_fan_speeds_mapping": {
+                    "description": "Mapping of indoor fan speed and characteristics",
+                    "type": "object",
+                    "properties": {
+                        "fan_flow_fraction": {
+                            "type": "number"
+                        },
+                        "fan_power_fraction": {
+                            "type": "number"
+                        },
+                        "compressor_stage": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "compressor_stages": {
+                    "description": "List of the net rated capacity ratio corresponding to each compressor stage of the unitary direct expansion unit",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                }
+            },
+            "required": [
+                "type",
+                "ref_net_cap",
+                "ref_cap_unit",
+                "full_eff",
+                "full_eff_unit",
+                "part_eff",
+                "part_eff_unit"
+            ]
+        }
+    },
+    "$ref": "copper.unitarydirectexpansion.schema.json#/definitions/unitarydirectexpansion"
+}
