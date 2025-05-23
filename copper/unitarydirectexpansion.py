@@ -632,11 +632,15 @@ class UnitaryDirectExpansion(Equipment):
                 if stage_capacity < load < next_stage_capacity:
                     stage_id_low = current_stage
                     stage_id_high = next_stage
+                    break
                 else:
-                    logging.error(
-                        f"The load {load} is either greater than then capacity at stage {current_stage} ({stage_capacity} kW) or larger than the capacity at stage {next_stage} ({next_stage_capacity} kW)."
-                    )
-                    raise ValueError("Interpolation cannot be performed")
+                    if next_stage == len(self.compressor_stages):
+                        logging.error(
+                            f"The load {load} is either greater than then capacity at stage {current_stage} ({stage_capacity} kW) or larger than the capacity at stage {next_stage} ({next_stage_capacity} kW)."
+                        )
+                        raise ValueError("Interpolation cannot be performed")
+                    else:
+                        next
         # Perform interpolation
         eer_low, _, actual_load_low = self.calculate_intermediate_eer(
             curves,
