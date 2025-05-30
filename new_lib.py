@@ -45,6 +45,6 @@ def plot_lib(lib_path, rating_std="ahri_340/360"):
 
 if __name__ == "__main__":
     location = os.path.dirname(os.path.realpath(__file__))
-    dx_lib = os.path.join(location, "./copper/data/multi_stage.json")
+    dx_lib = os.path.join(location, "./copper/data/library.json")
     #print(dx_lib)
     plot_lib(lib_path=dx_lib)
