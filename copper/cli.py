@@ -7,6 +7,7 @@ This the command line interface module of Copper. It faciliate the integration o
 import click, json, inspect
 
 from copper.chiller import Chiller
+from copper.unitarydirectexpansion import UnitaryDirectExpansion
 import copper.schema
 
 
@@ -35,7 +36,8 @@ def run(input_file):
             eqp_props = action["equipment"]
             # Make sure that the equipment is supported by Copper
             assert eqp_props["type"].lower() in [
-                "chiller"
+                "chiller",
+                "unitarydirectexpansion",
             ], "Equipment type not currently supported by Copper."
 
             # Get properties for equipment type
