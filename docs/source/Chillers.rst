@@ -15,4 +15,4 @@ The `chiller library`_ contains performance curves for existing chillers for bot
 .. _EnergyPlus: https://bigladdersoftware.com/epx/docs/8-7/engineering-reference/chillers.html#electric-chiller-model-based-on-condenser-entering-temperature
 .. _DOE-2: https://doe2.com/Download/DOE-21E/DOE-2EngineersManualVersion2.1A.pdf
 .. _EnergyPlus engineering manual: https://bigladdersoftware.com/epx/docs/8-7/engineering-reference/chillers.html#electric-chiller-model-based-on-condenser-leaving-temperature
-.. _chiller library: https://github.com/pnnl/copper/blob/develop/copper/lib/chiller_curves.json
+.. _chiller library: https://github.com/pnnl/copper/blob/develop/copper/data/chiller_curves.json
