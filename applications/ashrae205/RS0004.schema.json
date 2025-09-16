@@ -1,0 +1,361 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Air-to-Air Direct Expansion Refrigerant System",
+    "description": "Schema for ASHRAE 205 annex RS0004: Air-to-Air Direct Expansion Refrigerant System",
+    "definitions": {
+        "RS0004": {
+            "type": "object",
+            "properties": {
+                "metadata": {
+                    "description": "Metadata data group",
+                    "$ref": "ASHRAE205.schema.json#/definitions/Metadata",
+                    "requiredText": "True",
+                    "constraintsText": "schema=RS0004"
+                },
+                "description": {
+                    "description": "Data group describing product and rating information",
+                    "$ref": "RS0004.schema.json#/definitions/Description"
+                },
+                "performance": {
+                    "description": "Data group containing performance information",
+                    "$ref": "RS0004.schema.json#/definitions/Performance",
+                    "requiredText": "True"
+                }
+            },
+            "required": [
+                "metadata",
+                "performance"
+            ],
+            "additionalProperties": false
+        },
+        "Description": {
+            "type": "object",
+            "properties": {
+                "product_information": {
+                    "description": "Data group describing product information",
+                    "$ref": "RS0004.schema.json#/definitions/ProductInformation"
+                }
+            },
+            "additionalProperties": false
+        },
+        "ProductInformation": {
+            "type": "object",
+            "properties": {
+                "outdoor_unit_manufacturer": {
+                    "description": "Outdoor unit manufacturer name",
+                    "type": "string"
+                },
+                "outdoor_unit_model_number": {
+                    "description": "Outdoor unit model number",
+                    "$ref": "ASHRAE205.schema.json#/definitions/Pattern",
+                    "notes": "Pattern shall match all model numbers that can be represented by the representation"
+                },
+                "indoor_unit_manufacturer": {
+                    "description": "Indoor unit manufacturer name",
+                    "type": "string",
+                    "notes": "May be omitted for packaged systems with a single manufacturer"
+                },
+                "indoor_unit_model_number": {
+                    "description": "Indoor unit model number",
+                    "$ref": "ASHRAE205.schema.json#/definitions/Pattern",
+                    "notes": "Pattern shall match all model numbers that can be represented by the representation"
+                },
+                "refrigerant": {
+                    "description": "Refrigerant used",
+                    "type": "string",
+                    "notes": "The string shall start with 'R-' and then include the refrigerant number designation conforming to ANSI/ASHRAE Standard 34[@ASHRAE34]"
+                },
+                "compressor_type": {
+                    "description": "Type of compressor",
+                    "$ref": "ASHRAE205.schema.json#/definitions/CompressorType"
+                }
+            },
+            "additionalProperties": false
+        },
+        "Performance": {
+            "type": "object",
+            "properties": {
+                "compressor_speed_control_type": {
+                    "description": "Method used to control different speeds of the compressor",
+                    "$ref": "ASHRAE205.schema.json#/definitions/SpeedControlType",
+                    "requiredText": "True"
+                },
+                "cycling_degradation_coefficient": {
+                    "description": "Cycling degradation coefficient (C~D~) as described in AHRI 210/240",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "exclusiveMaximum": 1.0,
+                    "units": "-",
+                    "notes": [
+                        "Used for the lowest stage when the unit cycles to meet load",
+                        "***Informative note:*** 340/360 specifies a fixed cycling degradation coefficient of approximately 0.12"
+                    ],
+                    "requiredText": "True",
+                    "constraintsText": [
+                        ">=0.0",
+                        "<1.0"
+                    ]
+                },
+                "scaling": {
+                    "description": "Specifies the range the performance data can be scaled to represent different capacity equipment",
+                    "$ref": "ASHRAE205.schema.json#/definitions/Scaling",
+                    "notes": "If not present, scaling of the performance data is not allowed"
+                },
+                "performance_map_cooling": {
+                    "description": "Data group describing cooling performance over a range of conditions",
+                    "$ref": "RS0004.schema.json#/definitions/PerformanceMapCooling",
+                    "requiredText": "True"
+                },
+                "performance_map_standby": {
+                    "description": "Data group describing standby performance",
+                    "$ref": "RS0004.schema.json#/definitions/PerformanceMapStandby",
+                    "requiredText": "True"
+                }
+            },
+            "required": [
+                "compressor_speed_control_type",
+                "cycling_degradation_coefficient",
+                "performance_map_cooling",
+                "performance_map_standby"
+            ],
+            "additionalProperties": false
+        },
+        "PerformanceMapCooling": {
+            "type": "object",
+            "properties": {
+                "grid_variables": {
+                    "description": "Data group defining the grid variables for cooling performance",
+                    "$ref": "RS0004.schema.json#/definitions/GridVariablesCooling",
+                    "requiredText": "True"
+                },
+                "lookup_variables": {
+                    "description": "Data group defining the lookup variables for cooling performance",
+                    "$ref": "RS0004.schema.json#/definitions/LookupVariablesCooling",
+                    "requiredText": "True"
+                }
+            },
+            "required": [
+                "grid_variables",
+                "lookup_variables"
+            ],
+            "additionalProperties": false
+        },
+        "GridVariablesCooling": {
+            "type": "object",
+            "properties": {
+                "outdoor_coil_entering_dry_bulb_temperature": {
+                    "description": "Dry bulb temperature of the air entering the outdoor coil",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "K",
+                    "requiredText": "True",
+                    "constraintsText": ">=0.0"
+                },
+                "indoor_coil_entering_relative_humidity": {
+                    "description": "Relative humidity of the air entering the indoor coil",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "-",
+                    "notes": "As measured immediately before entering the coil (i.e., after the fan in a blow-through configuration)",
+                    "requiredText": "True",
+                    "constraintsText": [
+                        ">=0.0",
+                        "<=1.0"
+                    ]
+                },
+                "indoor_coil_entering_dry_bulb_temperature": {
+                    "description": "Dry bulb temperature of the air entering the indoor coil",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "K",
+                    "notes": "As measured immediately before entering the coil (i.e., after the fan in a blow-through configuration)",
+                    "requiredText": "True",
+                    "constraintsText": ">=0.0"
+                },
+                "indoor_coil_air_mass_flow_rate": {
+                    "description": "Mass flow rate of air entering the indoor coil",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "kg/s",
+                    "scalable": true,
+                    "requiredText": "True",
+                    "constraintsText": ">0.0"
+                },
+                "compressor_sequence_number": {
+                    "description": "Index indicating the relative capacity order of the compressor speed/stage expressed in order from lowest capacity (starting at 1) to highest capacity",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    },
+                    "units": "-",
+                    "notes": [
+                        "If `compressor_speed_control_type` is `DISCRETE`, sequence numbers shall be provided for each discrete stage of the compressor(s)",
+                        "If `compressor_speed_control_type` is `CONTINUOUS`, sufficient sequence numbers shall be provided to capture the continuous operation of the compressor(s)"
+                    ],
+                    "requiredText": "True",
+                    "constraintsText": ">=1"
+                },
+                "ambient_absolute_air_pressure": {
+                    "description": "Ambient absolute air pressure",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "Pa",
+                    "requiredText": "True",
+                    "constraintsText": ">=0.0"
+                }
+            },
+            "required": [
+                "outdoor_coil_entering_dry_bulb_temperature",
+                "indoor_coil_entering_relative_humidity",
+                "indoor_coil_entering_dry_bulb_temperature",
+                "indoor_coil_air_mass_flow_rate",
+                "compressor_sequence_number",
+                "ambient_absolute_air_pressure"
+            ],
+            "additionalProperties": false
+        },
+        "LookupVariablesCooling": {
+            "type": "object",
+            "properties": {
+                "gross_total_capacity": {
+                    "description": "Total heat removed by the indoor coil",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "W",
+                    "scalable": true,
+                    "notes": "Shall not include fan heat",
+                    "requiredText": "True",
+                    "constraintsText": ">=0.0"
+                },
+                "gross_sensible_capacity": {
+                    "description": "Sensible heat removed by the indoor coil",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "W",
+                    "scalable": true,
+                    "notes": "Shall not include fan heat",
+                    "requiredText": "True",
+                    "constraintsText": ">=0.0"
+                },
+                "gross_power": {
+                    "description": "Gross power draw (of the outdoor unit)",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "W",
+                    "scalable": true,
+                    "notes": [
+                        "Includes compressor, outdoor fan, and any auxiliary power used by the unit's controls and any sump heater",
+                        "Shall not include power drawn by the indoor fan"
+                    ],
+                    "requiredText": "True",
+                    "constraintsText": ">0.0"
+                },
+                "operation_state": {
+                    "description": "The operation state at the operating conditions",
+                    "type": "array",
+                    "items": {
+                        "$ref": "ASHRAE205.schema.json#/definitions/OperationState"
+                    },
+                    "units": "-",
+                    "requiredText": "True"
+                }
+            },
+            "required": [
+                "gross_total_capacity",
+                "gross_sensible_capacity",
+                "gross_power",
+                "operation_state"
+            ],
+            "additionalProperties": false
+        },
+        "PerformanceMapStandby": {
+            "type": "object",
+            "properties": {
+                "grid_variables": {
+                    "description": "Data group defining the grid variables for standby performance",
+                    "$ref": "RS0004.schema.json#/definitions/GridVariablesStandby",
+                    "requiredText": "True"
+                },
+                "lookup_variables": {
+                    "description": "Data group defining the lookup variables for standby performance",
+                    "$ref": "RS0004.schema.json#/definitions/LookupVariablesStandby",
+                    "requiredText": "True"
+                }
+            },
+            "required": [
+                "grid_variables",
+                "lookup_variables"
+            ],
+            "additionalProperties": false
+        },
+        "GridVariablesStandby": {
+            "type": "object",
+            "properties": {
+                "outdoor_coil_environment_dry_bulb_temperature": {
+                    "description": "Dry bulb temperature of the air in the environment of the outdoor coil",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "K",
+                    "requiredText": "True",
+                    "constraintsText": ">=0.0"
+                }
+            },
+            "required": [
+                "outdoor_coil_environment_dry_bulb_temperature"
+            ],
+            "additionalProperties": false
+        },
+        "LookupVariablesStandby": {
+            "type": "object",
+            "properties": {
+                "gross_power": {
+                    "description": "Gross power draw (of the outdoor unit)",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "W",
+                    "scalable": true,
+                    "notes": "Includes any auxiliary power used by the unit's controls and any sump heater",
+                    "requiredText": "True",
+                    "constraintsText": ">0.0"
+                }
+            },
+            "required": [
+                "gross_power"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "version": "2.0.0",
+    "$ref": "#/definitions/RS0004"
+}
