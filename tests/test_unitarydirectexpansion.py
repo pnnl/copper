@@ -391,6 +391,35 @@ class UnitaryDirectExpansion(TestCase):
         self.dx_unit_dft.set_of_curves.append(new_curve)
         assert len(self.dx_unit_dft.get_dx_curves(copy_all_stages=False)["2"]) == 1
 
+    def test_ms_generation(self):
+        ms_dx_unit = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            compressor_speed="constant",
+            ref_cap_unit="ton",
+            ref_gross_cap=8,
+            full_eff=11.5,
+            full_eff_unit="eer",
+            part_eff=12.8,
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+            indoor_fan_speeds=1,
+            compressor_stages=[0.33, 0.67, 1.0],
+            indoor_fan_curve=True,
+            indoor_fan_power=8 * 400 * 0.3 / 1000,
+            indoor_fan_power_unit="kW",
+        )
+        set_of_curves = ms_dx_unit.generate_set_of_curves(
+            method="nearest_neighbor",
+            tol=0.01,
+            num_nearest_neighbors=5,
+            verbose=True,
+            vars=["eir-f-t"],
+            random_seed=1,
+        )
+        assert len(set_of_curves) > 0
+
     def test_ahri_340_360_example_g4_3(self):
         ahri_example_lib = cp.Library(
             path=os.path.join(location, "./data", "ahri_example.json")
