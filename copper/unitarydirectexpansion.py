@@ -319,7 +319,9 @@ class UnitaryDirectExpansion(Equipment):
                             * fan_power_fractions[
                                 compressor_stages.index(compressor_stage)
                             ],
-                            fan_flow_fractions.index(compressor_stage),
+                            fan_power_fractions[
+                                compressor_stages.index(compressor_stage)
+                            ],
                         )
                     else:
                         return (

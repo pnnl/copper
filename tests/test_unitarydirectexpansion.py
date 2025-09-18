@@ -391,7 +391,7 @@ class UnitaryDirectExpansion(TestCase):
         self.dx_unit_dft.set_of_curves.append(new_curve)
         assert len(self.dx_unit_dft.get_dx_curves(copy_all_stages=False)["2"]) == 1
 
-    def test_ms_generation(self):
+    def test_ms_generation_vs_fan(self):
         ms_dx_unit = cp.UnitaryDirectExpansion(
             compressor_type="scroll",
             condenser_type="air",
@@ -408,6 +408,62 @@ class UnitaryDirectExpansion(TestCase):
             compressor_stages=[0.33, 0.67, 1.0],
             indoor_fan_curve=True,
             indoor_fan_power=8 * 400 * 0.3 / 1000,
+            indoor_fan_power_unit="kW",
+        )
+        set_of_curves = ms_dx_unit.generate_set_of_curves(
+            method="nearest_neighbor",
+            tol=0.01,
+            num_nearest_neighbors=5,
+            verbose=True,
+            vars=["eir-f-t"],
+            random_seed=1,
+        )
+        assert len(set_of_curves) > 0
+
+    def test_ms_generation_ms_fan(self):
+        ms_dx_unit = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            compressor_speed="constant",
+            ref_cap_unit="ton",
+            ref_gross_cap=15,
+            full_eff=11.2,
+            full_eff_unit="eer",
+            part_eff=14.8,
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+            indoor_fan_speeds=5,
+            compressor_stages=[0.2, 0.4, 0.6, 0.8, 1.0],
+            indoor_fan_speeds_mapping={
+                "1": {
+                    "fan_flow_fraction": 0.2,
+                    "fan_power_fraction": 0.1,
+                    "compressor_stage": 1,
+                },
+                "2": {
+                    "fan_flow_fraction": 0.4,
+                    "fan_power_fraction": 0.16,
+                    "compressor_stage": 2,
+                },
+                "3": {
+                    "fan_flow_fraction": 0.6,
+                    "fan_power_fraction": 0.36,
+                    "compressor_stage": 3,
+                },
+                "4": {
+                    "fan_flow_fraction": 0.8,
+                    "fan_power_fraction": 0.64,
+                    "compressor_stage": 4,
+                },
+                "5": {
+                    "fan_flow_fraction": 1.0,
+                    "fan_power_fraction": 1.0,
+                    "compressor_stage": 5,
+                },
+            },
+            indoor_fan_curve=False,
+            indoor_fan_power=15 * 400 * 0.3 / 1000,
             indoor_fan_power_unit="kW",
         )
         set_of_curves = ms_dx_unit.generate_set_of_curves(
