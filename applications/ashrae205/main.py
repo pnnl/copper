@@ -1,26 +1,81 @@
-import json
-import pandas as pd
-import numpy as np
-import itertools
-import psychrolib
+# %% [markdown]
+# ================================================
+# Unitary DX Performance Mapping Generator for STD 205
+# ================================================
+# 1. Generate performance curves (CSV)
+# 2. Populate STD205 JSON template with curves
+# 3. Validate JSON against ASHRAE 205 schema
+# 4. Convert JSON to other formats using tk205
+# ================================================
 
-# Set psychrometric unit system to SI
+# %%
+import json
+import itertools
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import psychrolib
+from pathlib import Path
+from jsonschema import Draft7Validator, RefResolver
+import tk205
+
+# %% -------------------------
+# STEP 1: Generate performance CSV
+# -------------------------
+def cooling_capacity_curve(T_outdoor, T_indoor, flow_rate):
+    base_capacity = 35000  # Btu/h nominal
+    adjustment = (
+        -200 * (T_outdoor - 95) 
+        + 150 * (75 - T_indoor) 
+        + 50 * (flow_rate - 400)
+    )
+    return base_capacity + adjustment
+
+outdoor_temps = np.arange(70, 115, 5)
+indoor_temps = [72, 75, 78]
+flow_rates = [350, 400, 450]
+
+data = []
+for t_out in outdoor_temps:
+    for t_in in indoor_temps:
+        for flow in flow_rates:
+            cap = cooling_capacity_curve(t_out, t_in, flow)
+            data.append((t_out, t_in, flow, cap))
+
+df = pd.DataFrame(data, columns=["OutdoorDB", "IndoorDB", "CFM", "Capacity_BtuH"])
+
+# Save to CSV
+csv_file = "unitary_dx_capacity_curves.csv"
+df.to_csv(csv_file, index=False)
+print(f"✅ Performance CSV saved to {csv_file}")
+
+# Plot example
+plt.figure(figsize=(8, 6))
+for t_in in indoor_temps:
+    subset = df[df["IndoorDB"] == t_in]
+    plt.plot(subset["OutdoorDB"], subset["Capacity_BtuH"], marker="o", label=f"Indoor {t_in}F")
+plt.xlabel("Outdoor Dry Bulb (F)")
+plt.ylabel("Capacity (Btu/h)")
+plt.title("Cooling Capacity vs Outdoor Temperature")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# %% -------------------------
+# STEP 2: Populate STD205 JSON
+# -------------------------
 psychrolib.SetUnitSystem(psychrolib.SI)
 
-# === CONFIGURATION ===
-csv_file = 'AC_Perf_901_2022_65_to_135_11.55EER_14.8IEER.csv'
-json_template_file = 'DX-Constant-Efficiency.RS0004.a205.json'
-output_json_file = 'DX_Updated_STD205_Output.json'
+json_template_file = "DX-Constant-Efficiency.RS0004.a205.json"
+output_json_file = "DX_Updated_STD205_Output.json"
 
-# Nominal values, gt760 for default
-nominal_capacity = 232057  # W, 792 kBtu/h
-nominal_eer = 9.2         # Example EER (IP)
+# Nominal values
+nominal_capacity = 232057  # W
+nominal_eer = 9.2
 nominal_eir = 1 / nominal_eer
 nominal_SHR = 0.7
 
-# === UTILITY FUNCTIONS ===
 def compute_wetbulb(Tdb_K, RH_frac, pressure_kPa):
-    """Compute wet-bulb temperature in Celsius."""
     Tdb_C = Tdb_K - 273.15
     pressure_Pa = pressure_kPa * 1000
     return psychrolib.GetTWetBulbFromRelHum(Tdb_C, RH_frac, pressure_Pa)
@@ -50,119 +105,30 @@ def calculate_performance(
     gross_capacity = nominal_capacity * cap_f_t * cap_f_flow
     eir = nominal_eir * eir_f_t * eir_f_flow
     power = gross_capacity * eir * (plr / plf if plf > 0 else 1)
-    return gross_capacity, 0.0, power  # sensible capacity is placeholder
+    return gross_capacity, 0.0, power
 
-# --- NEW: colleague-style ADP finder (line to saturation), using PsychroLib ---
-def _cp_moist_air_J_per_kgK(w):
-    return 1006.0 + 1860.0 * w
-
-def _dewpoint_from_w(w, P_Pa):
-    """
-    Compute dewpoint [°C] from humidity ratio w [kg/kg] and pressure P [Pa].
-    """
-    # Partial vapor pressure from humidity ratio
-    Pw = psychrolib.GetVapPresFromHumRatio(w, P_Pa)
-    # Need a dry-bulb guess as the first arg (PsychroLib ignores it, but must be >=0).
-    # Safe to use 0.0 °C or any value.
-    return psychrolib.GetTDewPointFromVapPres(0.0, Pw)
-
-def estimate_sensible_capacity_coolpropline(
-    Q_total_W, Tdbi_K, RH_frac, flow_rate_kg_s, pressure_kPa, SHR_rated=0.7
-):
-    """
-    Colleague's approach:
-      1) From Q_total and SHR, derive (T_out, w_out).
-      2) Fit line (T, w) through (T_in, w_in) and (T_out, w_out).
-      3) March along that line to find ADP where T_dp(w_x) ~= T_x.
-      4) Compute sensible/latent using T_out from step 1.
-
-    Returns: Q_sensible_W, Q_latent_W, SHR_actual
-    """
-    P_Pa = pressure_kPa * 1000.0
-    T_in_C = Tdbi_K - 273.15
-    RH = max(0.01, min(0.99, RH_frac))
-    m_dot = max(flow_rate_kg_s, 1e-9)
-
-    # Inlet state
-    w_in = psychrolib.GetHumRatioFromRelHum(T_in_C, RH, P_Pa)
-    h_in = psychrolib.GetMoistAirEnthalpy(T_in_C, w_in)
-
-    # Outlet conditions from total capacity + SHR
-    delta_h = Q_total_W / m_dot
-    h_out = h_in - delta_h
-    # Compute w_out using h at inlet T (standard SHR split)
-    h_tin_wout = h_in - (1.0 - SHR_rated) * delta_h
-    w_out = psychrolib.GetHumRatioFromEnthalpyAndTDryBulb(h_tin_wout, T_in_C)
-    # T_out from enthalpy & w_out
-    T_out_C = psychrolib.GetTDryBulbFromEnthalpyAndHumRatio(h_out, w_out)
-
-    # Line in (T, w): w = a*T + b through (T_in, w_in) & (T_out, w_out)
-    dT = T_out_C - T_in_C
-    if abs(dT) < 1e-9:
-        # near-zero temp drop ⇒ mostly sensible=0; return safe split
-        cp_air = _cp_moist_air_J_per_kgK(w_in)
-        Q_sens = m_dot * cp_air * (T_in_C - T_out_C)
-        Q_lat = Q_total_W - Q_sens
-        SHR_actual = Q_sens / max(Q_total_W, 1e-6)
-        return Q_sens, Q_lat, SHR_actual
-
-    a = (w_out - w_in) / dT
-    b = w_in - a * T_in_C
-
-    # Iteratively locate ADP along the line (match dewpoint to its temperature)
-    # Start above T_out to avoid division issues
-    t_x = T_out_C + 1e-3
-    incr = 0.001
-    for _ in range(2000):
-        t_x += incr
-        w_x = a * t_x + b
-        # Guard bounds for humidity ratio
-        w_x = max(1e-8, w_x)
-        # Dewpoint (from w_x at pressure)
-        t_dp = _dewpoint_from_w(w_x, P_Pa)
-        err = t_dp - t_x
-        if abs(err) < 1e-4:
-            break
-        # "CoolProp-style" step control
-        incr = err / 10.0
-
-    T_adp = t_x
-    w_adp = a * T_adp + b
-    w_adp = max(1e-8, w_adp)
-
-    # Sensible / latent using T_out from step 1 (keeps total consistent)
-    cp_air = _cp_moist_air_J_per_kgK(w_in)
-    Q_sens = m_dot * cp_air * (T_in_C - T_out_C)
-    Q_lat  = Q_total_W - Q_sens
-    SHR_actual = Q_sens / max(Q_total_W, 1e-6)
-
-    return Q_sens, Q_lat, SHR_actual
-
-# === STEP 1: Load CSV ===
-df = pd.read_csv(csv_file, header=None)
-df.columns = [
+# Load curves
+df_curves = pd.read_csv(csv_file, header=None)
+df_curves.columns = [
     'CurveName', 'CurveType', 'Unused', 'CurveUse',
     'X1Min', 'X1Max', 'X2Min', 'X2Max',
     'C0', 'C1', 'C2', 'C3', 'C4', 'C5'
 ]
 
-# === STEP 2: Load JSON Template ===
 with open(json_template_file, 'r') as f:
-    data = json.load(f)
+    data_json = json.load(f)
 
-grid = data['performance']['performance_map_cooling']['grid_variables']
+grid = data_json['performance']['performance_map_cooling']['grid_variables']
 keys = list(grid.keys())
 values = [grid[k] for k in keys]
 combinations = list(itertools.product(*values))
 
-# === STEP 3: Identify Curve Rows ===
-cap_f_t_row = df[df['CurveType'] == 'cap-f-t'].iloc[0]
-cap_f_flow_row = df[df['CurveType'] == 'cap-f-ff'].iloc[0]
-eir_f_t_row = df[df['CurveType'] == 'eir-f-t'].iloc[0]
-eir_f_flow_row = df[df['CurveType'] == 'eir-f-ff'].iloc[0]
-plf_f_plr_row = df[df['CurveType'] == 'plf-f-plr'].iloc[0]
+cap_f_t_row = df_curves[df_curves['CurveType'] == 'cap-f-t'].iloc[0]
+cap_f_flow_row = df_curves[df_curves['CurveType'] == 'cap-f-ff'].iloc[0]
+eir_f_t_row = df_curves[df_curves['CurveType'] == 'eir-f-t'].iloc[0]
+eir_f_flow_row = df_curves[df_curves['CurveType'] == 'eir-f-ff'].iloc[0]
+plf_f_plr_row = df_curves[df_curves['CurveType'] == 'plf-f-plr'].iloc[0]
 
-# === STEP 4: Loop Through Grid ===
 lookup = {
     "gross_total_capacity": [],
     "gross_sensible_capacity": [],
@@ -183,34 +149,15 @@ for combo in combinations:
 
         flow_rate = combo_dict["indoor_coil_air_mass_flow_rate"]
         flow_ratio = flow_rate / max(grid["indoor_coil_air_mass_flow_rate"])
-        plr = 1.0  # currently fixed
+        plr = 1.0
 
         gross_cap, _, power = calculate_performance(
             cap_f_t_row, cap_f_flow_row, eir_f_t_row, eir_f_flow_row, plf_f_plr_row,
-            WBi_C, Tdbo_C, flow_ratio, plr,
-            nominal_capacity, nominal_eir
-        )
-
-        # --- Apply compressor sequence degradation ---
-        comp_stage = combo_dict.get("compressor_sequence_number", 1)
-        if comp_stage > 1:
-            # Assume half performance for stage >= 2
-            degradation_factor = 0.5
-            gross_cap *= degradation_factor
-            power *= degradation_factor
-
-        # --- Sensible/latent using colleague's ADP method (per point) ---
-        sens_cap, _, _ = estimate_sensible_capacity_coolpropline(
-            Q_total_W=gross_cap,
-            Tdbi_K=Tdbi_K,
-            RH_frac=RH_frac,
-            flow_rate_kg_s=flow_rate,
-            pressure_kPa=P_kPa,
-            SHR_rated=nominal_SHR
+            WBi_C, Tdbo_C, flow_ratio, plr, nominal_capacity, nominal_eir
         )
 
         lookup["gross_total_capacity"].append(gross_cap)
-        lookup["gross_sensible_capacity"].append(sens_cap)
+        lookup["gross_sensible_capacity"].append(gross_cap * nominal_SHR)  # simplified
         lookup["gross_power"].append(power)
         lookup["operation_state"].append("NORMAL")
 
@@ -218,11 +165,51 @@ for combo in combinations:
         print(f"Skipping point {combo_dict} due to error: {e}")
         continue
 
-# === STEP 5: Update JSON ===
-data['performance']['performance_map_cooling']['lookup_variables'] = lookup
+data_json['performance']['performance_map_cooling']['lookup_variables'] = lookup
 
-# === STEP 6: Save Updated JSON ===
 with open(output_json_file, 'w') as f:
-    json.dump(data, f, indent=2)
+    json.dump(data_json, f, indent=2)
 
 print(f"✅ STD205 JSON updated and saved to: {output_json_file}")
+
+# %% -------------------------
+# STEP 3: Validate JSON
+# -------------------------
+base_dir = Path.cwd()
+schema_file = base_dir / "RS0004.schema.json"
+ashrae_file = base_dir / "ASHRAE205.schema.json"
+json_file   = base_dir / output_json_file
+
+with schema_file.open() as f:
+    schema = json.load(f)
+with ashrae_file.open() as f:
+    ashrae_schema = json.load(f)
+
+ashrae_uri = ashrae_file.resolve().as_uri()
+rs0004_uri = schema_file.resolve().as_uri()
+
+store = {ashrae_uri: ashrae_schema, rs0004_uri: schema}
+resolver = RefResolver(base_uri=rs0004_uri, referrer=schema, store=store)
+
+with json_file.open() as f:
+    data_val = json.load(f)
+
+validator = Draft7Validator(schema, resolver=resolver)
+errors = sorted(validator.iter_errors(data_val), key=lambda e: e.path)
+
+if not errors:
+    print(f"✅ {json_file.name} is valid according to {schema_file.name}")
+else:
+    print(f"❌ {json_file.name} has {len(errors)} validation errors:")
+    for err in errors:
+        path = ".".join(str(x) for x in err.path)
+        print(f" - {path}: {err.message}")
+
+# %% -------------------------
+# STEP 4: Convert JSON to XLSX using tk205
+# -------------------------
+src_dir = "input"   # directory with JSON files
+out_dir = "xlsx"    # output directory
+
+tk205.translate_directory(src_dir, out_dir)
+print(f"✅ Converted JSON in {src_dir} → XLSX in {out_dir}")
