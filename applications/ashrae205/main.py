@@ -1,4 +1,3 @@
-# %% [markdown]
 # ================================================
 # Unitary DX Performance Mapping Generator for STD 205
 # ================================================
@@ -8,7 +7,6 @@
 # 4. Convert JSON to other formats using tk205
 # ================================================
 
-# %%
 import json
 import itertools
 import numpy as np
@@ -19,7 +17,7 @@ from pathlib import Path
 from jsonschema import Draft7Validator, RefResolver
 import tk205
 
-# %% -------------------------
+# -------------------------
 # STEP 1: Generate performance CSV
 # -------------------------
 def cooling_capacity_curve(T_outdoor, T_indoor, flow_rate):
@@ -61,7 +59,7 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-# %% -------------------------
+# -------------------------
 # STEP 2: Populate STD205 JSON
 # -------------------------
 psychrolib.SetUnitSystem(psychrolib.SI)
@@ -172,7 +170,7 @@ with open(output_json_file, 'w') as f:
 
 print(f"✅ STD205 JSON updated and saved to: {output_json_file}")
 
-# %% -------------------------
+# -------------------------
 # STEP 3: Validate JSON
 # -------------------------
 base_dir = Path.cwd()
@@ -205,7 +203,7 @@ else:
         path = ".".join(str(x) for x in err.path)
         print(f" - {path}: {err.message}")
 
-# %% -------------------------
+# -------------------------
 # STEP 4: Convert JSON to XLSX using tk205
 # -------------------------
 src_dir = "input"   # directory with JSON files
