@@ -43,7 +43,7 @@ for t_out in outdoor_temps:
 df = pd.DataFrame(data, columns=["OutdoorDB", "IndoorDB", "CFM", "Capacity_BtuH"])
 
 # Save to CSV
-csv_file = "unitary_dx_capacity_curves.csv"
+csv_file = "unitary_dx_capacity_curves.csv" #change name as needed
 df.to_csv(csv_file, index=False)
 print(f"✅ Performance CSV saved to {csv_file}")
 
@@ -65,7 +65,7 @@ plt.show()
 psychrolib.SetUnitSystem(psychrolib.SI)
 
 json_template_file = "DX-Constant-Efficiency.RS0004.a205.json"
-output_json_file = "DX_Updated_STD205_Output.json"
+output_json_file = "input/DX_Updated_STD205_Output.json" # make the json output to be saved in input folder
 
 # Nominal values
 nominal_capacity = 232057  # W
