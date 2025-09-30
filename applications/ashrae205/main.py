@@ -20,48 +20,167 @@ import tk205
 # -------------------------
 # STEP 1: Generate performance CSV
 # -------------------------
-def cooling_capacity_curve(T_outdoor, T_indoor, flow_rate):
-    base_capacity = 35000  # Btu/h nominal
-    adjustment = (
-        -200 * (T_outdoor - 95) 
-        + 150 * (75 - T_indoor) 
-        + 50 * (flow_rate - 400)
-    )
-    return base_capacity + adjustment
+"""
+Generate performance curve CSVs for unitary DX equipment using the `copper` library.
+Replicates the Jupyter notebook workflow (no plots, no IDF export).
+"""
 
-outdoor_temps = np.arange(70, 115, 5)
-indoor_temps = [72, 75, 78]
-flow_rates = [350, 400, 450]
+import os
+import glob
+import argparse
+import copper as cp
 
-data = []
-for t_out in outdoor_temps:
-    for t_in in indoor_temps:
-        for flow in flow_rates:
-            cap = cooling_capacity_curve(t_out, t_in, flow)
-            data.append((t_out, t_in, flow, cap))
+def generate_curves(lib_path, outdir, combined_csv=None, seed=1):
+    # Load copper library
+    lib = cp.Library(path=lib_path)  # noqa: F841 (kept to initialize)
 
-df = pd.DataFrame(data, columns=["OutdoorDB", "IndoorDB", "CFM", "Capacity_BtuH"])
+    # Capacity buckets (kBtu/h) and fan power (kW)
+    capacities = {
+        "65_to_135": 96,
+        "135_to_240": 180,
+        "240_to_760": 480,
+        "gt760": 792,
+    }
+    fan_power = {
+        "65_to_135": 0.524,
+        "135_to_240": 1.197,
+        "240_to_760": 5.243,
+        "gt760": 11.190,
+    }
 
-# Save to CSV
-csv_file = "unitary_dx_capacity_curves.csv" #change name as needed
-df.to_csv(csv_file, index=False)
-print(f"✅ Performance CSV saved to {csv_file}")
+    # ASHRAE 90.1 efficiency requirements
+    requirements = {
+        "901_2004": {
+            "eer": {
+                "65_to_135": 10.3,
+                "135_to_240": 9.7,
+                "240_to_760": 9.5,
+                "gt760": 9.2,
+            },
+            "ieer": {
+                "65_to_135": None,
+                "135_to_240": None,
+                "240_to_760": 9.7,
+                "gt760": 9.4,
+            },
+        },
+        "901_2022": {
+            "eer": {
+                "65_to_135": None,
+                "135_to_240": None,
+                "240_to_760": None,
+                "gt760": None,
+            },
+            "ieer": {
+                "65_to_135": 14.8,
+                "135_to_240": 14.2,
+                "240_to_760": 13.2,
+                "gt760": 12.5,
+            },
+        },
+    }
 
-# Plot example
-plt.figure(figsize=(8, 6))
-for t_in in indoor_temps:
-    subset = df[df["IndoorDB"] == t_in]
-    plt.plot(subset["OutdoorDB"], subset["Capacity_BtuH"], marker="o", label=f"Indoor {t_in}F")
-plt.xlabel("Outdoor Dry Bulb (F)")
-plt.ylabel("Capacity (Btu/h)")
-plt.title("Cooling Capacity vs Outdoor Temperature")
-plt.legend()
-plt.grid(True)
-plt.show()
+    os.makedirs(outdir, exist_ok=True)
+
+    for code, req in requirements.items():
+        for cap_key, ref_cap_kbtuh in capacities.items():
+            if cap_key not in req["ieer"]:
+                continue
+
+            tonnage = cp.Units(value=ref_cap_kbtuh, unit="kbtu/h").conversion(new_unit="ton")
+
+            indoor_fan_speeds = 1 if "2004" in code else 2
+
+            dx = cp.UnitaryDirectExpansion(
+                compressor_type="scroll",
+                condenser_type="air",
+                compressor_speed="constant",
+                ref_cap_unit="ton",
+                ref_net_cap=tonnage,
+                full_eff=req["eer"][cap_key],
+                full_eff_unit="eer",
+                part_eff_ref_std="ahri_340/360",
+                indoor_fan_speeds=indoor_fan_speeds,
+                indoor_fan_power=fan_power[cap_key],
+                indoor_fan_power_unit="kW",
+            )
+
+            if req["eer"][cap_key] is None:
+                dx.full_eff = dx.ieer_to_eer(req["ieer"][cap_key])
+                name = f"AC_Perf_{code}_{cap_key}_{round(dx.full_eff,2)}EER_{round(req['ieer'][cap_key],2)}IEER"
+            if req["ieer"][cap_key] is None:
+                agg_only = True
+                name = f"AC_Perf_{code}_{cap_key}_{round(dx.full_eff,2)}EER"
+            else:
+                dx.part_eff = req["ieer"][cap_key]
+                agg_only = False
+                name = f"AC_Perf_{code}_{cap_key}_{round(dx.full_eff,2)}EER_{round(dx.part_eff,2)}IEER"
+
+            dx.degradation_coefficient = 0.25 if "2004" in code else 0.15
+            dx.add_cycling_degradation_curve(overwrite=True)
+
+            _ = dx.generate_set_of_curves(
+                method="nearest_neighbor",
+                tol=0.01,
+                num_nearest_neighbors=5,
+                verbose=False,
+                vars=["eir-f-t"],
+                random_seed=seed,
+                agg_only=agg_only,
+            )
+
+            dx.add_cycling_degradation_curve(overwrite=True)
+
+            curves = cp.SetofCurves()
+            curves.curves = dx.set_of_curves
+            curves.eqp = dx
+
+            limits = dx.get_ranges()
+            for c in curves.curves:
+                xs = limits[c.out_var]["vars_range"][0]
+                c.x_min, c.x_max = xs[0], xs[1]
+                if len(limits[c.out_var]["vars_range"]) > 1:
+                    ys = limits[c.out_var]["vars_range"][1]
+                    c.y_min, c.y_max = ys[0], ys[1]
+                if "eir" in c.out_var:
+                    c.out_min = 0.0
+                if "plf" in c.out_var:
+                    c.out_min = 0.0
+
+            curves.export(path=outdir, fmt="csv", name=name)
+
+    if combined_csv:
+        combined_path = os.path.join(outdir, combined_csv)
+        with open(combined_path, "w", encoding="utf-8") as nf:
+            nf.write("name,variable,unit_type,curve_type,min_x,max_x,min_y,max_y,coeff1,coeff2,coeff3,coeff4,coeff5,coeff6\n")
+            pattern = os.path.join(outdir, "AC_Perf*.csv")
+            for f in glob.glob(pattern):
+                with open(f, "r", encoding="utf-8") as cf:
+                    for line in cf:
+                        nf.write(line)
+        print(f"✅ Combined CSV written: {combined_path}")
+
+    print(f"✅ Individual CSVs written to: {os.path.abspath(outdir)}")
+
+parser = argparse.ArgumentParser(description="Generate DX curve CSVs with copper")
+parser.add_argument("--lib", default="./copper/data/unitarydirectexpansion_curves.json",
+                    help="Path to copper library JSON")
+parser.add_argument("--outdir", default=".",
+                    help="Output directory for AC_Perf*.csv")
+parser.add_argument("--combined", default="",
+                    help="Optional combined CSV filename")
+parser.add_argument("--seed", type=int, default=1,
+                    help="Random seed")
+args = parser.parse_args()
+
+generate_curves(args.lib, args.outdir, args.combined, args.seed)
+
 
 # -------------------------
 # STEP 2: Populate STD205 JSON
 # -------------------------
+
+csv_file = "AC_Perf_901_2022_65_to_135_11.55EER_14.8IEER.CSV"  # generated from STEP 1
 psychrolib.SetUnitSystem(psychrolib.SI)
 
 json_template_file = "DX-Constant-Efficiency.RS0004.a205.json"
