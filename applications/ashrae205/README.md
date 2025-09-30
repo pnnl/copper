@@ -43,21 +43,47 @@ The workflow is fully implemented in a single script: **`main.py`**.
 * `RS0004.schema.json`, `ASHRAE205.schema.json`  
   → Schemas used for validation.
 
----
-
 ## 📥 Requirements
 
-Install dependencies:
+Install core dependencies:
 
 ```bash
-pip install pandas numpy matplotlib psychrolib jsonschema tk205
+pip install pandas numpy matplotlib psychrolib jsonschema
 ````
 
-For JSON → XLSX conversion using Toolkit 205, follow setup at [Toolkit 205](https://github.com/open205/toolkit-205), then build schemas:
+For **JSON → XLSX conversion** and **schema validation**, you also need
+[Toolkit 205](https://github.com/open205/toolkit-205).
 
-```bash
-poetry run doit build_schema
-```
+### Setup Toolkit 205
+
+1. Clone the Toolkit 205 repository:
+
+   ```bash
+   git clone https://github.com/open205/toolkit-205.git
+   ```
+
+2. Copy its contents into the project:
+
+   ```bash
+   cp -r toolkit-205/* application/ashrae205/
+   ```
+
+3. Install Poetry (if not already installed):
+
+   ```bash
+   pip install poetry
+   ```
+
+4. Build schemas inside `application/ashrae205/`:
+
+   ```bash
+   cd application/ashrae205/
+   poetry install
+   poetry run doit build_schema
+   ```
+
+This will generate the required schema files (**RS0004.schema.json** and **ASHRAE205.schema.json**) used for validation.
+
 
 ---
 
