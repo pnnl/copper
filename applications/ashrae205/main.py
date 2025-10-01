@@ -26,8 +26,14 @@ Replicates the Jupyter notebook workflow (no plots, no IDF export).
 """
 
 import os
+import sys
 import glob
 import argparse
+
+# Add the copper module to the Python path
+copper_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if copper_path not in sys.path:
+    sys.path.insert(0, copper_path)
 import copper as cp
 
 def generate_curves(lib_path, outdir, combined_csv=None, seed=1):
@@ -127,6 +133,7 @@ def generate_curves(lib_path, outdir, combined_csv=None, seed=1):
                 vars=["eir-f-t"],
                 random_seed=seed,
                 agg_only=agg_only,
+                random_seed=1,
             )
 
             dx.add_cycling_degradation_curve(overwrite=True)
@@ -163,7 +170,7 @@ def generate_curves(lib_path, outdir, combined_csv=None, seed=1):
     print(f"✅ Individual CSVs written to: {os.path.abspath(outdir)}")
 
 parser = argparse.ArgumentParser(description="Generate DX curve CSVs with copper")
-parser.add_argument("--lib", default="./copper/data/unitarydirectexpansion_curves.json",
+parser.add_argument("--lib", default="../../copper/data/unitarydirectexpansion_curves.json",
                     help="Path to copper library JSON")
 parser.add_argument("--outdir", default=".",
                     help="Output directory for AC_Perf*.csv")

@@ -59,13 +59,14 @@ For **JSON → XLSX conversion** and **schema validation**, you also need
 1. Clone the Toolkit 205 repository:
 
    ```bash
-   git clone https://github.com/open205/toolkit-205.git
+   git clone --recurse-submodules https://github.com/open205/toolkit-205.git
    ```
 
 2. Copy its contents into the project:
 
    ```bash
-   cp -r toolkit-205/* application/ashrae205/
+   cp -r toolkit-205/tk205 applications/ashrae205/
+   cp -r toolkit-205/schema-205/schema205 applications/ashrae205/
    ```
 
 3. Install Poetry (if not already installed):
@@ -74,10 +75,10 @@ For **JSON → XLSX conversion** and **schema validation**, you also need
    pip install poetry
    ```
 
-4. Build schemas inside `application/ashrae205/`:
+4. Build schemas inside `applications/ashrae205/`:
 
    ```bash
-   cd application/ashrae205/
+   cd applications/ashrae205/
    poetry install
    poetry run doit build_schema
    ```
