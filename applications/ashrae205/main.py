@@ -31,10 +31,11 @@ import glob
 import argparse
 
 # Add the copper module to the Python path
-copper_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+copper_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if copper_path not in sys.path:
     sys.path.insert(0, copper_path)
 import copper as cp
+
 
 def generate_curves(lib_path, outdir, combined_csv=None, seed=1):
     # Load copper library
@@ -93,7 +94,9 @@ def generate_curves(lib_path, outdir, combined_csv=None, seed=1):
             if cap_key not in req["ieer"]:
                 continue
 
-            tonnage = cp.Units(value=ref_cap_kbtuh, unit="kbtu/h").conversion(new_unit="ton")
+            tonnage = cp.Units(value=ref_cap_kbtuh, unit="kbtu/h").conversion(
+                new_unit="ton"
+            )
 
             indoor_fan_speeds = 1 if "2004" in code else 2
 
@@ -159,7 +162,9 @@ def generate_curves(lib_path, outdir, combined_csv=None, seed=1):
     if combined_csv:
         combined_path = os.path.join(outdir, combined_csv)
         with open(combined_path, "w", encoding="utf-8") as nf:
-            nf.write("name,variable,unit_type,curve_type,min_x,max_x,min_y,max_y,coeff1,coeff2,coeff3,coeff4,coeff5,coeff6\n")
+            nf.write(
+                "name,variable,unit_type,curve_type,min_x,max_x,min_y,max_y,coeff1,coeff2,coeff3,coeff4,coeff5,coeff6\n"
+            )
             pattern = os.path.join(outdir, "AC_Perf*.csv")
             for f in glob.glob(pattern):
                 with open(f, "r", encoding="utf-8") as cf:
@@ -169,15 +174,16 @@ def generate_curves(lib_path, outdir, combined_csv=None, seed=1):
 
     print(f"✅ Individual CSVs written to: {os.path.abspath(outdir)}")
 
+
 parser = argparse.ArgumentParser(description="Generate DX curve CSVs with copper")
-parser.add_argument("--lib", default="../../copper/data/unitarydirectexpansion_curves.json",
-                    help="Path to copper library JSON")
-parser.add_argument("--outdir", default=".",
-                    help="Output directory for AC_Perf*.csv")
-parser.add_argument("--combined", default="",
-                    help="Optional combined CSV filename")
-parser.add_argument("--seed", type=int, default=1,
-                    help="Random seed")
+parser.add_argument(
+    "--lib",
+    default="../../copper/data/unitarydirectexpansion_curves.json",
+    help="Path to copper library JSON",
+)
+parser.add_argument("--outdir", default=".", help="Output directory for AC_Perf*.csv")
+parser.add_argument("--combined", default="", help="Optional combined CSV filename")
+parser.add_argument("--seed", type=int, default=1, help="Random seed")
 args = parser.parse_args()
 
 generate_curves(args.lib, args.outdir, args.combined, args.seed)
@@ -191,7 +197,7 @@ csv_file = "AC_Perf_901_2022_65_to_135_11.55EER_14.8IEER.CSV"  # generated from 
 psychrolib.SetUnitSystem(psychrolib.SI)
 
 json_template_file = "DX-Constant-Efficiency.RS0004.a205.json"
-output_json_file = "input/DX_Updated_STD205_Output.json" # make the json output to be saved in input folder
+output_json_file = "input/DX_Updated_STD205_Output.json"  # make the json output to be saved in input folder
 
 # Nominal values
 nominal_capacity = 232057  # W
@@ -199,27 +205,46 @@ nominal_eer = 9.2
 nominal_eir = 1 / nominal_eer
 nominal_SHR = 0.7
 
+
 def compute_wetbulb(Tdb_K, RH_frac, pressure_kPa):
     Tdb_C = Tdb_K - 273.15
     pressure_Pa = pressure_kPa * 1000
     return psychrolib.GetTWetBulbFromRelHum(Tdb_C, RH_frac, pressure_Pa)
 
+
 def evaluate_curve(row, x1, x2=0):
-    ctype = row['CurveUse'].lower()
-    if ctype == 'bi_quad':
-        return row['C0'] + row['C1'] * x1 + row['C2'] * x1**2 + row['C3'] * x2 + row['C4'] * x2**2 + row['C5'] * x1 * x2
-    elif ctype == 'cubic':
-        return row['C0'] + row['C1'] * x1 + row['C2'] * x1**2 + row['C3'] * x1**3
-    elif ctype == 'quadratic':
-        return row['C0'] + row['C1'] * x1 + row['C2'] * x1**2
-    elif ctype == 'linear':
-        return row['C0'] + row['C1'] * x1
+    ctype = row["CurveUse"].lower()
+    if ctype == "bi_quad":
+        return (
+            row["C0"]
+            + row["C1"] * x1
+            + row["C2"] * x1**2
+            + row["C3"] * x2
+            + row["C4"] * x2**2
+            + row["C5"] * x1 * x2
+        )
+    elif ctype == "cubic":
+        return row["C0"] + row["C1"] * x1 + row["C2"] * x1**2 + row["C3"] * x1**3
+    elif ctype == "quadratic":
+        return row["C0"] + row["C1"] * x1 + row["C2"] * x1**2
+    elif ctype == "linear":
+        return row["C0"] + row["C1"] * x1
     else:
         raise ValueError(f"Unsupported curve type: {ctype}")
 
+
 def calculate_performance(
-    cap_f_t_row, cap_f_flow_row, eir_f_t_row, eir_f_flow_row, plf_f_plr_row,
-    x1, x2, flow_ratio, plr, nominal_capacity, nominal_eir
+    cap_f_t_row,
+    cap_f_flow_row,
+    eir_f_t_row,
+    eir_f_flow_row,
+    plf_f_plr_row,
+    x1,
+    x2,
+    flow_ratio,
+    plr,
+    nominal_capacity,
+    nominal_eir,
 ):
     cap_f_t = evaluate_curve(cap_f_t_row, x1, x2)
     cap_f_flow = evaluate_curve(cap_f_flow_row, flow_ratio)
@@ -231,40 +256,54 @@ def calculate_performance(
     power = gross_capacity * eir * (plr / plf if plf > 0 else 1)
     return gross_capacity, 0.0, power
 
+
 # Load curves
 df_curves = pd.read_csv(csv_file, header=None)
 df_curves.columns = [
-    'CurveName', 'CurveType', 'Unused', 'CurveUse',
-    'X1Min', 'X1Max', 'X2Min', 'X2Max',
-    'C0', 'C1', 'C2', 'C3', 'C4', 'C5'
+    "CurveName",
+    "CurveType",
+    "Unused",
+    "CurveUse",
+    "X1Min",
+    "X1Max",
+    "X2Min",
+    "X2Max",
+    "C0",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
 ]
 
-with open(json_template_file, 'r') as f:
+with open(json_template_file, "r") as f:
     data_json = json.load(f)
 
-grid = data_json['performance']['performance_map_cooling']['grid_variables']
+grid = data_json["performance"]["performance_map_cooling"]["grid_variables"]
 keys = list(grid.keys())
 values = [grid[k] for k in keys]
 combinations = list(itertools.product(*values))
 
-cap_f_t_row = df_curves[df_curves['CurveType'] == 'cap-f-t'].iloc[0]
-cap_f_flow_row = df_curves[df_curves['CurveType'] == 'cap-f-ff'].iloc[0]
-eir_f_t_row = df_curves[df_curves['CurveType'] == 'eir-f-t'].iloc[0]
-eir_f_flow_row = df_curves[df_curves['CurveType'] == 'eir-f-ff'].iloc[0]
-plf_f_plr_row = df_curves[df_curves['CurveType'] == 'plf-f-plr'].iloc[0]
+cap_f_t_row = df_curves[df_curves["CurveType"] == "cap-f-t"].iloc[0]
+cap_f_flow_row = df_curves[df_curves["CurveType"] == "cap-f-ff"].iloc[0]
+eir_f_t_row = df_curves[df_curves["CurveType"] == "eir-f-t"].iloc[0]
+eir_f_flow_row = df_curves[df_curves["CurveType"] == "eir-f-ff"].iloc[0]
+plf_f_plr_row = df_curves[df_curves["CurveType"] == "plf-f-plr"].iloc[0]
 
 lookup = {
     "gross_total_capacity": [],
     "gross_sensible_capacity": [],
     "gross_power": [],
-    "operation_state": []
+    "operation_state": [],
 }
 
 for combo in combinations:
     combo_dict = dict(zip(keys, combo))
     try:
         Tdbi_K = combo_dict["indoor_coil_entering_dry_bulb_temperature"]
-        RH_frac = max(0.01, min(1.0, combo_dict["indoor_coil_entering_relative_humidity"]))
+        RH_frac = max(
+            0.01, min(1.0, combo_dict["indoor_coil_entering_relative_humidity"])
+        )
         Tdbo_K = combo_dict["outdoor_coil_entering_dry_bulb_temperature"]
         P_kPa = combo_dict["ambient_absolute_air_pressure"]
 
@@ -276,8 +315,17 @@ for combo in combinations:
         plr = 1.0
 
         gross_cap, _, power = calculate_performance(
-            cap_f_t_row, cap_f_flow_row, eir_f_t_row, eir_f_flow_row, plf_f_plr_row,
-            WBi_C, Tdbo_C, flow_ratio, plr, nominal_capacity, nominal_eir
+            cap_f_t_row,
+            cap_f_flow_row,
+            eir_f_t_row,
+            eir_f_flow_row,
+            plf_f_plr_row,
+            WBi_C,
+            Tdbo_C,
+            flow_ratio,
+            plr,
+            nominal_capacity,
+            nominal_eir,
         )
 
         lookup["gross_total_capacity"].append(gross_cap)
@@ -289,9 +337,9 @@ for combo in combinations:
         print(f"Skipping point {combo_dict} due to error: {e}")
         continue
 
-data_json['performance']['performance_map_cooling']['lookup_variables'] = lookup
+data_json["performance"]["performance_map_cooling"]["lookup_variables"] = lookup
 
-with open(output_json_file, 'w') as f:
+with open(output_json_file, "w") as f:
     json.dump(data_json, f, indent=2)
 
 print(f"✅ STD205 JSON updated and saved to: {output_json_file}")
@@ -302,7 +350,7 @@ print(f"✅ STD205 JSON updated and saved to: {output_json_file}")
 base_dir = Path.cwd()
 schema_file = base_dir / "RS0004.schema.json"
 ashrae_file = base_dir / "ASHRAE205.schema.json"
-json_file   = base_dir / output_json_file
+json_file = base_dir / output_json_file
 
 with schema_file.open() as f:
     schema = json.load(f)
@@ -332,8 +380,8 @@ else:
 # -------------------------
 # STEP 4: Convert JSON to XLSX using tk205
 # -------------------------
-src_dir = "input"   # directory with JSON files
-out_dir = "xlsx"    # output directory
+src_dir = "input"  # directory with JSON files
+out_dir = "xlsx"  # output directory
 
 tk205.translate_directory(src_dir, out_dir)
 print(f"✅ Converted JSON in {src_dir} → XLSX in {out_dir}")
