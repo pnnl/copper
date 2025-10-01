@@ -7,8 +7,8 @@
         "id": "123e4567-e89b-12d3-a456-426614174000",
         "data_timestamp": "2020-05-07T00:00Z",
         "data_version": 1,
-        "disclaimer": "Example data not to be used for simulation",
-        "notes": "An example representation that applies a constant COP of 3.1"
+    "disclaimer": "Example data not to be used for simulation",
+    "notes": "An example representation of the ASHRAE 90.1 Appendix G minimum requirements for unitary air-conditioners"
     },
     "description": {
         "product_information": {
@@ -27,14 +27,22 @@
             "grid_variables": {
                 "outdoor_coil_entering_dry_bulb_temperature": [
                     283.15,
+                    293.15,
+                    303.15,
+                    313.15,
                     323.15
                 ],
                 "indoor_coil_entering_relative_humidity": [
                     0,
+                    0.1,
+                    0.5,
+                    0.9,
                     1
                 ],
                 "indoor_coil_entering_dry_bulb_temperature": [
                     283.15,
+                    293.15,
+                    303.15,
                     313.15
                 ],
                 "indoor_coil_air_mass_flow_rate": [
