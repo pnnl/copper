@@ -103,6 +103,9 @@ This will generate the required schema files (**RS0004.schema.json** and **ASHRA
 4. **Conversion** (optional)
    Using **tk205**, the script converts valid JSON into Excel `.xlsx` format (stored in `xlsx/`).
 
+5. **Plot** (optional)
+   Using matplotlab to plot the figures of curves and maps for comparisons.
+
 ---
 
 ## ⚙️ Configuration
@@ -137,6 +140,7 @@ Example outputs:
 ✅ STD205 JSON updated and saved to: input/DX_Updated_STD205_Output.json
 ✅ DX_Updated_STD205_Output.json is valid according to RS0004.schema.json
 ✅ Converted JSON in input → XLSX in xlsx
+📈 Saved: ./
 ```
 
 ---

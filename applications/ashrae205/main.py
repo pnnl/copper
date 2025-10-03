@@ -16,6 +16,7 @@ import psychrolib
 from pathlib import Path
 from jsonschema import Draft7Validator, RefResolver
 import tk205
+import os
 
 # -------------------------
 # STEP 1: Generate performance CSV
@@ -385,3 +386,113 @@ out_dir = "xlsx"  # output directory
 
 tk205.translate_directory(src_dir, out_dir)
 print(f"✅ Converted JSON in {src_dir} → XLSX in {out_dir}")
+
+# -------------------------
+# STEP 5: Plot validation figures (curves vs JSON table)
+# -------------------------
+figs_dir = Path("figs")
+figs_dir.mkdir(exist_ok=True, parents=True)
+
+# ---- 5.1: Load curves (bi-quad coefficients for eir-f-t and cap-f-t) ----
+dfc = df_curves
+dfc.columns = [
+    "CurveName","CurveType","Unused","CurveUse",
+    "X1Min","X1Max","X2Min","X2Max",
+    "C0","C1","C2","C3","C4","C5"
+]
+
+def _row_to_coeffs(df, curve_type):
+    row = df[df["CurveType"] == curve_type]
+    if row.empty:
+        raise RuntimeError(f"CurveType '{curve_type}' not found in {csv_file.name}")
+    return row.iloc[0][["C0","C1","C2","C3","C4","C5"]].astype(float).to_numpy()
+
+eir_coeffs = _row_to_coeffs(dfc, "eir-f-t")
+cap_coeffs = _row_to_coeffs(dfc, "cap-f-t")
+
+def bi_quad(x, y, c):
+    return c[0] + c[1]*x + c[2]*x**2 + c[3]*y + c[4]*y**2 + c[5]*x*y
+
+def bi_quad_norm(x, y, c, x_ref, y_ref):
+    return bi_quad(x, y, c) / bi_quad(x_ref, y_ref, c)
+
+# ---- 5.2: Build a performance table from the JSON we just wrote ----
+with open(output_json_file, "r") as f:
+    std205 = json.load(f)
+
+grid = std205["performance"]["performance_map_cooling"]["grid_variables"]
+lookup = std205["performance"]["performance_map_cooling"]["lookup_variables"]
+
+# Recreate combinations deterministically from the JSON grid
+grid_keys = list(grid.keys())
+grid_vals = [grid[k] for k in grid_keys]
+grid_combos = list(itertools.product(*grid_vals))
+
+# Sanity check: combos length must match lookup arrays
+n_pts = len(grid_combos)
+for k in ["gross_total_capacity", "gross_power"]:
+    if len(lookup[k]) != n_pts:
+        raise RuntimeError(f"Lookup '{k}' length {len(lookup[k])} != grid size {n_pts}")
+
+# Build a compact DataFrame for plotting
+perf_rows = []
+for i, combo in enumerate(grid_combos):
+    cd = dict(zip(grid_keys, combo))
+    perf_rows.append({
+        "indoor_db_C":  cd["indoor_coil_entering_dry_bulb_temperature"] - 273.15,
+        "outdoor_db_C": cd["outdoor_coil_entering_dry_bulb_temperature"] - 273.15,
+        "capacity_W":   float(lookup["gross_total_capacity"][i]),
+        "power_W":      float(lookup["gross_power"][i]),
+    })
+perf = pd.DataFrame(perf_rows).dropna(subset=["capacity_W","power_W"])
+
+# ---- 5.3: Choose a common reference point and compute modifiers ----
+target_in_C, target_out_C = 20.0, 30.0
+# Find nearest actual table point to the desired reference
+i_ref = ((perf["indoor_db_C"] - target_in_C).abs()
+       + (perf["outdoor_db_C"] - target_out_C).abs()).idxmin()
+cap_ref = perf.loc[i_ref, "capacity_W"]
+eir_ref = perf.loc[i_ref, "power_W"] / max(perf.loc[i_ref, "capacity_W"], 1e-9)
+
+perf["cap_mod"] = perf["capacity_W"] / max(cap_ref, 1e-9)
+perf["eir_mod"] = (perf["power_W"] / perf["capacity_W"]) / max(eir_ref, 1e-9)
+
+# ---- 5.4: Produce 1D comparisons vs outdoor temp for each indoor temp ----
+outdoor_span = np.linspace(perf["outdoor_db_C"].min(), perf["outdoor_db_C"].max(), 200)
+
+def curve_line(indoor_C, outdoor_arr, coeffs):
+    return np.array([bi_quad_norm(indoor_C, o, coeffs, target_in_C, target_out_C) for o in outdoor_arr])
+
+# EIR modifier plot
+plt.figure(figsize=(7, 5))
+for indoor_C in sorted(perf["indoor_db_C"].unique()):
+    subset = perf[perf["indoor_db_C"] == indoor_C]
+    eir_curve = curve_line(indoor_C, outdoor_span, eir_coeffs)
+    plt.plot(outdoor_span, eir_curve, label=f"Curve {indoor_C:.0f}°C")
+    plt.scatter(subset["outdoor_db_C"], subset["eir_mod"], marker="x", label=f"Table {indoor_C:.0f}°C")
+plt.title("EIR modifier vs Outdoor Dry-Bulb")
+plt.xlabel("Outdoor Dry-Bulb (°C)")
+plt.ylabel("EIR Modifier (norm. to ~20°C/30°C)")
+plt.legend()
+eir_fig_path = figs_dir / "eir_modifier_vs_outdoor.png"
+plt.tight_layout()
+plt.savefig(eir_fig_path, dpi=200)
+plt.show()
+print(f"📈 Saved: {eir_fig_path}")
+
+# Capacity modifier plot
+plt.figure(figsize=(7, 5))
+for indoor_C in sorted(perf["indoor_db_C"].unique()):
+    subset = perf[perf["indoor_db_C"] == indoor_C]
+    cap_curve = curve_line(indoor_C, outdoor_span, cap_coeffs)
+    plt.plot(outdoor_span, cap_curve, label=f"Curve {indoor_C:.0f}°C")
+    plt.scatter(subset["outdoor_db_C"], subset["cap_mod"], marker="x", label=f"Table {indoor_C:.0f}°C")
+plt.title("Capacity modifier vs Outdoor Dry-Bulb")
+plt.xlabel("Outdoor Dry-Bulb (°C)")
+plt.ylabel("Capacity Modifier (norm. to ~20°C/30°C)")
+plt.legend()
+cap_fig_path = figs_dir / "capacity_modifier_vs_outdoor.png"
+plt.tight_layout()
+plt.savefig(cap_fig_path, dpi=200)
+plt.show()
+print(f"📈 Saved: {cap_fig_path}")
