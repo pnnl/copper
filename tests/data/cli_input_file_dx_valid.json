@@ -1,0 +1,31 @@
+{
+    "actions": [
+        {
+            "equipment": {
+                "type": "UnitaryDirectExpansion",
+                "compressor_type": "scroll",
+                "condenser_type": "air",
+                "compressor_speed": "constant",
+                "ref_net_cap": 471000,
+                "ref_cap_unit": "W",
+                "full_eff": 5.89,
+                "full_eff_unit": "cop",
+                "part_eff": 8.5,
+                "part_eff_unit": "cop",
+                "sim_engine": "energyplus",
+                "indoor_fan_speeds": 1.0,
+                "model": "simplified_bf"
+            },
+            "function_call": {
+                "function": "generate_set_of_curves",
+                "vars": ["plf-f-plr"],
+                "method": "nearest_neighbor",
+                "tol": 0.05,
+                "export_path": "./",
+                "export_format": "json",
+                "export_name": "Quickstart_Guide_UnitDX",
+                "random_seed": 1
+            }
+        }
+    ]
+}

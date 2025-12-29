@@ -13,8 +13,7 @@
                 "part_eff": 0.52,
                 "part_eff_unit": "kW/ton",
                 "sim_engine": "energyplus",
-                "model": "ect_lwt",
-                "additional_prop": 12
+                "model": "ect_lwt"
             },
             "function_call": {
                 "function": "generate_set_of_curves",

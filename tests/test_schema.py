@@ -5,8 +5,20 @@ from unittest import TestCase
 
 class TestCurves(TestCase):
     def test_good_schema(self):
-        input_file = json.load(open("./tests/data/cli_input_file.json", "r"))
+        input_file = json.load(open("./tests/data/cli_input_file_valid.json", "r"))
         assert cp.Schema(input=input_file).validate()
+
+    def test_good_schema_additional_properties_dx(self):
+        input_file = json.load(open("./tests/data/cli_input_file_dx_valid.json", "r"))
+        assert cp.Schema(input=input_file).validate()
+
+    def test_bad_schema_additional_properties(self):
+        input_file = json.load(open("./tests/data/cli_input_file.json", "r"))
+        assert cp.Schema(input=input_file).validate() == False
+
+    def test_bad_schema_additional_properties_dx(self):
+        input_file = json.load(open("./tests/data/cli_input_file_dx.json", "r"))
+        assert cp.Schema(input=input_file).validate() == False
 
     def test_bad_schema(self):
         input_file = json.load(open("./tests/data/cli_input_file.json", "r"))

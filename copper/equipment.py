@@ -11,6 +11,7 @@ from copper.generator import *
 class Equipment:
     def __init__(self):
         self.plotting_range = {}
+        self.type = None
         self.full_eff_alt = None
         self.full_eff_unit_alt = None
         self.full_eff = None

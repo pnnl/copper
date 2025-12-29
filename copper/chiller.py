@@ -44,7 +44,7 @@ class Chiller(Equipment):
         min_unloading=0.1,
         min_plr=None,
     ):
-        self.type = "chiller"
+        self.type = "Chiller"
         self.compressor_type = compressor_type
         self.condenser_type = condenser_type
         self.compressor_speed = compressor_speed
