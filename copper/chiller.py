@@ -401,7 +401,7 @@ class Chiller(Equipment):
             std = self.part_eff_ref_std_alt
         else:
             std = self.part_eff_ref_std
-        chiller_data = equipment_references[self.type][std][self.condenser_type]
+        chiller_data = equipment_references[self.type.lower()][std][self.condenser_type]
         lwt = Equipment.convert_to_deg_c(chiller_data["lwt"], chiller_data["lwt_unit"])
         ect = [
             Equipment.convert_to_deg_c(t, chiller_data["ect_unit"])
