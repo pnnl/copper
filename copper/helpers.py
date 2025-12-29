@@ -7,7 +7,7 @@ This file contains sundries which are not specifically used when using Copper bu
 import json, sys
 
 
-def curve_csv_to_json(csv_path, equip_type="chiller"):
+def curve_csv_to_json(csv_path, equip_type="Chiller"):
     """
     Convert sets of curves defined in a CSV file using a predefined format to a JSON file
     """

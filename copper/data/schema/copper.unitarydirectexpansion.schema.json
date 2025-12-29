@@ -31,7 +31,7 @@
                 "full_eff_unit": {
                     "description": "Full load efficiency units of the unitary direct expansion unit",
                     "type": "string",
-                    "enum": ["eer"],
+                    "enum": ["eer", "cop", "kW/ton"],
                     "minLength": 1
                 },
                 "part_eff": {
@@ -42,7 +42,7 @@
                 "part_eff_unit": {
                     "description": "Part load efficiency units of the unitary direct expansion unit",
                     "type": "string",
-                    "enum": ["eer"],
+                    "enum": ["eer", "cop", "kW/ton"],
                     "minLength": 1
                 },
                 "compressor_type": {
@@ -108,16 +108,20 @@
                 "indoor_fan_speeds_mapping": {
                     "description": "Mapping of indoor fan speed and characteristics",
                     "type": "object",
-                    "properties": {
-                        "fan_flow_fraction": {
-                            "type": "number"
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "fan_flow_fraction": {
+                                "type": "number"
+                            },
+                            "fan_power_fraction": {
+                                "type": "number"
+                            },
+                            "compressor_stage": {
+                                "type": "number"
+                            }
                         },
-                        "fan_power_fraction": {
-                            "type": "number"
-                        },
-                        "compressor_stage": {
-                            "type": "number"
-                        }
+                        "required": ["fan_flow_fraction", "fan_power_fraction", "compressor_stage"]
                     }
                 },
                 "compressor_stages": {
@@ -126,6 +130,90 @@
                     "items": {
                         "type": "number"
                     }
+                },
+                "ref_gross_cap": {
+                    "description": "Reference gross capacity of the unitary direct expansion unit",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                "set_of_curves": {
+                    "description": "Set of performance curves for the unitary direct expansion unit",
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "part_eff_ref_std_alt": {
+                    "description": "Alternative standard for rated conditions",
+                    "type": "string",
+                    "enum": ["ahri_340/360"],
+                    "minLength": 1
+                },
+                "indoor_fan_curve_coef": {
+                    "description": "Indoor fan curve coefficients",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": ["cubic"]
+                        },
+                        "1": {
+                            "type": "number"
+                        },
+                        "2": {
+                            "type": "number"
+                        },
+                        "3": {
+                            "type": "number"
+                        },
+                        "4": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "indoor_fan_curve": {
+                    "description": "Flag indicating if indoor fan curve is used",
+                    "type": "boolean"
+                },
+                "control_power": {
+                    "description": "Control power by stage for the unitary direct expansion unit",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number"
+                    }
+                },
+                "control_power_unit": {
+                    "description": "Unit of the control power",
+                    "type": "string",
+                    "enum": ["W", "kW"],
+                    "minLength": 1
+                },
+                "full_eff_alt": {
+                    "description": "Alternative full load efficiency of the unitary direct expansion unit",
+                    "type": "number",
+                    "minimum": 0
+                },
+                "full_eff_alt_unit": {
+                    "description": "Alternative full load efficiency units of the unitary direct expansion unit",
+                    "type": "string",
+                    "enum": ["eer", "cop", "kW/ton"],
+                    "minLength": 1
+                },
+                "part_eff_alt": {
+                    "description": "Alternative part load efficiency of the unitary direct expansion unit",
+                    "type": "number",
+                    "minimum": 0
+                },
+                "part_eff_alt_unit": {
+                    "description": "Alternative part load efficiency units of the unitary direct expansion unit",
+                    "type": "string",
+                    "enum": ["eer", "cop", "kW/ton"],
+                    "minLength": 1
+                },
+                "stages": {
+                    "description": "String representation of the number of compressor stages",
+                    "type": "string",
+                    "minLength": 1
                 }
             },
             "required": [
@@ -136,7 +224,8 @@
                 "full_eff_unit",
                 "part_eff",
                 "part_eff_unit"
-            ]
+            ],
+            "additionalProperties": false
         }
     },
     "$ref": "copper.unitarydirectexpansion.schema.json#/definitions/unitarydirectexpansion"

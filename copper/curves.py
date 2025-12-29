@@ -207,7 +207,7 @@ class SetsofCurves:
             new_curve.ref_x = ref_x
             new_curve.ref_y = ref_y
             # TODO: Move following statement to Chiller class
-            if self.eqp_type == "chiller":
+            if self.eqp_type.lower() == "chiller":
                 if agg_set_of_curves.model == "ect_lwt":
                     self.ref_lwt = ref_y
                     self.ref_ect = ref_x
@@ -227,7 +227,7 @@ class SetsofCurves:
 
         # Determine reference condenser flow rate
         # TODO: Move following statement to Chiller class
-        if self.eqp_type == "chiller":
+        if self.eqp_type.lower() == "chiller":
             self.eqp.set_of_curves = agg_set_of_curves.curves
             if self.eqp.condenser_type == "water":
                 cond_flow_rate = self.eqp.get_ref_cond_flow_rate()
@@ -652,7 +652,7 @@ class Curve:
 
         # Equipment specific charactertics
         # TODO: move under a function in the Chiller class
-        if self.eqp.type == "chiller":
+        if self.eqp.type.lower() == "chiller":
             self.ref_evap_fluid_flow = 0
             self.ref_cond_fluid_flow = 0
             if self.eqp.part_eff_ref_std == "ahri_550/590":

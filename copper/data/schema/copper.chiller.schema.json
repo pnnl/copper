@@ -132,6 +132,13 @@
                     "type": "number",
                     "exclusiveMinimum": 0,
                     "exclusiveMaximum": 1
+                },
+                "set_of_curves": {
+                    "description": "Set of performance curves for the chiller",
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
                 }
             },
             "required": [
@@ -143,7 +150,8 @@
                 "part_eff",
                 "part_eff_unit",
                 "model"
-            ]
+            ],
+            "additionalProperties": false
         }
     },
     "$ref": "copper.chiller.schema.json#/definitions/chiller"

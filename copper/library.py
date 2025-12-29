@@ -388,14 +388,14 @@ class Library:
         # difference in numeric fields
         for name, val in matches.items():
             # Retrieve full load/reference numeric attribute
-            if eqp.type == "chiller":
+            if eqp.type.lower() == "chiller":
                 cap = val["ref_cap"]
                 cap_unit = val["ref_cap_unit"]
                 ref_cap = eqp.ref_cap
                 eff = val["full_eff"]
                 eff_unit = matches[name]["full_eff_unit"]
 
-            elif eqp.type == "UnitaryDirectExpansion":
+            elif eqp.type.lower() == "unitarydirectexpansion":
                 cap = val["ref_net_cap"]
                 cap_unit = val["ref_cap_unit"]
                 ref_cap = eqp.ref_net_cap

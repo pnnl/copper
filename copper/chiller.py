@@ -44,7 +44,7 @@ class Chiller(Equipment):
         min_unloading=0.1,
         min_plr=None,
     ):
-        self.type = "chiller"
+        self.type = "Chiller"
         self.compressor_type = compressor_type
         self.condenser_type = condenser_type
         self.compressor_speed = compressor_speed
@@ -401,7 +401,7 @@ class Chiller(Equipment):
             std = self.part_eff_ref_std_alt
         else:
             std = self.part_eff_ref_std
-        chiller_data = equipment_references[self.type][std][self.condenser_type]
+        chiller_data = equipment_references[self.type.lower()][std][self.condenser_type]
         lwt = Equipment.convert_to_deg_c(chiller_data["lwt"], chiller_data["lwt_unit"])
         ect = [
             Equipment.convert_to_deg_c(t, chiller_data["ect_unit"])
@@ -518,7 +518,7 @@ class Chiller(Equipment):
         """
         lib = Library(path=lib_path)
         filters = [
-            ("eqp_type", "chiller"),
+            ("eqp_type", "Chiller"),
             ("condenser_type", self.condenser_type),
             ("sim_engine", self.sim_engine),
             ("model", self.model),
