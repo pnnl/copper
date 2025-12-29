@@ -243,10 +243,10 @@ class UnitaryDirectExpansion(Equipment):
         """Determine and assign a part load fraction as a function of part load ratio curve to a unitary DX equipment.
 
         :param str overwrite: Flag to overwrite the existing degradation curve. Default is False
-        :param bool overwrite: Overwrite exisiting plf-f-plr curves
+        :param bool overwrite: Overwrite existing plf-f-plr curves
         :param bool return_curve: Return the curves
         """
-        # Remove exisiting curve if it exists
+        # Remove existing curve if it exists
         if overwrite:
             for curve in self.set_of_curves:
                 if curve.out_var == "plf-f-plr":
@@ -480,7 +480,7 @@ class UnitaryDirectExpansion(Equipment):
 
             # Determine intermediate efficiency calculation approach
             # - full_load: the unit has to run without having to cycle in order to meet the load
-            # - degradation: the unit cycles to meet the load, the calculation is done using AHRI's coeffient of degradation, see Section 6.2.3.2 in AHRI 340/360 (2022)
+            # - degradation: the unit cycles to meet the load, the calculation is done using AHRI's coefficient of degradation, see Section 6.2.3.2 in AHRI 340/360 (2022)
             # - interpolation: the unit will cycle in between speeds to meet the load, the calculation is done using AHRI's, see Section 6.2.3.1 in AHRI 340/360 (2022)
             if load_fraction < 1:
                 if len(self.compressor_stages) == 0:
@@ -684,7 +684,7 @@ class UnitaryDirectExpansion(Equipment):
         apply_modifiers_at_full_load,
         degradation=True,
     ):
-        """Calculate intermediate EER (as part of the IEER calculation) using the degredation approach as per Section 6.2.3.2 in AHRI 340/360 (2022).
+        """Calculate intermediate EER (as part of the IEER calculation) using the degradation approach as per Section 6.2.3.2 in AHRI 340/360 (2022).
 
         :parm dict curves: Performance curves associated with the unit
         :parm float load_fraction: Load fraction used for the IEER calculation: 1, 0.75, 0.5, or 0.25
@@ -739,7 +739,7 @@ class UnitaryDirectExpansion(Equipment):
         else:
             load_factor = 1.0
 
-        # Calculate efficency at rating conditions
+        # Calculate efficiency at rating conditions
         eir_temp_mod_fac = curves[current_stage]["eir-f-t"].evaluate(eawbt, oabdt)
         eir_flow_mod_fac = curves[current_stage]["eir-f-ff"].evaluate(
             flow_fraction, 1.0

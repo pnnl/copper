@@ -30,7 +30,7 @@
                     "type": "number"
                 },
                 "max_gen": {
-                    "description": "Maxmimum number of generation to run",
+                    "description": "Maximum number of generation to run",
                     "type": "number"
                 },
                 "num_nearest_neighbors": {
