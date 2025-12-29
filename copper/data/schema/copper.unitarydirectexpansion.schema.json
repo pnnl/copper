@@ -214,14 +214,6 @@
                     "description": "String representation of the number of compressor stages",
                     "type": "string",
                     "minLength": 1
-                },
-                "aew": {
-                    "description": "Air entering wet-bulb temperature in degrees Celsius",
-                    "type": "number"
-                },
-                "ect": {
-                    "description": "Entering condenser temperature in degrees Celsius",
-                    "type": "number"
                 }
             },
             "required": [

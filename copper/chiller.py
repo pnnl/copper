@@ -518,7 +518,7 @@ class Chiller(Equipment):
         """
         lib = Library(path=lib_path)
         filters = [
-            ("eqp_type", "chiller"),
+            ("eqp_type", "Chiller"),
             ("condenser_type", self.condenser_type),
             ("sim_engine", self.sim_engine),
             ("model", self.model),

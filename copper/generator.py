@@ -246,7 +246,7 @@ class Generator:
         :rtype: bool
 
         """
-        if self.equipment.type == "chiller":
+        if self.equipment.type.lower() == "chiller":
             if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_rated_eff(
                     eff_type="part",
@@ -284,7 +284,7 @@ class Generator:
                             cap_rating += abs(1 - c.get_out_reference(self.equipment))
             else:
                 return False
-        elif self.equipment.type == "UnitaryDirectExpansion":
+        elif self.equipment.type.lower() == "unitarydirectexpansion":
             if self.equipment.set_of_curves != "":
                 part_rating = self.equipment.calc_rated_eff(
                     eff_type="part",
@@ -328,7 +328,7 @@ class Generator:
         :rtype: bool
 
         """
-        if self.equipment.type == "chiller":
+        if self.equipment.type.lower() == "chiller":
             if self.equipment.set_of_curves != "":
                 grad_list = []
                 for c in self.equipment.set_of_curves:

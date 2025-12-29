@@ -139,18 +139,6 @@
                     "items": {
                         "type": "object"
                     }
-                },
-                "ref_lwt": {
-                    "description": "Rated leaving water temperature in degrees Celsius",
-                    "type": "number"
-                },
-                "ref_ect": {
-                    "description": "Rated entering condenser temperature in degrees Celsius",
-                    "type": "number"
-                },
-                "ref_lct": {
-                    "description": "Rated leaving condenser temperature in degrees Celsius",
-                    "type": "number"
                 }
             },
             "required": [

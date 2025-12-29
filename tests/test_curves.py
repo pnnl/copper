@@ -24,13 +24,13 @@ class TestCurves(TestCase):
 
         # Equipment lookup
         self.assertTrue(
-            len(lib.find_equipment(filters=[("eqp_type", "chiller")]).keys())
+            len(lib.find_equipment(filters=[("eqp_type", "Chiller")]).keys())
         )
         self.assertFalse(len(lib.find_equipment(filters=[("eqp_type", "vrf")]).keys()))
 
         # Set of curves lookup using filter
         filters = [
-            ("eqp_type", "chiller"),
+            ("eqp_type", "Chiller"),
             ("sim_engine", "energyplus"),
             ("model", "ect_lwt"),
             ("condenser_type", "air"),
@@ -126,7 +126,7 @@ class TestCurves(TestCase):
 
     def test_agg(self):
         filters = [
-            ("eqp_type", "chiller"),
+            ("eqp_type", "Chiller"),
             ("sim_engine", "energyplus"),
             ("model", "ect_lwt"),
             ("condenser_type", "water"),
@@ -315,7 +315,7 @@ class TestCurves(TestCase):
         )
 
         filters = [
-            ("eqp_type", "chiller"),
+            ("eqp_type", "Chiller"),
             ("model", "lct_lwt"),
             ("condenser_type", "water"),
             ("sim_engine", "energyplus"),
