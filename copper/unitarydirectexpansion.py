@@ -589,12 +589,12 @@ class UnitaryDirectExpansion(Equipment):
         """Calculate intermediate EER (as part of the IEER calculation) by interpolation as per AHRI, see Section 6.2.3.1 in AHRI 340/360 (2022).
 
         :param float net_cooling_cap_rated: Net rated cooling capacity
-        :parm dict curves: Performance curves associated with the unit
-        :parm float load: Load corresponding to the load fraction for the IEER calculation
-        :parm float load_fraction: Load fraction used for the IEER calculation: 1, 0.75, 0.5, or 0.25
-        :parm float gross_eir: The unit's gross (only compressor and condenser section power) energy recovery ratio (1/COP)
-        :parm bool report: Flag that indicates if intermediate calculated variables should be logged
-        :parm bool apply_modifiers_at_full_load: Flag that defines if the capacity and EIR modifiers should be applied when the unit's performance is calculated for a load_fraction = 1
+        :param dict curves: Performance curves associated with the unit
+        :param float load: Load corresponding to the load fraction for the IEER calculation
+        :param float load_fraction: Load fraction used for the IEER calculation: 1, 0.75, 0.5, or 0.25
+        :param float gross_eir: The unit's gross (only compressor and condenser section power) energy recovery ratio (1/COP)
+        :param bool report: Flag that indicates if intermediate calculated variables should be logged
+        :param bool apply_modifiers_at_full_load: Flag that defines if the capacity and EIR modifiers should be applied when the unit's performance is calculated for a load_fraction = 1
         :return: Energy Efficiency Ration (EER)
         :rtype: float
 
@@ -686,13 +686,13 @@ class UnitaryDirectExpansion(Equipment):
     ):
         """Calculate intermediate EER (as part of the IEER calculation) using the degradation approach as per Section 6.2.3.2 in AHRI 340/360 (2022).
 
-        :parm dict curves: Performance curves associated with the unit
-        :parm float load_fraction: Load fraction used for the IEER calculation: 1, 0.75, 0.5, or 0.25
-        :parm int stage: Current stage
-        :parm float gross_eir: The unit's gross (only compressor and condenser section power) energy recovery ratio (1/COP)
-        :parm bool report: Flag that indicates if intermediate calculated variables should be logged
-        :parm bool apply_modifiers_at_full_load: Flag that defines if the capacity and EIR modifiers should be applied when the unit's performance is calculated for a load_fraction = 1
-        :parm bool degradation: Flag that indicates whether or not the degradation coefficient should be applied
+        :param dict curves: Performance curves associated with the unit
+        :param float load_fraction: Load fraction used for the IEER calculation: 1, 0.75, 0.5, or 0.25
+        :param int stage: Current stage
+        :param float gross_eir: The unit's gross (only compressor and condenser section power) energy recovery ratio (1/COP)
+        :param bool report: Flag that indicates if intermediate calculated variables should be logged
+        :param bool apply_modifiers_at_full_load: Flag that defines if the capacity and EIR modifiers should be applied when the unit's performance is calculated for a load_fraction = 1
+        :param bool degradation: Flag that indicates whether or not the degradation coefficient should be applied
         :return: Energy Efficiency Ration (EER), Load factor (LF), Actual load
         :rtype: list
 
@@ -848,7 +848,7 @@ class UnitaryDirectExpansion(Equipment):
         Root Mean Square Error = 0.455
         Model was internally validated using 10-fold cross validation approach and externally validated using the USDOE database.
 
-        :parm float ieer: Integrated energy efficiency ratio (IEER)
+        :param float ieer: Integrated energy efficiency ratio (IEER)
         :return: Energy efficiency ratio (EER)
         :rtype: float
 
