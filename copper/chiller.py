@@ -284,7 +284,7 @@ class Chiller(Equipment):
                     )  # kJ/kg.K
                     rho = CP.PropsSI("D", "P", 101325, "T", ect[idx] + 273.15, "Water")
 
-                    # Gather arguments for determination fo leaving condenser temperature through iteration
+                    # Gather arguments for determination of leaving condenser temperature through iteration
                     if idx == 0:  # Full load rated conditions
                         args = [
                             lwt,
