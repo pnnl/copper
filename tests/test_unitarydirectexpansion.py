@@ -523,3 +523,34 @@ class UnitaryDirectExpansion(TestCase):
         if output_report:
             print(ieer)
         assert 13.01 * (1 - 0.001) <= ieer <= 13.01 * 1.001
+
+    def test_negative_values_generation(self):
+        # Define equipment characteristics
+        dx_unit = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            ref_cap_unit="kbtu/h",
+            ref_gross_cap=40,
+            full_eff=12.965599999999998,
+            full_eff_unit="eer",
+            part_eff=14.330400000000001,
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+            indoor_fan_speeds=1,
+            indoor_fan_power=0.7537333374023437,
+            indoor_fan_power_unit="kW",
+        )
+
+        # Generate the curves
+        set_of_curves = dx_unit.generate_set_of_curves(
+            method="nearest_neighbor",
+            tol=0.01,
+            num_nearest_neighbors=5,
+            verbose=True,
+            vars=["eir-f-t"],
+            random_seed=10,
+        )
+
+        for curve in set_of_curves:
+            assert curve.evaluate(curve.ref_x, curve.ref_y) >= 0
