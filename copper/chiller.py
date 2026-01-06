@@ -449,7 +449,7 @@ class Chiller(Equipment):
         return lct
 
     def cond_inlet_temp_residual(self, lct, args):
-        """Calculate the enetering condenser temperature residual based on a leaving condenser temperature.
+        """Calculate the entering condenser temperature residual based on a leaving condenser temperature.
 
         :param float lct: Leaving condenser temperature (deg. C)
         :return: Entering condenser temperature residual
@@ -640,7 +640,7 @@ class Chiller(Equipment):
         """Function to generate seed curves specific to a chiller and sets relevant attributes (misc_attr, ranges).
 
         :param copper.library.Library lib: Chiller library object
-        :param list fitlers: List of tuples containing the filter keys and values
+        :param list filters: List of tuples containing the filter keys and values
         :param list csets: List of set of curves object corresponding to selected chillers from library
         :rtype: SetsofCurves
 
