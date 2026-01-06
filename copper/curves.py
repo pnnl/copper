@@ -146,7 +146,7 @@ class SetsofCurves:
                 df, _ = self.nearest_neighbor_sort(target_attr=misc_attr)
                 sorted_vals = list(
                     map(vals.__getitem__, df.index.values)
-                )  # adding this incase of NaN in dfs
+                )  # adding this in case of NaN in dfs
                 y_s = [
                     list(
                         map(lambda x: np.dot(df["score"].values, x), zip(*sorted_vals))
@@ -368,7 +368,7 @@ class SetsofCurves:
     def l2_norm(self, df, target_attr, weights, vars=["full_eff", "ref_cap"]):
         """Perform L2 normalization.
 
-        :param pandas.DataFrame df: Dataframe containing the attributes of different equipments for a given equipment type
+        :param pandas.DataFrame df: Dataframe containing the attributes of different equipment for a given equipment type
         :param dict target_attr: Target equipment attribute
         :param list weights: List of weights, must have the same dimensions as vars
         :param list vars: List of string containing variable names to compute the L2 normalization
