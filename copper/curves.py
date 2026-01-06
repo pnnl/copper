@@ -86,7 +86,7 @@ class SetsofCurves:
                         "Normalization point not provided, the curve cannot be created."
                     )
 
-                # TODO: move assignement to Curve() class and values ot Chiller() class
+                # TODO: move assignment to Curve() class and values to Chiller() class
                 if c.eqp.model == "lct_lwt":
                     if c.out_var == "eir-f-t":
                         c.ref_x = c.ref_lwt
@@ -285,7 +285,7 @@ class SetsofCurves:
             df = pd.concat(df_list)
 
             # check if there is only a single curve.
-            # in that case, we select that curve, even if there ar NaN values
+            # in that case, we select that curve, even if there are NaN values
             if len(df) == 1 and len(df.dropna()) == 0:
                 for var in vars:
                     df[var] = target_attr[var]
@@ -605,7 +605,7 @@ class SetofCurves:
 
 class Curve:
     def __init__(self, eqp, c_type):
-        # General charactersitics
+        # General characteristics
         self.eqp = eqp
         self.out_var = ""
         self.type = c_type
