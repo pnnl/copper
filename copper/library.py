@@ -24,7 +24,7 @@ class Library:
         for item, vals in self.data.items():
             # Cannot calculate the part load efficiency
             # if full load efficiency is not specified
-            if not vals["full_eff"] is None and vals["condenser_type"] != "hr_scroll":
+            if vals["full_eff"] is not None and vals["condenser_type"] != "hr_scroll":
                 # Get equipment properties
                 class_name = vals["eqp_type"][0].upper() + vals["eqp_type"][1:]
                 full_class_path = "copper." + class_name
@@ -82,7 +82,7 @@ class Library:
                 )
 
                 # Set part load efficiency if
-                # the calculation was sucessful
+                # the calculation was successful
                 if part_eff > -999:
                     if (
                         class_name == "UnitaryDirectExpansion"
@@ -98,7 +98,7 @@ class Library:
                         del vals["part_eff_unit"]
 
     def load_obj(self, data):
-        """Load data for an equipment from the libary.
+        """Load data for equipment from the library.
 
         :param dict data: Equipment data in a dict format
         :return: Instance of the equipment in Copper (e.g. copper.chiller.Chiller)
@@ -177,7 +177,7 @@ class Library:
         :rtype: list
 
         """
-        # Find name of equiment that match specified filter
+        # Find name of equipment that match specified filter
         eqp_match = self.find_equipment(filters)
 
         # List of sets of curves that match specified filters
@@ -194,7 +194,7 @@ class Library:
             eqp_props = eqp_class_info[0]
             eqp_props.remove("self")
 
-            # List of propeties that should get defaulted
+            # List of properties that should get defaulted
             prop_to_default = [
                 "part_eff_ref_std",
                 "indoor_fan_speeds_mapping",
@@ -231,10 +231,10 @@ class Library:
             obj = eval(full_class_path)(**obj_args)
             c_set.eqp = obj
 
-            # Retrive all attributes of the sets of curves object
+            # Retrieve all attributes of the sets of curves object
             for c_att in list(c_set.__dict__):
                 # Set the attribute of new Curve object
-                # if attrubute are identified in database entry
+                # if attribute are identified in database entry
                 if c_att in list(self.data[name].keys()):
                     c_set.__dict__[c_att] = self.data[name][c_att]
 
@@ -337,10 +337,10 @@ class Library:
         # Initialize curve object
         c_obj = Curve(eqp, c_prop["type"])
         c_obj.out_var = c
-        # Retrive all attributes of the curve object
+        # Retrieve all attributes of the curve object
         for c_att in list(Curve(eqp, c_prop["type"]).__dict__):
             # Set the attribute of new Curve object
-            # if attrubute are identified in database entry
+            # if attribute are identified in database entry
             if c_att in list(c_prop.keys()):
                 c_obj.__dict__[c_att] = c_prop[c_att]
         return c_obj
