@@ -243,7 +243,7 @@ class SetsofCurves:
         :param dict target_attr: Target attributes we want to match
         :param list vars: The variables we want to use to compute our l2 score. note COP will be added
         :param int N: Indicates the number of nearest neighbors to consider. N=None for weighted_average
-        :param pandas.DataFrame df: Pandas dataframe with selected chiller names and the associated weightings
+        :param pandas.DataFrame df: Pandas DataFrame with selected chiller names and the associated weightings
         :return: Index of set_of_curve that should be the closest fit
         :rtype: int
 
@@ -315,12 +315,12 @@ class SetsofCurves:
     ):
         """Normalize curve outputs.
 
-        :param pandas.DataFrame df: Input dataframe containing the variable inputs
+        :param pandas.DataFrame df: Input DataFrame containing the variable inputs
         :param dict target_attr: Reference targets with respect to which l2 score needs to computed
         :param list vars: List of strings for variables we want to normalize
         :param list weights: Weights associated with each variable in vars
         :param int N: Number of nearest neighbors. It should be none unless method is 'NN_weighted_average'
-        :return: Dataframe with added columns with normalized variables, dict with added normalized values of var in vars, index of the best curve
+        :return: DataFrame with added columns with normalized variables, dict with added normalized values of var in vars, index of the best curve
         :rtype: list
 
         """
@@ -368,7 +368,7 @@ class SetsofCurves:
     def l2_norm(self, df, target_attr, weights, vars=["full_eff", "ref_cap"]):
         """Perform L2 normalization.
 
-        :param pandas.DataFrame df: Dataframe containing the attributes of different equipment for a given equipment type
+        :param pandas.DataFrame df: DataFrame containing the attributes of different equipment for a given equipment type
         :param dict target_attr: Target equipment attribute
         :param list weights: List of weights, must have the same dimensions as vars
         :param list vars: List of string containing variable names to compute the L2 normalization
@@ -772,7 +772,7 @@ class Curve:
     def regression(self, data, curve_types):
         """Find curve coefficient by running a multivariate linear regression.
 
-        :param pandas.DataFrame data: Dataframe object with the following columns: 'X1', 'X1^2', 'X2', 'X2^2', 'X1*X2', 'Y'
+        :param pandas.DataFrame data: DataFrame object with the following columns: 'X1', 'X1^2', 'X2', 'X2^2', 'X1*X2', 'Y'
         :param list curve_types: List of Copper curve types
 
         """
@@ -941,7 +941,7 @@ class Curve:
     def normalized(self, data, x_norm, y_norm):
         """Normalize curve around the reference data points.
 
-        :param pandas.DataFrame data: Dataframe object with the following columns: 'X1', 'X1^2', 'X2', 'X2^2', 'X1*X2', 'Y'
+        :param pandas.DataFrame data: DataFrame object with the following columns: 'X1', 'X1^2', 'X2', 'X2^2', 'X1*X2', 'Y'
         :param float x_norm: First independent variable normalization points
         :param float y_norm: Second independent variable normalization points
 

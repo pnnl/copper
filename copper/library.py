@@ -98,7 +98,7 @@ class Library:
                         del vals["part_eff_unit"]
 
     def load_obj(self, data):
-        """Load data for an equipment from the library.
+        """Load data for equipment from the library.
 
         :param dict data: Equipment data in a dict format
         :return: Instance of the equipment in Copper (e.g. copper.chiller.Chiller)
