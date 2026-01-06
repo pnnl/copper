@@ -438,11 +438,16 @@ class Generator:
             elif len(self.vars) == 0 or curve.out_var in self.vars:
                 for idx in range(1, 11):
                     try:
-                        setattr(
-                            curve,
-                            "coeff{}".format(idx),
-                            getattr(curve, "coeff{}".format(idx)) + self.get_random(),
-                        )
+                        negative_values_check = False
+                        while not negative_values_check:
+                            setattr(
+                                curve,
+                                "coeff{}".format(idx),
+                                getattr(curve, "coeff{}".format(idx))
+                                + self.get_random(),
+                            )
+                            if curve.evaluate(curve.ref_x, curve.ref_y) >= 0:
+                                negative_values_check = True
                     except:
                         pass
         return new_curves
