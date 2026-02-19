@@ -7,3 +7,4 @@ As the development of **Copper** progresses, more equipment types will be suppor
    :maxdepth: 1
 
    Chillers
+   Medium to Large Unitary Air Conditioners

@@ -13,6 +13,7 @@ What can **Copper** do?
 What equipment does **Copper** handle?
 --------------------------------------------
 * Chillers
+* Medium to Large Unitary Air Conditioners
 
 Future development
 -------------------
