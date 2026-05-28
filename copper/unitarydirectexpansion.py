@@ -18,6 +18,7 @@ equipment_references = json.load(
     open(os.path.join(location, "data", "equipment_references.json"), "r")
 )
 log_fan = False
+log_fan_curve_assumption = False
 
 
 class UnitaryDirectExpansion(Equipment):
@@ -92,9 +93,6 @@ class UnitaryDirectExpansion(Equipment):
                         unit="W",
                     ).conversion(new_unit=indoor_fan_power_unit)
                     if not log_fan:
-                        logging.info(
-                            f"Default fan power is based on 400 cfm/ton and 0.365 kW/cfm"
-                        )
                         logging.info(
                             f"Default fan power is based on 400 cfm/ton and 0.365 kW/cfm"
                         )
@@ -368,9 +366,12 @@ class UnitaryDirectExpansion(Equipment):
                 # assumption does not match the user's expectation, they can use a multispeed fan specification instead, see `indoor_fan_speeds`
                 # and `indoor_fan_speeds_mapping`.
                 if flow_fraction == 0:
-                    logging.info(
-                        "Assume that the fan flow fraction used to calculate the fan power using the fan curve follows the load fraction. If this assumption does not match your expectation, consider using a multispeed fan specification instead see `indoor_fan_speeds` and `indoor_fan_speeds_mapping`. "
-                    )
+                    global log_fan_curve_assumption
+                    if not log_fan_curve_assumption:
+                        logging.info(
+                            "Assume that the fan flow fraction used to calculate the fan power using the fan curve follows the load fraction. If this assumption does not match your expectation, consider using a multispeed fan specification instead see `indoor_fan_speeds` and `indoor_fan_speeds_mapping`. "
+                        )
+                        log_fan_curve_assumption = True
                     flow_fraction = load_fraction
                 power_factor = self.default_fan_curve.evaluate(x=flow_fraction, y=0)
                 if self.indoor_fan_power * power_factor > min_fan_power:
