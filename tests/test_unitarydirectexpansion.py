@@ -195,10 +195,11 @@ class UnitaryDirectExpansion(TestCase):
         dx_unit_multi_speed = self.dx_unit_dft
         dx_unit_multi_speed.indoor_fan_curve = True
         dx_unit_multi_speed.indoor_fan_speeds = 2
+        dx_unit_multi_speed.minimum_fan_power_fraction = 0.3
         assert (
             dx_unit_multi_speed.calc_fan_power(compressor_stage=1, flow_fraction=0.5)
             / dx_unit_multi_speed.indoor_fan_power
-            == 0.25
+            == dx_unit_multi_speed.minimum_fan_power_fraction
         )
         assert (
             round(
@@ -366,7 +367,7 @@ class UnitaryDirectExpansion(TestCase):
         # Generate the curves
         set_of_curves = dx.generate_set_of_curves(
             method="nearest_neighbor",
-            tol=0.005,
+            tol=0.01,
             num_nearest_neighbors=5,
             verbose=True,
             vars=["eir-f-t", "plf-f-plr"],

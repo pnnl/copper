@@ -65,6 +65,7 @@ class UnitaryDirectExpansion(Equipment):
         compressor_stages=[],
         control_power={},
         control_power_unit="kW",
+        minimum_fan_power_fraction=0.1,
     ):
         global log_fan
         self.type = "UnitaryDirectExpansion"
@@ -176,6 +177,7 @@ class UnitaryDirectExpansion(Equipment):
         self.indoor_fan_curve_coef = indoor_fan_curve_coef
         self.indoor_fan_power_unit = indoor_fan_power_unit
         self.indoor_fan_curve = indoor_fan_curve
+        self.minimum_fan_power_fraction = minimum_fan_power_fraction
 
         compressor_stages = sorted(compressor_stages)
         if len(compressor_stages) == 0:
@@ -272,13 +274,18 @@ class UnitaryDirectExpansion(Equipment):
                     self.set_of_curves.append(plf_f_plr)
 
     def calc_fan_power(
-        self, compressor_stage, provide_flow_fraction=False, flow_fraction=1
+        self,
+        compressor_stage,
+        provide_flow_fraction=False,
+        flow_fraction=0,
+        load_fraction=0,
     ):
         """Calculate unitary DX equipment fan power.
 
         :param float compressor_stage: Compressor stage associated with a specific fan speed
         :param bool provide_flow_fraction: Flag that indicates if the flow fraction should be returned
         :param float flow_fraction: Default flow fraction
+        :param float load_fraction: Load fraction used to calculate the fan power when using a fan curve, default is 0
         :return: Unitary DX Equipment fan power in Watts, (and flow fraction)
         :rtype: float
 
@@ -288,7 +295,7 @@ class UnitaryDirectExpansion(Equipment):
         if (
             compressor_stage == len(self.compressor_stages)
             or self.indoor_fan_speeds == 1
-        ):
+        ) and not self.indoor_fan_curve:
             flow_fraction = 1.0
             if provide_flow_fraction:
                 return self.indoor_fan_power, flow_fraction
@@ -355,20 +362,27 @@ class UnitaryDirectExpansion(Equipment):
                                     a * compressor_stage + b
                                 )
             else:  # using curve
-                default_min_fan_power = (
-                    self.indoor_fan_power * 0.25
-                )  # default min fan power
+                min_fan_power = self.indoor_fan_power * self.minimum_fan_power_fraction
+                # If flow fraction is not provided, assume it follows the load fraction. This assumption is based on the fact that in many cases,
+                # the fan flow rate is modulated to meet the load (e.g., using a VFD), but this might not be the case for all systems. If this
+                # assumption does not match the user's expectation, they can use a multispeed fan specification instead, see `indoor_fan_speeds`
+                # and `indoor_fan_speeds_mapping`.
+                if flow_fraction == 0:
+                    logging.info(
+                        "Assume that the fan flow fraction used to calculate the fan power using the fan curve follows the load fraction. If this assumption does not match your expectation, consider using a multispeed fan specification instead see `indoor_fan_speeds` and `indoor_fan_speeds_mapping`. "
+                    )
+                    flow_fraction = load_fraction
                 power_factor = self.default_fan_curve.evaluate(x=flow_fraction, y=0)
-                if self.indoor_fan_power * power_factor > default_min_fan_power:
+                if self.indoor_fan_power * power_factor > min_fan_power:
                     if provide_flow_fraction:
-                        return self.indoor_fan_power * power_factor, 1.0
+                        return self.indoor_fan_power * power_factor, flow_fraction
                     else:
                         return self.indoor_fan_power * power_factor
                 else:
                     if provide_flow_fraction:
-                        return default_min_fan_power, 1.0
+                        return min_fan_power, flow_fraction
                     else:
-                        return default_min_fan_power
+                        return min_fan_power
 
     def calc_rated_eff(
         self,
@@ -709,14 +723,16 @@ class UnitaryDirectExpansion(Equipment):
         tot_cap_temp_mod_fac = curves[current_stage]["cap-f-t"].evaluate(eawbt, oabdt)
         tot_cap_flow_mod_fac = curves[current_stage]["cap-f-ff"].evaluate(1.0, 1.0)
         indoor_fan_power, flow_fraction = self.calc_fan_power(
-            current_stage, True, report
+            current_stage, True, report, load_fraction=load_fraction
         )
 
         # Second pass: assume performance impact of airflow now that the airflow fraction is known
         tot_cap_flow_mod_fac = curves[current_stage]["cap-f-ff"].evaluate(
             flow_fraction, 1.0
         )
-        indoor_fan_power, flow_fraction = self.calc_fan_power(current_stage, True)
+        indoor_fan_power, flow_fraction = self.calc_fan_power(
+            current_stage, True, load_fraction=load_fraction
+        )
 
         # Determine the net cooling capacity for this stage at the rating condition corresponding to the IEER load fraction
         if not apply_modifiers_at_full_load and load_fraction == 1:
