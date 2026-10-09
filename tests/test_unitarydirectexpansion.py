@@ -618,6 +618,6 @@ class UnitaryDirectExpansionDefaultCurves(TestCase):
             set_of_curves=curves,
         )
 
-        self.assertTrue(len(unit.set_of_curves) >= len(curves))
+        self.assertIs(unit.set_of_curves, curves)
 
     lib = cp.Library(path=DX_lib)
