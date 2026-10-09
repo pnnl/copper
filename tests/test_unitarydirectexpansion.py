@@ -555,3 +555,69 @@ class UnitaryDirectExpansion(TestCase):
 
         for curve in set_of_curves:
             assert curve.evaluate(curve.ref_x, curve.ref_y) >= 0
+
+
+class UnitaryDirectExpansionDefaultCurves(TestCase):
+    """Each unit needs its own set_of_curves list.
+
+    add_cycling_degradation_curve mutates self.set_of_curves in place, so a
+    list used as the default argument is shared by every unit built without
+    an explicit set_of_curves, and the first unit's curve is reused by all
+    the others no matter what degradation coefficient they were given.
+    """
+
+    @staticmethod
+    def _unit(degradation_coefficient):
+        return cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            compressor_speed="constant",
+            ref_cap_unit="W",
+            ref_gross_cap=471000,
+            full_eff=5.89,
+            full_eff_unit="cop",
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+            compressor_stages=[1.0],
+            control_power={},
+            degradation_coefficient=degradation_coefficient,
+        )
+
+    def test_curves_are_not_shared_between_units(self):
+        first = self._unit(0.10)
+        second = self._unit(0.50)
+
+        self.assertIsNot(first.set_of_curves, second.set_of_curves)
+
+    def test_degradation_coefficient_is_respected(self):
+        first = self._unit(0.10)
+        second = self._unit(0.50)
+
+        for unit, coefficient in ((first, 0.10), (second, 0.50)):
+            curves = [c for c in unit.set_of_curves if c.out_var == "plf-f-plr"]
+            self.assertEqual(len(curves), 1)
+            self.assertAlmostEqual(curves[0].coeff1, 1 - coefficient)
+            self.assertAlmostEqual(curves[0].coeff2, coefficient)
+
+    def test_explicit_curves_are_still_used(self):
+        curves = self.lib.get_set_of_curves_by_name("D208122216").curves
+        unit = cp.UnitaryDirectExpansion(
+            compressor_type="scroll",
+            condenser_type="air",
+            compressor_speed="constant",
+            ref_cap_unit="W",
+            ref_gross_cap=471000,
+            full_eff=5.89,
+            full_eff_unit="cop",
+            part_eff_ref_std="ahri_340/360",
+            model="simplified_bf",
+            sim_engine="energyplus",
+            compressor_stages=[1.0],
+            control_power={},
+            set_of_curves=curves,
+        )
+
+        self.assertTrue(len(unit.set_of_curves) >= len(curves))
+
+    lib = cp.Library(path=DX_lib)

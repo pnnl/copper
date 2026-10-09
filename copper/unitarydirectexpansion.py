@@ -34,7 +34,7 @@ class UnitaryDirectExpansion(Equipment):
         ref_gross_cap=None,
         ref_net_cap=None,
         part_eff_unit="",
-        set_of_curves=[],
+        set_of_curves=None,
         part_eff_ref_std="ahri_340/360",
         part_eff_ref_std_alt=None,
         model="simplified_bf",
@@ -162,7 +162,9 @@ class UnitaryDirectExpansion(Equipment):
         self.part_eff_alt = 0
         self.part_eff_alt_unit = part_eff_unit
         self.compressor_type = compressor_type
-        self.set_of_curves = set_of_curves
+        # A list default would be shared by every instance, and
+        # add_cycling_degradation_curve mutates this list in place.
+        self.set_of_curves = [] if set_of_curves is None else set_of_curves
         self.part_eff_ref_std = part_eff_ref_std
         self.model = model
         self.sim_engine = sim_engine
